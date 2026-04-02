@@ -1,0 +1,175 @@
+@import 'tailwindcss';
+
+@source '../../vendor/laravel/framework/src/Illuminate/Pagination/resources/views/*.blade.php';
+@source '../../storage/framework/views/*.php';
+@source '../**/*.blade.php';
+@source '../**/*.js';
+
+@theme {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+  --font-headline: 'Manrope', ui-sans-serif, system-ui, sans-serif;
+  
+  /* Material Design 3 Colors - Bank Pesantren Theme */
+  --color-primary: #004d4c;
+  --color-primary-container: #006766;
+  --color-primary-fixed: #a2f0ee;
+  --color-primary-fixed-dim: #86d4d2;
+  --color-on-primary: #ffffff;
+  --color-on-primary-container: #94e2e0;
+  --color-on-primary-fixed: #00201f;
+  --color-on-primary-fixed-variant: #00504f;
+  
+  --color-secondary: #5c614d;
+  --color-secondary-container: #dee2c9;
+  --color-secondary-fixed: #e0e5cc;
+  --color-secondary-fixed-dim: #c4c9b1;
+  --color-on-secondary: #ffffff;
+  --color-on-secondary-container: #606551;
+  --color-on-secondary-fixed: #191d0e;
+  --color-on-secondary-fixed-variant: #444936;
+  
+  --color-tertiary: #755b00;
+  --color-tertiary-container: #cca73b;
+  --color-tertiary-fixed: #ffdf90;
+  --color-tertiary-fixed-dim: #eac254;
+  --color-on-tertiary: #ffffff;
+  --color-on-tertiary-container: #503d00;
+  --color-on-tertiary-fixed: #241a00;
+  --color-on-tertiary-fixed-variant: #584400;
+  
+  --color-error: #ba1a1a;
+  --color-error-container: #ffdad6;
+  --color-on-error: #ffffff;
+  --color-on-error-container: #93000a;
+  
+  --color-surface: #f8fafa;
+  --color-surface-bright: #f8fafa;
+  --color-surface-dim: #d8dada;
+  --color-surface-container: #eceeee;
+  --color-surface-container-low: #f2f4f4;
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-high: #e6e8e8;
+  --color-surface-container-highest: #e1e3e3;
+  --color-on-surface: #191c1d;
+  --color-on-surface-variant: #3e4948;
+  --color-surface-variant: #e1e3e3;
+  --color-surface-tint: #076968;
+  
+  --color-inverse-surface: #2e3131;
+  --color-inverse-on-surface: #eff1f1;
+  --color-inverse-primary: #86d4d2;
+  
+  --color-outline: #6f7978;
+  --color-outline-variant: #bec9c8;
+  
+  --color-background: #f8fafa;
+  --color-on-background: #191c1d;
+  
+  --color-shadow: rgba(0, 0, 0, 0.1);
+}
+
+/* Custom Utilities */
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+  
+  .glass-effect {
+    @apply bg-white/80 backdrop-blur-xl;
+  }
+  
+  .sanctuary-gradient {
+    @apply bg-gradient-to-br from-primary to-primary-container;
+  }
+}
+
+/* Material Icons */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.material-symbols-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+/* Custom Scrollbar */
+@layer utilities {
+  .scrollbar-thin {
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-outline-variant) transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background-color: var(--color-outline-variant);
+    border-radius: 3px;
+  }
+}
+
+/* Animation Utilities */
+@layer utilities {
+  .animate-scale-in {
+    animation: scale-in 0.2s ease-out;
+  }
+  
+  .animate-slide-in {
+    animation: slide-in 0.3s ease-out;
+  }
+}
+
+@keyframes scale-in {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slide-in {
+  from {
+    transform: translateY(-10px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* Form Elements */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 transition-all flex items-center justify-center gap-2;
+  }
+  
+  .btn-secondary {
+    @apply bg-surface-container-high text-on-surface font-semibold py-3 px-6 rounded-xl hover:bg-surface-container-highest transition-all;
+  }
+  
+  .btn-error {
+    @apply bg-error text-on-error font-bold py-3 px-6 rounded-xl shadow-lg shadow-error/20 hover:shadow-error/30 active:scale-95 transition-all;
+  }
+  
+  .input-field {
+    @apply w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-2 focus:ring-primary/20 transition-all;
+  }
+  
+  .card {
+    @apply bg-surface-container-lowest rounded-xl shadow-sm p-6;
+  }
+  
+  .card-elevated {
+    @apply bg-surface-container-lowest rounded-xl shadow-lg p-6;
+  }
+}

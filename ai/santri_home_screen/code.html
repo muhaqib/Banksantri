@@ -1,0 +1,281 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bank Pesantren - Home</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "secondary-fixed-dim": "#c4c9b1",
+              "primary": "#004d4c",
+              "tertiary-fixed-dim": "#eac254",
+              "tertiary": "#755b00",
+              "surface-container-high": "#e6e8e8",
+              "outline": "#6f7978",
+              "on-primary-fixed-variant": "#00504f",
+              "inverse-on-surface": "#eff1f1",
+              "secondary": "#5c614d",
+              "inverse-surface": "#2e3131",
+              "surface-dim": "#d8dada",
+              "on-tertiary": "#ffffff",
+              "error": "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#3e4948",
+              "surface-bright": "#f8fafa",
+              "primary-container": "#006766",
+              "outline-variant": "#bec9c8",
+              "on-secondary-fixed": "#191d0e",
+              "background": "#f8fafa",
+              "secondary-container": "#dee2c9",
+              "on-surface": "#191c1d",
+              "on-secondary-fixed-variant": "#444936",
+              "surface-variant": "#e1e3e3",
+              "surface-tint": "#076968",
+              "on-secondary-container": "#606551",
+              "primary-fixed": "#a2f0ee",
+              "on-primary-container": "#94e2e0",
+              "on-primary": "#ffffff",
+              "surface": "#f8fafa",
+              "inverse-primary": "#86d4d2",
+              "on-tertiary-container": "#503d00",
+              "tertiary-fixed": "#ffdf90",
+              "on-tertiary-fixed": "#241a00",
+              "surface-container-highest": "#e1e3e3",
+              "on-background": "#191c1d",
+              "on-primary-fixed": "#00201f",
+              "on-tertiary-fixed-variant": "#584400",
+              "surface-container-low": "#f2f4f4",
+              "surface-container": "#eceeee",
+              "primary-fixed-dim": "#86d4d2",
+              "tertiary-container": "#cca73b",
+              "secondary-fixed": "#e0e5cc",
+              "on-error-container": "#93000a",
+              "on-error": "#ffffff",
+              "on-secondary": "#ffffff"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+      .material-symbols-outlined {
+        font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      }
+      body {
+        -webkit-tap-highlight-color: transparent;
+      }
+      .no-scrollbar::-webkit-scrollbar {
+        display: none;
+      }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background font-body text-on-surface antialiased">
+<!-- Top Navigation Shell -->
+<header class="w-full pt-4 pb-2 flex items-center justify-between px-5 w-full bg-[#f8fafa] dark:bg-gray-900 sticky top-0 z-40">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed border border-primary/10">
+<img alt="Santri profile" class="w-full h-full object-cover" data-alt="portrait of a young man with a friendly expression wearing a clean white shirt in soft natural lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCCYiScg606JUpJW-4_1R2aJc5jGuQxTcdpqTzrBa0_7B5x8NFrJI593XNWRa4OgWs79npIBq4yuAX1eBEf6pA_2kKhORB322HIVHfok_OWVgfc70J-l4qXM-wPjos_XU7llULYlqv-vB9zy2i6fZEKqZ7phxwXVaA0VwlByJEzUFdQW326xTiJI23qVluMdkBki1IAKUeiVmvxd2f39GHrwvvMVu49rguGvWw4DvXuwV4xlmsZVOEuYKEE_I4Hrbj9PR9eMwRyo13p"/>
+</div>
+<div>
+<span class="block text-xs font-medium text-on-surface-variant opacity-70">Assalamu'alaikum,</span>
+<h1 class="font-manrope text-xl font-bold tracking-tight text-[#004d4c] dark:text-[#86d4d2]">Salam, Santri</h1>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<button class="relative hover:opacity-80 transition-opacity scale-95 active:transition-transform">
+<span class="material-symbols-outlined text-[#004d4c] dark:text-[#86d4d2]">notifications</span>
+<span class="absolute top-0 right-0 w-2 h-2 bg-error rounded-full"></span>
+</button>
+</div>
+</header>
+<main class="px-5 pb-24 space-y-6">
+<!-- Alert Banner (Low Balance) -->
+<section class="mt-2">
+<div class="bg-error-container text-on-error-container p-4 rounded-xl flex items-center gap-3 animate-pulse">
+<span class="material-symbols-outlined text-error">warning</span>
+<div class="flex-1">
+<p class="text-xs font-semibold leading-tight">Saldo Menipis! Segera Isi Ulang</p>
+<p class="text-[10px] opacity-80 uppercase tracking-wider">Sisa Saldo: Rp 9.500</p>
+</div>
+<span class="material-symbols-outlined text-error text-lg">chevron_right</span>
+</div>
+</section>
+<!-- Main Balance Card -->
+<section>
+<div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-[1.5rem] p-6 shadow-xl shadow-primary/10">
+<!-- Abstract Texture Overlay -->
+<div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
+<div class="relative z-10 space-y-8">
+<div class="flex justify-between items-start">
+<div class="space-y-1">
+<span class="text-primary-fixed font-label text-[10px] font-bold uppercase tracking-[0.2em]">Saldo Utama</span>
+<div class="flex items-baseline gap-1">
+<span class="font-headline text-on-primary text-4xl font-extrabold tracking-tighter">9.500</span>
+<span class="text-on-primary-container text-sm font-medium opacity-80">IDR</span>
+</div>
+</div>
+<div class="bg-surface-container-lowest/10 p-2 rounded-lg backdrop-blur-md">
+<span class="material-symbols-outlined text-white">account_balance_wallet</span>
+</div>
+</div>
+<div class="flex items-center justify-between pt-4 border-t border-white/10">
+<div class="flex items-center gap-2">
+<span class="w-8 h-5 rounded-sm bg-white/20"></span>
+<span class="text-white/60 font-mono text-xs">**** 8812</span>
+</div>
+<button class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
+              Isi Saldo
+            </button>
+</div>
+</div>
+</div>
+</section>
+<!-- Quick Actions -->
+<section class="bg-surface-container-low rounded-[1.25rem] p-5">
+<div class="grid grid-cols-4 gap-4">
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">history</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Riwayat</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">payments</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tarik Tunai</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">add_circle</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Top Up</span>
+</div>
+<div class="flex flex-col items-center gap-2 group">
+<div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+<span class="material-symbols-outlined">send</span>
+</div>
+<span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Transfer</span>
+</div>
+</div>
+</section>
+<!-- Special Quick-Action: Sadaqah -->
+<section>
+<div class="bg-tertiary-container/30 rounded-2xl p-4 flex items-center justify-between">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">volunteer_activism</span>
+</div>
+<div>
+<h4 class="text-xs font-bold text-on-tertiary-container font-headline">Sedekah Jumat</h4>
+<p class="text-[10px] text-on-tertiary-container/70">Berkah untuk sesama</p>
+</div>
+</div>
+<button class="bg-tertiary text-on-tertiary text-[10px] px-3 py-1.5 rounded-full font-bold">TUNAIKAN</button>
+</div>
+</section>
+<!-- Recent History -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h3 class="font-manrope font-bold text-on-surface tracking-tight">Riwayat Terakhir</h3>
+<button class="text-xs font-semibold text-primary">Lihat Semua</button>
+</div>
+<div class="space-y-3">
+<!-- Transaction Item: Out -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between transition-transform active:scale-[0.98]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-error/10 text-error rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">restaurant</span>
+</div>
+<div>
+<p class="text-sm font-bold leading-tight">Jajan Kantin</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Hari ini, 10:24</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">- Rp 15.000</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Selesai</p>
+</div>
+</div>
+<!-- Transaction Item: In -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between transition-transform active:scale-[0.98]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary/10 text-primary rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">account_balance</span>
+</div>
+<div>
+<p class="text-sm font-bold leading-tight">Kirim dari Orang Tua</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Kemarin, 19:15</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-primary">+ Rp 500.000</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Selesai</p>
+</div>
+</div>
+<!-- Transaction Item: Out -->
+<div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between transition-transform active:scale-[0.98]">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-error/10 text-error rounded-full flex items-center justify-center">
+<span class="material-symbols-outlined">shopping_cart</span>
+</div>
+<div>
+<p class="text-sm font-bold leading-tight">Koperasi Pelajar</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">24 Okt, 14:00</p>
+</div>
+</div>
+<div class="text-right">
+<p class="text-sm font-bold text-error">- Rp 25.000</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Selesai</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Promotional Section / Feature Highlight -->
+<section class="pb-10">
+<div class="relative w-full aspect-[2/1] rounded-2xl overflow-hidden bg-surface-container-high">
+<img alt="Library or Study area" class="w-full h-full object-cover" data-alt="peaceful interior of a modern library with wooden shelves and warm sunlight streaming through large windows" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCo3Y8DoPhYYRR8x2CYWCBS0EYkmRwCeZqfjZu3_fjSre82ruZqkfxCZCnXEA8OrKm60YxPKFETRFlr6aazqKWAimFowqtgux38S9imRkhd7SutVBoe18L1jJknf0dRQNwtbQrcfwEmapqpxIV_L5Ta1K8oeNrai5pyT7UNLiSFapdTeL2rkpIEPQylyy30qs_CuqZcsTvrHW868mRAMYFiKdEkGO1qNQPpkGhbPbLJE10UY86R8OThR_3fK4qQEBstIB3KkltyXjHB"/>
+<div class="absolute inset-0 bg-gradient-to-r from-on-surface/80 to-transparent flex flex-col justify-center p-6">
+<span class="text-[10px] font-bold text-primary-fixed uppercase tracking-widest mb-1">Edukasi Keuangan</span>
+<h4 class="text-white font-manrope font-bold text-lg leading-tight w-2/3">Tips Mengatur Uang Saku Selama di Pondok</h4>
+<button class="mt-4 w-fit bg-white/20 backdrop-blur-sm text-white border border-white/30 px-4 py-1.5 rounded-full text-[10px] font-bold">BACA TIPS</button>
+</div>
+</div>
+</section>
+</main>
+<!-- Bottom Navigation Bar -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 py-4 bg-[#f8fafa]/80 dark:bg-gray-900/80 backdrop-blur-xl shadow-[0_-4px_24px_-4px_rgba(25,28,29,0.06)] rounded-t-[1.5rem]">
+<a class="flex flex-col items-center justify-center bg-[#004d4c] text-white rounded-[0.75rem] px-4 py-1.5 transition-all duration-300 ease-in-out" href="#">
+<span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">home</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-0.5">Beranda</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#191c1d] dark:text-gray-400 opacity-60 hover:bg-[#f2f4f4] dark:hover:bg-gray-800 transition-all duration-300 ease-in-out p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined text-lg">history</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
+</a>
+<a class="flex flex-col items-center justify-center text-[#191c1d] dark:text-gray-400 opacity-60 hover:bg-[#f2f4f4] dark:hover:bg-gray-800 transition-all duration-300 ease-in-out p-2 rounded-xl" href="#">
+<span class="material-symbols-outlined text-lg">person</span>
+<span class="font-inter text-[10px] font-medium uppercase tracking-widest mt-0.5">Profil</span>
+</a>
+</nav>
+</body></html>

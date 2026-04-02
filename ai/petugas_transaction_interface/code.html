@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+
+<html lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              "on-secondary-fixed-variant": "#444936",
+              "background": "#f8fafa",
+              "surface-variant": "#e1e3e3",
+              "primary": "#004d4c",
+              "surface-container-highest": "#e1e3e3",
+              "primary-fixed": "#a2f0ee",
+              "surface-bright": "#f8fafa",
+              "on-secondary-container": "#606551",
+              "inverse-primary": "#86d4d2",
+              "tertiary-fixed-dim": "#eac254",
+              "inverse-on-surface": "#eff1f1",
+              "on-secondary-fixed": "#191d0e",
+              "on-tertiary-container": "#503d00",
+              "secondary-container": "#dee2c9",
+              "secondary": "#5c614d",
+              "error-container": "#ffdad6",
+              "on-surface-variant": "#3e4948",
+              "on-background": "#191c1d",
+              "on-tertiary-fixed-variant": "#584400",
+              "on-error-container": "#93000a",
+              "outline": "#6f7978",
+              "surface-dim": "#d8dada",
+              "on-error": "#ffffff",
+              "error": "#ba1a1a",
+              "inverse-surface": "#2e3131",
+              "tertiary-fixed": "#ffdf90",
+              "on-primary-fixed": "#00201f",
+              "primary-container": "#006766",
+              "on-primary-fixed-variant": "#00504f",
+              "surface-container-low": "#f2f4f4",
+              "on-primary-container": "#94e2e0",
+              "secondary-fixed": "#e0e5cc",
+              "tertiary": "#755b00",
+              "secondary-fixed-dim": "#c4c9b1",
+              "on-surface": "#191c1d",
+              "surface-container-lowest": "#ffffff",
+              "surface-container": "#eceeee",
+              "primary-fixed-dim": "#86d4d2",
+              "tertiary-container": "#cca73b",
+              "on-secondary": "#ffffff",
+              "surface": "#f8fafa",
+              "on-primary": "#ffffff",
+              "on-tertiary": "#ffffff",
+              "surface-container-high": "#e6e8e8",
+              "on-tertiary-fixed": "#241a00",
+              "surface-tint": "#076968",
+              "outline-variant": "#bec9c8"
+            },
+            fontFamily: {
+              "headline": ["Manrope"],
+              "body": ["Inter"],
+              "label": ["Inter"]
+            },
+            borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+          },
+        },
+      }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+</head>
+<body class="bg-surface font-body text-on-background selection:bg-primary-fixed selection:text-on-primary-fixed">
+<!-- TopAppBar Shell -->
+<header class="fixed top-0 left-0 w-full z-50 flex justify-between items-center px-6 h-16 bg-surface/80 backdrop-blur-xl">
+<div class="flex items-center gap-4">
+<span class="font-headline font-bold tracking-tight text-2xl text-primary">Bank Pesantren</span>
+</div>
+<div class="flex items-center gap-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-low rounded-full">
+<span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">notifications</span>
+<span class="material-symbols-outlined text-primary text-sm">settings</span>
+<span class="material-symbols-outlined text-primary text-sm">help_outline</span>
+</div>
+<img class="w-8 h-8 rounded-full bg-surface-container-highest object-cover" data-alt="Portrait of a professional Islamic male officer in a neat uniform with a friendly smile, studio lighting, professional photography style" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDoIYEOsotIvpHnjG6IFJfjuTuSZ6pRHrwN-5mfF9qHxHoH77KIzV2AM5CarEbGiPftxEssNG9HjV3lX4xenpFub4hzhjnb98UKXSX44lS_4sz5xsXiTRmSSaQt5nTZJyYrgZfa3tkWtge-pS5_NKxRT-zLAkg2p_j-pOuiFzkp2O8dx-mltCfD0vpaxT9rBT_jupjMMZFfKyMZnO3Qe2RP7hfTNGPsiMLhNoiqJJ7gF53TGF1tlR1cVU9jUisnwucTxzHD63JgfDyD"/>
+</div>
+</header>
+<!-- SideNavBar Shell -->
+<aside class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 flex flex-col py-6 bg-surface border-r-0 hidden md:flex">
+<div class="px-8 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 bg-primary rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-primary">account_balance</span>
+</div>
+<div>
+<p class="font-headline text-lg font-bold text-primary leading-tight">Unit Petugas</p>
+<p class="text-xs text-slate-500">ID: 99281</p>
+</div>
+</div>
+</div>
+<nav class="flex-1 space-y-1">
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="dashboard">dashboard</span>
+<span class="font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-4 bg-surface-container-lowest text-primary font-bold rounded-l-full ml-4 pl-4 py-3 shadow-sm transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="payments" style="font-variation-settings: 'FILL' 1;">payments</span>
+<span class="font-medium">Transactions</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="nfc">nfc</span>
+<span class="font-medium">RFID Enrollment</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="group">group</span>
+<span class="font-medium">Santri Directory</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="analytics">analytics</span>
+<span class="font-medium">Report</span>
+</a>
+</nav>
+<div class="px-6 mb-4">
+<button class="w-full bg-primary text-on-primary py-3 rounded-xl font-semibold flex items-center justify-center gap-2 active:scale-95 transition-transform">
+<span class="material-symbols-outlined text-sm">add</span>
+<span>New Session</span>
+</button>
+</div>
+<div class="border-t border-surface-container-low pt-4">
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="lock">lock</span>
+<span class="font-medium">Lock Terminal</span>
+</a>
+<a class="flex items-center gap-4 text-slate-500 px-8 py-3 hover:text-primary transition-all" href="#">
+<span class="material-symbols-outlined" data-icon="logout">logout</span>
+<span class="font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="md:ml-64 pt-20 px-6 pb-12 min-h-screen">
+<div class="max-w-7xl mx-auto">
+<header class="mb-8">
+<h1 class="font-headline text-3xl font-extrabold text-on-background tracking-tight">Terminal Transaksi</h1>
+<p class="text-on-surface-variant">Lakukan verifikasi identitas dan nominal pembayaran dengan aman.</p>
+</header>
+<!-- Three Column Bento Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
+<!-- Column 1: Profile & RFID -->
+<div class="space-y-6">
+<section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+<h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Identitas Santri</h2>
+<div class="flex flex-col items-center text-center space-y-4">
+<!-- Active State Profile -->
+<div class="relative">
+<img class="w-24 h-24 rounded-full object-cover ring-4 ring-primary-fixed" data-alt="Portrait of a young teenage male santri wearing a traditional songkok and white shirt, clean background, warm and bright lighting" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCxsdVfgCVUYF6w0D5c2NqBfo9uM6gvwH1X4EUDDUQX6xpljlUx3-0J6_SPGMdqJECX51EHYMkqFm0nQqfP5QvDqxf103J8MTGUukvCFaaD5TpBc0dabE-AF_B2iurw01iVPsYoZdrPtiOE5lREmxQp8Nk1CsuQrFKRIZgZ4F7q1yvyz5cWMXWkaipCD8y7cCJHVPu06k6vqZz_JF27R-84hFvgOcI-XpAecJWBpbaZ9gJMIrNq2AW0p2cCDD-cwmJfdXuvgMt-XKg2"/>
+<div class="absolute -bottom-1 -right-1 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
+<span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">nfc</span>
+</div>
+</div>
+<div>
+<p class="font-headline text-xl font-bold text-on-surface">Ahmad Maulana</p>
+<p class="text-sm font-medium text-on-surface-variant">NIS: 2024098812</p>
+<span class="inline-flex items-center px-2.5 py-0.5 mt-2 rounded-full text-xs font-medium bg-primary-fixed text-on-primary-fixed">
+                                    Status: Terverifikasi
+                                </span>
+</div>
+</div>
+<div class="mt-8 pt-6 border-t border-surface-container-low">
+<p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Saldo Terkini</p>
+<div class="bg-primary-container/10 p-4 rounded-xl">
+<p class="font-headline text-2xl font-extrabold text-primary">Rp 45.000</p>
+</div>
+</div>
+</section>
+<!-- RFID Visual Indicator (Floating) -->
+<div class="bg-surface-container-low p-6 rounded-xl flex items-center gap-4">
+<div class="w-12 h-12 rounded-full bg-white flex items-center justify-center shadow-sm">
+<span class="material-symbols-outlined text-primary" data-icon="nfc">nfc</span>
+</div>
+<div>
+<p class="text-sm font-bold text-primary">RFID Reader Active</p>
+<p class="text-xs text-on-surface-variant">Tap card for new transaction</p>
+</div>
+</div>
+</div>
+<!-- Column 2: Transaction Input -->
+<div class="space-y-6 lg:col-span-1">
+<section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm h-full">
+<h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Detail Transaksi</h2>
+<div class="space-y-5">
+<div>
+<label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nominal (IDR)</label>
+<div class="relative group">
+<span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</span>
+<input class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-4 font-headline text-2xl font-bold text-primary focus:ring-0 focus:bg-surface-container-highest transition-colors" placeholder="0" type="text" value="15.000"/>
+<div class="absolute left-0 top-0 h-full w-0.5 bg-primary rounded-l-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+</div>
+</div>
+<div>
+<label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kategori</label>
+<div class="grid grid-cols-2 gap-2">
+<button class="bg-primary text-on-primary px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between">
+                                        Koperasi
+                                        <span class="material-symbols-outlined text-sm">check_circle</span>
+</button>
+<button class="bg-surface-container-low text-on-surface-variant px-4 py-3 rounded-xl text-sm font-semibold text-left hover:bg-surface-container-high transition-colors">
+                                        Kantin
+                                    </button>
+<button class="bg-surface-container-low text-on-surface-variant px-4 py-3 rounded-xl text-sm font-semibold text-left hover:bg-surface-container-high transition-colors">
+                                        Laundry
+                                    </button>
+<button class="bg-surface-container-low text-on-surface-variant px-4 py-3 rounded-xl text-sm font-semibold text-left hover:bg-surface-container-high transition-colors">
+                                        Lainnya
+                                    </button>
+</div>
+</div>
+<div>
+<label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Catatan (Opsional)</label>
+<textarea class="w-full bg-surface-container-high border-none rounded-xl p-4 text-sm focus:ring-0 focus:bg-surface-container-highest transition-colors resize-none" placeholder="Contoh: Alat Tulis atau Keperluan Dapur" rows="3"></textarea>
+</div>
+</div>
+</section>
+</div>
+<!-- Column 3: Security & PIN -->
+<div class="space-y-6">
+<section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm flex flex-col h-full">
+<div class="text-center mb-6">
+<h2 class="font-headline text-sm font-bold text-primary uppercase tracking-widest">Otorisasi Santri</h2>
+<p class="text-xs text-on-surface-variant mt-1">Masukkan 6-digit PIN untuk memproses</p>
+</div>
+<!-- PIN Dots -->
+<div class="flex justify-center gap-3 mb-8">
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-primary"></div>
+<div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
+<div class="w-3 h-3 rounded-full bg-surface-container-highest"></div>
+</div>
+<!-- Numeric Keypad -->
+<div class="grid grid-cols-3 gap-3">
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">1</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">2</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">3</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">4</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">5</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">6</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">7</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">8</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">9</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">backspace</span>
+</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors">0</button>
+<button class="h-14 bg-surface-container-low rounded-xl font-headline text-xl font-bold text-on-surface active:bg-primary active:text-on-primary transition-colors flex items-center justify-center">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<!-- Action Button -->
+<div class="mt-8">
+<button class="w-full bg-primary text-on-primary py-4 rounded-xl font-headline font-bold text-lg shadow-lg shadow-primary/20 flex items-center justify-center gap-3 active:scale-95 transition-all">
+<span class="material-symbols-outlined">send</span>
+                                Process Transaction
+                            </button>
+<p class="text-[10px] text-center text-on-surface-variant mt-4 leading-relaxed italic">
+                                *Transaksi ini bersifat final dan akan tercatat secara otomatis pada riwayat pengeluaran santri.
+                            </p>
+</div>
+</section>
+</div>
+</div>
+<!-- Charitable Footer Quick-Action -->
+<footer class="mt-12 flex flex-wrap items-center justify-between gap-6 bg-tertiary-container/10 p-6 rounded-2xl border border-tertiary-container/20">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 bg-tertiary-container rounded-xl flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container" style="font-variation-settings: 'FILL' 1;">volunteer_activism</span>
+</div>
+<div>
+<p class="font-headline font-bold text-on-tertiary-container">Sadaqah Otomatis</p>
+<p class="text-xs text-on-tertiary-container/80">Bulatkan nominal untuk dana sosial pesantren</p>
+</div>
+</div>
+<div class="flex gap-2">
+<button class="px-4 py-2 bg-tertiary-container text-on-tertiary-container rounded-full text-xs font-bold uppercase tracking-wider shadow-sm">Aktifkan</button>
+<button class="px-4 py-2 bg-surface-container-lowest text-on-surface-variant rounded-full text-xs font-bold uppercase tracking-wider">Detail</button>
+</div>
+</footer>
+</div>
+</main>
+</body></html>

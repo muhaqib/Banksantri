@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Petugas Settlement | Bank Pesantren</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "on-secondary": "#ffffff",
+                        "inverse-primary": "#86d4d2",
+                        "on-secondary-container": "#606551",
+                        "surface-bright": "#f8fafa",
+                        "on-primary-container": "#94e2e0",
+                        "secondary-container": "#dee2c9",
+                        "on-error": "#ffffff",
+                        "primary-fixed": "#a2f0ee",
+                        "tertiary-fixed-dim": "#eac254",
+                        "on-primary": "#ffffff",
+                        "on-background": "#191c1d",
+                        "secondary": "#5c614d",
+                        "surface-container-low": "#f2f4f4",
+                        "primary-container": "#006766",
+                        "outline-variant": "#bec9c8",
+                        "inverse-surface": "#2e3131",
+                        "surface-container-lowest": "#ffffff",
+                        "on-primary-fixed": "#00201f",
+                        "on-tertiary": "#ffffff",
+                        "surface": "#f8fafa",
+                        "on-secondary-fixed": "#191d0e",
+                        "on-error-container": "#93000a",
+                        "error": "#ba1a1a",
+                        "on-surface-variant": "#3e4948",
+                        "surface-tint": "#076968",
+                        "primary": "#004d4c",
+                        "on-tertiary-fixed": "#241a00",
+                        "tertiary-fixed": "#ffdf90",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#86d4d2",
+                        "tertiary-container": "#cca73b",
+                        "tertiary": "#755b00",
+                        "secondary-fixed-dim": "#c4c9b1",
+                        "on-tertiary-fixed-variant": "#584400",
+                        "on-surface": "#191c1d",
+                        "surface-container": "#eceeee",
+                        "inverse-on-surface": "#eff1f1",
+                        "surface-container-high": "#e6e8e8",
+                        "surface-variant": "#e1e3e3",
+                        "background": "#f8fafa",
+                        "on-tertiary-container": "#503d00",
+                        "on-secondary-fixed-variant": "#444936",
+                        "surface-dim": "#d8dada",
+                        "surface-container-highest": "#e1e3e3",
+                        "secondary-fixed": "#e0e5cc",
+                        "outline": "#6f7978",
+                        "on-primary-fixed-variant": "#00504f"
+                    },
+                    fontFamily: {
+                        "headline": ["Manrope"],
+                        "body": ["Inter"],
+                        "label": ["Inter"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(248, 250, 250, 0.8);
+            backdrop-filter: blur(20px);
+        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, .font-headline { font-family: 'Manrope', sans-serif; }
+    </style>
+</head>
+<body class="bg-surface text-on-surface">
+<!-- SideNavBar (Shared Component) -->
+<aside class="fixed left-0 top-0 h-full w-64 z-50 bg-[#f2f4f4] dark:bg-[#191c1d] flex flex-col py-8 px-4 h-screen">
+<div class="mb-8">
+<h1 class="text-lg font-bold text-[#004d4c] dark:text-[#86d4d2]">Bank Pesantren</h1>
+<p class="text-xs text-on-surface-variant font-medium opacity-70">Financial Sanctuary</p>
+</div>
+<nav class="flex-1 space-y-2">
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-manrope text-sm font-medium">Dashboard</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#004d4c] dark:text-[#86d4d2] font-bold border-l-4 border-[#004d4c] dark:border-[#86d4d2] pl-4 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">payments</span>
+<span class="font-manrope text-sm font-medium">Settlements</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="font-manrope text-sm font-medium">Student Accounts</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">volunteer_activism</span>
+<span class="font-manrope text-sm font-medium">Zakat &amp; Sadaqah</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">assessment</span>
+<span class="font-manrope text-sm font-medium">Reports</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] dark:hover:bg-[#e1e3e3]/5 transition-all" href="#">
+<span class="material-symbols-outlined">manage_accounts</span>
+<span class="font-manrope text-sm font-medium">User Management</span>
+</a>
+</nav>
+<div class="mt-auto space-y-2">
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] transition-all" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-manrope text-sm font-medium">Help Center</span>
+</a>
+<a class="flex items-center gap-3 py-3 rounded-xl text-[#191c1d] dark:text-[#bec9c8] pl-5 opacity-70 hover:bg-[#e6e8e8] transition-all" href="#">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-manrope text-sm font-medium">Logout</span>
+</a>
+</div>
+</aside>
+<!-- TopAppBar (Shared Component) -->
+<header class="fixed top-0 right-0 z-40 bg-[#f8fafa]/80 dark:bg-[#191c1d]/80 backdrop-blur-md flex justify-between items-center w-full px-6 h-16 ml-64 lg:pl-[17rem]">
+<div class="flex items-center gap-4">
+<h2 class="text-xl font-bold text-[#004d4c] dark:text-[#86d4d2] font-manrope tracking-tight">Settlement Panel</h2>
+</div>
+<div class="flex items-center gap-4">
+<button class="p-2 rounded-full hover:bg-[#f2f4f4] dark:hover:bg-[#e1e3e3]/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#004d4c] dark:text-[#86d4d2]">notifications</span>
+</button>
+<button class="p-2 rounded-full hover:bg-[#f2f4f4] dark:hover:bg-[#e1e3e3]/10 transition-colors active:scale-95 duration-200">
+<span class="material-symbols-outlined text-[#004d4c] dark:text-[#86d4d2]">settings</span>
+</button>
+<div class="h-8 w-8 rounded-full bg-secondary-container overflow-hidden">
+<img class="w-full h-full object-cover" data-alt="portrait of a professional staff member in a clean well-lit office setting looking friendly and professional" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCctmykLdZkN_E6MYaY__9AkYTbvK_gjlcaiUZU2JyzBGNcaf1xPWRksNA-bGZjnV-nxvDfMMhVgTztrYwuMuHav0j-TRze2vYQt14_x2BsthA4LmcGGH5qhU3OaDXIBkk2nD2SPFPSnZ_uLdO9sv-gZK8qUSe3uGM_sE2qiaCQKYlK8PR3JlGmHVpsTHIpn_0FlsWKpD02zrVrNebUe4iXvL8jFoZRV7d1sNFGUvrohRmElYKYuE15sjcvRplUU8lLCyfAa-yCh3fy"/>
+</div>
+</div>
+</header>
+<!-- Main Content Canvas -->
+<main class="ml-64 pt-24 px-8 pb-12 min-h-screen">
+<div class="max-w-7xl mx-auto space-y-8">
+<!-- Hero Layout: Bento Grid Style -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+<!-- Digital Balance Card (Primary Anchor) -->
+<div class="lg:col-span-7 relative overflow-hidden rounded-xl p-8 flex flex-col justify-between min-h-[260px] bg-gradient-to-br from-primary to-primary-container text-on-primary">
+<div class="relative z-10">
+<p class="text-primary-fixed font-medium mb-1 opacity-90">Current Digital Balance</p>
+<h3 class="text-5xl font-extrabold font-headline tracking-tighter">Rp 12.450.000</h3>
+<p class="text-sm mt-4 text-primary-fixed-dim">Verified funds ready for settlement</p>
+</div>
+<div class="relative z-10 flex gap-4 mt-8">
+<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/5">
+<span class="material-symbols-outlined text-sm">schedule</span>
+<span class="text-xs">Last updated: 10:45 AM</span>
+</div>
+<div class="flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 backdrop-blur-sm border border-white/5">
+<span class="material-symbols-outlined text-sm">check_circle</span>
+<span class="text-xs">Account Status: Active</span>
+</div>
+</div>
+<!-- Decorative Background Element -->
+<div class="absolute -right-12 -top-12 w-64 h-64 rounded-full bg-primary-fixed opacity-5 blur-3xl"></div>
+</div>
+<!-- Tarik Tunai Form (Secondary Anchor) -->
+<div class="lg:col-span-5 bg-surface-container-lowest rounded-xl p-8 flex flex-col justify-center">
+<div class="mb-6">
+<h4 class="text-xl font-bold font-headline text-primary mb-2">Request Tarik Tunai</h4>
+<p class="text-sm text-on-surface-variant">Convert your digital balance into physical cash.</p>
+</div>
+<form class="space-y-6">
+<div class="space-y-2">
+<label class="text-xs font-semibold text-on-surface-variant px-1">Amount (IDR)</label>
+<div class="relative group">
+<div class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</div>
+<input class="w-full pl-12 pr-4 py-4 bg-surface-container-high border-none rounded-xl focus:ring-0 focus:bg-surface-container-highest transition-all font-semibold text-lg text-on-surface" placeholder="0" type="number"/>
+<div class="absolute left-0 top-0 w-0.5 h-0 bg-primary group-focus-within:h-full transition-all"></div>
+</div>
+</div>
+<button class="w-full py-4 bg-primary text-on-primary font-bold rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 active:scale-95 transition-all flex items-center justify-center gap-2" type="button">
+<span class="material-symbols-outlined" data-weight="fill">account_balance_wallet</span>
+                            Submit Request
+                        </button>
+<p class="text-[10px] text-center text-outline uppercase tracking-widest font-bold">Funds will be processed by finance department</p>
+</form>
+</div>
+</div>
+<!-- Stats & Quick Actions Row -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+<div class="bg-surface-container-low p-6 rounded-xl">
+<p class="text-xs text-on-surface-variant font-medium mb-1">Total Settled (Month)</p>
+<p class="text-2xl font-bold text-on-surface">Rp 45.2M</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl">
+<p class="text-xs text-on-surface-variant font-medium mb-1">Pending Requests</p>
+<p class="text-2xl font-bold text-on-surface">3</p>
+</div>
+<div class="bg-surface-container-low p-6 rounded-xl">
+<p class="text-xs text-on-surface-variant font-medium mb-1">Average Processing</p>
+<p class="text-2xl font-bold text-on-surface">2.4 Hrs</p>
+</div>
+<div class="bg-tertiary-container/20 p-6 rounded-xl flex items-center justify-between group cursor-pointer hover:bg-tertiary-container/30 transition-colors">
+<div>
+<p class="text-xs text-on-tertiary-container font-bold mb-1">Zakat &amp; Sadaqah</p>
+<p class="text-sm text-on-tertiary-container/80">Manage Donations</p>
+</div>
+<span class="material-symbols-outlined text-tertiary transition-transform group-hover:translate-x-1">volunteer_activism</span>
+</div>
+</div>
+<!-- Settlement History Section -->
+<div class="space-y-6">
+<div class="flex items-center justify-between">
+<h3 class="text-2xl font-bold font-headline text-primary">Settlement History</h3>
+<div class="flex gap-2">
+<button class="px-4 py-2 text-sm font-medium bg-surface-container-high rounded-lg hover:bg-surface-container-highest transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">filter_list</span>
+                            Filter
+                        </button>
+<button class="px-4 py-2 text-sm font-medium bg-surface-container-high rounded-lg hover:bg-surface-container-highest transition-colors flex items-center gap-2">
+<span class="material-symbols-outlined text-sm">download</span>
+                            Export
+                        </button>
+</div>
+</div>
+<div class="bg-surface-container-low rounded-xl overflow-hidden">
+<table class="w-full text-left border-collapse">
+<thead>
+<tr class="bg-surface-container-high/50 text-on-surface-variant">
+<th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Date &amp; Time</th>
+<th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Reference ID</th>
+<th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Amount</th>
+<th class="px-6 py-5 text-xs font-bold uppercase tracking-wider">Status</th>
+<th class="px-6 py-5 text-xs font-bold uppercase tracking-wider text-right">Action</th>
+</tr>
+</thead>
+<tbody class="divide-y divide-outline-variant/10 bg-surface-container-lowest">
+<!-- Row 1 -->
+<tr class="group hover:bg-surface transition-colors">
+<td class="px-6 py-6">
+<p class="font-semibold text-on-surface">Oct 24, 2023</p>
+<p class="text-xs text-outline">14:30 PM</p>
+</td>
+<td class="px-6 py-6">
+<code class="bg-surface-container px-2 py-1 rounded text-xs text-primary font-medium">ST-90234</code>
+</td>
+<td class="px-6 py-6 font-bold text-on-surface">Rp 2.500.000</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary-fixed text-on-secondary-fixed-variant text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+                                        Pending
+                                    </span>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="text-primary hover:underline font-bold text-xs uppercase tracking-widest">Details</button>
+</td>
+</tr>
+<!-- Row 2 -->
+<tr class="group hover:bg-surface transition-colors">
+<td class="px-6 py-6">
+<p class="font-semibold text-on-surface">Oct 22, 2023</p>
+<p class="text-xs text-outline">09:15 AM</p>
+</td>
+<td class="px-6 py-6">
+<code class="bg-surface-container px-2 py-1 rounded text-xs text-primary font-medium">ST-88210</code>
+</td>
+<td class="px-6 py-6 font-bold text-on-surface">Rp 5.000.000</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                        Approved
+                                    </span>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="text-primary hover:underline font-bold text-xs uppercase tracking-widest">Details</button>
+</td>
+</tr>
+<!-- Row 3 -->
+<tr class="group hover:bg-surface transition-colors">
+<td class="px-6 py-6">
+<p class="font-semibold text-on-surface">Oct 20, 2023</p>
+<p class="text-xs text-outline">16:45 PM</p>
+</td>
+<td class="px-6 py-6">
+<code class="bg-surface-container px-2 py-1 rounded text-xs text-primary font-medium">ST-85112</code>
+</td>
+<td class="px-6 py-6 font-bold text-on-surface">Rp 1.200.000</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-error-container text-on-error-container text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-error"></span>
+                                        Rejected
+                                    </span>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="text-primary hover:underline font-bold text-xs uppercase tracking-widest">Details</button>
+</td>
+</tr>
+<!-- Row 4 -->
+<tr class="group hover:bg-surface transition-colors">
+<td class="px-6 py-6">
+<p class="font-semibold text-on-surface">Oct 18, 2023</p>
+<p class="text-xs text-outline">11:00 AM</p>
+</td>
+<td class="px-6 py-6">
+<code class="bg-surface-container px-2 py-1 rounded text-xs text-primary font-medium">ST-84001</code>
+</td>
+<td class="px-6 py-6 font-bold text-on-surface">Rp 3.750.000</td>
+<td class="px-6 py-6">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary-fixed text-on-primary-fixed-variant text-xs font-bold">
+<span class="w-2 h-2 rounded-full bg-primary"></span>
+                                        Approved
+                                    </span>
+</td>
+<td class="px-6 py-6 text-right">
+<button class="text-primary hover:underline font-bold text-xs uppercase tracking-widest">Details</button>
+</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<!-- Contextual Help Card -->
+<div class="rounded-xl overflow-hidden bg-surface-container-high flex flex-col md:flex-row items-stretch">
+<div class="md:w-1/3 min-h-[160px] relative">
+<img class="absolute inset-0 w-full h-full object-cover" data-alt="vibrant abstract background with flowing curves of teal and gold reflecting prosperity and modern finance aesthetics" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCuRfEo0e2hyAJsUResjg4Wftczg5Wi0wMCWFyKlePLk4y6If8EICJsPyFQclbwp6x952jjs3BsIVhE7FyLG7NeM0a9UZAoVrfEZP3WJ8Aiq0bkn3ByXerzdPGXzlYQmBMjhlKMULAjMwuIcbnEvP6uK_xqj6SK3Q871v3HAtA7DsQND8QLxja-cOy4rUjGkAz7aHHv5z8wv1Yo2e1FrRPZtQ0yhOWwvC612KvBN_J2OrJ--mISjT6tMt24XDykkgdFXUrIfqhjo0Hn"/>
+</div>
+<div class="md:w-2/3 p-8 flex flex-col justify-center">
+<h4 class="text-lg font-bold text-on-surface mb-2">Need assistance with your settlement?</h4>
+<p class="text-sm text-on-surface-variant mb-6 max-w-lg">If you have questions regarding a rejected request or need to expedite a pending settlement, our support team is available 24/7 to assist institutional staff.</p>
+<div class="flex gap-4">
+<button class="px-6 py-2 bg-primary text-on-primary rounded-lg text-sm font-semibold hover:bg-primary-container transition-all">Chat Support</button>
+<button class="px-6 py-2 border border-outline-variant text-on-surface rounded-lg text-sm font-semibold hover:bg-surface-container-highest transition-all">View FAQ</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</body></html>
