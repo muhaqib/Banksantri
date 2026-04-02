@@ -37,5 +37,6 @@
 <body class="bg-surface font-body text-on-surface antialiased max-w-md mx-auto min-h-screen relative">
     @yield('content')
     @stack('scripts')
+
 </body>
 </html>

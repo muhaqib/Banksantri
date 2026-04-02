@@ -6,225 +6,282 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Bank Pesantren Admin')</title>
+    <title>@yield('title', 'Bank Pesantren')</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
     
+    <!-- Alpine.js CDN -->
+    <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+    
     @vite(['resources/css/app.css', 'resources/js/app.js'])
     
-    <script id="tailwind-config">
-        tailwind.config = {
-            darkMode: "class",
-            theme: {
-                extend: {
-                    colors: {
-                        "surface-variant": "#e1e3e3",
-                        "primary-fixed-dim": "#86d4d2",
-                        "on-tertiary": "#ffffff",
-                        "error-container": "#ffdad6",
-                        "primary-fixed": "#a2f0ee",
-                        "inverse-on-surface": "#eff1f1",
-                        "on-secondary-fixed": "#191d0e",
-                        "secondary": "#5c614d",
-                        "surface-tint": "#076968",
-                        "surface": "#f8fafa",
-                        "on-tertiary-fixed-variant": "#584400",
-                        "on-primary-container": "#94e2e0",
-                        "primary-container": "#006766",
-                        "surface-dim": "#d8dada",
-                        "on-primary-fixed-variant": "#00504f",
-                        "on-background": "#191c1d",
-                        "tertiary-fixed-dim": "#eac254",
-                        "surface-container": "#eceeee",
-                        "tertiary": "#755b00",
-                        "on-surface": "#191c1d",
-                        "surface-bright": "#f8fafa",
-                        "secondary-fixed-dim": "#c4c9b1",
-                        "on-surface-variant": "#3e4948",
-                        "surface-container-highest": "#e1e3e3",
-                        "outline": "#6f7978",
-                        "secondary-fixed": "#e0e5cc",
-                        "on-secondary": "#ffffff",
-                        "secondary-container": "#dee2c9",
-                        "outline-variant": "#bec9c8",
-                        "on-secondary-container": "#606551",
-                        "on-tertiary-fixed": "#241a00",
-                        "on-primary": "#ffffff",
-                        "inverse-surface": "#2e3131",
-                        "inverse-primary": "#86d4d2",
-                        "on-error-container": "#93000a",
-                        "primary": "#004d4c",
-                        "background": "#f8fafa",
-                        "on-primary-fixed": "#00201f",
-                        "surface-container-high": "#e6e8e8",
-                        "on-error": "#ffffff",
-                        "surface-container-lowest": "#ffffff",
-                        "surface-container-low": "#f2f4f4",
-                        "on-tertiary-container": "#503d00",
-                        "error": "#ba1a1a",
-                        "tertiary-fixed": "#ffdf90",
-                        "on-secondary-fixed-variant": "#444936",
-                        "tertiary-container": "#cca73b"
-                    },
-                    fontFamily: {
-                        "headline": ["Manrope"],
-                        "body": ["Inter"],
-                        "label": ["Inter"]
-                    },
-                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px"},
-                },
-            },
-        }
-    </script>
-    
     <style>
+        [x-cloak] { display: none !important; }
         .material-symbols-outlined {
             font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
         }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+        .material-symbols-filled {
+            font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
     </style>
     
     @stack('styles')
 </head>
-<body class="bg-surface font-body text-on-surface">
-    <!-- SideNavBar -->
-    <aside class="fixed left-0 top-0 bottom-0 w-64 border-r-0 bg-surface flex flex-col h-full py-6 z-50">
-        <div class="px-6 mb-8 flex items-center gap-3">
-            <div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
-                <span class="material-symbols-outlined text-white" style="font-variation-settings: 'FILL' 1;">account_balance</span>
-            </div>
-            <div>
-                <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Bank Pesantren</h1>
-                <p class="text-xs tracking-wide text-slate-500">
-                    @if($activeRole === 'admin')
-                        Super Admin
-                    @elseif($activeRole === 'petugas')
-                        Unit Petugas
-                    @endif
-                </p>
+<body class="bg-surface font-body text-on-surface" x-data="{ sidebarOpen: false }">
+    <!-- Mobile Header -->
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-surface border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
+        <div class="flex items-center gap-3">
+            <button @click="sidebarOpen = true" class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
+                <span class="material-symbols-outlined text-on-surface">menu</span>
+            </button>
+            <div class="flex items-center gap-2">
+                <div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
+                    <span class="material-symbols-filled text-white text-sm">mh</span>
+                </div>
+                <h1 class="font-headline font-bold text-primary text-sm">Bank Pesantren</h1>
             </div>
         </div>
+        <div class="flex items-center gap-2">
+            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                @if(auth()->user()->foto)
+                    <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                @else
+                    <span class="material-symbols-filled text-primary text-sm">account_circle</span>
+                @endif
+            </div>
+        </div>
+    </header>
+
+    <!-- Mobile Sidebar Overlay -->
+    <div x-show="sidebarOpen" @click="sidebarOpen = false" x-cloak
+         class="lg:hidden fixed inset-0 bg-black/50 backdrop-blur-sm z-50 transition-opacity"
+         x-transition:enter="transition ease-out duration-300"
+         x-transition:enter-start="opacity-0"
+         x-transition:enter-end="opacity-100"
+         x-transition:leave="transition ease-in duration-200"
+         x-transition:leave-start="opacity-100"
+         x-transition:leave-end="opacity-0">
+    </div>
+
+    <!-- SideNavBar -->
+    <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
+           class="fixed left-0 top-0 bottom-0 w-72 border-r-0 bg-surface flex flex-col h-full z-50 lg:translate-x-0 lg:w-64 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
         
-        <nav class="flex-1 px-2">
+        <!-- Logo Section -->
+        <div class="px-6 py-6 border-b border-outline-variant/10">
+            <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
+                        <span class="material-symbols-filled text-white">mh</span>
+                    </div>
+                    <div>
+                        <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Bank Pesantren</h1>
+                        <p class="text-xs tracking-wide text-on-surface-variant">
+                            @if($activeRole === 'admin')
+                                Super Admin
+                            @elseif($activeRole === 'petugas')
+                                Unit Petugas
+                            @endif
+                        </p>
+                    </div>
+                </div>
+                <button @click="sidebarOpen = false" class="lg:hidden p-2 hover:bg-surface-container-low rounded-lg transition-colors">
+                    <span class="material-symbols-outlined text-on-surface">close</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Navigation -->
+        <nav class="flex-1 px-3 py-4 overflow-y-auto scrollbar-thin">
             @if($activeRole === 'admin')
-                <a href="{{ route('admin.dashboard') }}" class="{{ request()->routeIs('admin.dashboard') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
+                <!-- Dashboard -->
+                <a href="{{ route('admin.dashboard') }}" 
+                   class="{{ request()->routeIs('admin.dashboard') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('admin.kas') }}" class="{{ request()->routeIs('admin.kas') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
+
+                <!-- Cash Control -->
+                <a href="{{ route('admin.kas') }}" 
+                   class="{{ request()->routeIs('admin.kas') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
                     <span class="material-symbols-outlined">account_balance_wallet</span>
                     <span>Cash Control</span>
                 </a>
-                
-                <!-- Top Up & Transaksi Menu -->
-                <div x-data="{ open: {{ request()->routeIs('admin.transactions.*') ? 'true' : 'false' }} }" class="mx-2 my-1">
+
+                <!-- Data Santri -->
+                <div x-data="{ open: {{ request()->routeIs('admin.santri.*') ? 'true' : 'false' }} }" class="my-1">
                     <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.transactions.*') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm tracking-wide transition-all">
+                            class="w-full {{ request()->routeIs('admin.santri.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
                         <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_card</span>
-                            <span>Top Up & Transaksi</span>
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
+                            <span>Data Santri</span>
                         </div>
                         <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
                     </button>
                     <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.transactions.topup') }}" class="{{ request()->routeIs('admin.transactions.topup') ? 'text-primary font-bold' : 'text-slate-500 hover:text-primary' }} block px-4 py-2 text-sm rounded-lg hover:bg-surface-container-low transition-all">
-                            • Top Up Saldo
+                        <a href="{{ route('admin.santri.index') }}" 
+                           class="{{ request()->routeIs('admin.santri.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Semua Santri</span>
                         </a>
-                        <a href="{{ route('admin.transactions.santri') }}" class="{{ request()->routeIs('admin.transactions.santri') ? 'text-primary font-bold' : 'text-slate-500 hover:text-primary' }} block px-4 py-2 text-sm rounded-lg hover:bg-surface-container-low transition-all">
-                            • Data Santri
+                        <a href="{{ route('admin.santri.create') }}" 
+                           class="{{ request()->routeIs('admin.santri.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Tambah Santri</span>
                         </a>
-                        <a href="{{ route('admin.transactions.history') }}" class="{{ request()->routeIs('admin.transactions.history') ? 'text-primary font-bold' : 'text-slate-500 hover:text-primary' }} block px-4 py-2 text-sm rounded-lg hover:bg-surface-container-low transition-all">
-                            • Riwayat Transaksi
+                        <a href="{{ route('admin.transactions.topup') }}" 
+                           class="{{ request()->routeIs('admin.transactions.topup') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Top Up Saldo</span>
                         </a>
                     </div>
                 </div>
-                
-                <a href="{{ route('admin.petugas.index') }}" class="{{ request()->routeIs('admin.petugas.*') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
-                    <span class="material-symbols-outlined">group</span>
-                    <span>User Management</span>
-                </a>
-                <a href="{{ route('admin.settlement') }}" class="{{ request()->routeIs('admin.settlement') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
-                    <span class="material-symbols-outlined">analytics</span>
-                    <span>Reports</span>
+
+                <!-- Data Petugas -->
+                <div x-data="{ open: {{ request()->routeIs('admin.petugas.*') ? 'true' : 'false' }} }" class="my-1">
+                    <button @click="open = !open"
+                            class="w-full {{ request()->routeIs('admin.petugas.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+                            <span>Data Petugas</span>
+                        </div>
+                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                    </button>
+                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
+                        <a href="{{ route('admin.petugas.index') }}" 
+                           class="{{ request()->routeIs('admin.petugas.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Semua Petugas</span>
+                        </a>
+                        <a href="{{ route('admin.petugas.create') }}" 
+                           class="{{ request()->routeIs('admin.petugas.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Tambah Petugas</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Transactions & History -->
+                <div x-data="{ open: {{ request()->routeIs('admin.transactions.*') ? 'true' : 'false' }} }" class="my-1">
+                    <button @click="open = !open"
+                            class="w-full {{ request()->routeIs('admin.transactions.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
+                            <span>Transaksi</span>
+                        </div>
+                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                    </button>
+                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
+                        <a href="{{ route('admin.transactions.santri') }}" 
+                           class="{{ request()->routeIs('admin.transactions.santri') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Riwayat Transaksi</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Settlement -->
+                <a href="{{ route('admin.settlement') }}" 
+                   class="{{ request()->routeIs('admin.settlement') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                    <span class="material-symbols-outlined">verified_user</span>
+                    <span>Settlement</span>
                 </a>
             @elseif($activeRole === 'petugas')
-                <a href="{{ route('petugas.dashboard') }}" class="{{ request()->routeIs('petugas.dashboard') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
+                <a href="{{ route('petugas.dashboard') }}" 
+                   class="{{ request()->routeIs('petugas.dashboard') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
                     <span class="material-symbols-outlined">dashboard</span>
                     <span>Dashboard</span>
                 </a>
-                <a href="{{ route('petugas.transaksi') }}" class="{{ request()->routeIs('petugas.transaksi') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
-                    <span>Transactions</span>
+                <a href="{{ route('petugas.transaksi') }}" 
+                   class="{{ request()->routeIs('petugas.transaksi') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                    <span class="material-symbols-filled">payments</span>
+                    <span>Transaksi</span>
                 </a>
-                <a href="{{ route('petugas.riwayat') }}" class="{{ request()->routeIs('petugas.riwayat') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
-                    <span class="material-symbols-outlined">analytics</span>
-                    <span>Report</span>
+                <a href="{{ route('petugas.riwayat') }}" 
+                   class="{{ request()->routeIs('petugas.riwayat') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                    <span class="material-symbols-outlined">history</span>
+                    <span>Riwayat</span>
                 </a>
-                <a href="{{ route('petugas.tarik-tunai') }}" class="{{ request()->routeIs('petugas.tarik-tunai') ? 'bg-primary text-on-primary' : 'text-slate-600 hover:bg-surface-container-low' }} rounded-xl mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide transition-all">
+                <a href="{{ route('petugas.tarik-tunai') }}" 
+                   class="{{ request()->routeIs('petugas.tarik-tunai') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
                     <span class="material-symbols-outlined">download</span>
                     <span>Tarik Tunai</span>
                 </a>
             @endif
         </nav>
-        
-        <div class="px-6 mt-auto">
-            <div class="border-t border-surface-container pt-4 space-y-2">
-                <div class="flex items-center gap-3 px-2 py-2">
-                    <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center">
-                        <span class="material-symbols-outlined text-primary text-sm">account_circle</span>
+
+        <!-- User Profile & Logout -->
+        <div class="border-t border-outline-variant/10 p-3">
+            <div class="bg-surface-container-low rounded-xl p-3 mb-2">
+                <div class="flex items-center gap-3">
+                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+                        @if(auth()->user()->foto)
+                            <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                        @else
+                            <span class="material-symbols-filled text-primary">account_circle</span>
+                        @endif
                     </div>
-                    <div class="flex-1">
-                        <p class="font-headline font-bold text-sm text-primary">{{ auth()->user()->name ?? 'User' }}</p>
-                        <p class="text-[10px] text-slate-500 uppercase tracking-widest">{{ $activeRole }}</p>
+                    <div class="flex-1 min-w-0">
+                        <p class="font-headline font-bold text-sm text-on-surface truncate">{{ auth()->user()->name ?? 'User' }}</p>
+                        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $activeRole }}</p>
                     </div>
                 </div>
-                <form action="{{ route('logout') }}" method="POST">
-                    @csrf
-                    <button type="submit" class="w-full text-slate-600 mx-2 my-1 px-4 py-3 flex items-center gap-3 font-body text-sm tracking-wide hover:bg-surface-container-low rounded-xl transition-all">
-                        <span class="material-symbols-outlined">logout</span>
-                        <span>Logout</span>
-                    </button>
-                </form>
             </div>
+            <form action="{{ route('logout') }}" method="POST">
+                @csrf
+                <button type="submit" class="w-full text-error hover:bg-error/10 px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all">
+                    <span class="material-symbols-outlined">logout</span>
+                    <span>Logout</span>
+                </button>
+            </form>
         </div>
     </aside>
 
-    <!-- TopAppBar -->
-    <header class="fixed top-0 right-0 left-0 z-40 bg-surface/80 backdrop-blur-xl flex justify-between items-center w-full px-6 py-3 ml-64 max-w-[calc(100%-16rem)]">
-        <div class="flex items-center gap-4 flex-1">
-            <div class="relative w-full max-w-md">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 text-lg">search</span>
-                <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all" placeholder="Search..." type="text"/>
-            </div>
-        </div>
-        <div class="flex items-center gap-4">
-            <button class="p-2 text-slate-500 hover:bg-surface-container-low rounded-full transition-colors">
-                <span class="material-symbols-outlined">notifications</span>
-            </button>
-            <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/30">
-                <div class="text-right">
-                    <p class="font-headline font-bold text-sm text-primary">{{ auth()->user()->name ?? 'Admin' }}</p>
-                    <p class="text-[10px] text-slate-500 font-medium tracking-widest uppercase">{{ $activeRole === 'admin' ? 'Super Admin' : 'Petugas' }}</p>
-                </div>
-                <div class="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center border-2 border-primary-container/20">
-                    <span class="material-symbols-outlined text-primary text-sm">account_circle</span>
-                </div>
-            </div>
-        </div>
-    </header>
-
     <!-- Main Content Canvas -->
-    <main class="ml-64 pt-20 px-8 pb-12 min-h-screen bg-surface">
-        <div class="max-w-7xl mx-auto space-y-8">
+    <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen bg-surface">
+        <!-- Desktop Top Bar -->
+        <header class="hidden lg:flex fixed top-0 right-0 left-64 z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 px-6 py-3">
+            <div class="flex items-center justify-between w-full">
+                <div class="flex-1 max-w-xl">
+                    <div class="relative">
+                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
+                        <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all" 
+                               placeholder="Search..." 
+                               type="text"/>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3">
+                    <button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors relative">
+                        <span class="material-symbols-outlined">notifications</span>
+                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
+                    </button>
+                    <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/10">
+                        <div class="text-right hidden xl:block">
+                            <p class="font-headline font-bold text-sm text-on-surface">{{ auth()->user()->name ?? 'Admin' }}</p>
+                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $activeRole }}</p>
+                        </div>
+                        <div class="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                            @if(auth()->user()->foto)
+                                <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
+                            @else
+                                <span class="material-symbols-filled text-primary text-sm">account_circle</span>
+                            @endif
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Page Content -->
+        <div class="p-4 lg:p-8">
             @if(session('success'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
-                     class="p-4 bg-primary-container/10 border border-primary/20 text-on-primary-container rounded-xl flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                        {{ session('success') }}
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                     class="mb-6 p-4 bg-primary-fixed rounded-xl border border-primary/20 text-on-primary-container flex items-center gap-3 animate-slide-in">
+                    <span class="material-symbols-filled text-primary">check_circle</span>
+                    <div class="flex-1">
+                        <p class="font-bold text-primary">{{ session('success') }}</p>
                     </div>
                     <button @click="show = false" class="text-primary hover:opacity-80">
                         <span class="material-symbols-outlined">close</span>
@@ -233,11 +290,11 @@
             @endif
 
             @if(session('error'))
-                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)" 
-                     class="p-4 bg-error-container border border-error/20 text-on-error-container rounded-xl flex items-center justify-between">
-                    <div class="flex items-center gap-3">
-                        <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
-                        {{ session('error') }}
+                <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
+                     class="mb-6 p-4 bg-error-container rounded-xl border border-error/20 text-on-error-container flex items-center gap-3 animate-slide-in">
+                    <span class="material-symbols-filled text-error">error</span>
+                    <div class="flex-1">
+                        <p class="font-bold">{{ session('error') }}</p>
                     </div>
                     <button @click="show = false" class="text-error hover:opacity-80">
                         <span class="material-symbols-outlined">close</span>
@@ -250,9 +307,13 @@
     </main>
 
     <script>
-        // Alpine.js for notifications
         document.addEventListener('alpine:init', () => {
-            // Custom Alpine directives if needed
+            // Auto-hide sidebar on mobile when route changes
+            document.addEventListener('click', (e) => {
+                if (e.target.tagName === 'A' && window.innerWidth < 1024) {
+                    window.Alpine.store('sidebar', false);
+                }
+            });
         });
     </script>
     @stack('scripts')

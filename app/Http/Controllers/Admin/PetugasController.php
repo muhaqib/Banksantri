@@ -40,6 +40,8 @@ class PetugasController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
+            'nip' => 'nullable|string|max:50|unique:users',
+            'jabatan' => 'required|string|max:100',
             'password' => 'required|string|min:6',
             'foto' => 'nullable|image|max:2048',
             'no_hp' => 'nullable|string|max:20',
@@ -55,6 +57,8 @@ class PetugasController extends Controller
         User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'nip' => $validated['nip'] ?? null,
+            'jabatan' => $validated['jabatan'],
             'password' => Hash::make($validated['password']),
             'role' => 'petugas',
             'foto' => $fotoPath,
@@ -106,6 +110,8 @@ class PetugasController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $petugas->id,
+            'nip' => 'nullable|string|max:50|unique:users,nip,' . $petugas->id,
+            'jabatan' => 'required|string|max:100',
             'password' => 'nullable|string|min:6',
             'foto' => 'nullable|image|max:2048',
             'no_hp' => 'nullable|string|max:20',
@@ -115,6 +121,8 @@ class PetugasController extends Controller
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
+            'nip' => $validated['nip'] ?? null,
+            'jabatan' => $validated['jabatan'],
             'no_hp' => $validated['no_hp'] ?? null,
             'alamat' => $validated['alamat'] ?? null,
         ];

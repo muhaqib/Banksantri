@@ -21,6 +21,8 @@ class User extends Authenticatable
         'password',
         'role',
         'nis',
+        'nip',
+        'jabatan',
         'pin',
         'saldo',
         'rfid_code',

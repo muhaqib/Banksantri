@@ -11,7 +11,7 @@
             <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
                 <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">shield</span>
             </div>
-            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Bank Pesantren</h1>
+            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Mawa Smart</h1>
             <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase">Financial Sanctuary</p>
         </div>
 

@@ -183,21 +183,19 @@
     </div>
 
     <!-- Bottom Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-surface/80 backdrop-blur-xl border-t border-outline-variant/10 px-6 py-2 max-w-md mx-auto rounded-t-3xl shadow-lg">
-        <div class="flex items-center justify-around">
-            <a href="{{ route('santri.home') }}" class="flex flex-col items-center py-2 text-on-surface-variant opacity-60 hover:opacity-100 hover:bg-surface-container-low transition-all p-2 rounded-xl">
-                <span class="material-symbols-outlined text-lg">home</span>
-                <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Beranda</span>
-            </a>
-            <a href="{{ route('santri.riwayat') }}" class="flex flex-col items-center py-2 text-on-surface-variant opacity-60 hover:opacity-100 hover:bg-surface-container-low transition-all p-2 rounded-xl">
-                <span class="material-symbols-outlined text-lg">history</span>
-                <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
-            </a>
-            <a href="{{ route('santri.profile') }}" class="flex flex-col items-center py-2 bg-primary text-on-primary rounded-2xl px-4 transition-all shadow-lg shadow-primary/20">
-                <span class="material-symbols-filled text-lg">account_circle</span>
-                <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Profil</span>
-            </a>
-        </div>
+    <nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 py-4 bg-surface/80 backdrop-blur-xl shadow-[0_-4px_24px_-4px_rgba(25,28,29,0.06)] rounded-t-[1.5rem]">
+        <a href="{{ route('santri.home') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">home</span>
+            <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Beranda</span>
+        </a>
+        <a href="{{ route('santri.riwayat') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
+            <span class="material-symbols-outlined text-lg">history</span>
+            <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
+        </a>
+        <a href="{{ route('santri.profile') }}" class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-[0.75rem] px-4 py-1.5 transition-all">
+            <span class="material-symbols-outlined text-lg">person</span>
+            <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Profil</span>
+        </a>
     </nav>
 </div>
 

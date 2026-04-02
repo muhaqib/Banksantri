@@ -73,16 +73,16 @@
                         <tr class="hover:bg-surface transition-colors group">
                             <td class="px-6 py-4">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold">
+                                    <div class="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold overflow-hidden flex-shrink-0">
                                         @if($santri->foto)
-                                            <img src="{{ Storage::url($santri->foto) }}" alt="{{ $santri->name }}" class="w-full h-full object-cover rounded-full">
+                                            <img src="{{ Storage::url($santri->foto) }}" alt="{{ $santri->name }}" class="w-full h-full object-cover">
                                         @else
                                             {{ substr($santri->name, 0, 2) }}
                                         @endif
                                     </div>
-                                    <div>
-                                        <div class="font-bold text-on-surface">{{ $santri->name }}</div>
-                                        <div class="text-xs text-on-surface-variant">{{ $santri->email }}</div>
+                                    <div class="min-w-0">
+                                        <div class="font-bold text-on-surface truncate">{{ $santri->name }}</div>
+                                        <div class="text-xs text-on-surface-variant truncate">{{ $santri->email }}</div>
                                     </div>
                                 </div>
                             </td>
