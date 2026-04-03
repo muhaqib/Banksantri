@@ -183,10 +183,20 @@
                 </div>
 
                 <!-- Settlement -->
-                <a href="{{ route('admin.settlement') }}" 
+                <a href="{{ route('admin.settlement') }}"
                    class="{{ request()->routeIs('admin.settlement') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
                     <span class="material-symbols-outlined">verified_user</span>
                     <span>Settlement</span>
+                </a>
+
+                <!-- Top Up Verification -->
+                <a href="{{ route('admin.topup') }}"
+                   class="{{ request()->routeIs('admin.topup') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                    <span class="material-symbols-outlined">add_circle</span>
+                    <span>Verifikasi Top Up</span>
+                    @if($pendingTopUpCount ?? 0 > 0)
+                        <span class="ml-auto bg-error text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingTopUpCount ?? 0 }}</span>
+                    @endif
                 </a>
             @elseif($activeRole === 'petugas')
                 <a href="{{ route('petugas.dashboard') }}" 

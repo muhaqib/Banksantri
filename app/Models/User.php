@@ -117,4 +117,20 @@ class User extends Authenticatable
     {
         return $this->hasMany(WithdrawalRequest::class, 'petugas_id');
     }
+
+    /**
+     * Get all top-up requests for this user (as santri).
+     */
+    public function topUpRequests()
+    {
+        return $this->hasMany(TopUpRequest::class, 'santri_id');
+    }
+
+    /**
+     * Get all top-up requests verified by this user (as admin).
+     */
+    public function verifiedTopUpRequests()
+    {
+        return $this->hasMany(TopUpRequest::class, 'admin_id');
+    }
 }

@@ -14,6 +14,8 @@ use App\Http\Controllers\Petugas\TarikTunaiController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
 use App\Http\Controllers\Santri\ProfileController;
+use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
+use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -40,10 +42,18 @@ Route::middleware('auth')->group(function () {
         Route::post('/kas', [KasController::class, 'store'])->name('kas.store');
         
         // Santri Management
-        Route::resource('santri', SantriController::class);
-        
+        Route::resource('santri', SantriController::class)->except(['show']);
+        Route::get('santri/{santri}', function() {
+            return redirect()->route('admin.santri.index');
+        })->name('santri.redirect');
+        Route::get('santri/{santri}/modal-data', [SantriController::class, 'getModalData'])->name('santri.modal-data');
+
         // Petugas Management
-        Route::resource('petugas', AdminPetugasController::class);
+        Route::resource('petugas', AdminPetugasController::class)->except(['show']);
+        Route::get('petugas/{petugas}', function() {
+            return redirect()->route('admin.petugas.index');
+        })->name('petugas.redirect');
+        Route::get('petugas/{petugas}/modal-data', [AdminPetugasController::class, 'getModalData'])->name('petugas.modal-data');
         
         Route::get('/settlement', [SettlementController::class, 'index'])->name('settlement');
         Route::patch('/settlement/{id}/approve', [SettlementController::class, 'approve'])->name('settlement.approve');
@@ -55,6 +65,13 @@ Route::middleware('auth')->group(function () {
         Route::post('/transactions/search-santri', [AdminTransactionController::class, 'searchSantri'])->name('transactions.search-santri');
         Route::get('/transactions/santri', [AdminTransactionController::class, 'santriList'])->name('transactions.santri');
         Route::get('/transactions/history', [AdminTransactionController::class, 'history'])->name('transactions.history');
+
+        // Top-Up Management
+        Route::get('/topup', [AdminTopUpController::class, 'index'])->name('topup');
+        Route::get('/topup/{topUp}', [AdminTopUpController::class, 'show'])->name('topup.show');
+        Route::get('/topup/{topUp}/modal-data', [AdminTopUpController::class, 'getModalData'])->name('topup.modal-data');
+        Route::post('/topup/{topUp}/approve', [AdminTopUpController::class, 'approve'])->name('topup.approve');
+        Route::post('/topup/{topUp}/reject', [AdminTopUpController::class, 'reject'])->name('topup.reject');
     });
 
     // Petugas Routes
@@ -74,6 +91,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat', [SantriRiwayatController::class, 'index'])->name('riwayat');
         Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
         Route::post('/change-pin', [ProfileController::class, 'changePin'])->name('change-pin');
+        Route::get('/topup', [SantriTopUpController::class, 'create'])->name('topup');
+        Route::post('/topup', [SantriTopUpController::class, 'store'])->name('topup.store');
+        Route::get('/topup/status', [SantriTopUpController::class, 'getStatus'])->name('topup.status');
     });
 
     // Default redirect

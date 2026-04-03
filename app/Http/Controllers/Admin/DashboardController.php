@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TopUpRequest;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Models\WithdrawalRequest;
@@ -16,13 +17,13 @@ class DashboardController extends Controller
         $masuk = Transaction::where('jenis', 'masuk')
             ->whereDate('created_at', today())
             ->sum('nominal');
-        
+
         $keluar = Transaction::where('jenis', 'keluar')
             ->whereDate('created_at', today())
             ->sum('nominal');
-        
+
         $transaksiHariIni = Transaction::whereDate('created_at', today())->count();
-        
+
         // Get kas balance
         $kasMasuk = \App\Models\KasTransaction::where('jenis', 'masuk')->sum('nominal');
         $kasKeluar = \App\Models\KasTransaction::where('jenis', 'keluar')->sum('nominal');
@@ -56,6 +57,9 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get pending top-up count
+        $pendingTopUpCount = TopUpRequest::where('status', 'pending')->count();
+
         return view('pages.admin.dashboard', [
             'pemasukanHariIni' => $masuk,
             'pengeluaranHariIni' => $keluar,
@@ -64,6 +68,7 @@ class DashboardController extends Controller
             'transaksiTerakhir' => $transaksiTerakhir,
             'petugasList' => $petugasList,
             'pendingRequests' => $pendingRequests,
+            'pendingTopUpCount' => $pendingTopUpCount,
         ]);
     }
 }

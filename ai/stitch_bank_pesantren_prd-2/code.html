@@ -1,0 +1,340 @@
+<!doctype html>
+
+<html class="light" lang="id">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Konfirmasi Top-Up - Santri Mobile</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "outline-variant": "#bec9c8",
+                            "surface-dim": "#d8dada",
+                            "primary-fixed-dim": "#86d4d2",
+                            "secondary-fixed": "#e0e5cc",
+                            tertiary: "#755b00",
+                            "on-error": "#ffffff",
+                            "on-background": "#191c1d",
+                            "surface-container-highest": "#e1e3e3",
+                            surface: "#f8fafa",
+                            "surface-tint": "#076968",
+                            "on-primary": "#ffffff",
+                            "surface-bright": "#f8fafa",
+                            "secondary-container": "#dee2c9",
+                            "primary-fixed": "#a2f0ee",
+                            "inverse-surface": "#2e3131",
+                            "on-secondary-fixed": "#191d0e",
+                            "on-secondary": "#ffffff",
+                            "surface-container-low": "#f2f4f4",
+                            "on-secondary-fixed-variant": "#444936",
+                            "on-surface-variant": "#3e4948",
+                            "tertiary-fixed-dim": "#eac254",
+                            "surface-variant": "#e1e3e3",
+                            "surface-container": "#eceeee",
+                            secondary: "#5c614d",
+                            "primary-container": "#006766",
+                            "on-primary-fixed-variant": "#00504f",
+                            primary: "#004d4c",
+                            "error-container": "#ffdad6",
+                            error: "#ba1a1a",
+                            "tertiary-fixed": "#ffdf90",
+                            "on-tertiary-fixed": "#241a00",
+                            "on-surface": "#191c1d",
+                            "inverse-primary": "#86d4d2",
+                            "surface-container-high": "#e6e8e8",
+                            "on-tertiary-container": "#503d00",
+                            "on-primary-container": "#94e2e0",
+                            "on-tertiary": "#ffffff",
+                            "tertiary-container": "#cca73b",
+                            "on-secondary-container": "#606551",
+                            background: "#f8fafa",
+                            "on-primary-fixed": "#00201f",
+                            "inverse-on-surface": "#eff1f1",
+                            "on-tertiary-fixed-variant": "#584400",
+                            "surface-container-lowest": "#ffffff",
+                            "secondary-fixed-dim": "#c4c9b1",
+                            outline: "#6f7978",
+                            "on-error-container": "#93000a",
+                        },
+                        fontFamily: {
+                            headline: ["Manrope"],
+                            body: ["Inter"],
+                            label: ["Inter"],
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            "2xl": "1rem",
+                            "3xl": "1.5rem",
+                            full: "9999px",
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+            }
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: #f8fafa;
+                -webkit-tap-highlight-color: transparent;
+            }
+            .header-font {
+                font-family: "Manrope", sans-serif;
+            }
+        </style>
+        <style>
+            body {
+                min-height: max(884px, 100dvh);
+            }
+        </style>
+    </head>
+    <body class="bg-surface text-on-surface antialiased min-h-screen pb-32">
+        <!-- TopAppBar -->
+        <header
+            class="w-full top-0 sticky z-50 bg-[#f8fafa] dark:bg-[#191c1d] flex items-center justify-between px-5 h-16 w-full max-w-md mx-auto"
+        >
+            <button
+                class="hover:bg-[#f2f4f4] transition-colors p-2 rounded-full scale-95 active:opacity-80 transition-all"
+            >
+                <span
+                    class="material-symbols-outlined text-[#004d4c] dark:text-[#86d4d2]"
+                    >arrow_back</span
+                >
+            </button>
+            <h1
+                class="font-['Manrope'] font-bold text-lg tracking-tight text-[#004d4c] dark:text-[#86d4d2]"
+            >
+                Konfirmasi Top-Up
+            </h1>
+            <div class="w-10"></div>
+            <!-- Spacer for centering -->
+        </header>
+        <main class="max-w-md mx-auto px-5 pt-4 space-y-6">
+            <!-- Information Banner -->
+            <section
+                class="bg-primary-fixed/30 p-4 rounded-2xl flex gap-4 items-start"
+            >
+                <span class="material-symbols-outlined text-primary mt-0.5"
+                    >info</span
+                >
+                <p class="text-sm font-medium leading-relaxed text-on-surface">
+                    Permintaan Anda akan segera diproses oleh Admin. Silakan
+                    tunggu konfirmasi.
+                </p>
+            </section>
+            <!-- Bank Details Card (Bento Style) -->
+            <section class="space-y-3">
+                <h2
+                    class="font-headline font-bold text-primary tracking-tight px-1"
+                >
+                    Tujuan Transfer
+                </h2>
+                <div
+                    class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_4px_24px_-8px_rgba(0,77,76,0.08)] relative overflow-hidden"
+                >
+                    <!-- Decorative Gradient Background -->
+                    <div
+                        class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"
+                    ></div>
+                    <div class="flex items-center gap-3 mb-6">
+                        <div
+                            class="w-12 h-12 bg-surface-container-low rounded-xl flex items-center justify-center"
+                        >
+                            <img
+                                alt="BSI Logo"
+                                class="w-8 h-auto object-contain"
+                                data-alt="Official logo of Bank Syariah Indonesia BSI with teal and white corporate colors"
+                                src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMMvjWQUqgCzDFdLv5G5WxpPN-ykKw1RSWZ8NwcJs8RWnr2aOLdfTfOF2C_zAdaMuOAuqIoZLK6vndDBob7Uj_PVRMSPjVUQBwmBWMRSYCZN3ktBAV5cDO_gpJjRn7E8oM__aGYFPxw1th7QI7ijoMCKJwgmnPV74BK9roYlnn0E8V73dRP9m69GDjPSE5Z80Xva-m1ZWQz7Q1758Jihz221CgJHH9vzTdPNqNv1wfNSh7J9kNEzjxuXaigpb6Ysqkw9IdoocQgoTo"
+                            />
+                        </div>
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-bold text-outline"
+                            >
+                                Bank Penerima
+                            </p>
+                            <p
+                                class="font-headline font-extrabold text-on-surface"
+                            >
+                                Bank Syariah Indonesia (BSI)
+                            </p>
+                        </div>
+                    </div>
+                    <div class="space-y-4">
+                        <div>
+                            <p
+                                class="text-[10px] uppercase tracking-widest font-bold text-outline"
+                            >
+                                Nama Rekening
+                            </p>
+                            <p
+                                class="font-headline font-bold text-lg text-on-surface"
+                            >
+                                Bendahara Al-Hikmah]
+                            </p>
+                        </div>
+                        <div class="flex items-end justify-between">
+                            <div>
+                                <p
+                                    class="text-[10px] uppercase tracking-widest font-bold text-outline"
+                                >
+                                    Nomor Rekening
+                                </p>
+                                <p
+                                    class="font-headline font-extrabold text-2xl tracking-wider text-primary"
+                                >
+                                    712 888 2026
+                                </p>
+                            </div>
+                            <button
+                                class="flex items-center gap-2 bg-primary-fixed-dim/30 px-4 py-2 rounded-xl text-primary font-bold text-sm hover:bg-primary-fixed-dim transition-all active:scale-95"
+                            >
+                                <span class="material-symbols-outlined text-sm"
+                                    >content_copy</span
+                                >
+                                Salin
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            <!-- Form Section -->
+            <section class="space-y-6">
+                <!-- Input Nominal -->
+                <div class="space-y-3">
+                    <label
+                        class="font-headline font-bold text-primary tracking-tight px-1 block"
+                        for="nominal"
+                        >Nominal Top-Up</label
+                    >
+                    <div class="relative group">
+                        <div
+                            class="absolute left-4 top-1/2 -translate-y-1/2 font-headline font-bold text-primary text-xl"
+                        >
+                            IDR
+                        </div>
+                        <input
+                            class="w-full bg-surface-container-high border-none rounded-2xl py-5 pl-16 pr-5 font-headline font-bold text-2xl focus:ring-2 focus:ring-primary/20 focus:bg-surface-container-highest transition-all text-on-surface placeholder:text-outline-variant"
+                            id="nominal"
+                            placeholder="0"
+                            type="number"
+                        />
+                        <div
+                            class="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-8 bg-primary rounded-r-full hidden group-focus-within:block"
+                        ></div>
+                    </div>
+                </div>
+                <!-- Proof of Transfer Upload -->
+                <div class="space-y-3">
+                    <label
+                        class="font-headline font-bold text-primary tracking-tight px-1 block"
+                        >Bukti Transfer</label
+                    >
+                    <div
+                        class="bg-surface-container-low border-2 border-dashed border-outline-variant/30 rounded-3xl p-8 flex flex-col items-center justify-center text-center group hover:bg-surface-container transition-colors cursor-pointer"
+                    >
+                        <div
+                            class="w-16 h-16 bg-surface-container-lowest rounded-2xl flex items-center justify-center mb-4 shadow-sm group-hover:scale-110 transition-transform"
+                        >
+                            <span
+                                class="material-symbols-outlined text-primary text-3xl"
+                                >cloud_upload</span
+                            >
+                        </div>
+                        <p class="font-bold text-on-surface">Unggah Bukti</p>
+                        <p class="text-xs text-outline mt-1 px-4">
+                            Klik atau tarik screenshot bukti transfer ke sini
+                            (JPG, PNG)
+                        </p>
+                    </div>
+                </div>
+            </section>
+            <!-- Action Button -->
+            <section class="pt-4">
+                <button
+                    class="w-full bg-primary text-on-primary py-5 rounded-2xl font-headline font-extrabold text-lg shadow-[0_8px_20px_-6px_rgba(0,77,76,0.3)] active:scale-[0.98] transition-all hover:brightness-110"
+                >
+                    Kirim Permintaan
+                </button>
+            </section>
+        </main>
+        <!-- BottomNavBar -->
+        <nav
+            class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-6 pb-6 pt-3 bg-[#f8fafa]/80 dark:bg-[#191c1d]/80 backdrop-blur-xl rounded-t-3xl border-t-[0.5px] border-[#bec9c8]/15 shadow-[0_-4px_24px_-4px_rgba(25,28,29,0.06)]"
+        >
+            <!-- Beranda -->
+            <a
+                class="flex flex-col items-center justify-center text-[#404948] dark:text-[#bec9c8] hover:bg-[#f2f4f4]/50 dark:hover:bg-white/5 tap-highlight-transparent transition-transform duration-200 active:scale-90"
+                href="#"
+            >
+                <span class="material-symbols-outlined mb-1">home</span>
+                <span class="font-['Inter'] text-[11px] font-medium"
+                    >Beranda</span
+                >
+            </a>
+            <!-- Tabungan (Active) -->
+            <a
+                class="flex flex-col items-center justify-center text-[#004d4c] dark:text-[#86d4d2] font-bold tap-highlight-transparent transition-transform duration-200 active:scale-90"
+                href="#"
+            >
+                <div class="relative">
+                    <span
+                        class="material-symbols-outlined mb-1"
+                        style="font-variation-settings: &quot;FILL&quot; 1"
+                        >account_balance_wallet</span
+                    >
+                    <div
+                        class="absolute -top-1 -right-1 w-2 h-2 bg-primary rounded-full"
+                    ></div>
+                </div>
+                <span class="font-['Inter'] text-[11px]">Tabungan</span>
+            </a>
+            <!-- Zakat -->
+            <a
+                class="flex flex-col items-center justify-center text-[#404948] dark:text-[#bec9c8] hover:bg-[#f2f4f4]/50 dark:hover:bg-white/5 tap-highlight-transparent transition-transform duration-200 active:scale-90"
+                href="#"
+            >
+                <span class="material-symbols-outlined mb-1"
+                    >volunteer_activism</span
+                >
+                <span class="font-['Inter'] text-[11px] font-medium"
+                    >Zakat</span
+                >
+            </a>
+            <!-- Profil -->
+            <a
+                class="flex flex-col items-center justify-center text-[#404948] dark:text-[#bec9c8] hover:bg-[#f2f4f4]/50 dark:hover:bg-white/5 tap-highlight-transparent transition-transform duration-200 active:scale-90"
+                href="#"
+            >
+                <span class="material-symbols-outlined mb-1">person</span>
+                <span class="font-['Inter'] text-[11px] font-medium"
+                    >Profil</span
+                >
+            </a>
+        </nav>
+    </body>
+</html>

@@ -71,20 +71,6 @@ class PetugasController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(User $petugas)
-    {
-        if ($petugas->role !== 'petugas') {
-            abort(403);
-        }
-
-        return view('pages.admin.petugas.show', [
-            'petugas' => $petugas
-        ]);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(User $petugas)
@@ -163,5 +149,20 @@ class PetugasController extends Controller
 
         return redirect()->route('admin.petugas.index')
             ->with('success', 'Data petugas berhasil dihapus!');
+    }
+
+    /**
+     * Get petugas data for modal (AJAX).
+     */
+    public function getModalData(User $petugas)
+    {
+        if ($petugas->role !== 'petugas') {
+            return response()->json(['error' => 'Invalid petugas'], 403);
+        }
+
+        return response()->json([
+            'petugas' => $petugas,
+            'foto_url' => $petugas->foto ? Storage::url($petugas->foto) : null
+        ]);
     }
 }

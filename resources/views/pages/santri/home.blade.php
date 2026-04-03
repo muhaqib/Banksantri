@@ -61,9 +61,9 @@
                             <span class="w-8 h-5 rounded-sm bg-white/20"></span>
                             <span class="text-white/60 font-mono text-xs">**** {{ substr(auth()->user()->nis ?? '0000', -4) }}</span>
                         </div>
-                        <button class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
+                        <a href="{{ route('santri.topup') }}" class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
                             Isi Saldo
-                        </button>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -84,7 +84,7 @@
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tarik</span>
                 </a>
-                <a href="#" class="flex flex-col items-center gap-2 group">
+                <a href="{{ route('santri.topup') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">add_circle</span>
                     </div>
@@ -111,7 +111,7 @@
                         <p class="text-[10px] text-on-tertiary-container/70">Berkah untuk sesama</p>
                     </div>
                 </div>
-                <button class="bg-tertiary text-on-tertiary text-[10px] px-3 py-1.5 rounded-full font-bold">TUNAIKAN</button>
+                <button class="bg-tertiary text-on-tertiary text-[10px] px-3 py-1.5 rounded-full font-bold">SOON</button>
             </div>
         </section>
 

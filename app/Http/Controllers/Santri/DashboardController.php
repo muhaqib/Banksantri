@@ -23,11 +23,11 @@ class DashboardController extends Controller
             ->whereMonth('created_at', now()->month)
             ->sum('nominal');
 
-        // Get recent transactions
+        // Get recent transactions (only 3)
         $transaksiTerakhir = Transaction::with('petugas')
             ->where('santri_id', $santri->id)
             ->orderBy('created_at', 'desc')
-            ->limit(5)
+            ->limit(3)
             ->get();
 
         return view('pages.santri.home', [

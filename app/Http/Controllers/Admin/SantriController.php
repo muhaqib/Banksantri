@@ -85,20 +85,6 @@ class SantriController extends Controller
     }
 
     /**
-     * Display the specified resource.
-     */
-    public function show(User $santri)
-    {
-        if ($santri->role !== 'santri') {
-            abort(403);
-        }
-
-        return view('pages.admin.santri.show', [
-            'santri' => $santri
-        ]);
-    }
-
-    /**
      * Show the form for editing the specified resource.
      */
     public function edit(User $santri)
@@ -197,5 +183,20 @@ class SantriController extends Controller
 
         return redirect()->route('admin.santri.index')
             ->with('success', 'Data santri berhasil dihapus!');
+    }
+
+    /**
+     * Get santri data for modal (AJAX).
+     */
+    public function getModalData(User $santri)
+    {
+        if ($santri->role !== 'santri') {
+            return response()->json(['error' => 'Invalid santri'], 403);
+        }
+
+        return response()->json([
+            'santri' => $santri,
+            'foto_url' => $santri->foto ? Storage::url($santri->foto) : null
+        ]);
     }
 }
