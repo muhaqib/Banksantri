@@ -36,7 +36,8 @@ class TarikTunaiController extends Controller
             'saldoDigital' => $petugas->saldo ?? 0,
             'pendingRequests' => $pendingRequests,
             'riwayatPenarikan' => $riwayatPenarikan,
-            'totalSettled' => $totalSettled
+            'totalSettled' => $totalSettled,
+            'activeRole' => 'petugas',
         ]);
     }
 

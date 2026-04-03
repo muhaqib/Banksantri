@@ -3,9 +3,8 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="w-full max-w-md mx-auto px-6" x-data="{ role: 'admin', showPassword: false }">
+<div class="w-full max-w-md mx-auto px-4 sm:px-6 transition-all duration-300" x-data="{ role: 'admin', showPassword: false }">
     <!-- Logo Card -->
-    <div class="bg-white rounded-2xl shadow-xl p-8">
         <!-- Logo -->
         <div class="text-center mb-8">
             <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
@@ -152,7 +151,6 @@
                 </div>
             </div>
         </footer>
-    </div>
 </div>
 
 <style>

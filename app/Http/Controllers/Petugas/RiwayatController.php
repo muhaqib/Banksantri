@@ -29,6 +29,7 @@ class RiwayatController extends Controller
             'transaksiList' => $transaksiList,
             'totalKeluar' => $totalKeluar,
             'totalMasuk' => $totalMasuk,
+            'activeRole' => 'petugas',
         ]);
     }
 }

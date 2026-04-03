@@ -32,6 +32,7 @@ class TopUpController extends Controller
         return view('pages.admin.topup.index', [
             'pendingTopUps' => $pendingTopUps,
             'recentTopUps' => $recentTopUps,
+            'activeRole' => 'admin',
         ]);
     }
 

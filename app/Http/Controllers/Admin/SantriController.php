@@ -20,7 +20,8 @@ class SantriController extends Controller
             ->paginate(15);
 
         return view('pages.admin.santri.index', [
-            'santriList' => $santriList
+            'santriList' => $santriList,
+            'activeRole' => 'admin',
         ]);
     }
 
@@ -29,7 +30,9 @@ class SantriController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.santri.create');
+        return view('pages.admin.santri.create', [
+            'activeRole' => 'admin',
+        ]);
     }
 
     /**
@@ -94,7 +97,8 @@ class SantriController extends Controller
         }
 
         return view('pages.admin.santri.edit', [
-            'santri' => $santri
+            'santri' => $santri,
+            'activeRole' => 'admin',
         ]);
     }
 

@@ -14,11 +14,14 @@ class DashboardController extends Controller
     public function index()
     {
         // Get real data from database
-        $masuk = Transaction::where('jenis', 'masuk')
+        // Total Top Up Santri Hari Ini (kategori: top_up)
+        $totalTopUpHariIni = Transaction::where('jenis', 'masuk')
+            ->where('kategori', 'top_up')
             ->whereDate('created_at', today())
             ->sum('nominal');
 
-        $keluar = Transaction::where('jenis', 'keluar')
+        // Total Transaksi Hari Ini (semua transaksi keluar)
+        $totalTransaksiHariIni = Transaction::where('jenis', 'keluar')
             ->whereDate('created_at', today())
             ->sum('nominal');
 
@@ -60,15 +63,62 @@ class DashboardController extends Controller
         // Get pending top-up count
         $pendingTopUpCount = TopUpRequest::where('status', 'pending')->count();
 
+        // Get recent top-up activity
+        $recentTopUps = TopUpRequest::with(['santri'])
+            ->whereIn('status', ['approved', 'rejected'])
+            ->orderBy('updated_at', 'desc')
+            ->limit(10)
+            ->get();
+
+        // Get weekly transaction trends (last 7 days)
+        $weeklyTrends = [];
+        for ($i = 6; $i >= 0; $i--) {
+            $date = now()->subDays($i);
+            $dayName = $date->locale('id')->isoFormat('ddd');
+            
+            // Top up santri (hijau)
+            $topUpAmount = Transaction::where('jenis', 'masuk')
+                ->where('kategori', 'top_up')
+                ->whereDate('created_at', $date)
+                ->sum('nominal');
+            
+            // Transaksi keluar (merah)
+            $transaksiAmount = Transaction::where('jenis', 'keluar')
+                ->whereDate('created_at', $date)
+                ->sum('nominal');
+            
+            $weeklyTrends[] = [
+                'name' => strtoupper($dayName),
+                'topup' => $topUpAmount,
+                'transaksi' => $transaksiAmount,
+            ];
+        }
+
+        // Calculate max value for chart scaling
+        $maxValue = max(
+            collect($weeklyTrends)->max('topup') ?? 0,
+            collect($weeklyTrends)->max('transaksi') ?? 0,
+            1 // Prevent division by zero
+        );
+
+        // Normalize values to percentage (max 100%)
+        foreach ($weeklyTrends as &$trend) {
+            $trend['topup_percent'] = ($trend['topup'] / $maxValue) * 100;
+            $trend['transaksi_percent'] = ($trend['transaksi'] / $maxValue) * 100;
+        }
+
         return view('pages.admin.dashboard', [
-            'pemasukanHariIni' => $masuk,
-            'pengeluaranHariIni' => $keluar,
+            'totalTopUpHariIni' => $totalTopUpHariIni,
+            'totalTransaksiHariIni' => $totalTransaksiHariIni,
             'transaksiHariIni' => $transaksiHariIni,
             'saldoKasUtama' => $saldoKasUtama,
             'transaksiTerakhir' => $transaksiTerakhir,
             'petugasList' => $petugasList,
             'pendingRequests' => $pendingRequests,
             'pendingTopUpCount' => $pendingTopUpCount,
+            'recentTopUps' => $recentTopUps,
+            'weeklyTrends' => $weeklyTrends,
+            'activeRole' => 'admin',
         ]);
     }
 }

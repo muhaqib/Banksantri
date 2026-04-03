@@ -26,7 +26,8 @@ class KasController extends Controller
 
         return view('pages.admin.kas', [
             'saldoKas' => $saldoKas,
-            'riwayatKas' => $riwayatKas
+            'riwayatKas' => $riwayatKas,
+            'activeRole' => 'admin',
         ]);
     }
 

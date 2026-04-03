@@ -26,7 +26,8 @@ class SettlementController extends Controller
 
         return view('pages.admin.settlement', [
             'pendingRequests' => $pendingRequests,
-            'settlementHistory' => $settlementHistory
+            'settlementHistory' => $settlementHistory,
+            'activeRole' => 'admin',
         ]);
     }
 

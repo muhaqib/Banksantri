@@ -20,7 +20,8 @@ class PetugasController extends Controller
             ->paginate(15);
 
         return view('pages.admin.petugas.index', [
-            'petugasList' => $petugasList
+            'petugasList' => $petugasList,
+            'activeRole' => 'admin',
         ]);
     }
 
@@ -29,7 +30,9 @@ class PetugasController extends Controller
      */
     public function create()
     {
-        return view('pages.admin.petugas.create');
+        return view('pages.admin.petugas.create', [
+            'activeRole' => 'admin',
+        ]);
     }
 
     /**
@@ -80,7 +83,8 @@ class PetugasController extends Controller
         }
 
         return view('pages.admin.petugas.edit', [
-            'petugas' => $petugas
+            'petugas' => $petugas,
+            'activeRole' => 'admin',
         ]);
     }
 

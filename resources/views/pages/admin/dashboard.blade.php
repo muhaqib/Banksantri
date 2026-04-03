@@ -4,7 +4,7 @@
 @php $activeRole = 'admin'; @endphp
 
 @section('content')
-<div x-data="dashboardData()">
+<div>
     <!-- Page Heading -->
     <div class="flex items-end justify-between">
         <div>
@@ -19,31 +19,31 @@
 
     <!-- Bento Financial Widgets -->
     <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-        <!-- Total Cash In -->
+        <!-- Total Top Up Santri Hari Ini -->
         <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
-                <div class="p-2 bg-primary-fixed rounded-lg text-primary">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_up</span>
+                <div class="p-2 bg-green-100 rounded-lg text-green-600">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
                 </div>
-                <span class="text-xs font-bold text-primary">+12.5%</span>
+                <span class="text-xs font-bold text-green-600">Hari Ini</span>
             </div>
             <div class="mt-4">
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Total Cash In</p>
-                <h3 class="font-headline font-bold text-2xl text-on-surface mt-1">Rp {{ number_format($pemasukanHariIni ?? 0, 0, ',', '.') }}</h3>
+                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Total Top Up Santri</p>
+                <h3 class="font-headline font-bold text-2xl text-green-600 mt-1">Rp {{ number_format($totalTopUpHariIni ?? 0, 0, ',', '.') }}</h3>
             </div>
         </div>
 
-        <!-- Total Cash Out -->
+        <!-- Total Transaksi Hari Ini -->
         <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
-                <div class="p-2 bg-error-container rounded-lg text-error">
-                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">trending_down</span>
+                <div class="p-2 bg-red-100 rounded-lg text-red-600">
+                    <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
                 </div>
-                <span class="text-xs font-bold text-error">+4.2%</span>
+                <span class="text-xs font-bold text-red-600">Hari Ini</span>
             </div>
             <div class="mt-4">
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Total Cash Out</p>
-                <h3 class="font-headline font-bold text-2xl text-on-surface mt-1">Rp {{ number_format($pengeluaranHariIni ?? 0, 0, ',', '.') }}</h3>
+                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Total Transaksi</p>
+                <h3 class="font-headline font-bold text-2xl text-red-600 mt-1">Rp {{ number_format($totalTransaksiHariIni ?? 0, 0, ',', '.') }}</h3>
             </div>
         </div>
 
@@ -63,16 +63,16 @@
             <div class="absolute -right-12 -top-12 w-32 h-32 rounded-full bg-primary-fixed opacity-5 blur-3xl"></div>
         </div>
 
-        <!-- Transactions -->
+        <!-- Transactions Count -->
         <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
                 <div class="p-2 bg-secondary-container rounded-lg text-secondary">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
                 </div>
-                <span class="text-xs font-bold text-secondary">Steady</span>
+                <span class="text-xs font-bold text-secondary">{{ $transaksiHariIni ?? 0 }}</span>
             </div>
             <div class="mt-4">
-                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Transactions</p>
+                <p class="text-xs font-medium text-on-surface-variant uppercase tracking-widest">Jumlah Transaksi</p>
                 <h3 class="font-headline font-bold text-2xl text-on-surface mt-1">{{ $transaksiHariIni ?? 0 }}</h3>
             </div>
         </div>
@@ -82,56 +82,63 @@
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
         <!-- Left Column: Actions & Trends -->
         <div class="lg:col-span-8 space-y-6">
-            <!-- Cash Control Actions -->
+            <!-- Top Up Verification Quick Actions -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Setor Kas Masuk -->
+                <!-- Pending Top Up Requests -->
                 <div class="bg-surface-container-lowest rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">download</span>
-                        <h4 class="font-headline font-bold text-lg text-primary">Setor Kas Masuk</h4>
+                        <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
+                        <div>
+                            <h4 class="font-headline font-bold text-lg text-primary">Top Up Pending</h4>
+                            <p class="text-xs text-on-surface-variant">Menunggu verifikasi</p>
+                        </div>
                     </div>
                     <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nominal Amount</label>
-                            <div class="relative group">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</span>
-                                <input class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-4 font-headline text-lg font-bold text-primary focus:ring-0 focus:bg-surface-container-highest transition-all" placeholder="0" type="text"/>
-                                <div class="absolute left-0 top-0 w-0.5 h-0 bg-primary group-focus-within:h-full transition-all"></div>
+                        <div class="bg-surface-container-high rounded-xl p-4">
+                            <div class="flex items-center justify-between mb-2">
+                                <span class="text-xs font-semibold text-on-surface-variant uppercase">Total Pending</span>
+                                <span class="text-2xl font-headline font-bold text-primary">{{ $pendingTopUpCount ?? 0 }}</span>
                             </div>
+                            <p class="text-xs text-on-surface-variant">Request yang perlu diverifikasi</p>
                         </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Description</label>
-                            <textarea class="w-full bg-surface-container-high border-none rounded-xl p-4 text-sm focus:bg-surface-container-highest focus:ring-0 transition-all resize-none" placeholder="Mandatory description..." rows="2"></textarea>
-                        </div>
-                        <a href="{{ route('admin.kas') }}" class="block w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95 text-center flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            <span>Confirm Cash Deposit</span>
+                        <a href="{{ route('admin.topup') }}" class="block w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95 text-center flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
+                            <span>Verifikasi Sekarang</span>
                         </a>
                     </div>
                 </div>
 
-                <!-- Ambil Kas Keluar -->
-                <div class="bg-surface-container-lowest rounded-xl p-6 border border-error/10 hover:border-error/30 transition-all shadow-sm">
+                <!-- Recent Top Up Activity -->
+                <div class="bg-surface-container-lowest rounded-xl p-6 border border-secondary/10 hover:border-secondary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
-                        <span class="material-symbols-outlined text-error p-2 bg-error-container rounded-full" style="font-variation-settings: 'FILL' 1;">upload</span>
-                        <h4 class="font-headline font-bold text-lg text-error">Ambil Kas Keluar</h4>
+                        <span class="material-symbols-outlined text-secondary p-2 bg-secondary-container rounded-full" style="font-variation-settings: 'FILL' 1;">history</span>
+                        <div>
+                            <h4 class="font-headline font-bold text-lg text-secondary">Aktivitas Top Up</h4>
+                            <p class="text-xs text-on-surface-variant">Riwayat verifikasi terbaru</p>
+                        </div>
                     </div>
-                    <div class="space-y-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nominal Amount</label>
-                            <div class="relative group">
-                                <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</span>
-                                <input class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-4 font-headline text-lg font-bold text-error focus:ring-0 focus:bg-surface-container-highest transition-all" placeholder="0" type="text"/>
-                                <div class="absolute left-0 top-0 w-0.5 h-0 bg-error group-focus-within:h-full transition-all"></div>
+                    <div class="space-y-3">
+                        @forelse(($recentTopUps ?? [])->take(3) as $topUp)
+                            <div class="flex items-center justify-between p-3 bg-surface-container-high rounded-lg">
+                                <div class="flex items-center gap-2">
+                                    <div class="w-8 h-8 rounded-full {{ $topUp->status === 'approved' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error' }} flex items-center justify-center">
+                                        <span class="material-symbols-outlined text-sm">{{ $topUp->status === 'approved' ? 'check_circle' : 'cancel' }}</span>
+                                    </div>
+                                    <div>
+                                        <p class="text-xs font-bold text-on-surface">{{ $topUp->santri->name ?? 'Santri' }}</p>
+                                        <p class="text-[10px] text-on-surface-variant">{{ $topUp->created_at->diffForHumans() }}</p>
+                                    </div>
+                                </div>
+                                <p class="text-xs font-bold text-on-surface">Rp {{ number_format($topUp->nominal, 0, ',', '.') }}</p>
                             </div>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Description</label>
-                            <textarea class="w-full bg-surface-container-high border-none rounded-xl p-4 text-sm focus:bg-surface-container-highest focus:ring-0 transition-all resize-none" placeholder="Mandatory description..." rows="2"></textarea>
-                        </div>
-                        <a href="{{ route('admin.kas') }}" class="block w-full bg-error text-on-error font-bold py-4 rounded-xl shadow-lg shadow-error/10 hover:shadow-error/20 transition-all active:scale-95 text-center flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            <span>Withdraw Cash</span>
+                        @empty
+                            <div class="text-center py-4">
+                                <span class="material-symbols-outlined text-3xl text-on-surface-variant mb-2">inbox</span>
+                                <p class="text-xs text-on-surface-variant">Belum ada aktivitas</p>
+                            </div>
+                        @endforelse
+                        <a href="{{ route('admin.topup') }}" class="block w-full text-center text-xs font-bold text-primary hover:underline py-2">
+                            Lihat Semua →
                         </a>
                     </div>
                 </div>
@@ -142,31 +149,37 @@
                 <div class="flex justify-between items-center mb-10">
                     <div>
                         <h3 class="font-headline font-bold text-xl text-primary">Weekly Transaction Trends</h3>
-                        <p class="text-xs text-on-surface-variant">Comparing Income vs Expense flow</p>
+                        <p class="text-xs text-on-surface-variant">Comparing Top Up vs Transaction flow</p>
                     </div>
                     <div class="flex gap-4">
                         <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-primary"></span>
-                            <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Income</span>
+                            <span class="w-3 h-3 rounded-full bg-green-500"></span>
+                            <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Top Up Santri</span>
                         </div>
                         <div class="flex items-center gap-2">
-                            <span class="w-3 h-3 rounded-full bg-error"></span>
-                            <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Expense</span>
+                            <span class="w-3 h-3 rounded-full bg-red-500"></span>
+                            <span class="text-[10px] font-bold text-on-surface-variant uppercase tracking-tighter">Transaksi</span>
                         </div>
                     </div>
                 </div>
-                
+
                 <!-- Visual representation of a chart -->
                 <div class="h-64 flex items-end justify-between gap-4">
-                    <template x-for="day in days">
+                    @foreach($weeklyTrends ?? [] as $day)
                         <div class="flex-1 space-y-2">
                             <div class="flex items-end justify-center gap-1 h-48">
-                                <div class="w-3 bg-primary rounded-t-sm" :style="'height: ' + day.income + '%'"></div>
-                                <div class="w-3 bg-error rounded-t-sm" :style="'height: ' + day.expense + '%'"></div>
+                                <div class="w-3 bg-green-500 rounded-t-sm transition-all hover:opacity-80" 
+                                     style="height: {{ $day['topup_percent'] }}%"
+                                     title="Top Up: Rp {{ number_format($day['topup'], 0, ',', '.') }}">
+                                </div>
+                                <div class="w-3 bg-red-500 rounded-t-sm transition-all hover:opacity-80" 
+                                     style="height: {{ $day['transaksi_percent'] }}%"
+                                     title="Transaksi: Rp {{ number_format($day['transaksi'], 0, ',', '.') }}">
+                                </div>
                             </div>
-                            <p class="text-center text-[10px] font-bold text-on-surface-variant" x-text="day.name"></p>
+                            <p class="text-center text-[10px] font-bold text-on-surface-variant">{{ $day['name'] }}</p>
                         </div>
-                    </template>
+                    @endforeach
                 </div>
             </div>
 
@@ -281,22 +294,6 @@
         </div>
     </div>
 </div>
-
-<script>
-function dashboardData() {
-    return {
-        days: [
-            { name: 'MON', income: 60, expense: 30 },
-            { name: 'TUE', income: 80, expense: 40 },
-            { name: 'WED', income: 55, expense: 70 },
-            { name: 'THU', income: 90, expense: 25 },
-            { name: 'FRI', income: 75, expense: 35 },
-            { name: 'SAT', income: 40, expense: 20 },
-            { name: 'SUN', income: 30, expense: 15 }
-        ]
-    }
-}
-</script>
 
 <style>
 .material-symbols-outlined {

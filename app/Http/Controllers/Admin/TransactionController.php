@@ -16,7 +16,9 @@ class TransactionController extends Controller
      */
     public function createTopUp()
     {
-        return view('pages.admin.transactions.topup');
+        return view('pages.admin.transactions.topup', [
+            'activeRole' => 'admin',
+        ]);
     }
 
     /**
@@ -77,7 +79,8 @@ class TransactionController extends Controller
             ->paginate(20);
 
         return view('pages.admin.transactions.santri-list', [
-            'santriList' => $santriList
+            'santriList' => $santriList,
+            'activeRole' => 'admin',
         ]);
     }
 
@@ -96,7 +99,8 @@ class TransactionController extends Controller
         return view('pages.admin.transactions.history', [
             'transactions' => $transactions,
             'totalMasuk' => $totalMasuk,
-            'totalKeluar' => $totalKeluar
+            'totalKeluar' => $totalKeluar,
+            'activeRole' => 'admin',
         ]);
     }
 

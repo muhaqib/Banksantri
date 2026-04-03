@@ -39,6 +39,7 @@ class DashboardController extends Controller
             'totalNominal' => $totalNominal,
             'successRate' => $successRate,
             'transaksiTerakhir' => $transaksiTerakhir,
+            'activeRole' => 'petugas',
         ]);
     }
 }

@@ -13,7 +13,9 @@ class TransaksiController extends Controller
 {
     public function index()
     {
-        return view('pages.petugas.transaksi');
+        return view('pages.petugas.transaksi', [
+            'activeRole' => 'petugas',
+        ]);
     }
 
     public function scanRfid(Request $request)

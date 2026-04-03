@@ -103,12 +103,6 @@
                     <span>Dashboard</span>
                 </a>
 
-                <!-- Cash Control -->
-                <a href="{{ route('admin.kas') }}" 
-                   class="{{ request()->routeIs('admin.kas') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">account_balance_wallet</span>
-                    <span>Cash Control</span>
-                </a>
 
                 <!-- Data Santri -->
                 <div x-data="{ open: {{ request()->routeIs('admin.santri.*') ? 'true' : 'false' }} }" class="my-1">
@@ -206,7 +200,7 @@
                 </a>
                 <a href="{{ route('petugas.transaksi') }}" 
                    class="{{ request()->routeIs('petugas.transaksi') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-filled">payments</span>
+                    <span class="material-symbols-outlined">payments</span>
                     <span>Transaksi</span>
                 </a>
                 <a href="{{ route('petugas.riwayat') }}" 
@@ -251,38 +245,7 @@
 
     <!-- Main Content Canvas -->
     <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen bg-surface">
-        <!-- Desktop Top Bar -->
-        <header class="hidden lg:flex fixed top-0 right-0 left-64 z-40 bg-surface/80 backdrop-blur-xl border-b border-outline-variant/10 px-6 py-3">
-            <div class="flex items-center justify-between w-full">
-                <div class="flex-1 max-w-xl">
-                    <div class="relative">
-                        <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant">search</span>
-                        <input class="w-full pl-10 pr-4 py-2 bg-surface-container-low border-none rounded-xl text-sm focus:ring-2 focus:ring-primary/20 transition-all" 
-                               placeholder="Search..." 
-                               type="text"/>
-                    </div>
-                </div>
-                <div class="flex items-center gap-3">
-                    <button class="p-2 text-on-surface-variant hover:bg-surface-container-low rounded-full transition-colors relative">
-                        <span class="material-symbols-outlined">notifications</span>
-                        <span class="absolute top-1.5 right-1.5 w-2 h-2 bg-error rounded-full"></span>
-                    </button>
-                    <div class="flex items-center gap-3 pl-4 border-l border-outline-variant/10">
-                        <div class="text-right hidden xl:block">
-                            <p class="font-headline font-bold text-sm text-on-surface">{{ auth()->user()->name ?? 'Admin' }}</p>
-                            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $activeRole }}</p>
-                        </div>
-                        <div class="w-9 h-9 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
-                            @if(auth()->user()->foto)
-                                <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="material-symbols-filled text-primary text-sm">account_circle</span>
-                            @endif
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </header>
+ 
 
         <!-- Page Content -->
         <div class="p-4 lg:p-8">

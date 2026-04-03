@@ -32,7 +32,7 @@ class LoginController extends Controller
             })
             ->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
+        if ($user && $this->verifyPassword($request->password, $user->password, $user)) {
             Auth::login($user, $request->filled('remember'));
             $request->session()->regenerate();
 
@@ -48,6 +48,69 @@ class LoginController extends Controller
         return back()->withErrors([
             'username' => 'Username, email, NIS, atau password salah.',
         ])->onlyInput('username');
+    }
+
+    /**
+     * Verify password with fallback support for non-bcrypt hashes.
+     * Temporarily supports MD5, SHA1, and plain text for migration purposes.
+     */
+    private function verifyPassword(string $password, string $hashedPassword, User $user): bool
+    {
+        // Try Bcrypt first (Laravel's default)
+        try {
+            if (Hash::check($password, $hashedPassword)) {
+                // Auto-rehash if password was using old algorithm
+                if (!$this->isBcryptHash($hashedPassword)) {
+                    $this->rehashUserPassword($user, $password);
+                }
+                return true;
+            }
+        } catch (\RuntimeException $e) {
+            // Password is not bcrypt, try other algorithms
+        }
+
+        // Fallback: Try MD5 (common in older systems)
+        if (md5($password) === $hashedPassword) {
+            $this->rehashUserPassword($user, $password);
+            return true;
+        }
+
+        // Fallback: Try SHA1
+        if (sha1($password) === $hashedPassword) {
+            $this->rehashUserPassword($user, $password);
+            return true;
+        }
+
+        // Fallback: Try plain text (NOT recommended, but for migration)
+        if ($password === $hashedPassword) {
+            $this->rehashUserPassword($user, $password);
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
+     * Check if hash is in bcrypt format.
+     */
+    private function isBcryptHash(string $hash): bool
+    {
+        return str_starts_with($hash, '$2y$') || str_starts_with($hash, '$2a$') || str_starts_with($hash, '$2b$');
+    }
+
+    /**
+     * Rehash user password with bcrypt.
+     */
+    private function rehashUserPassword(User $user, string $password): void
+    {
+        try {
+            $user->update([
+                'password' => Hash::make($password)
+            ]);
+        } catch (\Exception $e) {
+            // Log error but don't fail the login
+            \Log::warning('Failed to rehash password for user: ' . $user->id . ' - ' . $e->getMessage());
+        }
     }
 
     public function logout(Request $request)
