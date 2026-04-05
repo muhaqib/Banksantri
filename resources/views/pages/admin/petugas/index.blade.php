@@ -11,33 +11,33 @@
             <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Data Petugas</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola data petugas bank pesantren.</p>
         </div>
-        <a href="{{ route('admin.petugas.create') }}" class="btn-primary">
-            <span class="material-symbols-filled">add</span>
+        <a href="{{ route('admin.petugas.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+            <span class="material-symbols-outlined">add</span>
             <span>Tambah Petugas</span>
         </a>
     </div>
 
     <!-- Stats Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="card">
+        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-filled text-primary">group</span>
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">group</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Petugas</p>
             </div>
             <p class="text-3xl font-bold text-on-surface">{{ $petugasList->total() }}</p>
         </div>
-        
-        <div class="card">
+
+        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-filled text-primary">verified_user</span>
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
                 <p class="text-xs text-on-surface-variant font-medium">Petugas Aktif</p>
             </div>
             <p class="text-3xl font-bold text-primary">{{ $petugasList->total() }}</p>
         </div>
-        
-        <div class="card">
+
+        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-filled text-primary">work</span>
+                <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">work</span>
                 <p class="text-xs text-on-surface-variant font-medium">Jabatan</p>
             </div>
             <p class="text-lg font-bold text-on-surface">{{ $petugasList->getCollection()->pluck('jabatan')->unique()->count() }} Tipe</p>
@@ -45,12 +45,12 @@
     </div>
 
     <!-- Petugas List Table -->
-    <div class="card !p-0 overflow-hidden">
-        <div class="p-6 border-b border-outline-variant/10 flex items-center justify-between">
+    <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
+        <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Petugas</h3>
             <div class="flex gap-2">
-                <input type="text" placeholder="Cari petugas..." 
-                       class="input-field !py-2 !text-sm" style="width: 250px;">
+                <input type="text" placeholder="Cari petugas..."
+                       class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0">
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -125,10 +125,10 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Pagination -->
         @if($petugasList->hasPages())
-            <div class="p-6 border-t border-outline-variant/10">
+            <div class="p-6 border-t border-surface-container">
                 {{ $petugasList->links() }}
             </div>
         @endif
@@ -142,13 +142,13 @@
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
-            
+
             <div x-show="!loading && selectedPetugas" class="space-y-0">
                 <!-- Profile Header with Gradient -->
                 <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-8 pb-12">
                     <!-- Abstract Texture Overlay -->
                     <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                    
+
                     <div class="relative z-10">
                         <div class="flex items-start justify-between mb-6">
                             <div class="flex items-center gap-5">
@@ -173,158 +173,202 @@
                                 <span class="material-symbols-outlined text-white">close</span>
                             </button>
                         </div>
-                    </div>
-                </div>
-                
-                <!-- Content Section -->
-                <div class="px-8 -mt-6 pb-8 space-y-6">
-                    <!-- Personal Information -->
-                    <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+
+                        <!-- Personal Information -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
                             </div>
-                            <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Email</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.email || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.no_hp || '-'"></p>
-                            </div>
-                            <div class="col-span-2">
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
-                                <p class="font-medium text-on-surface text-sm leading-relaxed" x-text="selectedPetugas.alamat || '-'"></p>
+
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Email</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.email || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.no_hp || '-'"></p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
+                                    <p class="font-medium text-on-surface text-sm leading-relaxed" x-text="selectedPetugas.alamat || '-'"></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Professional Information -->
-                    <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">work</span>
+
+                        <!-- Professional Information -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">work</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Jabatan</h4>
                             </div>
-                            <h4 class="font-headline font-bold text-on-surface">Informasi Jabatan</h4>
+
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Jabatan</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.jabatan || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">NIP</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.nip || '-'"></p>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Jabatan</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.jabatan || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">NIP</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedPetugas.nip || '-'"></p>
-                            </div>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 pt-2">
+                            <button @click="showDetailModal = false; openEditModal(selectedPetugas.id)" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                                <span>Edit Data</span>
+                            </button>
+                            <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
+                                Tutup
+                            </button>
                         </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex gap-3 pt-2">
-                        <button @click="showDetailModal = false; openEditModal(selectedPetugas.id)" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-sm">edit</span>
-                            <span>Edit Data</span>
-                        </button>
-                        <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
-                            Tutup
-                        </button>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 <!-- Edit Modal -->
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-2xl shadow-2xl max-w-2xl w-full p-6 animate-scale-in" @click.stop>
-            <div class="flex items-center justify-between mb-6">
-                <h3 class="font-headline font-bold text-xl text-on-surface">Edit Data Petugas</h3>
-                <button @click="showEditModal = false" class="p-2 hover:bg-surface-container-high rounded-full transition-colors">
-                    <span class="material-symbols-outlined text-on-surface-variant">close</span>
-                </button>
+        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
+            <div x-show="loading" class="flex items-center justify-center py-24">
+                <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
-            
-            <div x-show="loading" class="flex items-center justify-center py-12">
-                <span class="material-symbols-outlined text-primary animate-spin">progress_activity</span>
+
+            <div x-show="!loading && selectedPetugas" class="flex flex-col h-full">
+                <!-- Header -->
+                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-6 pb-4 flex-shrink-0">
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <h3 class="font-headline font-bold text-2xl text-white tracking-tight">Edit Data Petugas</h3>
+                            <p class="text-sm text-white/80 mt-1">Ubah informasi petugas</p>
+                        </div>
+                        <button @click="showEditModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
+                            <span class="material-symbols-outlined text-white">close</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Form Section (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-6 pb-6 z-50">
+                    <form :id="`edit-petugas-form-${selectedPetugas.id}`" :action="`/admin/petugas/${selectedPetugas.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
+                        @csrf
+                        @method('PUT')
+
+                        <!-- Photo Upload -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-5">
+                            <div class="flex items-center gap-4">
+                                <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden ring-2 ring-primary/20">
+                                    <template x-if="editData.foto_preview">
+                                        <img :src="editData.foto_preview" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!editData.foto_preview && selectedPetugas.foto_url">
+                                        <img :src="selectedPetugas.foto_url" class="w-full h-full object-cover">
+                                    </template>
+                                    <template x-if="!editData.foto_preview && !selectedPetugas.foto_url">
+                                        <span x-text="selectedPetugas.name ? selectedPetugas.name.substring(0, 2).toUpperCase() : ''"></span>
+                                    </template>
+                                </div>
+                                <div class="flex-1">
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Foto Profil</label>
+                                    <input type="file" name="foto" accept="image/*" @change="handleFotoUpload" class="text-sm text-on-surface-variant file:mr-3 file:py-2 file:px-3 file:rounded-lg file:border-0 file:text-xs file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Personal Info -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">person</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nama Lengkap <span class="text-error">*</span></label>
+                                <input type="text" name="name" x-model="editData.name" required class="input-field w-full">
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Email <span class="text-error">*</span></label>
+                                <input type="email" name="email" x-model="editData.email" required class="input-field w-full">
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">NIP</label>
+                                    <input type="text" name="nip" x-model="editData.nip" class="input-field w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP</label>
+                                    <input type="text" name="no_hp" x-model="editData.no_hp" class="input-field w-full">
+                                </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Alamat</label>
+                                <textarea name="alamat" rows="3" x-model="editData.alamat" class="input-field w-full"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Professional Info -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">work</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Jabatan</h4>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Jabatan <span class="text-error">*</span></label>
+                                <input type="text" name="jabatan" x-model="editData.jabatan" required class="input-field w-full">
+                            </div>
+                        </div>
+
+                        <!-- Account Settings -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">settings</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Pengaturan Akun</h4>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Password Baru (Opsional)</label>
+                                <input type="password" name="password" class="input-field w-full" placeholder="Kosongkan jika tidak ingin mengubah">
+                            </div>
+                        </div>
+                    </form>
+
+                    <!-- Submit Buttons -->
+                    <div class="flex gap-4 p-5">
+                        <button type="button" @click="showEditModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
+                            Batal
+                        </button>
+                        <button type="submit" :form="`edit-petugas-form-${selectedPetugas.id}`" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">save</span>
+                            <span>Simpan Perubahan</span>
+                        </button>
+                    </div>
+                </div>
             </div>
-            
-            <form x-show="!loading && selectedPetugas" :action="`/admin/petugas/${selectedPetugas.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 max-h-[70vh] overflow-y-auto pr-2">
-                @csrf
-                @method('PUT')
-                
-                <div class="flex items-center gap-4 p-4 bg-surface-container-lowest rounded-xl">
-                    <div class="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden flex-shrink-0">
-                        <template x-if="editData.foto_preview">
-                            <img :src="editData.foto_preview" class="w-full h-full object-cover">
-                        </template>
-                        <template x-if="!editData.foto_preview && selectedPetugas.foto_url">
-                            <img :src="selectedPetugas.foto_url" class="w-full h-full object-cover">
-                        </template>
-                        <template x-if="!editData.foto_preview && !selectedPetugas.foto_url">
-                            <span x-text="selectedPetugas.name ? selectedPetugas.name.substring(0, 2).toUpperCase() : ''"></span>
-                        </template>
-                    </div>
-                    <div class="flex-1">
-                        <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Foto Profil</label>
-                        <input type="file" name="foto" accept="image/*" @change="handleFotoUpload" class="text-sm text-on-surface-variant file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold file:bg-primary/10 file:text-primary hover:file:bg-primary/20">
-                    </div>
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nama Lengkap <span class="text-error">*</span></label>
-                        <input type="text" name="name" :value="selectedPetugas.name" required class="input-field w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Jabatan <span class="text-error">*</span></label>
-                        <input type="text" name="jabatan" :value="selectedPetugas.jabatan" required class="input-field w-full">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Email <span class="text-error">*</span></label>
-                    <input type="email" name="email" :value="selectedPetugas.email" required class="input-field w-full">
-                </div>
-                
-                <div class="grid grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">NIP</label>
-                        <input type="text" name="nip" :value="selectedPetugas.nip" class="input-field w-full">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP</label>
-                        <input type="text" name="no_hp" :value="selectedPetugas.no_hp" class="input-field w-full">
-                    </div>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Alamat</label>
-                    <textarea name="alamat" rows="3" class="input-field w-full" x-text="selectedPetugas.alamat"></textarea>
-                </div>
-                
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Password Baru (Opsional)</label>
-                    <input type="password" name="password" class="input-field w-full" placeholder="Kosongkan jika tidak ingin mengubah">
-                </div>
-                
-                <div class="flex gap-3 pt-4 sticky bottom-0 bg-surface pb-2">
-                    <button type="button" @click="showEditModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-3 px-4 rounded-xl hover:bg-surface-container transition-all">
-                        Batal
-                    </button>
-                    <button type="submit" class="flex-1 bg-primary text-on-primary font-bold py-3 px-4 rounded-xl hover:shadow-lg transition-all">
-                        Simpan Perubahan
-                    </button>
-                </div>
-            </form>
         </div>
     </div>
+</div>
 
 <style>
 .material-symbols-outlined {
@@ -342,10 +386,22 @@ function petugasApp() {
         showEditModal: false,
         loading: false,
         selectedPetugas: null,
+        csrfToken: '',
         editData: {
-            foto_preview: null
+            foto_preview: null,
+            name: '',
+            email: '',
+            nip: '',
+            jabatan: '',
+            no_hp: '',
+            alamat: ''
         },
-        
+
+        init() {
+            // Initialize CSRF token
+            this.csrfToken = document.querySelector('meta[name="csrf-token"]')?.getAttribute('content') || '';
+        },
+
         async openDetailModal(id) {
             console.log('Opening detail modal for petugas ID:', id);
             this.loading = true;
@@ -379,6 +435,14 @@ function petugasApp() {
                 const data = await response.json();
                 this.selectedPetugas = data.petugas;
                 this.selectedPetugas.foto_url = data.foto_url;
+                
+                // Initialize editData with current values
+                this.editData.name = data.petugas.name || '';
+                this.editData.email = data.petugas.email || '';
+                this.editData.nip = data.petugas.nip || '';
+                this.editData.jabatan = data.petugas.jabatan || '';
+                this.editData.no_hp = data.petugas.no_hp || '';
+                this.editData.alamat = data.petugas.alamat || '';
             } catch (error) {
                 console.error('Error loading petugas data:', error);
                 alert('Gagal memuat data petugas: ' + error.message);
@@ -386,7 +450,7 @@ function petugasApp() {
                 this.loading = false;
             }
         },
-        
+
         handleFotoUpload(event) {
             const file = event.target.files[0];
             if (file) {

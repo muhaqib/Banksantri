@@ -7,7 +7,7 @@
     <meta name="theme-color" content="#004d4c">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <title>@yield('title', 'Bank Pesantren') - Santri</title>
+    <title>@yield('title', 'Mawa Smart') - Santri</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">

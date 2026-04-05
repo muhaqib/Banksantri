@@ -18,7 +18,7 @@
     </div>
 
     <!-- Bento Financial Widgets -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 mt-4 gap-6">
         <!-- Total Top Up Santri Hari Ini -->
         <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
@@ -79,7 +79,7 @@
     </div>
 
     <!-- Main Layout Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
         <!-- Left Column: Actions & Trends -->
         <div class="lg:col-span-8 space-y-6">
             <!-- Top Up Verification Quick Actions -->
@@ -232,7 +232,7 @@
 
         <!-- Right Column: Settlement Activity -->
         <div class="lg:col-span-4 space-y-6">
-            <div class="bg-surface-container-lowest rounded-xl shadow-sm sticky top-24">
+            <div class="bg-surface-container-lowest rounded-xl shadow-sm top-24">
                 <div class="p-6 border-b border-surface-container">
                     <h3 class="font-headline font-bold text-xl text-primary">Recent Settlements</h3>
                     <p class="text-xs text-on-surface-variant">Petugas payout requests</p>

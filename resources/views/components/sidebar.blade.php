@@ -6,7 +6,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
-    <title>@yield('title', 'Bank Pesantren')</title>
+    <title>@yield('title', 'Mawa Smart')</title>
     
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
@@ -38,9 +38,9 @@
             </button>
             <div class="flex items-center gap-2">
                 <div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
-                    <span class="material-symbols-filled text-white text-sm">mh</span>
+                    <span class="material-symbols-outlined text-white text-sm">mh</span>
                 </div>
-                <h1 class="font-headline font-bold text-primary text-sm">Bank Pesantren</h1>
+                <h1 class="font-headline font-bold text-primary text-sm">Mawa Smart</h1>
             </div>
         </div>
         <div class="flex items-center gap-2">
@@ -48,7 +48,7 @@
                 @if(auth()->user()->foto)
                     <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                 @else
-                    <span class="material-symbols-filled text-primary text-sm">account_circle</span>
+                    <span class="material-symbols-outlined text-primary text-sm">account_circle</span>
                 @endif
             </div>
         </div>
@@ -77,7 +77,7 @@
                         <span class="material-symbols-filled text-white">mh</span>
                     </div>
                     <div>
-                        <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Bank Pesantren</h1>
+                        <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Mawa Smart</h1>
                         <p class="text-xs tracking-wide text-on-surface-variant">
                             @if($activeRole === 'admin')
                                 Super Admin
@@ -224,7 +224,7 @@
                         @if(auth()->user()->foto)
                             <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
                         @else
-                            <span class="material-symbols-filled text-primary">account_circle</span>
+                            <span class="material-symbols-outlined text-primary">account_circle</span>
                         @endif
                     </div>
                     <div class="flex-1 min-w-0">
@@ -252,7 +252,7 @@
             @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
                      class="mb-6 p-4 bg-primary-fixed rounded-xl border border-primary/20 text-on-primary-container flex items-center gap-3 animate-slide-in">
-                    <span class="material-symbols-filled text-primary">check_circle</span>
+                    <span class="material-symbols-outlined text-primary">check_circle</span>
                     <div class="flex-1">
                         <p class="font-bold text-primary">{{ session('success') }}</p>
                     </div>

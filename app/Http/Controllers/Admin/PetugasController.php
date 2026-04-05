@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -93,10 +94,6 @@ class PetugasController extends Controller
      */
     public function update(Request $request, User $petugas)
     {
-        if ($petugas->role !== 'petugas') {
-            abort(403);
-        }
-
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users,email,' . $petugas->id,
@@ -108,13 +105,15 @@ class PetugasController extends Controller
             'alamat' => 'nullable|string',
         ]);
 
+        // Build data array for update
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
-            'nip' => $validated['nip'] ?? null,
+            'nip' => $validated['nip'] ?? $petugas->nip,
             'jabatan' => $validated['jabatan'],
-            'no_hp' => $validated['no_hp'] ?? null,
-            'alamat' => $validated['alamat'] ?? null,
+            'no_hp' => $validated['no_hp'] ?? $petugas->no_hp,
+            'alamat' => $validated['alamat'] ?? $petugas->alamat,
+            'updated_at' => now(),
         ];
 
         // Handle foto upload
@@ -122,15 +121,31 @@ class PetugasController extends Controller
             if ($petugas->foto) {
                 Storage::disk('public')->delete($petugas->foto);
             }
-            $data['foto'] = $request->file('foto')->store('fotos/petugas', 'public');
+            $fotoPath = $request->file('foto')->store('fotos/petugas', 'public');
+            $data['foto'] = $fotoPath;
         }
 
-        // Update password if provided
-        if ($validated['password']) {
+        // Update password only if provided
+        if (!empty($validated['password'])) {
             $data['password'] = Hash::make($validated['password']);
         }
 
-        $petugas->update($data);
+        // Log the update for debugging
+        \Log::info('Updating petugas', [
+            'id' => $petugas->id,
+            'name' => $validated['name'],
+            'email' => $validated['email']
+        ]);
+
+        // Use direct database update to avoid issues with Eloquent model casts
+        $updated = DB::table('users')
+            ->where('id', $petugas->id)
+            ->update($data);
+
+        if (!$updated) {
+            \Log::error('Failed to update petugas', ['id' => $petugas->id]);
+            return back()->withErrors(['error' => 'Gagal mengupdate data petugas']);
+        }
 
         return redirect()->route('admin.petugas.index')
             ->with('success', 'Data petugas berhasil diupdate!');
@@ -141,15 +156,25 @@ class PetugasController extends Controller
      */
     public function destroy(User $petugas)
     {
-        if ($petugas->role !== 'petugas') {
-            abort(403);
-        }
-
         if ($petugas->foto) {
             Storage::disk('public')->delete($petugas->foto);
         }
 
-        $petugas->delete();
+        // Log the delete for debugging
+        \Log::info('Deleting petugas', [
+            'id' => $petugas->id,
+            'name' => $petugas->name
+        ]);
+
+        // Use direct database delete to avoid any Eloquent model issues
+        $deleted = DB::table('users')
+            ->where('id', $petugas->id)
+            ->delete();
+
+        if (!$deleted) {
+            \Log::error('Failed to delete petugas', ['id' => $petugas->id]);
+            return back()->withErrors(['error' => 'Gagal menghapus data petugas']);
+        }
 
         return redirect()->route('admin.petugas.index')
             ->with('success', 'Data petugas berhasil dihapus!');

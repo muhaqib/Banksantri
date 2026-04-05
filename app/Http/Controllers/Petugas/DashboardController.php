@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Petugas;
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
 
 class DashboardController extends Controller
 {
@@ -32,6 +33,23 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Get weekly transaction data (last 7 days)
+        $weeklyData = [];
+        $days = ['SUN', 'MON', 'TUE', 'WED', 'THU', 'FRI', 'SAT'];
+        
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i);
+            $count = Transaction::where('petugas_id', $petugas->id)
+                ->whereDate('created_at', $date)
+                ->count();
+            
+            $weeklyData[] = [
+                'name' => $days[$date->dayOfWeek],
+                'value' => $count,
+                'date' => $date->format('Y-m-d')
+            ];
+        }
+
         return view('pages.petugas.dashboard', [
             'saldoDigital' => $petugas->saldo ?? 0,
             'penghasilanHariIni' => $totalNominal, // Assuming all transactions are income for petugas
@@ -39,6 +57,7 @@ class DashboardController extends Controller
             'totalNominal' => $totalNominal,
             'successRate' => $successRate,
             'transaksiTerakhir' => $transaksiTerakhir,
+            'weeklyData' => $weeklyData,
             'activeRole' => 'petugas',
         ]);
     }

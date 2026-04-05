@@ -21,11 +21,11 @@
                     @if(auth()->user()->foto)
                         <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover rounded-full">
                     @else
-                        <span class="material-symbols-filled text-white text-5xl">account_circle</span>
+                        <span class="material-symbols-outlined text-white text-5xl">account_circle</span>
                     @endif
                 </div>
                 <div class="absolute -bottom-2 -right-2 bg-tertiary-container text-on-tertiary-container w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface">
-                    <span class="material-symbols-filled text-sm">verified</span>
+                    <span class="material-symbols-outlined text-sm">verified</span>
                 </div>
             </div>
             
@@ -120,9 +120,9 @@
     </div>
 
     <!-- Change PIN Modal -->
-    <div x-show="showChangePin" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity"></div>
-        <div class="flex items-center justify-center min-h-screen p-4">
+    <div x-show="showChangePin" x-cloak class="fixed inset-0 z-100 overflow-y-auto">
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40"></div>
+        <div class="flex items-center justify-center min-h-screen p-4 relative z-50">
             <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in">
                 <div class="text-center mb-6">
                     <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">

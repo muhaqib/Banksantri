@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
 
@@ -108,7 +109,7 @@ class SantriController extends Controller
     public function update(Request $request, User $santri)
     {
         if ($santri->role !== 'santri') {
-            abort(403);
+            abort(404);
         }
 
         $validated = $request->validate([
@@ -129,19 +130,21 @@ class SantriController extends Controller
             'kelas' => 'nullable|string|max:50',
         ]);
 
+        // Build data array for update
         $data = [
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nis' => $validated['nis'],
             'saldo' => $validated['saldo'] ?? $santri->saldo,
-            'no_hp' => $validated['no_hp'] ?? null,
-            'alamat' => $validated['alamat'] ?? null,
-            'tempat_lahir' => $validated['tempat_lahir'] ?? null,
-            'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
-            'nama_wali' => $validated['nama_wali'] ?? null,
-            'no_hp_wali' => $validated['no_hp_wali'] ?? null,
-            'asal_sekolah' => $validated['asal_sekolah'] ?? null,
-            'kelas' => $validated['kelas'] ?? null,
+            'no_hp' => $validated['no_hp'] ?? $santri->no_hp,
+            'alamat' => $validated['alamat'] ?? $santri->alamat,
+            'tempat_lahir' => $validated['tempat_lahir'] ?? $santri->tempat_lahir,
+            'tanggal_lahir' => $validated['tanggal_lahir'] ?? $santri->tanggal_lahir,
+            'nama_wali' => $validated['nama_wali'] ?? $santri->nama_wali,
+            'no_hp_wali' => $validated['no_hp_wali'] ?? $santri->no_hp_wali,
+            'asal_sekolah' => $validated['asal_sekolah'] ?? $santri->asal_sekolah,
+            'kelas' => $validated['kelas'] ?? $santri->kelas,
+            'updated_at' => now(),
         ];
 
         // Handle foto upload
@@ -163,7 +166,10 @@ class SantriController extends Controller
             $data['pin'] = $validated['pin'];
         }
 
-        $santri->update($data);
+        // Use direct database update to avoid issues with Eloquent model casts
+        DB::table('users')
+            ->where('id', $santri->id)
+            ->update($data);
 
         return redirect()->route('admin.santri.index')
             ->with('success', 'Data santri berhasil diupdate!');
@@ -175,7 +181,7 @@ class SantriController extends Controller
     public function destroy(User $santri)
     {
         if ($santri->role !== 'santri') {
-            abort(403);
+            abort(404);
         }
 
         // Delete foto if exists
@@ -183,7 +189,10 @@ class SantriController extends Controller
             Storage::disk('public')->delete($santri->foto);
         }
 
-        $santri->delete();
+        // Use direct database delete to avoid any Eloquent model issues
+        DB::table('users')
+            ->where('id', $santri->id)
+            ->delete();
 
         return redirect()->route('admin.santri.index')
             ->with('success', 'Data santri berhasil dihapus!');

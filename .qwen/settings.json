@@ -5,7 +5,12 @@
       "Bash(npm run *)",
       "Bash(npm install)",
       "Bash(php *)",
-      "Bash(rm *)"
+      "Bash(rm *)",
+      "Bash(ls *)",
+      "Bash(sleep *)",
+      "Bash(curl *)",
+      "Bash(cut *)",
+      "Bash(pkill *)"
     ]
   },
   "$version": 3

@@ -114,6 +114,16 @@
             </button>
         </form>
 
+        <!-- Register Link (Admin Only) -->
+        <div class="mt-6 text-center" x-show="role === 'admin'">
+            <p class="text-sm text-on-surface-variant">
+                Belum punya akun admin? 
+                <a href="{{ route('register') }}" class="text-primary font-semibold hover:text-primary-container transition-colors">
+                    Daftar Sekarang
+                </a>
+            </p>
+        </div>
+
         <!-- Biometric Section (Optional) -->
         <section class="mt-8 mb-6" x-data="{ biometricEnabled: false }">
             <div class="bg-surface-container-low rounded-2xl p-6 relative overflow-hidden flex items-center gap-4">

@@ -26,7 +26,7 @@
             </div>
             <p class="text-3xl font-bold text-on-surface">{{ $santriList->total() }}</p>
         </div>
-        
+
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
@@ -34,7 +34,7 @@
             </div>
             <p class="text-3xl font-bold text-primary">Rp {{ number_format($santriList->getCollection()->sum('saldo'), 0, ',', '.') }}</p>
         </div>
-        
+
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">add_card</span>
@@ -52,7 +52,7 @@
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex gap-2">
-                <input type="text" placeholder="Cari santri..." 
+                <input type="text" placeholder="Cari santri..."
                        class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0">
             </div>
         </div>
@@ -128,7 +128,7 @@
                 </tbody>
             </table>
         </div>
-        
+
         <!-- Pagination -->
         @if($santriList->hasPages())
             <div class="p-6 border-t border-surface-container">
@@ -145,13 +145,13 @@
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
-            
+
             <div x-show="!loading && selectedSantri" class="space-y-0">
                 <!-- Profile Header with Gradient -->
                 <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-8 pb-12">
                     <!-- Abstract Texture Overlay -->
                     <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-                    
+
                     <div class="relative z-10">
                         <div class="flex items-start justify-between mb-6">
                             <div class="flex items-center gap-5">
@@ -176,92 +176,92 @@
                                 <span class="material-symbols-outlined text-white">close</span>
                             </button>
                         </div>
-                    </div>
-                
-                    <!-- Personal Information -->
-                    <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+
+                        <!-- Personal Information -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
                             </div>
-                            <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Email</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.email || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tempat Lahir</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.tempat_lahir || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tanggal Lahir</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="formatDate(selectedSantri.tanggal_lahir)"></p>
-                            </div>
-                            <div class="col-span-2">
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
-                                <p class="font-medium text-on-surface text-sm leading-relaxed" x-text="selectedSantri.alamat || '-'"></p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <!-- Academic Information -->
-                    <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
-                            </div>
-                            <h4 class="font-headline font-bold text-on-surface">Informasi Akademik</h4>
-                        </div>
-                        
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kelas</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kelas || '-'"></p>
-                            </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Asal Sekolah</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.asal_sekolah || '-'"></p>
+
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Email</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.email || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tempat Lahir</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.tempat_lahir || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tanggal Lahir</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="formatDate(selectedSantri.tanggal_lahir)"></p>
+                                </div>
+                                <div class="col-span-2">
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
+                                    <p class="font-medium text-on-surface text-sm leading-relaxed" x-text="selectedSantri.alamat || '-'"></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Guardian Information -->
-                    <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4">
-                        <div class="flex items-center gap-3 mb-4">
-                            <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">family_home</span>
+
+                        <!-- Academic Information -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Informasi Akademik</h4>
                             </div>
-                            <h4 class="font-headline font-bold text-on-surface">Data Wali</h4>
+
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kelas</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kelas || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Asal Sekolah</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.asal_sekolah || '-'"></p>
+                                </div>
+                            </div>
                         </div>
-                        
-                        <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Nama Wali</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.nama_wali || '-'"></p>
+
+                        <!-- Guardian Information -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                            <div class="flex items-center gap-3 mb-4">
+                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">family_home</span>
+                                </div>
+                                <h4 class="font-headline font-bold text-on-surface">Data Wali</h4>
                             </div>
-                            <div>
-                                <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP Wali</p>
-                                <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp_wali || '-'"></p>
+
+                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Nama Wali</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.nama_wali || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP Wali</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp_wali || '-'"></p>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                    
-                    <!-- Action Buttons -->
-                    <div class="flex gap-3 pt-2">
-                        <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-sm">edit</span>
-                            <span>Edit Data</span>
-                        </button>
-                        <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
-                            Tutup
-                        </button>
+
+                        <!-- Action Buttons -->
+                        <div class="flex gap-3 pt-2">
+                            <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                                <span>Edit Data</span>
+                            </button>
+                            <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
+                                Tutup
+                            </button>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -273,14 +273,14 @@
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in" @click.stop>
+        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
-            
-            <div x-show="!loading && selectedSantri" class="space-y-0">
+
+            <div x-show="!loading && selectedSantri" class="flex flex-col h-full">
                 <!-- Header -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-6 pb-8">
+                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-6 pb-4 flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-headline font-bold text-2xl text-white tracking-tight">Edit Data Santri</h3>
@@ -289,11 +289,15 @@
                         <button @click="showEditModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
                             <span class="material-symbols-outlined text-white">close</span>
                         </button>
-                        <div class="px-6 -mt-4 pb-6 max-h-[65vh] overflow-y-auto">
-                    <form :id="`edit-santri-form-${selectedSantri.id}`" :action="`/admin/santri/${selectedSantri.id}`" method="POST" enctype="multipart/form-data" class="space-y-4">
+                    </div>
+                </div>
+
+                <!-- Form Section (Scrollable) -->
+                <div class="flex-1 overflow-y-auto px-6 pb-6 z-50">
+                    <form :id="`edit-santri-form-${selectedSantri.id}`" :action="`/admin/santri/${selectedSantri.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
                         @csrf
                         @method('PUT')
-                        
+
                         <!-- Photo Upload -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5">
                             <div class="flex items-center gap-4">
@@ -314,7 +318,7 @@
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Personal Info -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -323,35 +327,35 @@
                                 </div>
                                 <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
                             </div>
-                            
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nama Lengkap <span class="text-error">*</span></label>
-                                    <input type="text" name="name" :value="selectedSantri.name" required class="input-field w-full">
+                                    <input type="text" name="name" x-model="editData.name" required class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">NIS <span class="text-error">*</span></label>
-                                    <input type="text" name="nis" :value="selectedSantri.nis" required class="input-field w-full">
+                                    <input type="text" name="nis" x-model="editData.nis" required class="input-field w-full">
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Email <span class="text-error">*</span></label>
-                                <input type="email" name="email" :value="selectedSantri.email" required class="input-field w-full">
+                                <input type="email" name="email" x-model="editData.email" required class="input-field w-full">
                             </div>
-                            
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP</label>
-                                    <input type="text" name="no_hp" :value="selectedSantri.no_hp" class="input-field w-full">
+                                    <input type="text" name="no_hp" x-model="editData.no_hp" class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
-                                    <input type="text" name="kelas" :value="selectedSantri.kelas" class="input-field w-full">
+                                    <input type="text" name="kelas" x-model="editData.kelas" class="input-field w-full">
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Birth Info -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -360,19 +364,19 @@
                                 </div>
                                 <h4 class="font-headline font-bold text-on-surface">Tempat & Tanggal Lahir</h4>
                             </div>
-                            
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat Lahir</label>
-                                    <input type="text" name="tempat_lahir" :value="selectedSantri.tempat_lahir" class="input-field w-full">
+                                    <input type="text" name="tempat_lahir" x-model="editData.tempat_lahir" class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tanggal Lahir</label>
-                                    <input type="date" name="tanggal_lahir" :value="selectedSantri.tanggal_lahir" class="input-field w-full">
+                                    <input type="date" name="tanggal_lahir" x-model="editData.tanggal_lahir" class="input-field w-full">
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Guardian Info -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -381,32 +385,32 @@
                                 </div>
                                 <h4 class="font-headline font-bold text-on-surface">Data Wali</h4>
                             </div>
-                            
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nama Wali</label>
-                                    <input type="text" name="nama_wali" :value="selectedSantri.nama_wali" class="input-field w-full">
+                                    <input type="text" name="nama_wali" x-model="editData.nama_wali" class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP Wali</label>
-                                    <input type="text" name="no_hp_wali" :value="selectedSantri.no_hp_wali" class="input-field w-full">
+                                    <input type="text" name="no_hp_wali" x-model="editData.no_hp_wali" class="input-field w-full">
                                 </div>
                             </div>
                         </div>
-                        
+
                         <!-- Additional Info -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
                             <div>
                                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Asal Sekolah</label>
-                                <input type="text" name="asal_sekolah" :value="selectedSantri.asal_sekolah" class="input-field w-full">
+                                <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
                             </div>
-                            
+
                             <div>
                                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Alamat</label>
-                                <textarea name="alamat" rows="3" class="input-field w-full" x-text="selectedSantri.alamat"></textarea>
+                                <textarea name="alamat" rows="3" x-model="editData.alamat" class="input-field w-full"></textarea>
                             </div>
                         </div>
-                        
+
                         <!-- Account Settings -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
@@ -415,29 +419,25 @@
                                 </div>
                                 <h4 class="font-headline font-bold text-on-surface">Pengaturan Akun</h4>
                             </div>
-                            
+
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Saldo (Rp)</label>
-                                    <input type="number" name="saldo" :value="selectedSantri.saldo" step="0.01" class="input-field w-full">
+                                    <input type="number" name="saldo" x-model="editData.saldo" step="0.01" class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">PIN Baru (Opsional)</label>
                                     <input type="password" name="pin" maxlength="6" pattern="[0-9]{6}" class="input-field w-full" placeholder="6 digit PIN">
                                 </div>
                             </div>
-                            
+
                             <div>
                                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Password Baru (Opsional)</label>
                                 <input type="password" name="password" class="input-field w-full" placeholder="Kosongkan jika tidak ingin mengubah">
                             </div>
                         </div>
                     </form>
-                </div>
-                
-                <!-- Fixed Bottom Buttons -->
-                <div class="fixed bottom-0 left-0 right-0 bg-surface/95 backdrop-blur-md border-t border-outline-variant/10 p-4 z-10">
-                    <div class="max-w-2xl mx-auto flex gap-3">
+                    <div class="flex gap-4 p-5">
                         <button type="button" @click="showEditModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
                             Batal
                         </button>
@@ -447,8 +447,9 @@
                         </button>
                     </div>
                 </div>
-                    </div>
-                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <style>
@@ -465,7 +466,19 @@ function santriApp() {
         loading: false,
         selectedSantri: null,
         editData: {
-            foto_preview: null
+            foto_preview: null,
+            name: '',
+            email: '',
+            nis: '',
+            no_hp: '',
+            kelas: '',
+            tempat_lahir: '',
+            tanggal_lahir: '',
+            nama_wali: '',
+            no_hp_wali: '',
+            asal_sekolah: '',
+            alamat: '',
+            saldo: 0
         },
 
         async openDetailModal(id) {
@@ -501,6 +514,20 @@ function santriApp() {
                 const data = await response.json();
                 this.selectedSantri = data.santri;
                 this.selectedSantri.foto_url = data.foto_url;
+                
+                // Initialize editData with current values
+                this.editData.name = data.santri.name || '';
+                this.editData.email = data.santri.email || '';
+                this.editData.nis = data.santri.nis || '';
+                this.editData.no_hp = data.santri.no_hp || '';
+                this.editData.kelas = data.santri.kelas || '';
+                this.editData.tempat_lahir = data.santri.tempat_lahir || '';
+                this.editData.tanggal_lahir = data.santri.tanggal_lahir || '';
+                this.editData.nama_wali = data.santri.nama_wali || '';
+                this.editData.no_hp_wali = data.santri.no_hp_wali || '';
+                this.editData.asal_sekolah = data.santri.asal_sekolah || '';
+                this.editData.alamat = data.santri.alamat || '';
+                this.editData.saldo = data.santri.saldo || 0;
             } catch (error) {
                 console.error('Error loading santri data:', error);
                 alert('Gagal memuat data santri: ' + error.message);
@@ -508,7 +535,7 @@ function santriApp() {
                 this.loading = false;
             }
         },
-        
+
         handleFotoUpload(event) {
             const file = event.target.files[0];
             if (file) {
@@ -519,11 +546,11 @@ function santriApp() {
                 reader.readAsDataURL(file);
             }
         },
-        
+
         formatNumber(num) {
             return new Intl.NumberFormat('id-ID').format(num);
         },
-        
+
         formatDate(dateStr) {
             if (!dateStr) return '-';
             const date = new Date(dateStr);

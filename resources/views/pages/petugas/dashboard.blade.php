@@ -26,7 +26,7 @@
                     </a>
                 </div>
                 
-                <p class="text-primary-fixed font-medium mb-1 opacity-90">Current Digital Balance</p>
+                <p class="text-primary-fixed font-medium mb-1 opacity-90">Saldo Digital Anda </p>
                 <h3 class="text-5xl font-extrabold font-headline tracking-tighter">Rp {{ number_format($saldoDigital ?? 0, 0, ',', '.') }}</h3>
                 <p class="text-sm mt-4 text-primary-fixed-dim">Verified funds ready for settlement</p>
             </div>
@@ -158,17 +158,11 @@
 <script>
 function petugasDashboard() {
     return {
-        weeklyData: [
-            { name: 'MON', value: 12 },
-            { name: 'TUE', value: 18 },
-            { name: 'WED', value: 15 },
-            { name: 'THU', value: 22 },
-            { name: 'FRI', value: 20 },
-            { name: 'SAT', value: 10 },
-            { name: 'SUN', value: 8 }
-        ],
+        weeklyData: @json($weeklyData ?? []),
         get maxWeeklyValue() {
-            return Math.max(...this.weeklyData.map(d => d.value));
+            if (this.weeklyData.length === 0) return 1;
+            const max = Math.max(...this.weeklyData.map(d => d.value));
+            return max > 0 ? max : 1;
         }
     }
 }
