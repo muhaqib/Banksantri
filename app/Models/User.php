@@ -133,4 +133,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(TopUpRequest::class, 'admin_id');
     }
+
+    /**
+     * Get all prestasi for this user (as santri).
+     */
+    public function prestasi()
+    {
+        return $this->hasMany(PrestasiSantri::class, 'santri_id');
+    }
 }

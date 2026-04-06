@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-tint": "#076968",
+                    "on-tertiary": "#ffffff",
+                    "on-primary-container": "#94e2e0",
+                    "secondary-fixed-dim": "#c4c9b1",
+                    "secondary-fixed": "#e0e5cc",
+                    "secondary": "#5c614d",
+                    "on-tertiary-container": "#503d00",
+                    "surface-bright": "#f8fafa",
+                    "primary": "#004d4c",
+                    "on-primary-fixed": "#00201f",
+                    "surface-variant": "#e1e3e3",
+                    "inverse-surface": "#2e3131",
+                    "on-secondary": "#ffffff",
+                    "on-error": "#ffffff",
+                    "on-surface": "#191c1d",
+                    "on-secondary-fixed": "#191d0e",
+                    "inverse-on-surface": "#eff1f1",
+                    "error": "#ba1a1a",
+                    "primary-container": "#006766",
+                    "surface": "#f8fafa",
+                    "surface-container-lowest": "#ffffff",
+                    "on-secondary-fixed-variant": "#444936",
+                    "on-secondary-container": "#606551",
+                    "primary-fixed-dim": "#86d4d2",
+                    "primary-fixed": "#a2f0ee",
+                    "tertiary-fixed": "#ffdf90",
+                    "surface-container": "#eceeee",
+                    "on-primary": "#ffffff",
+                    "error-container": "#ffdad6",
+                    "on-tertiary-fixed-variant": "#584400",
+                    "on-background": "#191c1d",
+                    "outline": "#6f7978",
+                    "tertiary-fixed-dim": "#eac254",
+                    "surface-dim": "#d8dada",
+                    "surface-container-low": "#f2f4f4",
+                    "background": "#f8fafa",
+                    "tertiary-container": "#cca73b",
+                    "on-primary-fixed-variant": "#00504f",
+                    "on-error-container": "#93000a",
+                    "outline-variant": "#bec9c8",
+                    "secondary-container": "#dee2c9",
+                    "tertiary": "#755b00",
+                    "surface-container-high": "#e6e8e8",
+                    "inverse-primary": "#86d4d2",
+                    "on-tertiary-fixed": "#241a00",
+                    "surface-container-highest": "#e1e3e3",
+                    "on-surface-variant": "#3e4948"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.25rem",
+                    "lg": "0.5rem",
+                    "xl": "0.75rem",
+                    "full": "9999px"
+            },
+            "fontFamily": {
+                    "headline": ["Manrope"],
+                    "body": ["Inter"],
+                    "label": ["Inter"]
+            }
+          },
+        }
+      }
+    </script>
+<style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafa; }
+        .font-manrope { font-family: 'Manrope', sans-serif; }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-surface text-on-surface antialiased min-h-screen flex flex-col">
+<!-- TopAppBar -->
+<header class="bg-[#f8fafa] w-full top-0 sticky z-50 flex justify-between items-center px-5 h-16 transition-transform duration-200">
+<div class="flex items-center gap-3">
+<div class="relative w-10 h-10 rounded-full overflow-hidden border-2 border-primary-fixed-dim">
+<img alt="Ustadz profile" class="w-full h-full object-cover" data-alt="Close up portrait of a senior Islamic scholar with a neat beard and traditional cap, serene and wise expression, soft daylight." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDXmWPe_IZx2KzBuiJgNhyfrGXPBcnKC2m1fqLgng42Fo947sbryNLiO2n9ygaa8cM0h_IuWgwZ47p2jZJ5DcfICgJGLXqpFjB5R6aWDgSQe58YD5mY414uEdqH_ZpFpecMTyqHxA12UGeg-cnVbka_3UwPyAhWIyGQ_oIWai5yosTglVwePP3wOWjkfELscxvbFcg8XO4rfi2Pjmwhqte4fC61dCpzrSsCFJg3e0I89p4XOEC7Mv1T5_4RZuq1gDyCPqd8Ql3uavFj"/>
+<div class="absolute bottom-0 right-0 w-3 h-3 bg-green-500 border-2 border-white rounded-full"></div>
+</div>
+<div>
+<h1 class="font-manrope text-lg font-extrabold text-[#004d4c] leading-tight">Ustadz Ahmad Fauzi</h1>
+<p class="text-[10px] font-semibold text-primary uppercase tracking-widest">Online • Fiqh Specialist</p>
+</div>
+</div>
+<div class="flex items-center gap-4 text-[#004d4c]">
+<button class="material-symbols-outlined hover:bg-[#f2f4f4]/50 p-2 rounded-full transition-all">call</button>
+<button class="material-symbols-outlined hover:bg-[#f2f4f4]/50 p-2 rounded-full transition-all">more_vert</button>
+</div>
+</header>
+<!-- Chat Canvas -->
+<main class="flex-grow px-5 pt-4 pb-24 overflow-y-auto space-y-6">
+<!-- Date Indicator -->
+<div class="flex justify-center">
+<span class="bg-surface-container-high px-4 py-1 rounded-full text-[10px] font-bold text-on-surface-variant uppercase tracking-wider">Today</span>
+</div>
+<!-- Ustadz Message (Left) -->
+<div class="flex flex-col items-start max-w-[85%]">
+<div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none shadow-sm">
+<p class="text-on-surface text-sm leading-relaxed">Assalamu'alaikum, Ananda. Ada yang bisa Bapak bantu terkait pelajaran Fiqh hari ini?</p>
+</div>
+<span class="text-[10px] text-outline mt-1 ml-1">09:12 AM</span>
+</div>
+<!-- Student Message (Right) -->
+<div class="flex flex-col items-end max-w-[85%] ml-auto">
+<div class="bg-primary text-on-primary p-4 rounded-2xl rounded-tr-none shadow-sm">
+<p class="text-sm leading-relaxed">Wa'alaikumussalam, Ustadz. Saya ingin bertanya tentang syarat sahnya tayamum saat kita sedang dalam perjalanan jauh.</p>
+</div>
+<div class="flex items-center gap-1 mt-1 mr-1">
+<span class="text-[10px] text-outline">09:15 AM</span>
+<span class="material-symbols-outlined text-[12px] text-primary" style="font-variation-settings: 'FILL' 1;">done_all</span>
+</div>
+</div>
+<!-- Ustadz Message with Resource (Left) -->
+<div class="flex flex-col items-start max-w-[85%]">
+<div class="bg-surface-container-low p-4 rounded-2xl rounded-tl-none shadow-sm space-y-3">
+<p class="text-on-surface text-sm leading-relaxed">Pertanyaan bagus. Secara ringkas, ada 5 syarat utama. Coba perhatikan ringkasan kitab Safinatun Najah berikut ini:</p>
+<!-- Resource Card -->
+<div class="bg-surface-container-lowest rounded-xl p-3 border border-outline-variant/15 flex items-center gap-3">
+<div class="bg-tertiary-container w-10 h-10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-on-tertiary-container">menu_book</span>
+</div>
+<div class="flex-grow">
+<p class="text-xs font-bold text-on-surface">Fasal Tayamum.pdf</p>
+<p class="text-[10px] text-outline">1.2 MB • PDF Document</p>
+</div>
+<button class="material-symbols-outlined text-primary">download</button>
+</div>
+</div>
+<span class="text-[10px] text-outline mt-1 ml-1">09:18 AM</span>
+</div>
+<!-- Typing Indicator (Simulated) -->
+<div class="flex items-center gap-2 px-1">
+<div class="flex gap-1">
+<div class="w-1.5 h-1.5 bg-primary/40 rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-primary/60 rounded-full"></div>
+<div class="w-1.5 h-1.5 bg-primary/80 rounded-full"></div>
+</div>
+<span class="text-[10px] font-medium text-primary italic">Ustadz is typing...</span>
+</div>
+</main>
+<!-- Chat Input Area (Floating Style) -->
+<div class="fixed bottom-0 left-0 w-full p-4 z-50">
+<div class="bg-surface-container-lowest/90 backdrop-blur-xl rounded-3xl p-2 flex items-center gap-2 shadow-[0_-4px_24px_-4px_rgba(25,28,29,0.06)] border border-outline-variant/10">
+<button class="w-10 h-10 flex items-center justify-center text-primary hover:bg-surface-container rounded-full transition-all active:scale-90">
+<span class="material-symbols-outlined">add_circle</span>
+</button>
+<div class="flex-grow relative">
+<input class="w-full bg-surface-container-high border-none rounded-2xl py-2.5 px-4 text-sm focus:ring-0 focus:bg-surface-container-highest transition-colors placeholder:text-outline/60" placeholder="Type your question..." type="text"/>
+</div>
+<button class="w-10 h-10 flex items-center justify-center bg-primary text-on-primary rounded-2xl transition-all active:scale-90 duration-300 ease-out">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+<!-- Hidden Bottom Nav for Screen Logic Consistency (Suppressed because focused chat task) -->
+<!-- The shared component for Ask Ustadz would normally highlight "Ask Ustadz" tab -->
+<!-- But as per "Shell Visibility & Relevance", this is a task-focused sub-page (Direct Chat) so we prioritize the chat UI -->
+</body></html>

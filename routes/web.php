@@ -16,7 +16,9 @@ use App\Http\Controllers\Santri\DashboardController as SantriDashboardController
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
 use App\Http\Controllers\Santri\ProfileController;
 use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
+use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
+use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -75,6 +77,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/topup/{topUp}/modal-data', [AdminTopUpController::class, 'getModalData'])->name('topup.modal-data');
         Route::post('/topup/{topUp}/approve', [AdminTopUpController::class, 'approve'])->name('topup.approve');
         Route::post('/topup/{topUp}/reject', [AdminTopUpController::class, 'reject'])->name('topup.reject');
+
+        // Prestasi Santri Management
+        Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
+        Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
     });
 
     // Petugas Routes
@@ -97,6 +103,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/topup', [SantriTopUpController::class, 'create'])->name('topup');
         Route::post('/topup', [SantriTopUpController::class, 'store'])->name('topup.store');
         Route::get('/topup/status', [SantriTopUpController::class, 'getStatus'])->name('topup.status');
+        
+        // Prestasi Routes
+        Route::get('/prestasi', [SantriPrestasiController::class, 'index'])->name('prestasi');
+        Route::get('/prestasi/{prestasi}', [SantriPrestasiController::class, 'show'])->name('prestasi.show');
     });
 
     // Default redirect

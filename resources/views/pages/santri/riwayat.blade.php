@@ -187,6 +187,10 @@
             <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">history</span>
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
         </a>
+        <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+            <span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Kompetensi</span>
+        </a>
         <a href="{{ route('santri.profile') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
             <span class="material-symbols-outlined text-lg">person</span>
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Profil</span>

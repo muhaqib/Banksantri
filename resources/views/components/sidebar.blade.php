@@ -192,6 +192,30 @@
                         <span class="ml-auto bg-error text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingTopUpCount ?? 0 }}</span>
                     @endif
                 </a>
+
+                <!-- Prestasi Santri -->
+                <div x-data="{ open: {{ request()->routeIs('admin.prestasi.*') ? 'true' : 'false' }} }" class="my-1">
+                    <button @click="open = !open"
+                            class="w-full {{ request()->routeIs('admin.prestasi.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                        <div class="flex items-center gap-3">
+                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+                            <span>Prestasi Santri</span>
+                        </div>
+                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                    </button>
+                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
+                        <a href="{{ route('admin.prestasi.index') }}"
+                           class="{{ request()->routeIs('admin.prestasi.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Semua Prestasi</span>
+                        </a>
+                        <a href="{{ route('admin.prestasi.create') }}"
+                           class="{{ request()->routeIs('admin.prestasi.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Tambah Prestasi</span>
+                        </a>
+                    </div>
+                </div>
             @elseif($activeRole === 'petugas')
                 <a href="{{ route('petugas.dashboard') }}" 
                    class="{{ request()->routeIs('petugas.dashboard') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">

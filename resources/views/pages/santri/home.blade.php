@@ -7,9 +7,14 @@
     <!-- Top Navigation Header -->
     <header class="w-full pt-4 pb-2 flex items-center justify-between px-5 sticky top-0 z-40 bg-surface">
         <div class="flex items-center gap-3">
-            <div class="w-10 h-10 rounded-full overflow-hidden bg-primary-fixed border border-primary/10">
-                <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
-            </div>
+            
+            <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center ring-4 ring-white/30">
+                    @if(auth()->user()->foto)
+                        <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover rounded-full">
+                    @else
+                        <span class="material-symbols-outlined text-white text-5xl">account_circle</span>
+                    @endif
+                </div>
             <div>
                 <span class="block text-xs font-medium text-on-surface-variant opacity-70">Assalamu'alaikum,</span>
                 <h1 class="font-headline text-xl font-bold tracking-tight text-primary">{{ auth()->user()->name ?? 'Santri' }}</h1>
@@ -78,23 +83,23 @@
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Riwayat</span>
                 </a>
-                <a href="#" class="flex flex-col items-center gap-2 group">
-                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
-                        <span class="material-symbols-outlined">payments</span>
-                    </div>
-                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tarik</span>
-                </a>
                 <a href="{{ route('santri.topup') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">add_circle</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Top Up</span>
                 </a>
+                <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Prestasi</span>
+                </a>
                 <a href="#" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">send</span>
                     </div>
-                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Transfer</span>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tanya Ustadz</span>
                 </a>
             </div>
         </section>
@@ -159,8 +164,12 @@
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Beranda</span>
         </a>
         <a href="{{ route('santri.riwayat') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
-            <span class="material-symbols-outlined text-lg">history</span>
+            <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">history</span>
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
+        </a>
+        <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
+            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
+            <span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Kompetensi</span>
         </a>
         <a href="{{ route('santri.profile') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
             <span class="material-symbols-outlined text-lg">person</span>
