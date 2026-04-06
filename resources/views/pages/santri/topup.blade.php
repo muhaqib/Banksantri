@@ -229,11 +229,11 @@
             <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">home</span>
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Beranda</span>
         </a>
-        <a href="{{ route('santri.riwayat') }}" class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-[0.75rem] px-4 py-1.5 transition-all">
+        <a href="{{ route('santri.riwayat') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
             <span class="material-symbols-outlined text-lg" style="font-variation-settings: 'FILL' 1;">history</span>
             <span class="font-body text-[10px] font-medium uppercase tracking-widest mt-0.5">Riwayat</span>
         </a>
-        <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center justify-center bg-primary text-on-primary rounded-2xl px-4 py-1.5 transition-all duration-300 ease-out active:scale-90">
+        <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center justify-center text-on-surface opacity-60 hover:bg-surface-container-low transition-all p-2 rounded-xl">
             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
             <span class="font-manrope text-[10px] font-semibold uppercase tracking-widest mt-1">Achievements</span>
         </a>

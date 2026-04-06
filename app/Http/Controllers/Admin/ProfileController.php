@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Santri;
+namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
@@ -10,23 +10,13 @@ use Illuminate\Validation\Rules\Password;
 
 class ProfileController extends Controller
 {
+    /**
+     * Show the profile settings page.
+     */
     public function index()
     {
-        return view('pages.santri.profile');
-    }
-
-    public function changePin(Request $request)
-    {
-        $validated = $request->validate([
-            'old_pin' => 'required|string|size:6',
-            'new_pin' => 'required|string|size:6|min:6',
-            'new_pin_confirmation' => 'required|string|size:6|same:new_pin'
-        ]);
-
-        // TODO: Verify old PIN
-        // TODO: Update PIN
-
-        return redirect()->route('santri.profile')->with('success', 'PIN berhasil diubah');
+        $user = Auth::user();
+        return view('pages.admin.profile.settings', compact('user'));
     }
 
     /**

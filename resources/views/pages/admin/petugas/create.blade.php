@@ -22,7 +22,7 @@
         <!-- Section: Data Pribadi -->
         <div>
             <h3 class="font-headline font-bold text-lg text-primary mb-4 flex items-center gap-2">
-                <span class="material-symbols-filled">person</span>
+                <span class="material-symbols-outlined">person</span>
                 <span>Data Pribadi</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -48,11 +48,11 @@
                             class="input-field">
                         <option value="">Pilih Jabatan</option>
                         <option value="Kepala Unit" {{ old('jabatan') == 'Kepala Unit' ? 'selected' : '' }}>Kepala Unit</option>
-                        <option value="Petugas Admin" {{ old('jabatan') == 'Petugas Admin' ? 'selected' : '' }}>Petugas Admin</option>
-                        <option value="Petugas Transaksi" {{ old('jabatan') == 'Petugas Transaksi' ? 'selected' : '' }}>Petugas Transaksi</option>
+                        <option value="Staff Pengurus" {{ old('jabatan') == 'Staff Pengurus' ? 'selected' : '' }}>Staff Pengurus</option>
+                        <option value="Petugas Laundry" {{ old('jabatan') == 'Petugas Laundry' ? 'selected' : '' }}>Petugas Laundry</option>
                         <option value="Petugas Kantin" {{ old('jabatan') == 'Petugas Kantin' ? 'selected' : '' }}>Petugas Kantin</option>
-                        <option value="Petugas Koperasi" {{ old('jabatan') == 'Petugas Koperasi' ? 'selected' : '' }}>Petugas Koperasi</option>
-                        <option value="Supervisor" {{ old('jabatan') == 'Supervisor' ? 'selected' : '' }}>Supervisor</option>
+                        <option value="Koperasi Kitab" {{ old('jabatan') == 'Koperasi Kitab' ? 'selected' : '' }}>Koperasi Kitab</option>
+                        <option value="Petugas Mart" {{ old('jabatan') == 'Petugas Mart' ? 'selected' : '' }}>Petugas Mart</option>
                     </select>
                     @error('jabatan')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
@@ -88,7 +88,7 @@
         <!-- Section: Keamanan & Foto -->
         <div>
             <h3 class="font-headline font-bold text-lg text-primary mb-4 flex items-center gap-2">
-                <span class="material-symbols-filled">lock</span>
+                <span class="material-symbols-outlined">lock</span>
                 <span>Keamanan & Foto</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -118,19 +118,10 @@
                 Batal
             </a>
             <button type="submit" class="btn-primary">
-                <span class="material-symbols-filled">save</span>
+                <span class="material-symbols-outlined">save</span>
                 <span>Simpan Data Petugas</span>
             </button>
         </div>
     </form>
 </div>
-
-<style>
-.material-symbols-outlined {
-    font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-.material-symbols-filled {
-    font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
-}
-</style>
 @endsection

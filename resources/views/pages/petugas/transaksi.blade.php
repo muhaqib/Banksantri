@@ -12,18 +12,7 @@
     </header>
 
     <!-- Success Message -->
-    @if(session('success'))
-        <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
-             class="mb-6 p-4 bg-primary-fixed rounded-xl border border-primary/20 flex items-center gap-3">
-            <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-            <div>
-                <p class="font-bold text-primary">{{ session('success') }}</p>
-            </div>
-            <button @click="show = false" class="ml-auto text-primary hover:opacity-80">
-                <span class="material-symbols-outlined">close</span>
-            </button>
-        </div>
-    @endif
+
 
     <!-- Error Messages -->
     @if($errors->any())
@@ -146,7 +135,7 @@
                                         @click="form.kategori = 'koperasi'; $refs.kategoriInput.value = 'koperasi'"
                                         :class="form.kategori === 'koperasi' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'"
                                         class="px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between transition-colors">
-                                    <span>Koperasi</span>
+                                    <span>Koperasi Kitab</span>
                                     <span x-show="form.kategori === 'koperasi'" class="material-symbols-outlined text-sm">check_circle</span>
                                 </button>
                                 <button type="button"

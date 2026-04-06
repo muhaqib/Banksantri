@@ -114,7 +114,7 @@
         <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl shadow-sm">
             <div class="p-6 border-b border-surface-container">
                 <h3 class="font-headline font-bold text-lg text-primary">Pending Requests</h3>
-                <p class="text-xs text-on-surface-variant">Your withdrawal requests awaiting approval</p>
+                <p class="text-xs text-on-surface-variant">Permintaan anda menunggu persetujuan</p>
             </div>
             <div class="p-4 space-y-3">
                 @forelse($pendingRequests ?? [] as $request)

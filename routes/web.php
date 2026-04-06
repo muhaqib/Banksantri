@@ -14,11 +14,13 @@ use App\Http\Controllers\Petugas\RiwayatController as PetugasRiwayatController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
-use App\Http\Controllers\Santri\ProfileController;
+use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
 use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -96,6 +98,11 @@ Route::middleware('auth')->group(function () {
         // Prestasi Santri Management
         Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
         Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
+
+        // Profile Management
+        Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');
+        Route::post('/profile/email', [AdminProfileController::class, 'updateEmail'])->name('profile.email');
+        Route::post('/profile/password', [AdminProfileController::class, 'updatePassword'])->name('profile.password');
     });
 
     // Petugas Routes
@@ -107,14 +114,21 @@ Route::middleware('auth')->group(function () {
         Route::get('/riwayat', [PetugasRiwayatController::class, 'index'])->name('riwayat');
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->name('tarik-tunai');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->name('tarik-tunai.store');
+
+        // Profile Management
+        Route::get('/profile', [PetugasProfileController::class, 'index'])->name('profile');
+        Route::post('/profile/email', [PetugasProfileController::class, 'updateEmail'])->name('profile.email');
+        Route::post('/profile/password', [PetugasProfileController::class, 'updatePassword'])->name('profile.password');
     });
 
     // Santri Routes
     Route::prefix('santri')->name('santri.')->middleware('role:santri')->group(function () {
         Route::get('/home', [SantriDashboardController::class, 'index'])->name('home');
         Route::get('/riwayat', [SantriRiwayatController::class, 'index'])->name('riwayat');
-        Route::get('/profile', [ProfileController::class, 'index'])->name('profile');
-        Route::post('/change-pin', [ProfileController::class, 'changePin'])->name('change-pin');
+        Route::get('/profile', [SantriProfileController::class, 'index'])->name('profile');
+        Route::post('/change-pin', [SantriProfileController::class, 'changePin'])->name('change-pin');
+        Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->name('profile.email');
+        Route::post('/profile/password', [SantriProfileController::class, 'updatePassword'])->name('profile.password');
         Route::get('/topup', [SantriTopUpController::class, 'create'])->name('topup');
         Route::post('/topup', [SantriTopUpController::class, 'store'])->name('topup.store');
         Route::get('/topup/status', [SantriTopUpController::class, 'getStatus'])->name('topup.status');

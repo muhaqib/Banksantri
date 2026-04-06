@@ -257,6 +257,28 @@
                     </div>
                 </div>
             </div>
+            
+            <!-- Profile Settings Link -->
+            @if($activeRole === 'admin')
+                <a href="{{ route('admin.profile') }}" 
+                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Pengaturan Akun</span>
+                </a>
+            @elseif($activeRole === 'petugas')
+                <a href="{{ route('petugas.profile') }}" 
+                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Pengaturan Akun</span>
+                </a>
+            @elseif($activeRole === 'santri')
+                <a href="{{ route('santri.profile') }}" 
+                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
+                    <span class="material-symbols-outlined">settings</span>
+                    <span>Pengaturan Akun</span>
+                </a>
+            @endif
+            
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
                 <button type="submit" class="w-full text-error hover:bg-error/10 px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all">

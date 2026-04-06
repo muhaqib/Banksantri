@@ -11,7 +11,7 @@
                 <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">shield</span>
             </div>
             <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Mawa Smart</h1>
-            <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase">Financial Sanctuary</p>
+            <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase">Ponpes Mambaul Hikmah</p>
         </div>
 
         <!-- Login Form -->
