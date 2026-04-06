@@ -10,7 +10,8 @@
       "Bash(sleep *)",
       "Bash(curl *)",
       "Bash(cut *)",
-      "Bash(pkill *)"
+      "Bash(pkill *)",
+      "Bash(chmod *)"
     ]
   },
   "$version": 3

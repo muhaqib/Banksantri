@@ -20,7 +20,7 @@ class LoginController extends Controller
     }
 
     /**
-     * Handle login authentication with auto-fix for non-Bcrypt passwords.
+     * Handle login authentication.
      */
     public function login(Request $request)
     {
@@ -46,50 +46,11 @@ class LoginController extends Controller
             ])->onlyInput('username');
         }
 
-        $canLogin = false;
+        // Cek password dengan Hash::check
+        if (Hash::check($request->password, $user->password)) {
+            // Login menggunakan Laravel Auth
+            Auth::login($user, $request->filled('remember'));
 
-        // Coba login dengan Auth::attempt (Bcrypt)
-        try {
-            $canLogin = Auth::attempt(['email' => $user->email, 'password' => $request->password], $request->filled('remember'));
-        } catch (\RuntimeException $e) {
-            // Jika error karena bukan Bcrypt, coba verifikasi manual
-            if (strpos($e->getMessage(), 'Bcrypt') !== false) {
-                $hashedPassword = $user->password;
-                
-                // Cek berbagai format password
-                $isMatch = false;
-                
-                // 1. Plain text match
-                if ($hashedPassword === $request->password) {
-                    $isMatch = true;
-                }
-                // 2. MD5 match
-                elseif (strlen($hashedPassword) === 32 && md5($request->password) === $hashedPassword) {
-                    $isMatch = true;
-                }
-                // 3. SHA1 match
-                elseif (strlen($hashedPassword) === 40 && sha1($request->password) === $hashedPassword) {
-                    $isMatch = true;
-                }
-                // 4. SHA256 match
-                elseif (strlen($hashedPassword) === 64 && hash('sha256', $request->password) === $hashedPassword) {
-                    $isMatch = true;
-                }
-                
-                if ($isMatch) {
-                    // Login langsung
-                    Auth::login($user, $request->filled('remember'));
-                    $canLogin = true;
-                    
-                    // Auto-convert password ke Bcrypt
-                    $this->convertPasswordToBcrypt($user, $request->password);
-                }
-            } else {
-                throw $e;
-            }
-        }
-
-        if ($canLogin) {
             $request->session()->regenerate();
 
             // Redirect berdasarkan role

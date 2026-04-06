@@ -20,8 +20,16 @@ class RoleMiddleware
             return redirect()->route('login');
         }
 
+        // Check if user has the required role
         if ($request->user()->role !== $role) {
-            abort(403, 'Unauthorized access');
+            // Redirect to appropriate dashboard based on user's actual role
+            if ($request->user()->role === 'admin') {
+                return redirect()->route('admin.dashboard');
+            } elseif ($request->user()->role === 'petugas') {
+                return redirect()->route('petugas.dashboard');
+            } else {
+                return redirect()->route('santri.home');
+            }
         }
 
         return $next($request);

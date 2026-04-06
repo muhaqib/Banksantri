@@ -27,6 +27,21 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+// Default redirect - MUST be before guest/auth middleware groups
+Route::get('/', function () {
+    if (auth()->check()) {
+        if (auth()->user()->role === 'admin') {
+            return redirect()->route('admin.dashboard');
+        } elseif (auth()->user()->role === 'petugas') {
+            return redirect()->route('petugas.dashboard');
+        } else {
+            return redirect()->route('santri.home');
+        }
+    }
+    
+    return redirect()->route('login');
+});
+
 // Guest routes
 Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showLoginForm'])->name('login');

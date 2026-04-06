@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Auth;
 
 class RegisterController extends Controller
 {
@@ -31,14 +32,16 @@ class RegisterController extends Controller
         ]);
 
         // Buat user baru dengan role admin
-        User::create([
+        $user = User::create([
             'name' => $request->username,
             'email' => $request->email,
             'password' => Hash::make($request->password),
             'role' => 'admin',
         ]);
 
-        // Redirect ke halaman login dengan pesan sukses
-        return redirect()->route('login')->with('success', 'Registrasi berhasil! Silakan login.');
+        Auth::login($user);
+
+        // Redirect ke halaman home dengan pesan sukses
+        return redirect('/home')->with('success', 'Registrasi berhasil!');
     }
 }

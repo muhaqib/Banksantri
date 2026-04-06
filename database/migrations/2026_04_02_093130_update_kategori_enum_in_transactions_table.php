@@ -12,14 +12,15 @@ return new class extends Migration
      */
     public function up(): void
     {
-        DB::statement("ALTER TABLE transactions MODIFY COLUMN kategori ENUM('kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya', 'top_up')");
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->string('kategori')->change();
+        });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        DB::statement("ALTER TABLE transactions MODIFY COLUMN kategori ENUM('kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya')");
+        Schema::table('transactions', function (Blueprint $table) {
+            $table->string('kategori')->change();
+        });
     }
 };
