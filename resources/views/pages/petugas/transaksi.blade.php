@@ -13,7 +13,6 @@
 
     <!-- Success Message -->
 
-
     <!-- Error Messages -->
     @if($errors->any())
         <div class="mb-6 p-4 bg-error-container rounded-xl border border-error/20">

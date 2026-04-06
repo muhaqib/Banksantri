@@ -23,7 +23,7 @@
         <!-- Section: Data Pribadi -->
         <div>
             <h3 class="font-headline font-bold text-lg text-primary mb-4 flex items-center gap-2">
-                <span class="material-symbols-filled">person</span>
+                <span class="material-symbols-outlined">person</span>
                 <span>Data Pribadi</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">

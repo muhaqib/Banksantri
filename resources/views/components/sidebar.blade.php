@@ -242,42 +242,45 @@
 
         <!-- User Profile & Logout -->
         <div class="border-t border-outline-variant/10 p-3">
-            <div class="bg-surface-container-low rounded-xl p-3 mb-2">
-                <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-                        @if(auth()->user()->foto)
-                            <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
-                        @else
-                            <span class="material-symbols-outlined text-primary">account_circle</span>
-                        @endif
-                    </div>
-                    <div class="flex-1 min-w-0">
-                        <p class="font-headline font-bold text-sm text-on-surface truncate">{{ auth()->user()->name ?? 'User' }}</p>
-                        <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">{{ $activeRole }}</p>
-                    </div>
-                </div>
-            </div>
-            
-            <!-- Profile Settings Link -->
-            @if($activeRole === 'admin')
-                <a href="{{ route('admin.profile') }}" 
-                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span>Pengaturan Akun</span>
-                </a>
-            @elseif($activeRole === 'petugas')
-                <a href="{{ route('petugas.profile') }}" 
-                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span>Pengaturan Akun</span>
-                </a>
-            @elseif($activeRole === 'santri')
-                <a href="{{ route('santri.profile') }}" 
-                   class="w-full text-on-surface hover:bg-surface-container-low px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all mb-2">
-                    <span class="material-symbols-outlined">settings</span>
-                    <span>Pengaturan Akun</span>
-                </a>
+            @php
+    $user = auth()->user();
+    $profileRoute = route(($activeRole ?? 'santri') . '.profile');
+@endphp
+
+<a href="{{ $profileRoute }}" 
+   class="block border-t border-outline-variant/10 p-3 hover:bg-surface-container-low transition-all rounded-xl">
+
+    <div class="flex items-center gap-3">
+        
+        <!-- Foto -->
+        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
+            @if($user && $user->foto)
+                <img src="{{ Storage::url($user->foto) }}" 
+                     alt="{{ $user->name }}" 
+                     class="w-full h-full object-cover">
+            @else
+                <span class="material-symbols-outlined text-primary">account_circle</span>
             @endif
+        </div>
+
+        <!-- Nama & Role -->
+        <div class="flex-1 min-w-0">
+            <p class="font-headline font-bold text-sm text-on-surface truncate">
+                {{ $user->name ?? 'User' }}
+            </p>
+            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
+                {{ $activeRole ?? 'santri' }}
+            </p>
+        </div>
+
+        <!-- Icon panah (opsional biar keliatan bisa diklik) -->
+        <span class="material-symbols-outlined text-on-surface-variant text-sm">
+            chevron_right
+        </span>
+
+    </div>
+
+</a>
             
             <form action="{{ route('logout') }}" method="POST">
                 @csrf

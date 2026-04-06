@@ -95,9 +95,6 @@
                             </td>
                             <td class="px-6 py-4 text-center">
                                 <div class="flex items-center justify-center gap-2">
-                                    <button @click="viewDetail({{ $topUp->id }})" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Detail">
-                                        <span class="material-symbols-outlined text-sm">visibility</span>
-                                    </button>
                                     <button @click="approveTopUp({{ $topUp->id }})" class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Verifikasi">
                                         <span class="material-symbols-outlined text-sm">check_circle</span>
                                     </button>
@@ -206,7 +203,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-on-surface/40 transition-opacity" @click="showProofModal = false"></div>
+        <div class="fixed inset-1 bg-on-surface/40 transition-opacity" @click="showProofModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
@@ -286,7 +283,7 @@
 
     <!-- Detail Modal -->
     <div x-show="showDetailModal" x-cloak class="fixed inset-0 overflow-y-auto z-50">
-        <div class="fixed inset-0 bg-black/50 transition-opacity" @click="showDetailModal = false"></div>
+        <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showDetailModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in" @click.stop>
                 <div x-show="loading" class="flex items-center justify-center py-12">
@@ -324,11 +321,6 @@
                         </div>
                     </div>
 
-                    <button @click="viewProof(selectedTopUp.bukti_pembayaran)" class="w-full bg-surface-container-high text-on-surface font-bold py-3 px-4 rounded-xl hover:bg-surface-container transition-all flex items-center justify-center gap-2">
-                        <span class="material-symbols-outlined text-sm">image</span>
-                        <span>Lihat Bukti Pembayaran</span>
-                    </button>
-
                     <div x-show="selectedTopUp.status === 'pending'" class="flex gap-3">
                         <button @click="approveTopUp(selectedTopUp.id)" class="flex-1 bg-primary text-on-primary font-bold py-3 px-4 rounded-xl hover:shadow-lg transition-all flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined text-sm">check_circle</span>
@@ -345,8 +337,8 @@
     </div>
 
     <!-- Reject Modal -->
-    <div x-show="showRejectModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showRejectModal = false"></div>
+    <div x-show="showRejectModal" x-cloak class="fixed inset-0 overflow-y-auto">
+        <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showRejectModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in" @click.stop>
                 <div class="text-center mb-6">
