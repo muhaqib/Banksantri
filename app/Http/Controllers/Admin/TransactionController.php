@@ -140,6 +140,7 @@ class TransactionController extends Controller
                 'nama' => $santri->name,
                 'email' => $santri->email,
                 'saldo' => $santri->saldo,
+                'foto_url' => $santri->foto ? asset('storage/' . $santri->foto) : null,
                 'riwayat' => $riwayat
             ]
         ]);
