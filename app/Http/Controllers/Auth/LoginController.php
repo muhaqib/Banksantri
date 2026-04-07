@@ -34,8 +34,8 @@ class LoginController extends Controller
         // Cari user berdasarkan email, NIS, atau name
         $user = User::where('role', $request->role)
             ->where(function($query) use ($request) {
-                $query->where('email', $request->username)
-                      ->orWhere('nis', $request->username)
+                $query->where('nis', $request->username)
+                      ->orWhere('email', $request->username)
                       ->orWhere('name', $request->username);
             })
             ->first();
@@ -46,26 +46,25 @@ class LoginController extends Controller
             ])->onlyInput('username');
         }
 
-        // Cek password dengan Hash::check
-        if (Hash::check($request->password, $user->password)) {
-            // Login menggunakan Laravel Auth
-            Auth::login($user, $request->filled('remember'));
-
-            $request->session()->regenerate();
-
-            // Redirect berdasarkan role
-            return redirect()->intended(match($user->role) {
-                'admin' => route('admin.dashboard'),
-                'petugas' => route('petugas.dashboard'),
-                'santri' => route('santri.home'),
-                default => '/'
-            });
+        // Verifikasi password untuk semua role
+        if (!Hash::check($request->password, $user->password)) {
+            return back()->withErrors([
+                'username' => 'Username, email, NIS, atau password salah.',
+            ])->onlyInput('username');
         }
 
-        // Jika gagal login
-        return back()->withErrors([
-            'username' => 'Username, email, NIS, atau password salah.',
-        ])->onlyInput('username');
+        // Login menggunakan Laravel Auth
+        Auth::login($user, $request->filled('remember'));
+
+        $request->session()->regenerate();
+
+        // Redirect berdasarkan role
+        return redirect()->intended(match($user->role) {
+            'admin' => route('admin.dashboard'),
+            'petugas' => route('petugas.dashboard'),
+            'santri' => route('santri.home'),
+            default => '/'
+        });
     }
 
     /**

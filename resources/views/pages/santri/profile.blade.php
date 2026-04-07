@@ -19,11 +19,7 @@
             <div class="relative mb-4">
                 <div class="w-24 h-24 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center ring-4 ring-white/30">
                     @if(auth()->user()->foto)
-                       <img src="{{ auth()->user()->foto 
-    ? asset('storage/' . auth()->user()->foto) 
-    : asset('images/default.png') }}" 
-    alt="{{ auth()->user()->name }}" 
-    class="w-full h-full object-cover rounded-full">
+                        <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover rounded-full">
                     @else
                         <span class="material-symbols-outlined text-white text-5xl">account_circle</span>
                     @endif

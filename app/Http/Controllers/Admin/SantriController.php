@@ -14,15 +14,56 @@ class SantriController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $santriList = User::where('role', 'santri')
-            ->orderBy('name', 'asc')
-            ->paginate(15);
+        $query = User::where('role', 'santri');
+
+        // Search by name or NIS if provided
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%');
+            });
+        }
+
+        $santriList = $query->orderBy('name', 'asc')->paginate(15);
 
         return view('pages.admin.santri.index', [
             'santriList' => $santriList,
             'activeRole' => 'admin',
+        ]);
+    }
+
+    /**
+     * Get santri data for autocomplete (AJAX).
+     */
+    public function search(Request $request)
+    {
+        $query = User::where('role', 'santri');
+
+        if ($request->filled('q')) {
+            $search = $request->q;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%');
+            });
+        }
+
+        $santri = $query->orderBy('name', 'asc')->limit(10)->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $santri->map(function($s) {
+                return [
+                    'id' => $s->id,
+                    'name' => $s->name,
+                    'nis' => $s->nis,
+                    'email' => $s->email,
+                    'saldo' => $s->saldo,
+                    'foto_url' => $s->foto ? asset('storage/' . $s->foto) : null,
+                ];
+            })
         ]);
     }
 
@@ -49,10 +90,10 @@ class SantriController extends Controller
             'pin' => 'required|string|size:6',
             'saldo' => 'nullable|numeric|min:0',
             'foto' => 'nullable|image|max:2048',
-            'no_hp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
+            'rfid_code' => 'nullable|string|max:100|unique:users',
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
+            'alamat' => 'nullable|string',
             'nama_wali' => 'nullable|string|max:255',
             'no_hp_wali' => 'nullable|string|max:20',
             'asal_sekolah' => 'nullable|string|max:255',
@@ -74,10 +115,10 @@ class SantriController extends Controller
             'saldo' => $validated['saldo'] ?? 0,
             'role' => 'santri',
             'foto' => $fotoPath,
-            'no_hp' => $validated['no_hp'] ?? null,
-            'alamat' => $validated['alamat'] ?? null,
+            'rfid_code' => $validated['rfid_code'] ?? null,
             'tempat_lahir' => $validated['tempat_lahir'] ?? null,
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? null,
+            'alamat' => $validated['alamat'] ?? null,
             'nama_wali' => $validated['nama_wali'] ?? null,
             'no_hp_wali' => $validated['no_hp_wali'] ?? null,
             'asal_sekolah' => $validated['asal_sekolah'] ?? null,
@@ -120,10 +161,10 @@ class SantriController extends Controller
             'pin' => 'nullable|string|size:6',
             'saldo' => 'nullable|numeric|min:0',
             'foto' => 'nullable|image|max:2048',
-            'no_hp' => 'nullable|string|max:20',
-            'alamat' => 'nullable|string',
+            'rfid_code' => 'nullable|string|max:100|unique:users,rfid_code,' . $santri->id,
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
+            'alamat' => 'nullable|string',
             'nama_wali' => 'nullable|string|max:255',
             'no_hp_wali' => 'nullable|string|max:20',
             'asal_sekolah' => 'nullable|string|max:255',
@@ -136,7 +177,7 @@ class SantriController extends Controller
             'email' => $validated['email'],
             'nis' => $validated['nis'],
             'saldo' => $validated['saldo'] ?? $santri->saldo,
-            'no_hp' => $validated['no_hp'] ?? $santri->no_hp,
+            'rfid_code' => $validated['rfid_code'] ?? $santri->rfid_code,
             'alamat' => $validated['alamat'] ?? $santri->alamat,
             'tempat_lahir' => $validated['tempat_lahir'] ?? $santri->tempat_lahir,
             'tanggal_lahir' => $validated['tanggal_lahir'] ?? $santri->tanggal_lahir,

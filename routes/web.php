@@ -69,6 +69,7 @@ Route::middleware('auth')->group(function () {
             return redirect()->route('admin.santri.index');
         })->name('santri.redirect');
         Route::get('santri/{santri}/modal-data', [SantriController::class, 'getModalData'])->name('santri.modal-data');
+        Route::get('santri/search', [SantriController::class, 'search'])->name('santri.search');
 
         // Petugas Management
         Route::resource('petugas', AdminPetugasController::class)->except(['show']);

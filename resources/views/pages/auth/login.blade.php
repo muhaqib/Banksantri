@@ -75,14 +75,14 @@
             <!-- Password Input -->
             <div class="mb-6">
                 <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">
-                    Kata Sandi / PIN
+                    <span x-text="role === 'santri' ? 'Kata Sandi' : 'Kata Sandi'"></span>
                 </label>
                 <div class="relative group">
                     <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-full scale-y-0 group-focus-within:scale-y-75 transition-transform duration-300"></div>
                     <input :type="showPassword ? 'text' : 'password'"
                            name="password"
                            required
-                           placeholder="••••••••"
+                           x-bind:placeholder="role === 'santri' ? '••••••••' : '••••••••'"
                            class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 pl-6 pr-12 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
                     <button type="button"
                             @click="showPassword = !showPassword"

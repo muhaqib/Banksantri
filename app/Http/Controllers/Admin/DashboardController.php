@@ -60,6 +60,9 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
+        // Count pending settlements for sidebar badge
+        $pendingSettlementCount = WithdrawalRequest::where('status', 'pending')->count();
+
         // Get pending top-up count
         $pendingTopUpCount = TopUpRequest::where('status', 'pending')->count();
 
@@ -115,6 +118,7 @@ class DashboardController extends Controller
             'transaksiTerakhir' => $transaksiTerakhir,
             'petugasList' => $petugasList,
             'pendingRequests' => $pendingRequests,
+            'pendingSettlementCount' => $pendingSettlementCount,
             'pendingTopUpCount' => $pendingTopUpCount,
             'recentTopUps' => $recentTopUps,
             'weeklyTrends' => $weeklyTrends,

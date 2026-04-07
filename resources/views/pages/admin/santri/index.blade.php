@@ -5,6 +5,34 @@
 
 @section('content')
 <div x-data="santriApp()">
+    <!-- Flash Messages -->
+    @if(session('success'))
+        <div class="mb-6 p-4 bg-success-container rounded-xl border border-success/20 flex items-start gap-3">
+            <span class="material-symbols-outlined text-success" style="font-variation-settings: 'FILL' 1;">check_circle</span>
+            <div class="flex-1">
+                <p class="font-bold text-success">{{ session('success') }}</p>
+            </div>
+            <button @click="$el.parentElement.remove()" class="text-success hover:bg-success/10 rounded-lg p-1">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        </div>
+    @endif
+
+    @if($errors->any())
+        <div class="mb-6 p-4 bg-error-container rounded-xl border border-error/20 flex items-start gap-3">
+            <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
+            <div class="flex-1">
+                <ul class="text-sm text-on-error-container space-y-1">
+                    @foreach($errors->all() as $error)
+                        <li>• {{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+            <button @click="$el.parentElement.remove()" class="text-error hover:bg-error/10 rounded-lg p-1">
+                <span class="material-symbols-outlined text-sm">close</span>
+            </button>
+        </div>
+    @endif
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
@@ -52,8 +80,18 @@
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex gap-2">
-                <input type="text" placeholder="Cari santri..."
-                       class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0">
+                <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2">
+                    <input type="text" 
+                           name="search" 
+                           x-model="searchQuery"
+                           @input.debounce.500ms="$el.form.submit()"
+                           placeholder="Cari nama atau NIS santri..."
+                           class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0">
+                    <button type="submit" 
+                            class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
+                        <span class="material-symbols-outlined text-sm">search</span>
+                    </button>
+                </form>
             </div>
         </div>
         <div class="overflow-x-auto">
@@ -346,27 +384,6 @@
 
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
-                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP</label>
-                                    <input type="text" name="no_hp" x-model="editData.no_hp" class="input-field w-full">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
-                                    <input type="text" name="kelas" x-model="editData.kelas" class="input-field w-full">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Birth Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
-                            <div class="flex items-center gap-2 mb-2">
-                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">cake</span>
-                                </div>
-                                <h4 class="font-headline font-bold text-on-surface">Tempat & Tanggal Lahir</h4>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat Lahir</label>
                                     <input type="text" name="tempat_lahir" x-model="editData.tempat_lahir" class="input-field w-full">
                                 </div>
@@ -374,6 +391,11 @@
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tanggal Lahir</label>
                                     <input type="date" name="tanggal_lahir" x-model="editData.tanggal_lahir" class="input-field w-full">
                                 </div>
+                            </div>
+
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">RFID Code</label>
+                                <input type="text" name="rfid_code" x-model="editData.rfid_code" class="input-field w-full" placeholder="Tap kartu RFID pada reader">
                             </div>
                         </div>
 
@@ -394,6 +416,14 @@
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP Wali</label>
                                     <input type="text" name="no_hp_wali" x-model="editData.no_hp_wali" class="input-field w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Asal Sekolah</label>
+                                    <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
+                                    <input type="text" name="kelas" x-model="editData.kelas" class="input-field w-full">
                                 </div>
                             </div>
                         </div>
@@ -464,21 +494,31 @@ function santriApp() {
         showDetailModal: false,
         showEditModal: false,
         loading: false,
+        searchQuery: '',
         selectedSantri: null,
         editData: {
             foto_preview: null,
             name: '',
             email: '',
             nis: '',
-            no_hp: '',
-            kelas: '',
             tempat_lahir: '',
             tanggal_lahir: '',
+            rfid_code: '',
             nama_wali: '',
             no_hp_wali: '',
             asal_sekolah: '',
+            kelas: '',
             alamat: '',
             saldo: 0
+        },
+
+        searchSantri() {
+            // Auto-submit the form when search query changes
+            if (this.searchQuery.length >= 2) {
+                this.$el.closest('form').submit();
+            } else if (this.searchQuery.length === 0) {
+                this.$el.closest('form').submit();
+            }
         },
 
         async openDetailModal(id) {
@@ -519,13 +559,13 @@ function santriApp() {
                 this.editData.name = data.santri.name || '';
                 this.editData.email = data.santri.email || '';
                 this.editData.nis = data.santri.nis || '';
-                this.editData.no_hp = data.santri.no_hp || '';
-                this.editData.kelas = data.santri.kelas || '';
                 this.editData.tempat_lahir = data.santri.tempat_lahir || '';
                 this.editData.tanggal_lahir = data.santri.tanggal_lahir || '';
+                this.editData.rfid_code = data.santri.rfid_code || '';
                 this.editData.nama_wali = data.santri.nama_wali || '';
                 this.editData.no_hp_wali = data.santri.no_hp_wali || '';
                 this.editData.asal_sekolah = data.santri.asal_sekolah || '';
+                this.editData.kelas = data.santri.kelas || '';
                 this.editData.alamat = data.santri.alamat || '';
                 this.editData.saldo = data.santri.saldo || 0;
             } catch (error) {

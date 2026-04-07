@@ -35,30 +35,40 @@
         
         <!-- Column 1: NIS Input & Profile -->
         <div class="space-y-6">
-            <!-- NIS Input -->
+            <!-- RFID Input -->
             <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
-                <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Cari Santri</h2>
-                
+                <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Scan Kartu RFID</h2>
+
                 <form @submit.prevent="cariSantri" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">
-                            Nomor Induk Santri (NIS)
+                            Tap Kartu RFID Santri
                         </label>
-                        <input type="text"
-                               x-model="nisInput"
-                               @keydown.enter.prevent="cariSantri"
-                               placeholder="Contoh: 12345"
-                               class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
+                        <div class="relative group">
+                            <div class="absolute left-4 top-1/2 -translate-y-1/2 text-primary">
+                            </div>
+                            <input type="text"
+                                   x-model="rfidInput"
+                                   @keydown.enter.prevent="cariSantri"
+                                   @focus="$el.select()"
+                                   autofocus
+                                   placeholder="Tap kartu atau masukkan kode RFID"
+                                   class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 pl-14 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
+                        </div>
                         <p x-show="errorMessage" class="text-error text-sm mt-2" x-text="errorMessage"></p>
+                        <p class="text-xs text-on-surface-variant mt-2">
+                            <span class="material-symbols-outlined text-xs align-middle">info</span>
+                            RFID reader akan otomatis mendeteksi kartu
+                        </p>
                     </div>
-                    
+
                     <button type="submit"
-                            :disabled="!nisInput || loading"
+                            :disabled="!rfidInput || loading"
                             class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
-                        <span x-show="!loading" class="material-symbols-outlined">search</span>
+                        <span x-show="!loading" class="material-symbols-outlined">badge</span>
                         <span x-show="loading" class="material-symbols-outlined animate-spin">progress_activity</span>
-                        <span x-show="!loading">Cari Santri</span>
-                        <span x-show="loading">Mencari...</span>
+                        <span x-show="!loading">Verifikasi Santri</span>
+                        <span x-show="loading">Memverifikasi...</span>
                     </button>
                 </form>
             </section>
@@ -69,9 +79,16 @@
                 
                 <div class="flex flex-col items-center text-center space-y-4">
                     <div class="relative">
-                        <div class="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center ring-4 ring-primary-fixed">
-                            <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
-                        </div>
+                        <template x-if="santriData?.foto_url">
+                            <div class="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary-fixed">
+                                <img :src="santriData.foto_url" :alt="santriData?.nama" class="w-full h-full object-cover">
+                            </div>
+                        </template>
+                        <template x-if="!santriData?.foto_url">
+                            <div class="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center ring-4 ring-primary-fixed">
+                                <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+                            </div>
+                        </template>
                         <div class="absolute -bottom-1 -right-1 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">verified</span>
                         </div>
@@ -255,9 +272,9 @@
         <!-- Empty State -->
         <div x-show="!santriData && !loading" class="lg:col-span-2 flex items-center justify-center bg-surface-container-lowest p-12 rounded-xl shadow-sm text-center">
             <div>
-                <span class="material-symbols-outlined text-5xl text-outline mb-4">search</span>
+                <span class="material-symbols-outlined text-5xl text-outline mb-4">badge</span>
                 <p class="text-on-surface-variant font-medium">Belum ada data santri</p>
-                <p class="text-sm text-outline mt-1">Masukkan NIS dan klik Cari untuk memulai transaksi</p>
+                <p class="text-sm text-outline mt-1">Tap kartu RFID atau masukkan kode RFID untuk memulai transaksi</p>
             </div>
         </div>
     </div>
@@ -266,7 +283,7 @@
 <script>
 function transaksiForm() {
     return {
-        nisInput: '',
+        rfidInput: '',
         loading: false,
         santriData: null,
         pin: [],
@@ -281,20 +298,28 @@ function transaksiForm() {
         init() {
             // Initialize from URL params if exists
             const urlParams = new URLSearchParams(window.location.search);
-            const nis = urlParams.get('nis');
-            if (nis) {
-                this.nisInput = nis;
+            const rfid = urlParams.get('rfid');
+            if (rfid) {
+                this.rfidInput = rfid;
                 this.cariSantri();
             }
+            
+            // Auto-focus on RFID input
+            this.$nextTick(() => {
+                const rfidInput = document.querySelector('input[x-model="rfidInput"]');
+                if (rfidInput) {
+                    rfidInput.focus();
+                }
+            });
         },
 
         async cariSantri() {
-            if (!this.nisInput.trim()) return;
-            
+            if (!this.rfidInput.trim()) return;
+
             this.loading = true;
             this.santriData = null;
             this.errorMessage = '';
-            
+
             try {
                 const response = await fetch('{{ route("petugas.transaksi.scan") }}', {
                     method: 'POST',
@@ -303,11 +328,11 @@ function transaksiForm() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ nis: this.nisInput })
+                    body: JSON.stringify({ rfid_code: this.rfidInput })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok && data.success) {
                     this.santriData = data.data;
                     this.form.nominal = '';
@@ -315,6 +340,7 @@ function transaksiForm() {
                     this.form.keterangan = '';
                     this.pin = [];
                     this.showPin = false;
+                    this.rfidInput = ''; // Clear RFID input after successful scan
                 } else {
                     this.errorMessage = data.message || 'Santri tidak ditemukan';
                 }

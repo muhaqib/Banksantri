@@ -1,0 +1,45 @@
+Saya ingin mengintegrasikan payment gateway Midtrans menggunakan Snap API.
+
+Buatkan saya implementasi lengkap dengan ketentuan berikut:
+
+1. Buat konfigurasi di .env:
+   - MIDTRANS_SERVER_KEY
+   - MIDTRANS_CLIENT_KEY
+   - MIDTRANS_IS_PRODUCTION=false
+2. Jadi untuk top up di fitur santri memakai midtrans,
+ketika santri sudah mengisi nominal maka akan muncul tombol lanjutkan pembayaran, lalu muncul dari midtrans
+ganti dengan midtrans
+ ganti pada bladenya 
+   B. Endpoint untuk generate Snap Token
+      - ambil data user login
+      - kirim parameter ke Midtrans:
+        - order_id
+        - gross_amount
+        - customer_details
+
+   C. Tampilan frontend (Blade)
+      - tombol lanjutkann pembayaran
+      - hilangkan fitur upload image
+      - tampilkan popup pembayaran
+
+   D. Callback / webhook dari Midtrans
+      - buat endpoint: /midtrans/callback
+      - handle status:
+        - settlement → success
+        - pending → pending
+        - expire → expired
+        - cancel → cancelled
+
+   E. Update database otomatis berdasarkan callback
+
+5. Tambahkan fitur tambahan:
+   - simpan response Midtrans ke database
+   - validasi order_id unik
+   - logging untuk debug
+
+6. Gunakan best practice:
+   - pisahkan controller (MidtransController)
+   - gunakan service class jika perlu
+   - jangan expose server key ke frontend
+
+8. jika pembayaran sukses, tambahkan saldo ke user 

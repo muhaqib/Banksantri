@@ -105,16 +105,19 @@ class TransactionController extends Controller
     }
 
     /**
-     * Search santri by NIS
+     * Search santri by NIS or Name
      */
     public function searchSantri(Request $request)
     {
         $request->validate([
-            'nis' => 'required|string'
+            'search' => 'required|string'
         ]);
 
-        $santri = User::where('nis', $request->nis)
-            ->where('role', 'santri')
+        $santri = User::where('role', 'santri')
+            ->where(function($query) use ($request) {
+                $query->where('nis', $request->search)
+                      ->orWhere('name', 'like', '%' . $request->search . '%');
+            })
             ->first();
 
         if (!$santri) {

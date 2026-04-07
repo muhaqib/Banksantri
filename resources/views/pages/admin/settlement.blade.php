@@ -20,7 +20,7 @@
                                 </svg>
                             </div>
                             <div>
-                                <h4 class="font-semibold text-gray-900">{{ $request->petugas_name }}</h4>
+                                <h4 class="font-semibold text-gray-900">{{ $request->petugas->name }}</h4>
                                 <p class="text-sm text-gray-500">{{ $request->created_at->format('d M Y, H:i') }}</p>
                             </div>
                         </div>
@@ -86,7 +86,7 @@
                     @forelse($settlementHistory ?? [] as $settlement)
                         <tr class="hover:bg-gray-50">
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <div class="text-sm font-medium text-gray-900">{{ $settlement->petugas_name }}</div>
+                                <div class="text-sm font-medium text-gray-900">{{ $settlement->petugas->name }}</div>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                                 {{ $settlement->created_at->format('d M Y, H:i') }}
@@ -95,13 +95,13 @@
                                 <span class="text-sm font-semibold text-gray-900">Rp {{ number_format($settlement->nominal, 0, ',', '.') }}</span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap">
-                                <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                <span class="px-2 py-1 text-xs font-semibold rounded-full
                                     {{ $settlement->status === 'approved' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600' }}">
                                     {{ ucfirst($settlement->status) }}
                                 </span>
                             </td>
                             <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                {{ $settlement->approved_by_name ?? '-' }}
+                                {{ $settlement->approver->name ?? '-' }}
                             </td>
                         </tr>
                     @empty

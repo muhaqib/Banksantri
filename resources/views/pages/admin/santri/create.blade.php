@@ -51,10 +51,27 @@
                     @enderror
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP</label>
-                    <input type="text" name="no_hp" value="{{ old('no_hp') }}"
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat Lahir</label>
+                    <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
-                    @error('no_hp')
+                    @error('tempat_lahir')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tanggal Lahir</label>
+                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                    @error('tanggal_lahir')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">RFID Code</label>
+                    <input type="text" name="rfid_code" value="{{ old('rfid_code') }}"
+                           placeholder="Tap kartu RFID pada reader"
+                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                    @error('rfid_code')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>

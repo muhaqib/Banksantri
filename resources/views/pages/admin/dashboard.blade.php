@@ -245,15 +245,23 @@
                                 <p class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Pending Approval</p>
                                 <span class="text-[10px] text-on-surface-variant">{{ $request->created_at->diffForHumans() }}</span>
                             </div>
-                            <h4 class="font-bold text-sm text-on-surface">{{ $request->petugas_name }}</h4>
+                            <h4 class="font-bold text-sm text-on-surface">{{ $request->petugas->name }}</h4>
                             <p class="text-lg font-headline font-bold text-on-surface my-1">Rp {{ number_format($request->nominal, 0, ',', '.') }}</p>
                             <div class="flex gap-2 mt-4">
-                                <a href="{{ route('admin.settlement.approve', $request->id) }}" class="flex-1 bg-primary text-on-primary py-2 rounded-lg text-xs font-bold active:scale-95 transition-all text-center">
-                                    Approve
-                                </a>
-                                <a href="{{ route('admin.settlement.reject', $request->id) }}" class="flex-1 bg-surface-container-high text-on-surface py-2 rounded-lg text-xs font-bold active:scale-95 transition-all text-center">
-                                    Deny
-                                </a>
+                                <form action="{{ route('admin.settlement.approve', $request->id) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full bg-primary text-on-primary py-2 rounded-lg text-xs font-bold active:scale-95 transition-all">
+                                        Approve
+                                    </button>
+                                </form>
+                                <form action="{{ route('admin.settlement.reject', $request->id) }}" method="POST" class="flex-1">
+                                    @csrf
+                                    @method('PATCH')
+                                    <button type="submit" class="w-full bg-surface-container-high text-on-surface py-2 rounded-lg text-xs font-bold active:scale-95 transition-all">
+                                        Deny
+                                    </button>
+                                </form>
                             </div>
                         </div>
                     @empty

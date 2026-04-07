@@ -22,13 +22,13 @@
                 <form @submit.prevent="cariSantri" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">
-                            Nomor Induk Santri (NIS)
+                            Nama atau NIS Santri
                         </label>
                         <div class="relative group">
                             <input type="text"
-                                   x-model="nisInput"
+                                   x-model="searchInput"
                                    @keydown.enter.prevent="cariSantri"
-                                   placeholder="Contoh: 12345"
+                                   placeholder="Contoh: Ahmad atau 12345"
                                    class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
                             <div class="absolute left-0 top-0 h-full w-0.5 bg-primary rounded-l-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
                         </div>
@@ -36,7 +36,7 @@
                     </div>
                     
                     <button type="submit"
-                            :disabled="!nisInput || loading"
+                            :disabled="!searchInput || loading"
                             class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
                         <span x-show="!loading" class="material-symbols-outlined">search</span>
                         <span x-show="loading" class="material-symbols-outlined animate-spin">progress_activity</span>
@@ -52,9 +52,16 @@
                 
                 <div class="flex flex-col items-center text-center space-y-4">
                     <div class="relative">
-                        <div class="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center ring-4 ring-primary-fixed">
-                            <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
-                        </div>
+                        <template x-if="santriData?.foto_url">
+                            <div class="w-24 h-24 rounded-full overflow-hidden ring-4 ring-primary-fixed">
+                                <img :src="santriData.foto_url" :alt="santriData?.nama" class="w-full h-full object-cover">
+                            </div>
+                        </template>
+                        <template x-if="!santriData?.foto_url">
+                            <div class="w-24 h-24 bg-primary-fixed rounded-full flex items-center justify-center ring-4 ring-primary-fixed">
+                                <span class="material-symbols-outlined text-primary text-5xl" style="font-variation-settings: 'FILL' 1;">account_circle</span>
+                            </div>
+                        </template>
                         <div class="absolute -bottom-1 -right-1 bg-primary text-on-primary w-8 h-8 rounded-full flex items-center justify-center border-4 border-surface-container-lowest">
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">verified</span>
                         </div>
@@ -158,10 +165,8 @@
                                 required
                                 class="w-full bg-surface-container-high border-none rounded-xl py-4 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all font-medium">
                             <option value="">Pilih Sumber Dana</option>
-                            <option value="orang_tua">Orang Tua/Wali</option>
-                            <option value="donatur">Donatur</option>
-                            <option value="beasiswa">Beasiswa</option>
-                            <option value="lainnya">Lainnya</option>
+                            <option value="orang_tua">Cash</option>
+                            <option value="donatur">Trasfer Bank</option>
                         </select>
                     </div>
 
@@ -203,18 +208,18 @@
 <script>
 function topUpForm() {
     return {
-        nisInput: '',
+        searchInput: '',
         loading: false,
         santriData: null,
         errorMessage: '',
 
         async cariSantri() {
-            if (!this.nisInput.trim()) return;
-            
+            if (!this.searchInput.trim()) return;
+
             this.loading = true;
             this.santriData = null;
             this.errorMessage = '';
-            
+
             try {
                 const response = await fetch('{{ route("admin.transactions.search-santri") }}', {
                     method: 'POST',
@@ -223,11 +228,11 @@ function topUpForm() {
                         'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content,
                         'Accept': 'application/json'
                     },
-                    body: JSON.stringify({ nis: this.nisInput })
+                    body: JSON.stringify({ search: this.searchInput })
                 });
-                
+
                 const data = await response.json();
-                
+
                 if (response.ok && data.success) {
                     this.santriData = data.data;
                 } else {

@@ -25,13 +25,13 @@ class TransaksiController extends Controller
 
     public function cariSantri(Request $request)
     {
-        \Log::info('Cari Santri - NIS: ' . $request->nis);
-        
+        \Log::info('Cari Santri - RFID Code: ' . $request->rfid_code);
+
         $request->validate([
-            'nis' => 'required|string'
+            'rfid_code' => 'required|string'
         ]);
 
-        $santri = User::where('nis', $request->nis)
+        $santri = User::where('rfid_code', $request->rfid_code)
             ->where('role', 'santri')
             ->first();
 
@@ -57,6 +57,7 @@ class TransaksiController extends Controller
                 'nis' => $santri->nis,
                 'nama' => $santri->name,
                 'saldo' => $santri->saldo,
+                'foto_url' => $santri->foto ? asset('storage/' . $santri->foto) : null,
                 'riwayat' => $riwayat
             ]
         ]);
