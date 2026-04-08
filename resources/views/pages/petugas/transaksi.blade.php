@@ -53,7 +53,7 @@
                                    @focus="$el.select()"
                                    autofocus
                                    placeholder="Tap kartu atau masukkan kode RFID"
-                                   class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 pl-14 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
+                                   class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
                         </div>
                         <p x-show="errorMessage" class="text-error text-sm mt-2" x-text="errorMessage"></p>
                         <p class="text-xs text-on-surface-variant mt-2">

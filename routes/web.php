@@ -19,6 +19,7 @@ use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use Illuminate\Support\Facades\Route;
@@ -65,17 +66,13 @@ Route::middleware('auth')->group(function () {
         
         // Santri Management
         Route::resource('santri', SantriController::class)->except(['show']);
-        Route::get('santri/{santri}', function() {
-            return redirect()->route('admin.santri.index');
-        })->name('santri.redirect');
         Route::get('santri/{santri}/modal-data', [SantriController::class, 'getModalData'])->name('santri.modal-data');
         Route::get('santri/search', [SantriController::class, 'search'])->name('santri.search');
 
         // Petugas Management
-        Route::resource('petugas', AdminPetugasController::class)->except(['show']);
-        Route::get('petugas/{petugas}', function() {
-            return redirect()->route('admin.petugas.index');
-        })->name('petugas.redirect');
+        Route::resource('petugas', AdminPetugasController::class)
+            ->except(['show'])
+            ->parameters(['petugas' => 'petugas']);
         Route::get('petugas/{petugas}/modal-data', [AdminPetugasController::class, 'getModalData'])->name('petugas.modal-data');
         
         Route::get('/settlement', [SettlementController::class, 'index'])->name('settlement');
@@ -99,6 +96,11 @@ Route::middleware('auth')->group(function () {
         // Prestasi Santri Management
         Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
         Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
+
+        // Blog Management
+        Route::resource('blog', AdminBlogController::class)->except(['show']);
+        Route::get('blog/{blog}', [AdminBlogController::class, 'show'])->name('blog.show');
+        Route::post('blog/{blog}/toggle-publish', [AdminBlogController::class, 'togglePublish'])->name('blog.toggle-publish');
 
         // Profile Management
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');

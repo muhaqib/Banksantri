@@ -262,9 +262,9 @@
 
                 <!-- Form Section (Scrollable) -->
                 <div class="flex-1 overflow-y-auto px-6 pb-6 z-50">
-                    <form :id="`edit-petugas-form-${selectedPetugas.id}`" :action="`/admin/petugas/${selectedPetugas.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
-                        @csrf
-                        @method('PUT')
+                    <form :id="`edit-petugas-form-${selectedPetugas.id}`" @submit.prevent="submitForm" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
+                        <input type="hidden" name="_token" :value="csrfToken">
+                        <input type="hidden" name="_method" value="PUT">
 
                         <!-- Photo Upload -->
                         <div class="bg-surface-container-lowest rounded-2xl p-5">
@@ -334,7 +334,15 @@
 
                             <div>
                                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Jabatan <span class="text-error">*</span></label>
-                                <input type="text" name="jabatan" x-model="editData.jabatan" required class="input-field w-full">
+                                <select name="jabatan" x-model="editData.jabatan" required class="input-field w-full">
+                                    <option value="">Pilih Jabatan</option>
+                                    <option value="Kepala Unit">Kepala Unit</option>
+                                    <option value="Staff Pengurus">Staff Pengurus</option>
+                                    <option value="Petugas Laundry">Petugas Laundry</option>
+                                    <option value="Petugas Kantin">Petugas Kantin</option>
+                                    <option value="Koperasi Kitab">Koperasi Kitab</option>
+                                    <option value="Petugas Mart">Petugas Mart</option>
+                                </select>
                             </div>
                         </div>
 
@@ -352,18 +360,18 @@
                                 <input type="password" name="password" class="input-field w-full" placeholder="Kosongkan jika tidak ingin mengubah">
                             </div>
                         </div>
-                    </form>
 
-                    <!-- Submit Buttons -->
-                    <div class="flex gap-4 p-5">
-                        <button type="button" @click="showEditModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
-                            Batal
-                        </button>
-                        <button type="submit" :form="`edit-petugas-form-${selectedPetugas.id}`" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-sm">save</span>
-                            <span>Simpan Perubahan</span>
-                        </button>
-                    </div>
+                        <!-- Submit Buttons -->
+                        <div class="flex gap-4 p-5">
+                            <button type="button" @click="showEditModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
+                                Batal
+                            </button>
+                            <button type="submit" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-sm">save</span>
+                                <span>Simpan Perubahan</span>
+                            </button>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
@@ -459,6 +467,24 @@ function petugasApp() {
                     this.editData.foto_preview = e.target.result;
                 };
                 reader.readAsDataURL(file);
+            }
+        },
+
+        submitForm() {
+            if (!this.selectedPetugas || !this.selectedPetugas.id) {
+                alert('Data petugas tidak valid');
+                return;
+            }
+
+            // Set form action URL
+            const form = document.getElementById(`edit-petugas-form-${this.selectedPetugas.id}`);
+            if (form) {
+                form.action = `/admin/petugas/${this.selectedPetugas.id}`;
+                console.log('Submitting form to:', form.action);
+                form.submit();
+            } else {
+                console.error('Form not found!');
+                alert('Form tidak ditemukan');
             }
         }
     }

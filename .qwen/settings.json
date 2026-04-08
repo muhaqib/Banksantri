@@ -11,7 +11,8 @@
       "Bash(curl *)",
       "Bash(cut *)",
       "Bash(pkill *)",
-      "Bash(chmod *)"
+      "Bash(chmod *)",
+      "Bash(composer *)"
     ]
   },
   "$version": 3

@@ -5,34 +5,6 @@
 
 @section('content')
 <div x-data="santriApp()">
-    <!-- Flash Messages -->
-    @if(session('success'))
-        <div class="mb-6 p-4 bg-success-container rounded-xl border border-success/20 flex items-start gap-3">
-            <span class="material-symbols-outlined text-success" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-            <div class="flex-1">
-                <p class="font-bold text-success">{{ session('success') }}</p>
-            </div>
-            <button @click="$el.parentElement.remove()" class="text-success hover:bg-success/10 rounded-lg p-1">
-                <span class="material-symbols-outlined text-sm">close</span>
-            </button>
-        </div>
-    @endif
-
-    @if($errors->any())
-        <div class="mb-6 p-4 bg-error-container rounded-xl border border-error/20 flex items-start gap-3">
-            <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
-            <div class="flex-1">
-                <ul class="text-sm text-on-error-container space-y-1">
-                    @foreach($errors->all() as $error)
-                        <li>• {{ $error }}</li>
-                    @endforeach
-                </ul>
-            </div>
-            <button @click="$el.parentElement.remove()" class="text-error hover:bg-error/10 rounded-lg p-1">
-                <span class="material-symbols-outlined text-sm">close</span>
-            </button>
-        </div>
-    @endif
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
