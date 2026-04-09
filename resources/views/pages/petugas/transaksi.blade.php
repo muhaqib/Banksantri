@@ -117,6 +117,18 @@
                                        placeholder="0">
                             </div>
                         </div>
+                        <div class="grid grid-cols-3 gap-2">
+    <template x-for="nominal in [2000, 5000, 10000, 15000, 20000, 50000]" :key="nominal">
+        <button type="button"
+                @click="form.nominal = nominal; saveFormState()"
+                :class="form.nominal == nominal 
+                    ? 'bg-primary text-white' 
+                    : 'bg-surface-container-low text-on-surface'"
+                class="py-2 px-3 text-xs font-bold rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
+            Rp <span x-text="nominal.toLocaleString('id-ID')"></span>
+        </button>
+    </template>
+</div>
 
                         <!-- Kategori (Auto-selected based on petugas jabatan) -->
                         <div>
@@ -138,7 +150,7 @@
                             <!-- Alpine.js will update this if needed -->
                             <p class="text-xs text-on-surface-variant mt-2">
                                 <span class="material-symbols-outlined text-xs align-middle">info</span>
-                                Kategori otomatis sesuai jabatan petugas ({{ auth()->user()->jabatan ?? 'N/A' }})
+                                Anda sebagai petugas ({{ auth()->user()->jabatan ?? 'N/A' }})
                             </p>
                         </div>
 

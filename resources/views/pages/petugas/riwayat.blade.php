@@ -25,39 +25,6 @@
         </div>
     </div>
 
-    <!-- Filter -->
-    <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
-        <div class="flex flex-wrap gap-4">
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Periode</label>
-                <select x-model="filterPeriode" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-                    <option value="hari">Hari Ini</option>
-                    <option value="minggu">Minggu Ini</option>
-                    <option value="bulan">Bulan Ini</option>
-                    <option value="custom">Custom</option>
-                </select>
-            </div>
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Kategori</label>
-                <select x-model="filterKategori" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-                    <option value="">Semua Kategori</option>
-                    <option value="kantin">Kantin</option>
-                    <option value="koperasi">Koperasi</option>
-                    <option value="laundry">Laundry</option>
-                    <option value="fotokopi">Fotokopi</option>
-                    <option value="lainnya">Lainnya</option>
-                </select>
-            </div>
-            <div class="flex-1 min-w-[200px]">
-                <label class="block text-sm font-medium text-gray-700 mb-2">Cari Santri</label>
-                <input type="text"
-                       x-model="searchQuery"
-                       placeholder="Nama atau NIS..."
-                       class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none">
-            </div>
-        </div>
-    </div>
-
     <!-- Stats Summary -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
