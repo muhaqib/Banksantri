@@ -52,17 +52,22 @@
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex gap-2">
-                <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2">
-                    <input type="text" 
-                           name="search" 
-                           x-model="searchQuery"
-                           @input.debounce.500ms="$el.form.submit()"
+                <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
+                    <input type="text"
+                           name="search"
+                           value="{{ request('search') }}"
                            placeholder="Cari nama atau NIS santri..."
-                           class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0">
-                    <button type="submit" 
+                           class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0 focus:outline-none">
+                    <button type="submit"
                             class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors">
                         <span class="material-symbols-outlined text-sm">search</span>
                     </button>
+                    @if(request('search'))
+                        <a href="{{ route('admin.santri.index') }}"
+                           class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-sm font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
+                            <span class="material-symbols-outlined text-sm">close</span>
+                        </a>
+                    @endif
                 </form>
             </div>
         </div>
@@ -466,7 +471,6 @@ function santriApp() {
         showDetailModal: false,
         showEditModal: false,
         loading: false,
-        searchQuery: '',
         selectedSantri: null,
         editData: {
             foto_preview: null,
@@ -482,15 +486,6 @@ function santriApp() {
             kelas: '',
             alamat: '',
             saldo: 0
-        },
-
-        searchSantri() {
-            // Auto-submit the form when search query changes
-            if (this.searchQuery.length >= 2) {
-                this.$el.closest('form').submit();
-            } else if (this.searchQuery.length === 0) {
-                this.$el.closest('form').submit();
-            }
         },
 
         async openDetailModal(id) {

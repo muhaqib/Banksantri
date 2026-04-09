@@ -111,7 +111,7 @@
 
         <!-- Column 2: Transaction Form -->
         <div class="lg:col-span-2" x-show="santriData">
-            <form action="{{ route('petugas.transaksi.store') }}" method="POST" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+            <form action="{{ route('petugas.transaksi.store') }}" method="POST" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" @submit="saveFormState()">
                 @csrf
                 <input type="hidden" name="santri_id" :value="santriData?.id">
                 
@@ -128,6 +128,7 @@
                                 <input type="number"
                                        name="nominal"
                                        x-model="form.nominal"
+                                       @input="saveFormState()"
                                        required
                                        min="1000"
                                        step="1000"
@@ -177,6 +178,7 @@
                             <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Catatan (Opsional)</label>
                             <textarea name="keterangan"
                                       x-model="form.keterangan"
+                                      @input="saveFormState()"
                                       rows="3"
                                       class="w-full bg-surface-container-high border-none rounded-xl p-4 text-sm focus:ring-0 focus:bg-surface-container-highest transition-colors resize-none"
                                       placeholder="Contoh: Beli makanan di kantin"></textarea>
@@ -296,6 +298,13 @@ function transaksiForm() {
         },
 
         init() {
+            // Clear saved form state if page loaded without errors (successful submission)
+            @if(!$errors->any())
+                localStorage.removeItem('transaksi_nominal');
+                localStorage.removeItem('transaksi_kategori');
+                localStorage.removeItem('transaksi_keterangan');
+            @endif
+
             // Initialize from URL params if exists
             const urlParams = new URLSearchParams(window.location.search);
             const rfid = urlParams.get('rfid');
@@ -303,14 +312,39 @@ function transaksiForm() {
                 this.rfidInput = rfid;
                 this.cariSantri();
             }
+
+            // Restore form state from localStorage (only if there are errors)
+            @if($errors->any())
+                this.restoreFormState();
+            @endif
+
+            // Auto-focus on RFID input when no santri data
+            if (!this.santriData) {
+                this.$nextTick(() => {
+                    const rfidInput = document.querySelector('input[x-model="rfidInput"]');
+                    if (rfidInput) {
+                        rfidInput.focus();
+                    }
+                });
+            }
+        },
+
+        saveFormState() {
+            // Save form data to localStorage
+            localStorage.setItem('transaksi_nominal', this.form.nominal);
+            localStorage.setItem('transaksi_kategori', this.form.kategori);
+            localStorage.setItem('transaksi_keterangan', this.form.keterangan);
+        },
+
+        restoreFormState() {
+            // Restore form data from localStorage
+            const nominal = localStorage.getItem('transaksi_nominal');
+            const kategori = localStorage.getItem('transaksi_kategori');
+            const keterangan = localStorage.getItem('transaksi_keterangan');
             
-            // Auto-focus on RFID input
-            this.$nextTick(() => {
-                const rfidInput = document.querySelector('input[x-model="rfidInput"]');
-                if (rfidInput) {
-                    rfidInput.focus();
-                }
-            });
+            if (nominal) this.form.nominal = nominal;
+            if (kategori) this.form.kategori = kategori;
+            if (keterangan) this.form.keterangan = keterangan;
         },
 
         async cariSantri() {
