@@ -32,41 +32,45 @@ class TransaksiController extends Controller
      */
     private function getKategoriFromJabatan($jabatan)
     {
-        $jabatan = strtolower($jabatan);
-        
         // Map jabatan to kategori
-        if (str_contains($jabatan, 'kepala unit') || str_contains($jabatan, 'staff pengurus')) {
+        if ($jabatan === 'Kepala Unit') {
             return [
                 'label' => 'Mengambil Tabungan',
-                'value' => 'lainnya',
+                'value' => 'tarik uang',
                 'icon' => 'account_balance_wallet'
             ];
-        } elseif (str_contains($jabatan, 'laundry')) {
+        } elseif ($jabatan === 'Staff Pengurus') {
+            return [
+                'label' => 'Mengambil Tabungan',
+                'value' => 'tarik uang',
+                'icon' => 'account_balance_wallet'
+            ];
+        } elseif ($jabatan === 'Petugas Laundry') {
             return [
                 'label' => 'Laundry',
                 'value' => 'laundry',
                 'icon' => 'dry_cleaning'
             ];
-        } elseif (str_contains($jabatan, 'syirkah')) {
+        } elseif ($jabatan === 'Petugas Syirkah') {
             return [
                 'label' => 'Syirkah',
-                'value' => 'lainnya',
+                'value' => 'syirkah',
                 'icon' => 'store'
             ];
-        } elseif (str_contains($jabatan, 'koperasi kitab') || str_contains($jabatan, 'kitab')) {
+        } elseif ($jabatan === 'Koperasi Kitab') {
             return [
                 'label' => 'Kitab',
                 'value' => 'koperasi',
                 'icon' => 'menu_book'
             ];
-        } elseif (str_contains($jabatan, 'mart')) {
+        } elseif ($jabatan === 'Petugas Mart') {
             return [
                 'label' => 'Mart',
                 'value' => 'kantin',
                 'icon' => 'storefront'
             ];
         }
-        
+
         // Default category
         return [
             'label' => 'Transaksi',
@@ -125,7 +129,7 @@ class TransaksiController extends Controller
         $request->validate([
             'santri_id' => 'required|exists:users,id',
             'nominal' => 'required|numeric|min:1000',
-            'kategori' => 'required|in:kantin,koperasi,laundry,fotokopi,lainnya',
+            'kategori' => 'required|in:kantin,koperasi,laundry,fotokopi,lainnya,tarik uang,syirkah',
             'keterangan' => 'nullable|string|max:500',
             'pin' => 'required|string|size:6'
         ]);

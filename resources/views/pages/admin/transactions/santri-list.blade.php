@@ -45,6 +45,24 @@
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
+            <form method="GET" action="{{ route('admin.transactions.santri') }}" class="flex gap-2">
+                <input type="text"
+                       name="search"
+                       value="{{ request('search') }}"
+                       placeholder="Cari nama atau NIS..."
+                       class="bg-surface-container-high border-none rounded-lg px-4 py-2 text-sm focus:ring-0 focus:outline-none w-64">
+                <button type="submit"
+                        class="bg-primary text-on-primary px-4 py-2 rounded-lg text-sm font-semibold hover:bg-primary/90 transition-colors flex items-center gap-1">
+                    <span class="material-symbols-outlined text-sm">search</span>
+                    <span>Cari</span>
+                </button>
+                @if(request('search'))
+                    <a href="{{ route('admin.transactions.santri') }}"
+                       class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-sm font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
+                        <span class="material-symbols-outlined text-sm">close</span>
+                    </a>
+                @endif
+            </form>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
@@ -85,8 +103,20 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-12 text-center">
-                                <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
-                                <p class="text-sm text-on-surface-variant">Belum ada data santri</p>
+                                <span class="material-symbols-outlined text-4xl text-outline mb-3">
+                                    @if(request('search'))
+                                        search_off
+                                    @else
+                                        group_off
+                                    @endif
+                                </span>
+                                <p class="text-sm text-on-surface-variant">
+                                    @if(request('search'))
+                                        Tidak ada santri yang sesuai dengan pencarian "{{ request('search') }}"
+                                    @else
+                                        Belum ada data santri
+                                    @endif
+                                </p>
                             </td>
                         </tr>
                     @endforelse

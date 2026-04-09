@@ -150,7 +150,7 @@
                             <!-- Alpine.js will update this if needed -->
                             <p class="text-xs text-on-surface-variant mt-2">
                                 <span class="material-symbols-outlined text-xs align-middle">info</span>
-                                Anda sebagai petugas ({{ auth()->user()->jabatan ?? 'N/A' }})
+                                Anda sebagai ({{ auth()->user()->jabatan ?? 'N/A' }})
                             </p>
                         </div>
 

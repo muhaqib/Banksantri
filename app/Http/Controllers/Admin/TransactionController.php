@@ -14,10 +14,13 @@ class TransactionController extends Controller
     /**
      * Display top up form
      */
-    public function createTopUp()
+    public function createTopUp(Request $request)
     {
+        $nis = $request->query('nis');
+        
         return view('pages.admin.transactions.topup', [
             'activeRole' => 'admin',
+            'nis' => $nis,
         ]);
     }
 
@@ -72,11 +75,20 @@ class TransactionController extends Controller
     /**
      * Display santri list
      */
-    public function santriList()
+    public function santriList(Request $request)
     {
-        $santriList = User::where('role', 'santri')
-            ->orderBy('name', 'asc')
-            ->paginate(20);
+        $query = User::where('role', 'santri');
+        
+        // Add search filter
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function($q) use ($search) {
+                $q->where('name', 'like', '%' . $search . '%')
+                  ->orWhere('nis', 'like', '%' . $search . '%');
+            });
+        }
+        
+        $santriList = $query->orderBy('name', 'asc')->paginate(20);
 
         return view('pages.admin.transactions.santri-list', [
             'santriList' => $santriList,

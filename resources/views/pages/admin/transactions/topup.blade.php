@@ -4,7 +4,7 @@
 @php $activeRole = 'admin'; @endphp
 
 @section('content')
-<div x-data="topUpForm()">
+<div x-data="topUpForm('{{ $nis ?? '' }}')" x-init="init()">
     <!-- Page Header -->
     <div class="mb-8">
         <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Top Up Saldo Santri</h2>
@@ -18,7 +18,7 @@
             <!-- Search Form -->
             <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Cari Santri</h2>
-                
+
                 <form @submit.prevent="cariSantri" class="space-y-4">
                     <div>
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">
@@ -27,6 +27,7 @@
                         <div class="relative group">
                             <input type="text"
                                    x-model="searchInput"
+                                   @input="autoSearch"
                                    @keydown.enter.prevent="cariSantri"
                                    placeholder="Contoh: Ahmad atau 12345"
                                    class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
@@ -34,7 +35,7 @@
                         </div>
                         <p x-show="errorMessage" class="text-error text-sm mt-2" x-text="errorMessage"></p>
                     </div>
-                    
+
                     <button type="submit"
                             :disabled="!searchInput || loading"
                             class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
@@ -206,12 +207,34 @@
 </div>
 
 <script>
-function topUpForm() {
+function topUpForm(initialNis = '') {
     return {
-        searchInput: '',
+        searchInput: initialNis,
         loading: false,
         santriData: null,
         errorMessage: '',
+        searchTimeout: null,
+
+        init() {
+            // Auto-search if NIS is provided in URL
+            if (this.searchInput && this.searchInput.trim()) {
+                this.cariSantri();
+            }
+        },
+
+        autoSearch() {
+            // Clear previous timeout
+            if (this.searchTimeout) {
+                clearTimeout(this.searchTimeout);
+            }
+
+            // Auto-submit after 500ms of no typing (but keep cursor)
+            if (this.searchInput.trim().length >= 2) {
+                this.searchTimeout = setTimeout(() => {
+                    this.cariSantri();
+                }, 500);
+            }
+        },
 
         async cariSantri() {
             if (!this.searchInput.trim()) return;

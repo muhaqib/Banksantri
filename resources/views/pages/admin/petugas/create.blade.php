@@ -50,7 +50,7 @@
                         <option value="Kepala Unit" {{ old('jabatan') == 'Kepala Unit' ? 'selected' : '' }}>Kepala Unit</option>
                         <option value="Staff Pengurus" {{ old('jabatan') == 'Staff Pengurus' ? 'selected' : '' }}>Staff Pengurus</option>
                         <option value="Petugas Laundry" {{ old('jabatan') == 'Petugas Laundry' ? 'selected' : '' }}>Petugas Laundry</option>
-                        <option value="Petugas Kantin" {{ old('jabatan') == 'Petugas Kantin' ? 'selected' : '' }}>Petugas Kantin</option>
+                        <option value="Petugas Syirkah" {{ old('jabatan') == 'Petugas Syirkah' ? 'selected' : '' }}>Petugas Syirkah</option>
                         <option value="Koperasi Kitab" {{ old('jabatan') == 'Koperasi Kitab' ? 'selected' : '' }}>Koperasi Kitab</option>
                         <option value="Petugas Mart" {{ old('jabatan') == 'Petugas Mart' ? 'selected' : '' }}>Petugas Mart</option>
                     </select>
