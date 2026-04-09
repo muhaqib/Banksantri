@@ -11,28 +11,9 @@
         <p class="text-on-surface-variant mt-1">Lakukan verifikasi identitas dan nominal pembayaran dengan aman.</p>
     </header>
 
-    <!-- Success Message -->
-
-    <!-- Error Messages -->
-    @if($errors->any())
-        <div class="mb-6 p-4 bg-error-container rounded-xl border border-error/20">
-            <div class="flex items-start gap-3">
-                <span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">error</span>
-                <div class="flex-1">
-                    <p class="font-bold text-error mb-2">Terjadi Kesalahan</p>
-                    <ul class="text-sm text-on-error-container space-y-1">
-                        @foreach($errors->all() as $error)
-                            <li>• {{ $error }}</li>
-                        @endforeach
-                    </ul>
-                </div>
-            </div>
-        </div>
-    @endif
-
     <!-- Main Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        
+
         <!-- Column 1: NIS Input & Profile -->
         <div class="space-y-6">
             <!-- RFID Input -->
@@ -76,7 +57,7 @@
             <!-- Santri Profile -->
             <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" x-show="santriData">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Identitas Santri</h2>
-                
+
                 <div class="flex flex-col items-center text-center space-y-4">
                     <div class="relative">
                         <template x-if="santriData?.foto_url">
@@ -93,7 +74,7 @@
                             <span class="material-symbols-outlined text-xs" style="font-variation-settings: 'FILL' 1;">verified</span>
                         </div>
                     </div>
-                    
+
                     <div>
                         <p class="font-headline text-xl font-bold text-on-surface" x-text="santriData?.nama"></p>
                         <p class="text-sm font-medium text-on-surface-variant">NIS: <span x-text="santriData?.nis"></span></p>
@@ -114,9 +95,9 @@
             <form action="{{ route('petugas.transaksi.store') }}" method="POST" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" @submit="saveFormState()">
                 @csrf
                 <input type="hidden" name="santri_id" :value="santriData?.id">
-                
+
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Detail Transaksi</h2>
-                
+
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <!-- Left: Transaction Details -->
                     <div class="space-y-5">
@@ -137,40 +118,28 @@
                             </div>
                         </div>
 
-                        <!-- Kategori -->
+                        <!-- Kategori (Auto-selected based on petugas jabatan) -->
                         <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kategori</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <button type="button"
-                                        @click="form.kategori = 'kantin'; $refs.kategoriInput.value = 'kantin'"
-                                        :class="form.kategori === 'kantin' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'"
-                                        class="px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between transition-colors">
-                                    <span>Kantin</span>
-                                    <span x-show="form.kategori === 'kantin'" class="material-symbols-outlined text-sm">check_circle</span>
-                                </button>
-                                <button type="button"
-                                        @click="form.kategori = 'koperasi'; $refs.kategoriInput.value = 'koperasi'"
-                                        :class="form.kategori === 'koperasi' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'"
-                                        class="px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between transition-colors">
-                                    <span>Koperasi Kitab</span>
-                                    <span x-show="form.kategori === 'koperasi'" class="material-symbols-outlined text-sm">check_circle</span>
-                                </button>
-                                <button type="button"
-                                        @click="form.kategori = 'laundry'; $refs.kategoriInput.value = 'laundry'"
-                                        :class="form.kategori === 'laundry' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'"
-                                        class="px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between transition-colors">
-                                    <span>Laundry</span>
-                                    <span x-show="form.kategori === 'laundry'" class="material-symbols-outlined text-sm">check_circle</span>
-                                </button>
-                                <button type="button"
-                                        @click="form.kategori = 'lainnya'; $refs.kategoriInput.value = 'lainnya'"
-                                        :class="form.kategori === 'lainnya' ? 'bg-primary text-on-primary' : 'bg-surface-container-low text-on-surface-variant'"
-                                        class="px-4 py-3 rounded-xl text-sm font-semibold text-left flex items-center justify-between transition-colors">
-                                    <span>Lainnya</span>
-                                    <span x-show="form.kategori === 'lainnya'" class="material-symbols-outlined text-sm">check_circle</span>
-                                </button>
+                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kategori Transaksi</label>
+                            <div class="p-4 bg-primary/10 rounded-xl border-2 border-primary/30">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-3">
+                                        <span class="material-symbols-outlined text-primary text-2xl" style="font-variation-settings: 'FILL' 1;">{{ $kategoriIcon }}</span>
+                                        <div>
+                                            <p class="font-headline text-lg font-bold text-primary" x-text="kategoriLabel"></p>
+                                            <p class="text-xs text-on-surface-variant">{{ $kategoriLabel }}</p>
+                                        </div>
+                                    </div>
+                                    <span class="material-symbols-outlined text-primary">check_circle</span>
+                                </div>
                             </div>
-                            <input type="hidden" name="kategori" x-ref="kategoriInput" :value="form.kategori" required>
+                            <!-- Hidden input with server-side value as primary source -->
+                            <input type="hidden" name="kategori" id="kategoriInput" value="{{ $kategoriValue }}" required>
+                            <!-- Alpine.js will update this if needed -->
+                            <p class="text-xs text-on-surface-variant mt-2">
+                                <span class="material-symbols-outlined text-xs align-middle">info</span>
+                                Kategori otomatis sesuai jabatan petugas ({{ auth()->user()->jabatan ?? 'N/A' }})
+                            </p>
                         </div>
 
                         <!-- Keterangan -->
@@ -245,7 +214,7 @@
 
                             <!-- Submit Button -->
                             <button type="submit"
-                                    :disabled="pin.length !== 6 || !form.nominal || !form.kategori"
+                                    :disabled="pin.length !== 6 || !form.nominal"
                                     class="w-full bg-primary text-on-primary font-headline font-bold py-4 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2">
                                 <span class="material-symbols-outlined">send</span>
                                 <span>Process Transaction</span>
@@ -291,13 +260,25 @@ function transaksiForm() {
         pin: [],
         showPin: false,
         errorMessage: '',
+        kategoriLabel: '{{ $kategoriLabel }}',
         form: {
             nominal: '',
-            kategori: '',
+            kategori: '{{ $kategoriValue }}',
             keterangan: ''
         },
 
         init() {
+            // Initialize kategori from server-side value
+            this.form.kategori = '{{ $kategoriValue }}';
+            
+            // Sync hidden input with Alpine.js
+            this.$nextTick(() => {
+                const kategoriInput = document.getElementById('kategoriInput');
+                if (kategoriInput) {
+                    kategoriInput.value = this.form.kategori;
+                }
+            });
+            
             // Clear saved form state if page loaded without errors (successful submission)
             @if(!$errors->any())
                 localStorage.removeItem('transaksi_nominal');

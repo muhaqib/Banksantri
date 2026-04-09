@@ -13,9 +13,66 @@ class TransaksiController extends Controller
 {
     public function index()
     {
+        // Get current user's jabatan and determine category
+        $jabatan = auth()->user()->jabatan ?? '';
+        
+        // Map jabatan to kategori
+        $kategoriMapping = $this->getKategoriFromJabatan($jabatan);
+        
         return view('pages.petugas.transaksi', [
             'activeRole' => 'petugas',
+            'kategoriLabel' => $kategoriMapping['label'],
+            'kategoriValue' => $kategoriMapping['value'],
+            'kategoriIcon' => $kategoriMapping['icon'],
         ]);
+    }
+
+    /**
+     * Map petugas jabatan to transaction category
+     */
+    private function getKategoriFromJabatan($jabatan)
+    {
+        $jabatan = strtolower($jabatan);
+        
+        // Map jabatan to kategori
+        if (str_contains($jabatan, 'kepala unit') || str_contains($jabatan, 'staff pengurus')) {
+            return [
+                'label' => 'Mengambil Tabungan',
+                'value' => 'lainnya',
+                'icon' => 'account_balance_wallet'
+            ];
+        } elseif (str_contains($jabatan, 'laundry')) {
+            return [
+                'label' => 'Laundry',
+                'value' => 'laundry',
+                'icon' => 'dry_cleaning'
+            ];
+        } elseif (str_contains($jabatan, 'syirkah')) {
+            return [
+                'label' => 'Syirkah',
+                'value' => 'lainnya',
+                'icon' => 'store'
+            ];
+        } elseif (str_contains($jabatan, 'koperasi kitab') || str_contains($jabatan, 'kitab')) {
+            return [
+                'label' => 'Kitab',
+                'value' => 'koperasi',
+                'icon' => 'menu_book'
+            ];
+        } elseif (str_contains($jabatan, 'mart')) {
+            return [
+                'label' => 'Mart',
+                'value' => 'kantin',
+                'icon' => 'storefront'
+            ];
+        }
+        
+        // Default category
+        return [
+            'label' => 'Transaksi',
+            'value' => 'lainnya',
+            'icon' => 'point_of_sale'
+        ];
     }
 
     public function scanRfid(Request $request)
@@ -108,7 +165,7 @@ class TransaksiController extends Controller
             ]);
 
             // Update petugas saldo (for certain categories)
-            if (in_array($request->kategori, ['kantin', 'koperasi', 'laundry', 'fotokopi'])) {
+            if (in_array($request->kategori, ['kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya'])) {
                 $petugas = Auth::user();
                 $petugas->update([
                     'saldo' => $petugas->saldo + $request->nominal
