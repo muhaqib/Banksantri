@@ -3,7 +3,7 @@
 @section('title', 'Login')
 
 @section('content')
-<div class="w-full max-w-md mx-auto px-4 sm:px-6 transition-all duration-300" x-data="{ role: 'admin', showPassword: false }">
+<div class="w-full max-w-md mx-auto px-4 sm:px-6 transition-all duration-300" x-data="{ role: 'santri', showPassword: false }">
     <!-- Logo Card -->
         <!-- Logo -->
         <div class="text-center mb-8">
@@ -28,6 +28,15 @@
                 </label>
                 <div class="grid grid-cols-3 gap-2">
                     <button type="button"
+                            @click="role = 'santri'"
+                            :class="{
+                                'bg-primary text-on-primary shadow-lg shadow-primary/20': role === 'santri',
+                                'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high': role !== 'santri'
+                            }"
+                            class="px-4 py-3 rounded-xl font-semibold text-sm transition-all transform active:scale-95">
+                        Santri
+                    </button>
+                <button type="button"
                             @click="role = 'admin'"
                             :class="{
                                 'bg-primary text-on-primary shadow-lg shadow-primary/20': role === 'admin',
@@ -45,15 +54,7 @@
                             class="px-4 py-3 rounded-xl font-semibold text-sm transition-all transform active:scale-95">
                         Petugas
                     </button>
-                    <button type="button"
-                            @click="role = 'santri'"
-                            :class="{
-                                'bg-primary text-on-primary shadow-lg shadow-primary/20': role === 'santri',
-                                'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high': role !== 'santri'
-                            }"
-                            class="px-4 py-3 rounded-xl font-semibold text-sm transition-all transform active:scale-95">
-                        Santri
-                    </button>
+                    
                 </div>
             </div>
 
@@ -67,7 +68,7 @@
                     <input type="text"
                            name="username"
                            required
-                           x-bind:placeholder="role === 'santri' ? 'Contoh: 12345678' : 'Masukkan username'"
+                           x-bind:placeholder="role === 'santri' ? 'Masukkan NIS' : 'Masukkan username'"
                            class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 pl-6 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
                 </div>
             </div>

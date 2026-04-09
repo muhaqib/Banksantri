@@ -28,7 +28,7 @@ class LoginController extends Controller
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
-            'role' => 'required|in:admin,petugas,santri'
+            'role' => 'required|in:santri,admin,petugas'
         ]);
 
         // Cari user berdasarkan email, NIS, atau name
