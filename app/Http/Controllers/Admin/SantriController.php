@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\File;
 
 class SantriController extends Controller
 {
@@ -103,7 +104,7 @@ class SantriController extends Controller
         // Handle foto upload
         $fotoPath = null;
         if ($request->hasFile('foto')) {
-            $fotoPath = $request->file('foto')->store('fotos/santri', 'public');
+            $fotoPath = $this->resizeAndSaveImage($request->file('foto'), 'fotos/santri');
         }
 
         User::create([
@@ -194,7 +195,7 @@ class SantriController extends Controller
             if ($santri->foto) {
                 Storage::disk('public')->delete($santri->foto);
             }
-            $data['foto'] = $request->file('foto')->store('fotos/santri', 'public');
+            $data['foto'] = $this->resizeAndSaveImage($request->file('foto'), 'fotos/santri');
         }
 
         // Update password if provided
@@ -252,5 +253,58 @@ class SantriController extends Controller
             'santri' => $santri,
             'foto_url' => $santri->foto ? Storage::url($santri->foto) : null
         ]);
+    }
+
+    /**
+     * Resize and save uploaded image.
+     * 
+     * @param \Illuminate\Http\UploadedFile $image
+     * @param string $directory
+     * @param int $maxWidth
+     * @param int $quality
+     * @return string|null
+     */
+    private function resizeAndSaveImage($image, $directory, $maxWidth = 800, $quality = 70)
+    {
+        // Get original dimensions
+        $img = imagecreatefromstring(file_get_contents($image->getRealPath()));
+        $originalWidth = imagesx($img);
+        $originalHeight = imagesy($img);
+
+        // Calculate new dimensions (maintain aspect ratio)
+        if ($originalWidth > $maxWidth) {
+            $newWidth = $maxWidth;
+            $newHeight = intval($originalHeight * ($maxWidth / $originalWidth));
+        } else {
+            $newWidth = $originalWidth;
+            $newHeight = $originalHeight;
+        }
+
+        // Create resized image
+        $resizedImg = imagecreatetruecolor($newWidth, $newHeight);
+        
+        // Preserve transparency for PNG
+        imagealphablending($resizedImg, false);
+        imagesavealpha($resizedImg, true);
+        
+        // Resize
+        imagecopyresampled($resizedImg, $img, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
+
+        // Generate filename
+        $filename = time() . '_' . uniqid() . '.jpg';
+        $fullPath = $directory . '/' . $filename;
+        $storagePath = storage_path('app/public/' . $fullPath);
+
+        // Ensure directory exists
+        File::ensureDirectoryExists(dirname($storagePath));
+
+        // Save as JPEG with specified quality
+        imagejpeg($resizedImg, $storagePath, $quality);
+
+        // Free memory
+        imagedestroy($img);
+        imagedestroy($resizedImg);
+
+        return $fullPath;
     }
 }
