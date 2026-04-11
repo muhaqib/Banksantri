@@ -106,26 +106,25 @@
                             <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nominal (IDR)</label>
                             <div class="relative">
                                 <span class="absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant font-bold">Rp</span>
-                                <input type="number"
+                                <input type="text"
                                        name="nominal"
-                                       x-model="form.nominal"
-                                       @input="saveFormState()"
+                                       x-model="formattedNominal"
+                                       @input="handleNominalInput($event.target.value)"
                                        required
-                                       min="1000"
-                                       step="1000"
                                        class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-4 font-headline text-2xl font-bold text-primary focus:ring-0 focus:bg-surface-container-highest transition-colors"
                                        placeholder="0">
                             </div>
+                            <input type="hidden" name="nominal" :value="form.nominal">
                         </div>
                         <div class="grid grid-cols-3 gap-2">
     <template x-for="nominal in [2000, 5000, 10000, 15000, 20000, 50000]" :key="nominal">
         <button type="button"
-                @click="form.nominal = nominal; saveFormState()"
-                :class="form.nominal == nominal 
-                    ? 'bg-primary text-white' 
+                @click="setNominal(nominal)"
+                :class="form.nominal == nominal
+                    ? 'bg-primary text-white'
                     : 'bg-surface-container-low text-on-surface'"
                 class="py-2 px-3 text-xs font-bold rounded-lg hover:bg-primary/10 hover:text-primary transition-colors">
-            Rp <span x-text="nominal.toLocaleString('id-ID')"></span>
+            Rp <span x-text="formatRupiah(nominal)"></span>
         </button>
     </template>
 </div>
@@ -273,6 +272,7 @@ function transaksiForm() {
         showPin: false,
         errorMessage: '',
         kategoriLabel: '{{ $kategoriLabel }}',
+        formattedNominal: '',
         form: {
             nominal: '',
             kategori: '{{ $kategoriValue }}',
@@ -334,8 +334,11 @@ function transaksiForm() {
             const nominal = localStorage.getItem('transaksi_nominal');
             const kategori = localStorage.getItem('transaksi_kategori');
             const keterangan = localStorage.getItem('transaksi_keterangan');
-            
-            if (nominal) this.form.nominal = nominal;
+
+            if (nominal) {
+                this.form.nominal = nominal;
+                this.formattedNominal = new Intl.NumberFormat('id-ID').format(nominal);
+            }
             if (kategori) this.form.kategori = kategori;
             if (keterangan) this.form.keterangan = keterangan;
         },
@@ -363,6 +366,7 @@ function transaksiForm() {
                 if (response.ok && data.success) {
                     this.santriData = data.data;
                     this.form.nominal = '';
+                    this.formattedNominal = '';
                     this.form.kategori = '';
                     this.form.keterangan = '';
                     this.pin = [];
@@ -381,6 +385,33 @@ function transaksiForm() {
 
         formatNumber(num) {
             return new Intl.NumberFormat('id-ID').format(num);
+        },
+
+        formatRupiah(angka) {
+            return new Intl.NumberFormat('id-ID').format(angka);
+        },
+
+        handleNominalInput(value) {
+            // Remove non-numeric characters
+            const rawValue = value.replace(/[^0-9]/g, '');
+            
+            // Update the raw numeric value
+            this.form.nominal = rawValue;
+            
+            // Format with dots for display
+            if (rawValue) {
+                this.formattedNominal = new Intl.NumberFormat('id-ID').format(rawValue);
+            } else {
+                this.formattedNominal = '';
+            }
+            
+            this.saveFormState();
+        },
+
+        setNominal(value) {
+            this.form.nominal = value;
+            this.formattedNominal = new Intl.NumberFormat('id-ID').format(value);
+            this.saveFormState();
         },
 
         addPinNumber(num) {
