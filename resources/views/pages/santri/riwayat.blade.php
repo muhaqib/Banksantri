@@ -24,15 +24,39 @@
     </header>
 
     <main class="px-5">
-        <!-- Month Selector / Summary Section -->
+        <!-- Monthly Chart with Filter -->
         <section class="mt-4 mb-6">
-            <div class="flex items-center gap-2 mb-4">
-                <p class="text-on-surface-variant font-semibold text-sm">{{ now()->locale('id')->isoFormat('MMMM YYYY') }}</p>
-                <span class="material-symbols-outlined text-sm text-on-surface-variant">expand_more</span>
+            <!-- Month Filter Dropdown -->
+            <div class="relative mb-4">
+                <button @click="showMonthFilter = !showMonthFilter" 
+                        class="w-full flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl">
+                    <div class="flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary">calendar_month</span>
+                        <p class="text-on-surface font-semibold text-sm" x-text="selectedMonthLabel"></p>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant transition-transform"
+                          :class="{ 'rotate-180': showMonthFilter }">expand_more</span>
+                </button>
+                
+                <!-- Month Dropdown -->
+                <div x-show="showMonthFilter" 
+                     x-cloak 
+                     @click.away="showMonthFilter = false"
+                     class="absolute z-50 w-full mt-2 bg-surface-container-lowest rounded-2xl shadow-xl p-3">
+                    <div class="grid grid-cols-3 gap-2">
+                        <template x-for="(month, index) in months" :key="index">
+                            <button @click="selectMonth(index + 1)"
+                                    class="px-3 py-2 rounded-lg text-xs font-medium text-center transition-colors"
+                                    :class="selectedMonth === (index + 1) ? 'bg-primary text-white' : 'bg-surface-container-low text-on-surface-variant hover:bg-surface-container-high'"
+                                    x-text="month">
+                            </button>
+                        </template>
+                    </div>
+                </div>
             </div>
-            
+
             <!-- Summary Cards -->
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-3 mb-4">
                 <div class="bg-surface-container-lowest p-4 rounded-2xl">
                     <div class="flex items-center gap-2 mb-2">
                         <div class="w-7 h-7 rounded-full bg-error-container flex items-center justify-center">
@@ -40,7 +64,7 @@
                         </div>
                         <span class="text-xs font-medium text-on-surface-variant">Pengeluaran</span>
                     </div>
-                    <p class="text-error font-headline font-bold text-base">Rp {{ number_format($pengeluaranBulanIni ?? 0, 0, ',', '.') }}</p>
+                    <p class="text-error font-headline font-bold text-base">Rp <span x-text="formatNumber(pengeluaran)"></span></p>
                 </div>
                 <div class="bg-surface-container-lowest p-4 rounded-2xl">
                     <div class="flex items-center gap-2 mb-2">
@@ -49,7 +73,15 @@
                         </div>
                         <span class="text-xs font-medium text-on-surface-variant">Pemasukan</span>
                     </div>
-                    <p class="text-primary font-headline font-bold text-base">Rp {{ number_format($pemasukanBulanIni ?? 0, 0, ',', '.') }}</p>
+                    <p class="text-primary font-headline font-bold text-base">Rp <span x-text="formatNumber(pemasukan)"></span></p>
+                </div>
+            </div>
+
+            <!-- Line Chart -->
+            <div class="bg-surface-container-lowest p-4 rounded-2xl overflow-x-auto">
+                <h3 class="text-xs font-semibold text-on-surface-variant mb-3 uppercase">Grafik Transaksi Harian</h3>
+                <div class="relative h-64 min-w-[600px]">
+                    <canvas id="monthlyChart"></canvas>
                 </div>
             </div>
         </section>
@@ -188,6 +220,24 @@ function riwayatSantri(config) {
         periode: config.currentPeriode,
         kategori: config.currentKategori,
         showFilter: false,
+        showMonthFilter: false,
+        selectedMonth: new Date().getMonth() + 1,
+        selectedYear: new Date().getFullYear(),
+        months: ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'],
+        chart: null,
+        chartData: {
+            labels: [],
+            pemasukan: [],
+            pengeluaran: []
+        },
+        pemasukan: 0,
+        pengeluaran: 0,
+
+        get selectedMonthLabel() {
+            const monthIndex = this.selectedMonth - 1;
+            const monthName = this.months[monthIndex];
+            return `${monthName} ${this.selectedYear}`;
+        },
 
         getFilterUrl(type) {
             const url = new URL(window.location.href);
@@ -211,6 +261,283 @@ function riwayatSantri(config) {
             const url = new URL(window.location.href);
             url.searchParams.set('periode', period);
             return url.toString();
+        },
+
+        async selectMonth(month) {
+            this.selectedMonth = month;
+            this.showMonthFilter = false;
+            
+            // Reload both chart and transaction list
+            await this.loadMonthlyData();
+            this.reloadTransactionList();
+        },
+
+        reloadTransactionList() {
+            const url = new URL(window.location.href);
+            url.searchParams.set('month', this.selectedMonth);
+            url.searchParams.set('year', this.selectedYear);
+            url.searchParams.set('periode', 'bulan');
+            
+            // Reload the page with new parameters
+            window.location.href = url.toString();
+        },
+
+        async loadMonthlyData() {
+            try {
+                const url = new URL(window.location.href);
+                url.searchParams.set('month', this.selectedMonth);
+                url.searchParams.set('year', this.selectedYear);
+
+                const response = await fetch(url.toString(), {
+                    headers: {
+                        'Accept': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    this.pemasukan = data.pemasukan || 0;
+                    this.pengeluaran = data.pengeluaran || 0;
+                    this.chartData = data.chartData || { labels: [], pemasukan: [], pengeluaran: [] };
+                    
+                    console.log('Chart data received:', this.chartData);
+                    console.log('Pemasukan data:', this.chartData.pemasukan);
+                    console.log('Pengeluaran data:', this.chartData.pengeluaran);
+                    
+                    this.$nextTick(() => {
+                        this.updateChart();
+                    });
+                }
+            } catch (error) {
+                console.error('Error loading monthly data:', error);
+            }
+        },
+
+        formatNumber(num) {
+            return new Intl.NumberFormat('id-ID').format(num);
+        },
+
+        initChart() {
+            // Check if Chart.js is loaded
+            if (typeof Chart === 'undefined') {
+                console.error('Chart.js not loaded!');
+                return;
+            }
+
+            const ctx = document.getElementById('monthlyChart');
+            if (!ctx) {
+                console.error('Canvas element not found');
+                return;
+            }
+
+            // Destroy existing chart if exists
+            if (this.chart) {
+                this.chart.destroy();
+            }
+
+            console.log('Initializing chart with data:', this.chartData);
+
+            this.chart = new Chart(ctx.getContext('2d'), {
+                type: 'line',
+                data: {
+                    labels: this.chartData.labels,
+                    datasets: [
+                        {
+                            label: 'Pemasukan',
+                            data: this.chartData.pemasukan,
+                            borderColor: '#10b981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#10b981',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#10b981',
+                            pointHoverBorderColor: '#ffffff',
+                            pointHoverBorderWidth: 3
+                        },
+                        {
+                            label: 'Pengeluaran',
+                            data: this.chartData.pengeluaran,
+                            borderColor: '#ef4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.1)',
+                            borderWidth: 3,
+                            tension: 0.3,
+                            fill: true,
+                            pointRadius: 4,
+                            pointHoverRadius: 6,
+                            pointBackgroundColor: '#ef4444',
+                            pointBorderColor: '#ffffff',
+                            pointBorderWidth: 2,
+                            pointHoverBackgroundColor: '#ef4444',
+                            pointHoverBorderColor: '#ffffff',
+                            pointHoverBorderWidth: 3
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    aspectRatio: 2,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top',
+                            labels: {
+                                boxWidth: 12,
+                                boxHeight: 12,
+                                padding: 15,
+                                font: {
+                                    size: 12,
+                                    weight: '600'
+                                },
+                                color: '#374151'
+                            }
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false,
+                            backgroundColor: 'rgba(255, 255, 255, 0.95)',
+                            titleColor: '#111827',
+                            bodyColor: '#374151',
+                            borderColor: '#e5e7eb',
+                            borderWidth: 1,
+                            padding: 12,
+                            displayColors: true,
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': Rp ' + new Intl.NumberFormat('id-ID').format(context.parsed.y);
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {
+                                display: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 9
+                                },
+                                color: '#6b7280',
+                                maxRotation: 0,
+                                minRotation: 0,
+                                autoSkip: false,
+                                padding: 2,
+                                callback: function(value, index, values) {
+                                    // Show all date labels
+                                    return this.getLabelForValue(value);
+                                }
+                            },
+                            offset: true
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.05)',
+                                drawBorder: false
+                            },
+                            ticks: {
+                                font: {
+                                    size: 11
+                                },
+                                color: '#6b7280',
+                                callback: function(value) {
+                                    if (value >= 1000000) {
+                                        return (value / 1000000).toFixed(1) + 'jt';
+                                    } else if (value >= 1000) {
+                                        return (value / 1000) + 'k';
+                                    }
+                                    return value;
+                                }
+                            },
+                            border: {
+                                display: false
+                            }
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    },
+                    animation: {
+                        duration: 800,
+                        easing: 'easeInOutQuart'
+                    }
+                }
+            });
+
+            console.log('Chart initialized successfully');
+        },
+
+        updateChart() {
+            if (!this.chart) {
+                console.log('Chart not initialized yet, calling initChart()');
+                this.initChart();
+                return;
+            }
+
+            console.log('Updating chart with data:', {
+                labels: this.chartData.labels,
+                pemasukan: this.chartData.pemasukan,
+                pengeluaran: this.chartData.pengeluaran
+            });
+
+            // Update labels
+            this.chart.data.labels = this.chartData.labels;
+            
+            // Update datasets
+            if (this.chart.data.datasets && this.chart.data.datasets.length >= 2) {
+                this.chart.data.datasets[0].data = [...this.chartData.pemasukan];
+                this.chart.data.datasets[1].data = [...this.chartData.pengeluaran];
+            }
+            
+            // Update chart with animation
+            this.chart.update('active');
+            
+            console.log('Chart updated successfully');
+        },
+
+        init() {
+            // Set initial month/year from URL params if available
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.has('month')) {
+                this.selectedMonth = parseInt(urlParams.get('month'));
+            }
+            if (urlParams.has('year')) {
+                this.selectedYear = parseInt(urlParams.get('year'));
+            }
+
+            // Wait for Chart.js to load, then initialize
+            this.waitForChartAndInit();
+        },
+
+        waitForChartAndInit() {
+            let attempts = 0;
+            const maxAttempts = 50; // 5 seconds max
+            const interval = setInterval(() => {
+                attempts++;
+
+                if (typeof Chart !== 'undefined') {
+                    clearInterval(interval);
+                    console.log('Chart.js loaded, loading chart data first...');
+                    
+                    // Load data first, then initialize chart
+                    this.$nextTick(async () => {
+                        await this.loadMonthlyData();
+                    });
+                } else if (attempts >= maxAttempts) {
+                    clearInterval(interval);
+                    console.error('Chart.js failed to load after 5 seconds');
+                }
+            }, 100);
         }
     }
 }
@@ -229,3 +556,19 @@ function riwayatSantri(config) {
 }
 </style>
 @endsection
+
+@push('scripts')
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js" defer></script>
+<script>
+window.addEventListener('load', function() {
+    console.log('Page loaded, checking for Chart.js...');
+    setTimeout(() => {
+        if (typeof Chart !== 'undefined') {
+            console.log('Chart.js is available!');
+        } else {
+            console.log('Chart.js not loaded, will use fallback');
+        }
+    }, 500);
+});
+</script>
+@endpush
