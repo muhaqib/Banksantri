@@ -46,9 +46,6 @@
     @stack('styles')
 </head>
 <body class="bg-surface font-body text-on-surface min-h-screen flex flex-col" x-data="{ theme: 'light' }">
-    <div class="fixed top-0 left-0 w-full h-1 bg-surface-container overflow-hidden">
-        <div class="h-full sanctuary-gradient w-1/3 animate-pulse"></div>
-    </div>
 
     <div class="flex-1 flex items-center justify-center p-4 sm:p-6 py-8 sm:py-6">
         @yield('content')
