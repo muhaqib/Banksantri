@@ -133,7 +133,27 @@
                     <div class="bg-surface-container-lowest p-4 rounded-xl flex items-center justify-between transition-transform active:scale-[0.98]">
                         <div class="flex items-center gap-3">
                             <div class="w-10 h-10 {{ $transaksi->jenis === 'masuk' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error' }} rounded-full flex items-center justify-center">
-                                <span class="material-symbols-outlined">{{ $transaksi->jenis === 'masuk' ? 'account_balance' : 'restaurant' }}</span>
+                                <span class="material-symbols-outlined">
+                                    @if($transaksi->kategori === 'top_up' || $transaksi->kategori === 'tarik uang')
+                                        account_balance_wallet
+                                    @elseif($transaksi->kategori === 'kantin')
+                                        restaurant_menu
+                                    @elseif($transaksi->kategori === 'koperasi')
+                                        shopping_bag
+                                    @elseif($transaksi->kategori === 'laundry')
+                                        local_laundry_service
+                                    @elseif($transaksi->kategori === 'fotokopi')
+                                        print
+                                    @elseif($transaksi->kategori === 'syirkah')
+                                        store
+                                    @elseif($transaksi->kategori === 'beli kitab')
+                                        menu_book
+                                    @elseif($transaksi->kategori === 'mart')
+                                        storefront
+                                    @else
+                                        {{ $transaksi->jenis === 'masuk' ? 'trending_up' : 'trending_down' }}
+                                    @endif
+                                </span>
                             </div>
                             <div>
                                 <p class="text-sm font-bold leading-tight">{{ $transaksi->kategori ?? 'Transaksi' }}</p>

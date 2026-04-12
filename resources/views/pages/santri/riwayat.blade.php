@@ -55,33 +55,33 @@
                 </div>
             </div>
 
-            <!-- Summary Cards -->
-            <div class="grid grid-cols-2 gap-3 mb-4">
-                <div class="bg-surface-container-lowest p-4 rounded-2xl">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-7 h-7 rounded-full bg-error-container flex items-center justify-center">
-                            <span class="material-symbols-outlined text-error text-sm">trending_down</span>
-                        </div>
-                        <span class="text-xs font-medium text-on-surface-variant">Pengeluaran</span>
-                    </div>
-                    <p class="text-error font-headline font-bold text-base">Rp <span x-text="formatNumber(pengeluaran)"></span></p>
-                </div>
-                <div class="bg-surface-container-lowest p-4 rounded-2xl">
-                    <div class="flex items-center gap-2 mb-2">
-                        <div class="w-7 h-7 rounded-full bg-primary-fixed flex items-center justify-center">
-                            <span class="material-symbols-outlined text-primary text-sm">trending_up</span>
-                        </div>
-                        <span class="text-xs font-medium text-on-surface-variant">Pemasukan</span>
-                    </div>
-                    <p class="text-primary font-headline font-bold text-base">Rp <span x-text="formatNumber(pemasukan)"></span></p>
-                </div>
-            </div>
-
             <!-- Line Chart -->
             <div class="bg-surface-container-lowest p-4 rounded-2xl overflow-x-auto">
                 <h3 class="text-xs font-semibold text-on-surface-variant mb-3 uppercase">Grafik Transaksi Harian</h3>
                 <div class="relative h-64 min-w-[600px]">
                     <canvas id="monthlyChart"></canvas>
+                </div>
+                
+                <!-- Summary Totals Below Chart -->
+                <div class="flex justify-between gap-4 mt-4 pt-4 border-t border-surface-container">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-6 h-6 rounded-full bg-error-container flex items-center justify-center">
+                                <span class="material-symbols-outlined text-error text-sm">trending_down</span>
+                            </div>
+                            <span class="text-xs font-medium text-on-surface-variant">Total Pengeluaran</span>
+                        </div>
+                        <p class="text-error font-headline font-bold text-sm">Rp <span x-text="formatNumber(pengeluaran)"></span></p>
+                    </div>
+                    <div class="flex-1">
+                        <div class="flex items-center gap-2 mb-1">
+                            <div class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center">
+                                <span class="material-symbols-outlined text-primary text-sm">trending_up</span>
+                            </div>
+                            <span class="text-xs font-medium text-on-surface-variant">Total Pemasukan</span>
+                        </div>
+                        <p class="text-primary font-headline font-bold text-sm">Rp <span x-text="formatNumber(pemasukan)"></span></p>
+                    </div>
                 </div>
             </div>
         </section>
@@ -159,7 +159,7 @@
                                 <div class="flex items-center gap-3">
                                     <div class="w-12 h-12 rounded-2xl {{ $transaksi->jenis === 'masuk' ? 'bg-primary-fixed' : 'bg-surface-container' }} flex items-center justify-center">
                                         <span class="material-symbols-outlined {{ $transaksi->jenis === 'masuk' ? 'text-primary' : 'text-on-surface-variant' }}">
-                                            @if($transaksi->kategori === 'top_up')
+                                            @if($transaksi->kategori === 'top_up' || $transaksi->kategori === 'tarik uang')
                                                 account_balance_wallet
                                             @elseif($transaksi->kategori === 'kantin')
                                                 restaurant_menu
@@ -169,6 +169,12 @@
                                                 local_laundry_service
                                             @elseif($transaksi->kategori === 'fotokopi')
                                                 print
+                                            @elseif($transaksi->kategori === 'syirkah')
+                                                store
+                                            @elseif($transaksi->kategori === 'beli kitab')
+                                                menu_book
+                                            @elseif($transaksi->kategori === 'mart')
+                                                storefront
                                             @else
                                                 {{ $transaksi->jenis === 'masuk' ? 'trending_up' : 'trending_down' }}
                                             @endif
@@ -349,34 +355,34 @@ function riwayatSantri(config) {
                             data: this.chartData.pemasukan,
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                            borderWidth: 3,
+                            borderWidth: 2,
                             tension: 0.3,
                             fill: true,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                             pointBackgroundColor: '#10b981',
                             pointBorderColor: '#ffffff',
                             pointBorderWidth: 2,
                             pointHoverBackgroundColor: '#10b981',
                             pointHoverBorderColor: '#ffffff',
-                            pointHoverBorderWidth: 3
+                            pointHoverBorderWidth: 2
                         },
                         {
                             label: 'Pengeluaran',
                             data: this.chartData.pengeluaran,
                             borderColor: '#ef4444',
                             backgroundColor: 'rgba(239, 68, 68, 0.1)',
-                            borderWidth: 3,
+                            borderWidth: 2,
                             tension: 0.3,
                             fill: true,
-                            pointRadius: 4,
-                            pointHoverRadius: 6,
+                            pointRadius: 3,
+                            pointHoverRadius: 5,
                             pointBackgroundColor: '#ef4444',
                             pointBorderColor: '#ffffff',
                             pointBorderWidth: 2,
                             pointHoverBackgroundColor: '#ef4444',
                             pointHoverBorderColor: '#ffffff',
-                            pointHoverBorderWidth: 3
+                            pointHoverBorderWidth: 2
                         }
                     ]
                 },

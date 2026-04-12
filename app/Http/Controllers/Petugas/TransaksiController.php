@@ -60,13 +60,13 @@ class TransaksiController extends Controller
         } elseif ($jabatan === 'Koperasi Kitab') {
             return [
                 'label' => 'Kitab',
-                'value' => 'koperasi',
+                'value' => 'beli kitab',
                 'icon' => 'menu_book'
             ];
         } elseif ($jabatan === 'Petugas Mart') {
             return [
                 'label' => 'Mart',
-                'value' => 'kantin',
+                'value' => 'mart',
                 'icon' => 'storefront'
             ];
         }
@@ -129,7 +129,7 @@ class TransaksiController extends Controller
         $request->validate([
             'santri_id' => 'required|exists:users,id',
             'nominal' => 'required|numeric|min:1000',
-            'kategori' => 'required|in:kantin,koperasi,laundry,fotokopi,lainnya,tarik uang,syirkah',
+            'kategori' => 'required|in:kantin,koperasi,laundry,fotokopi,lainnya,tarik uang,syirkah,beli kitab,mart',
             'keterangan' => 'nullable|string|max:500',
             'pin' => 'required|string|size:6'
         ]);
@@ -169,7 +169,7 @@ class TransaksiController extends Controller
             ]);
 
             // Update petugas saldo (for certain categories)
-            if (in_array($request->kategori, ['kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya'])) {
+            if (in_array($request->kategori, ['kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya', 'beli kitab', 'mart'])) {
                 $petugas = Auth::user();
                 $petugas->update([
                     'saldo' => $petugas->saldo + $request->nominal
