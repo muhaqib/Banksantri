@@ -141,4 +141,12 @@ class User extends Authenticatable
     {
         return $this->hasMany(PrestasiSantri::class, 'santri_id');
     }
+
+    /**
+     * Get the kamar assignment for this user (as santri).
+     */
+    public function kamarSantri()
+    {
+        return $this->hasOne(KamarSantri::class);
+    }
 }

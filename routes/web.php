@@ -21,6 +21,7 @@ use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
+use App\Http\Controllers\Admin\KamarSantriController;
 use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -101,6 +102,13 @@ Route::middleware('auth')->group(function () {
         Route::resource('blog', AdminBlogController::class)->except(['show']);
         Route::get('blog/{blog}', [AdminBlogController::class, 'show'])->name('blog.show');
         Route::post('blog/{blog}/toggle-publish', [AdminBlogController::class, 'togglePublish'])->name('blog.toggle-publish');
+
+        // Kamar Santri Management
+        Route::get('/kamar', [KamarSantriController::class, 'index'])->name('kamar.index');
+        Route::get('/kamar/available-santri', [KamarSantriController::class, 'getAvailableSantri'])->name('kamar.available-santri');
+        Route::post('/kamar', [KamarSantriController::class, 'store'])->name('kamar.store');
+        Route::get('/kamar/{kamar}', [KamarSantriController::class, 'show'])->name('kamar.show');
+        Route::delete('/kamar/{id}', [KamarSantriController::class, 'destroy'])->name('kamar.destroy');
 
         // Profile Management
         Route::get('/profile', [AdminProfileController::class, 'index'])->name('profile');

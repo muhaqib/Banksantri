@@ -105,9 +105,9 @@
 
 
                 <!-- Data Santri -->
-                <div x-data="{ open: {{ request()->routeIs('admin.santri.*') ? 'true' : 'false' }} }" class="my-1">
+                <div x-data="{ open: {{ request()->routeIs('admin.santri.*|admin.kamar.*') ? 'true' : 'false' }} }" class="my-1">
                     <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.santri.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                            class="w-full {{ request()->routeIs('admin.santri.*|admin.kamar.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
                         <div class="flex items-center gap-3">
                             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
                             <span>Data Santri</span>
@@ -115,20 +115,20 @@
                         <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
                     </button>
                     <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.santri.index') }}" 
+                        <a href="{{ route('admin.santri.index') }}"
                            class="{{ request()->routeIs('admin.santri.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
                             <span>Semua Santri</span>
                         </a>
-                        <a href="{{ route('admin.santri.create') }}" 
+                        <a href="{{ route('admin.santri.create') }}"
                            class="{{ request()->routeIs('admin.santri.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
                             <span>Tambah Santri</span>
                         </a>
-                        <a href="{{ route('admin.transactions.topup') }}" 
-                           class="{{ request()->routeIs('admin.transactions.topup') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                        <a href="{{ route('admin.kamar.index') }}"
+                           class="{{ request()->routeIs('admin.kamar.*') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Top Up Saldo</span>
+                            <span>Data Kamar</span>
                         </a>
                     </div>
                 </div>
@@ -168,10 +168,15 @@
                         <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
                     </button>
                     <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.transactions.santri') }}" 
+                        <a href="{{ route('admin.transactions.santri') }}"
                            class="{{ request()->routeIs('admin.transactions.santri') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
                             <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
                             <span>Riwayat Transaksi</span>
+                        </a>
+                        <a href="{{ route('admin.transactions.topup') }}"
+                           class="{{ request()->routeIs('admin.transactions.topup') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                            <span>Top Up Saldo</span>
                         </a>
                     </div>
                 </div>
