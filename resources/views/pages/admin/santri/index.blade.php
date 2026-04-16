@@ -78,7 +78,7 @@
                         <th class="px-6 py-4">Santri</th>
                         <th class="px-6 py-4">NIS</th>
                         <th class="px-6 py-4">Kelas</th>
-                        <th class="px-6 py-4">No HP</th>
+                        <th class="px-6 py-4">Kamar</th>
                         <th class="px-6 py-4 text-right">Saldo</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
@@ -107,7 +107,7 @@
                                     {{ $santri->kelas ?? '-' }}
                                 </span>
                             </td>
-                            <td class="px-6 py-4 text-on-surface-variant">{{ $santri->no_hp ?? '-' }}</td>
+                            <td class="px-6 py-4 text-on-surface-variant">{{ $santri->kamarSantri?->kamar ? ucfirst(str_replace('_', ' ', $santri->kamarSantri->kamar)) : '-' }}</td>
                             <td class="px-6 py-4 text-right">
                                 <span class="font-headline font-bold text-primary">Rp {{ number_format($santri->saldo, 0, ',', '.') }}</span>
                             </td>

@@ -17,7 +17,7 @@ class SantriController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('role', 'santri');
+        $query = User::where('role', 'santri')->with('kamarSantri');
 
         // Search by name or NIS if provided
         if ($request->filled('search')) {
