@@ -4,7 +4,7 @@
 @php $activeRole = 'petugas'; @endphp
 
 @section('content')
-<div x-data="transaksiForm()" x-init="init()">
+<div x-data="transaksiForm()" x-init="init()" @keydown.window="handleKeydown($event)">
     <!-- Page Header -->
     <header class="mb-8">
         <h1 class="font-headline text-3xl font-extrabold text-primary tracking-tight">Terminal Transaksi</h1>
@@ -214,7 +214,9 @@
                                     0
                                 </button>
                                 <button type="button"
-                                        @click="clearPin()"
+                                        @click="removePinNumber()"
+                                        @dblclick="clearPin()"
+                                        title="Hapus 1 digit (Klik ganda untuk hapus semua)"
                                         class="h-14 bg-error/10 rounded-xl flex items-center justify-center text-error hover:bg-error hover:text-on-error transition-colors">
                                     <span class="material-symbols-outlined">backspace</span>
                                 </button>
@@ -420,8 +422,33 @@ function transaksiForm() {
             }
         },
 
+        removePinNumber() {
+            this.pin.pop();
+        },
+
         clearPin() {
             this.pin = [];
+        },
+
+        handleKeydown(e) {
+            if (!this.santriData) return;
+
+            const activeElement = document.activeElement;
+            if (activeElement) {
+                const activeTag = activeElement.tagName.toLowerCase();
+                if (activeTag === 'input' || activeTag === 'textarea' || activeTag === 'select' || activeElement.isContentEditable) {
+                    return;
+                }
+            }
+
+            if (/^[0-9]$/.test(e.key)) {
+                this.addPinNumber(parseInt(e.key));
+            } else if (e.key === 'Backspace') {
+                e.preventDefault();
+                this.removePinNumber();
+            } else if (e.key === 'Delete' || e.key === 'Escape') {
+                this.clearPin();
+            }
         }
     }
 }
