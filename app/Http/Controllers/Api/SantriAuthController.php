@@ -24,7 +24,18 @@ class SantriAuthController extends Controller
             ->where('nis', $validated['nis'])
             ->first();
 
-        if (!$user || !Hash::check($validated['pin'], $user->pin)) {
+        if (!$user) {
+            throw ValidationException::withMessages([
+                'nis' => ['NIS atau PIN salah.'],
+            ]);
+        }
+
+        // Handle both plain text and hashed PINs
+        if ($user->pin === $validated['pin']) {
+            // It's a plaintext match, update to hash
+            $user->pin = Hash::make($validated['pin']);
+            $user->save();
+        } elseif (!Hash::check($validated['pin'], $user->pin)) {
             throw ValidationException::withMessages([
                 'nis' => ['NIS atau PIN salah.'],
             ]);

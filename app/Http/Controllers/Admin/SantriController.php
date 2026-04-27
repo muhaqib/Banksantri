@@ -112,7 +112,7 @@ class SantriController extends Controller
             'email' => $validated['email'],
             'nis' => $validated['nis'],
             'password' => Hash::make($validated['password']),
-            'pin' => $validated['pin'],
+            'pin' => Hash::make($validated['pin']),
             'saldo' => $validated['saldo'] ?? 0,
             'role' => 'santri',
             'foto' => $fotoPath,
@@ -203,9 +203,8 @@ class SantriController extends Controller
             $data['password'] = Hash::make($validated['password']);
         }
 
-        // Update PIN if provided
         if ($validated['pin']) {
-            $data['pin'] = $validated['pin'];
+            $data['pin'] = Hash::make($validated['pin']);
         }
 
         // Use direct database update to avoid issues with Eloquent model casts

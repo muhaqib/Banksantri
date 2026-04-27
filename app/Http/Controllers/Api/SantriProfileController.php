@@ -52,7 +52,14 @@ class SantriProfileController extends Controller
             'new_pin_confirmation' => 'required|string|size:6|same:new_pin',
         ]);
 
-        if (!Hash::check($validated['old_pin'], $santri->pin)) {
+        $isValid = false;
+        if ($santri->pin === $validated['old_pin']) {
+            $isValid = true;
+        } elseif (Hash::check($validated['old_pin'], $santri->pin)) {
+            $isValid = true;
+        }
+
+        if (!$isValid) {
             return response()->json([
                 'message' => 'PIN lama salah',
                 'errors' => ['old_pin' => ['PIN lama yang Anda masukkan salah']],
