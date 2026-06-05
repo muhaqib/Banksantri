@@ -107,7 +107,7 @@ class SantriController extends Controller
             $fotoPath = $this->resizeAndSaveImage($request->file('foto'), 'fotos/santri');
         }
 
-        User::create([
+        $santri = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nis' => $validated['nis'],
@@ -125,6 +125,7 @@ class SantriController extends Controller
             'asal_sekolah' => $validated['asal_sekolah'] ?? null,
             'kelas' => $validated['kelas'] ?? null,
         ]);
+        $santri->syncRoles(['santri']);
 
         return redirect()->route('admin.santri.index')
             ->with('success', 'Data santri berhasil ditambahkan!');

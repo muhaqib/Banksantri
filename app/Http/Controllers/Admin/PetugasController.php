@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
@@ -58,7 +59,7 @@ class PetugasController extends Controller
             $fotoPath = $request->file('foto')->store('fotos/petugas', 'public');
         }
 
-        User::create([
+        $petugas = User::create([
             'name' => $validated['name'],
             'email' => $validated['email'],
             'nip' => $validated['nip'] ?? null,
@@ -69,6 +70,8 @@ class PetugasController extends Controller
             'no_hp' => $validated['no_hp'] ?? null,
             'alamat' => $validated['alamat'] ?? null,
         ]);
+        $petugas->syncRoles(['petugas']);
+        $petugas->syncPermissions(PermissionRegistry::petugasDefaults());
 
         return redirect()->route('admin.petugas.index')
             ->with('success', 'Data petugas berhasil ditambahkan!');

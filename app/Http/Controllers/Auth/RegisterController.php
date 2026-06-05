@@ -38,10 +38,11 @@ class RegisterController extends Controller
             'password' => Hash::make($request->password),
             'role' => 'admin',
         ]);
+        $user->syncRoles(['admin']);
 
         Auth::login($user);
 
         // Redirect ke halaman home dengan pesan sukses
-        return redirect('/home')->with('success', 'Registrasi berhasil!');
+        return redirect()->route('admin.dashboard')->with('success', 'Registrasi berhasil!');
     }
 }

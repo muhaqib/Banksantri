@@ -11,12 +11,32 @@ use Illuminate\Support\Facades\Hash;
 
 class LoginController extends Controller
 {
+    private array $roles = [
+        'santri' => 'Santri',
+        'admin' => 'Admin',
+        'petugas' => 'Petugas',
+    ];
+
+    public function showRoleSelection()
+    {
+        return view('pages.auth.role-select', [
+            'roles' => $this->roles,
+        ]);
+    }
+
     /**
      * Show the login form.
      */
-    public function showLoginForm()
+    public function showLoginForm(?string $role = null)
     {
-        return view('pages.auth.login');
+        if (!$role || !array_key_exists($role, $this->roles)) {
+            return redirect()->route('login');
+        }
+
+        return view('pages.auth.login', [
+            'selectedRole' => $role,
+            'selectedRoleLabel' => $this->roles[$role],
+        ]);
     }
 
     /**
@@ -28,7 +48,7 @@ class LoginController extends Controller
         $request->validate([
             'username' => 'required|string',
             'password' => 'required|string',
-            'role' => 'required|in:santri,admin,petugas'
+            'role' => 'required|in:' . implode(',', array_keys($this->roles)),
         ]);
 
         // Cari user berdasarkan email, NIS, atau name
@@ -54,6 +74,10 @@ class LoginController extends Controller
         }
 
         // Login menggunakan Laravel Auth
+        if (!$user->hasRole($user->role)) {
+            $user->syncRoles([$user->role]);
+        }
+
         Auth::login($user, $request->filled('remember'));
 
         $request->session()->regenerate();

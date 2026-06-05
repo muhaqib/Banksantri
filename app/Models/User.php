@@ -6,10 +6,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use Spatie\Permission\Traits\HasRoles;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, HasRoles, Notifiable;
 
     /**
      * The attributes that are mass assignable.
@@ -61,38 +62,6 @@ class User extends Authenticatable
             'password' => 'hashed',
             'saldo' => 'decimal:0',
         ];
-    }
-
-    /**
-     * Determine if the user has a specific role.
-     */
-    public function hasRole(string $role): bool
-    {
-        return $this->role === $role;
-    }
-
-    /**
-     * Check if user is admin.
-     */
-    public function isAdmin(): bool
-    {
-        return $this->hasRole('admin');
-    }
-
-    /**
-     * Check if user is petugas.
-     */
-    public function isPetugas(): bool
-    {
-        return $this->hasRole('petugas');
-    }
-
-    /**
-     * Check if user is santri.
-     */
-    public function isSantri(): bool
-    {
-        return $this->hasRole('santri');
     }
 
     /**

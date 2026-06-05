@@ -39,6 +39,7 @@ class SantriSeeder extends Seeder
             $nis = trim($worksheet->getCell('E' . $row)->getValue() ?? '');
             $noHpWali = trim($worksheet->getCell('F' . $row)->getValue() ?? '');
             $role = trim($worksheet->getCell('G' . $row)->getValue() ?? 'santri');
+            $role = in_array($role, ['admin', 'petugas', 'santri'], true) ? $role : 'santri';
 
             // Skip if NIS is empty
             if (empty($nis)) {
@@ -60,7 +61,7 @@ class SantriSeeder extends Seeder
 
             // Create santri user
             try {
-                User::create([
+                $santri = User::create([
                     'name' => $nama,
                     'email' => $email,
                     'password' => Hash::make('santri123'),
@@ -72,6 +73,7 @@ class SantriSeeder extends Seeder
                     'email_verified_at' => now(),
                     'saldo' => 0,
                 ]);
+                $santri->syncRoles([$role ?: 'santri']);
 
                 $created++;
                 

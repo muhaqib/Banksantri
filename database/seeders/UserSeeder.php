@@ -14,7 +14,7 @@ class UserSeeder extends Seeder
     public function run(): void
     {
         // Create Admin
-        User::updateOrCreate(
+        $admin = User::updateOrCreate(
             ['email' => 'admin@tabungan.id'],
             [
                 'name' => 'admin',
@@ -24,9 +24,10 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $admin->syncRoles(['admin']);
 
         // Create Petugas
-        User::updateOrCreate(
+        $petugas = User::updateOrCreate(
             ['email' => 'petugas@tabungan.id'],
             [
                 'name' => 'petugas',
@@ -36,9 +37,10 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $petugas->syncRoles(['petugas']);
 
         // Create Santri
-        User::updateOrCreate(
+        $santri = User::updateOrCreate(
             ['email' => 'santri@tabungan.id'],
             [
                 'name' => 'santri',
@@ -49,9 +51,10 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $santri->syncRoles(['santri']);
 
         // Create Admin with admin@gmail.com (untuk testing)
-        User::updateOrCreate(
+        $testAdmin = User::updateOrCreate(
             ['email' => 'admin@gmail.com'],
             [
                 'name' => 'admin',
@@ -61,5 +64,6 @@ class UserSeeder extends Seeder
                 'email_verified_at' => now(),
             ]
         );
+        $testAdmin->syncRoles(['admin']);
     }
 }

@@ -1,0 +1,38 @@
+<?php
+
+namespace Database\Seeders;
+
+use App\Models\User;
+use App\Support\PermissionRegistry;
+use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
+
+class RolePermissionSeeder extends Seeder
+{
+    public function run(): void
+    {
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        foreach (PermissionRegistry::all() as $permission) {
+            Permission::findOrCreate($permission, 'web');
+        }
+
+        foreach (PermissionRegistry::defaults() as $roleName => $permissions) {
+            Role::findOrCreate($roleName, 'web')->syncPermissions($permissions);
+        }
+
+        User::query()
+            ->whereIn('role', array_keys(PermissionRegistry::defaults()))
+            ->each(function (User $user): void {
+                $user->syncRoles([$user->role]);
+
+                if ($user->role === 'petugas' && $user->permissions()->count() === 0) {
+                    $user->syncPermissions(PermissionRegistry::petugasDefaults());
+                }
+            });
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+    }
+}

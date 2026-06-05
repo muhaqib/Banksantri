@@ -1,4 +1,8 @@
 @props(['activeRole' => 'admin'])
+@php
+    $currentUser = auth()->user();
+    $displayRole = $currentUser?->getRoleNames()->first() ?? $currentUser?->role ?? $activeRole;
+@endphp
 
 <!DOCTYPE html>
 <html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
@@ -79,10 +83,12 @@
                     <div>
                         <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Mawa Smart</h1>
                         <p class="text-xs tracking-wide text-on-surface-variant">
-                            @if($activeRole === 'admin')
+                            @if($displayRole === 'admin')
                                 Super Admin
-                            @elseif($activeRole === 'petugas')
+                            @elseif($displayRole === 'petugas')
                                 Unit Petugas
+                            @elseif($displayRole === 'santri')
+                                Santri
                             @endif
                         </p>
                     </div>
@@ -94,192 +100,139 @@
         </div>
 
         <!-- Navigation -->
+        @php
+            $singleMenus = [
+                ['permission' => 'admin.dashboard.view', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
+                ['permission' => 'petugas.dashboard.view', 'route' => 'petugas.dashboard', 'active' => 'petugas.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
+            ];
+            $menuGroups = [
+                [
+                    'label' => 'Data Santri',
+                    'icon' => 'school',
+                    'active' => ['admin.santri.*', 'admin.kamar.*'],
+                    'children' => [
+                        ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.index', 'active' => 'admin.santri.index', 'label' => 'Semua Santri'],
+                        ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.create', 'active' => 'admin.santri.create', 'label' => 'Tambah Santri'],
+                        ['permission' => 'admin.kamar.manage', 'route' => 'admin.kamar.index', 'active' => 'admin.kamar.*', 'label' => 'Data Kamar'],
+                    ],
+                ],
+                [
+                    'label' => 'Data Petugas',
+                    'icon' => 'group',
+                    'active' => ['admin.petugas.*'],
+                    'children' => [
+                        ['permission' => 'admin.petugas.manage', 'route' => 'admin.petugas.index', 'active' => 'admin.petugas.index', 'label' => 'Semua Petugas'],
+                        ['permission' => 'admin.petugas.manage', 'route' => 'admin.petugas.create', 'active' => 'admin.petugas.create', 'label' => 'Tambah Petugas'],
+                    ],
+                ],
+                [
+                    'label' => 'Transaksi',
+                    'icon' => 'receipt_long',
+                    'active' => ['admin.transactions.*', 'admin.kas', 'admin.settlement', 'admin.topup'],
+                    'children' => [
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.santri', 'active' => 'admin.transactions.santri', 'label' => 'Riwayat Transaksi'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.topup', 'active' => 'admin.transactions.topup', 'label' => 'Top Up Saldo'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.topup', 'active' => 'admin.topup', 'label' => 'Verifikasi Top Up'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.settlement', 'active' => 'admin.settlement', 'label' => 'Settlement'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.kas', 'active' => 'admin.kas', 'label' => 'Kas'],
+                    ],
+                ],
+                [
+                    'label' => 'Prestasi Santri',
+                    'icon' => 'military_tech',
+                    'active' => ['admin.prestasi.*'],
+                    'children' => [
+                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.index', 'active' => 'admin.prestasi.index', 'label' => 'Semua Prestasi'],
+                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.create', 'active' => 'admin.prestasi.create', 'label' => 'Tambah Prestasi'],
+                    ],
+                ],
+                [
+                    'label' => 'Blog & Artikel',
+                    'icon' => 'article',
+                    'active' => ['admin.blog.*'],
+                    'children' => [
+                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.index', 'active' => 'admin.blog.index', 'label' => 'Semua Blog'],
+                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.create', 'active' => 'admin.blog.create', 'label' => 'Tambah Blog'],
+                    ],
+                ],
+                [
+                    'label' => 'Petugas',
+                    'icon' => 'payments',
+                    'active' => ['petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
+                    'children' => [
+                        ['permission' => 'petugas.transactions.manage', 'route' => 'petugas.transaksi', 'active' => 'petugas.transaksi', 'label' => 'Transaksi'],
+                        ['permission' => 'petugas.history.view', 'route' => 'petugas.riwayat', 'active' => 'petugas.riwayat', 'label' => 'Riwayat'],
+                        ['permission' => 'petugas.withdrawals.manage', 'route' => 'petugas.tarik-tunai', 'active' => 'petugas.tarik-tunai', 'label' => 'Tarik Tunai'],
+                    ],
+                ],
+            ];
+        @endphp
         <nav class="flex-1 px-3 py-4 overflow-y-auto scrollbar-thin">
-            @if($activeRole === 'admin')
-                <!-- Dashboard -->
-                <a href="{{ route('admin.dashboard') }}" 
-                   class="{{ request()->routeIs('admin.dashboard') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span>Dashboard</span>
-                </a>
+            @foreach($singleMenus as $item)
+                @can($item['permission'])
+                    <a href="{{ route($item['route']) }}"
+                       class="{{ request()->routeIs($item['active']) ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                        <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                        <span>{{ $item['label'] }}</span>
+                    </a>
+                @endcan
+            @endforeach
 
-
-                <!-- Data Santri -->
-                <div x-data="{ open: {{ request()->routeIs('admin.santri.*|admin.kamar.*') ? 'true' : 'false' }} }" class="my-1">
-                    <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.santri.*|admin.kamar.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">school</span>
-                            <span>Data Santri</span>
+            @foreach($menuGroups as $group)
+                @php
+                    $groupPermissions = collect($group['children'])->pluck('permission')->unique()->all();
+                    $isOpen = request()->routeIs(...$group['active']);
+                @endphp
+                @canany($groupPermissions)
+                    <div x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" class="my-1">
+                        <button @click="open = !open"
+                                class="w-full {{ $isOpen ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                            <div class="flex items-center gap-3">
+                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">{{ $group['icon'] }}</span>
+                                <span>{{ $group['label'] }}</span>
+                            </div>
+                            <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                        </button>
+                        <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
+                            @foreach($group['children'] as $child)
+                                @can($child['permission'])
+                                    <a href="{{ route($child['route']) }}"
+                                       class="{{ request()->routeIs($child['active']) ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                        <span>{{ $child['label'] }}</span>
+                                    </a>
+                                @endcan
+                            @endforeach
                         </div>
-                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.santri.index') }}"
-                           class="{{ request()->routeIs('admin.santri.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Semua Santri</span>
-                        </a>
-                        <a href="{{ route('admin.santri.create') }}"
-                           class="{{ request()->routeIs('admin.santri.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Tambah Santri</span>
-                        </a>
-                        <a href="{{ route('admin.kamar.index') }}"
-                           class="{{ request()->routeIs('admin.kamar.*') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Data Kamar</span>
-                        </a>
                     </div>
-                </div>
+                @endcanany
+            @endforeach
 
-                <!-- Data Petugas -->
-                <div x-data="{ open: {{ request()->routeIs('admin.petugas.*') ? 'true' : 'false' }} }" class="my-1">
-                    <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.petugas.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
-                            <span>Data Petugas</span>
-                        </div>
-                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.petugas.index') }}" 
-                           class="{{ request()->routeIs('admin.petugas.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Semua Petugas</span>
-                        </a>
-                        <a href="{{ route('admin.petugas.create') }}" 
-                           class="{{ request()->routeIs('admin.petugas.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Tambah Petugas</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Transactions & History -->
-                <div x-data="{ open: {{ request()->routeIs('admin.transactions.*') ? 'true' : 'false' }} }" class="my-1">
-                    <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.transactions.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">receipt_long</span>
-                            <span>Transaksi</span>
-                        </div>
-                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.transactions.santri') }}"
-                           class="{{ request()->routeIs('admin.transactions.santri') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Riwayat Transaksi</span>
-                        </a>
-                        <a href="{{ route('admin.transactions.topup') }}"
-                           class="{{ request()->routeIs('admin.transactions.topup') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Top Up Saldo</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Settlement -->
-                <a href="{{ route('admin.settlement') }}"
-                   class="{{ request()->routeIs('admin.settlement') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">verified_user</span>
-                    <span>Settlement</span>
-                    @if(($pendingSettlementCount ?? 0) > 0)
-                        <span class="ml-auto bg-error text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingSettlementCount }}</span>
-                    @endif
+            @can('admin.access.manage')
+                <a href="{{ route('admin.access.index') }}"
+                   class="{{ request()->routeIs('admin.access.*') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                    <span class="material-symbols-outlined">admin_panel_settings</span>
+                    <span>Manajemen Akses</span>
                 </a>
-
-                <!-- Top Up Verification -->
-                <a href="{{ route('admin.topup') }}"
-                   class="{{ request()->routeIs('admin.topup') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">add_circle</span>
-                    <span>Verifikasi Top Up</span>
-                    @if($pendingTopUpCount ?? 0 > 0)
-                        <span class="ml-auto bg-error text-white text-xs font-bold px-2 py-0.5 rounded-full">{{ $pendingTopUpCount ?? 0 }}</span>
-                    @endif
-                </a>
-
-                <!-- Prestasi Santri -->
-                <div x-data="{ open: {{ request()->routeIs('admin.prestasi.*') ? 'true' : 'false' }} }" class="my-1">
-                    <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.prestasi.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
-                            <span>Prestasi Santri</span>
-                        </div>
-                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.prestasi.index') }}"
-                           class="{{ request()->routeIs('admin.prestasi.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Semua Prestasi</span>
-                        </a>
-                        <a href="{{ route('admin.prestasi.create') }}"
-                           class="{{ request()->routeIs('admin.prestasi.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Tambah Prestasi</span>
-                        </a>
-                    </div>
-                </div>
-
-                <!-- Blog Management -->
-                <div x-data="{ open: {{ request()->routeIs('admin.blog.*') ? 'true' : 'false' }} }" class="my-1">
-                    <button @click="open = !open"
-                            class="w-full {{ request()->routeIs('admin.blog.*') ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
-                        <div class="flex items-center gap-3">
-                            <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">article</span>
-                            <span>Blog & Artikel</span>
-                        </div>
-                        <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
-                    </button>
-                    <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
-                        <a href="{{ route('admin.blog.index') }}"
-                           class="{{ request()->routeIs('admin.blog.index') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Semua Blog</span>
-                        </a>
-                        <a href="{{ route('admin.blog.create') }}"
-                           class="{{ request()->routeIs('admin.blog.create') ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                            <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
-                            <span>Tambah Blog</span>
-                        </a>
-                    </div>
-                </div>
-            @elseif($activeRole === 'petugas')
-                <a href="{{ route('petugas.dashboard') }}" 
-                   class="{{ request()->routeIs('petugas.dashboard') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">dashboard</span>
-                    <span>Dashboard</span>
-                </a>
-                <a href="{{ route('petugas.transaksi') }}" 
-                   class="{{ request()->routeIs('petugas.transaksi') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">payments</span>
-                    <span>Transaksi</span>
-                </a>
-                <a href="{{ route('petugas.riwayat') }}" 
-                   class="{{ request()->routeIs('petugas.riwayat') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">history</span>
-                    <span>Riwayat</span>
-                </a>
-                <a href="{{ route('petugas.tarik-tunai') }}" 
-                   class="{{ request()->routeIs('petugas.tarik-tunai') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">download</span>
-                    <span>Tarik Tunai</span>
-                </a>
-            @endif
+            @endcan
         </nav>
 
         <!-- User Profile & Logout -->
         <div class="border-t border-outline-variant/10 p-3">
             @php
-    $user = auth()->user();
-    $profileRoute = route(($activeRole ?? 'santri') . '.profile');
+    $user = $currentUser;
+    $profileRoute = null;
+    if ($user?->can('admin.profile.manage')) {
+        $profileRoute = route('admin.profile');
+    } elseif ($user?->can('petugas.profile.manage')) {
+        $profileRoute = route('petugas.profile');
+    } elseif ($user?->can('santri.profile.manage')) {
+        $profileRoute = route('santri.profile');
+    }
 @endphp
 
-<a href="{{ $profileRoute }}" 
+@if($profileRoute)
+<a href="{{ $profileRoute }}"
    class="block border-t border-outline-variant/10 p-3 hover:bg-surface-container-low transition-all rounded-xl">
 
     <div class="flex items-center gap-3">
@@ -301,7 +254,7 @@
                 {{ $user->name ?? 'User' }}
             </p>
             <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
-                {{ $activeRole ?? 'santri' }}
+                {{ $displayRole }}
             </p>
         </div>
 
@@ -313,6 +266,7 @@
     </div>
 
 </a>
+@endif
             
             <form action="{{ route('logout') }}" method="POST">
                 @csrf
