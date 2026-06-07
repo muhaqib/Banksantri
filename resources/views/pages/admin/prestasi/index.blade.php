@@ -1,8 +1,6 @@
 @extends('layouts.app')
 
 @section('header-title', 'Prestasi Santri')
-@php $activeRole = 'admin'; @endphp
-
 @section('content')
 <div x-data="prestasiApp()">
     <!-- Page Header -->
@@ -11,7 +9,7 @@
             <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Prestasi Santri</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola prestasi hafalan kitab para santri.</p>
         </div>
-        <a href="{{ route('admin.prestasi.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+        <a href="{{ route($prestasiRoutePrefix . '.prestasi.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
             <span class="material-symbols-outlined">add</span>
             <span>Tambah Prestasi</span>
         </a>
@@ -93,6 +91,7 @@
                                 @if($prestasi->tanggal_selesai)
                                     <div class="text-xs text-on-surface-variant">{{ $prestasi->tanggal_selesai->format('d M Y') }}</div>
                                 @endif
+                                <div class="text-xs text-on-surface-variant mt-1">{{ $prestasi->progress }}% progress</div>
                             </td>
                             <td class="px-6 py-4">
                                 <span class="text-xs font-medium text-on-surface-variant px-2 py-1 bg-surface-container-low rounded">
@@ -137,7 +136,7 @@
                                             title="Lihat Detail">
                                         <span class="material-symbols-outlined text-lg">visibility</span>
                                     </button>
-                                    <a href="{{ route('admin.prestasi.edit', $prestasi) }}" 
+                                    <a href="{{ route($prestasiRoutePrefix . '.prestasi.edit', $prestasi) }}"
                                        class="text-tertiary hover:text-tertiary-container transition-colors p-1 rounded-lg hover:bg-tertiary/5"
                                        title="Edit">
                                         <span class="material-symbols-outlined text-lg">edit</span>
@@ -264,7 +263,7 @@
                 <h3 class="font-headline font-bold text-2xl text-on-surface mb-2">Hapus Prestasi?</h3>
                 <p class="text-on-surface-variant text-sm">Apakah Anda yakin ingin menghapus prestasi <span class="font-bold" x-text="deleteItemName"></span>? Tindakan ini tidak dapat dibatalkan.</p>
             </div>
-            <form :action="`/admin/prestasi/${deleteItemId}`" method="POST">
+            <form :action="`${prestasiBaseUrl}/${deleteItemId}`" method="POST">
                 @csrf
                 @method('DELETE')
                 <div class="flex gap-3">
@@ -285,6 +284,7 @@
 <script>
 function prestasiApp() {
     return {
+        prestasiBaseUrl: @js(url($prestasiRoutePrefix . '/prestasi')),
         detailModalOpen: false,
         deleteModalOpen: false,
         selectedPrestasi: null,
@@ -294,7 +294,7 @@ function prestasiApp() {
 
         async openDetailModal(id) {
             try {
-                const response = await fetch(`/admin/prestasi/${id}/modal-data`);
+                const response = await fetch(`${this.prestasiBaseUrl}/${id}/modal-data`);
                 const data = await response.json();
                 this.selectedPrestasi = data.prestasi;
                 this.selectedSantri = data.santri;

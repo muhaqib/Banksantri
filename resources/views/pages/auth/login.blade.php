@@ -39,6 +39,7 @@
             </div>
         </div>
 
+        @if($selectedRole !== 'santri')
         <div class="mb-6">
             <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">Kata Sandi</label>
             <div class="relative group">
@@ -55,6 +56,12 @@
                 </button>
             </div>
         </div>
+        @else
+            <div class="mb-6 px-4 py-3 bg-primary-fixed/35 border border-primary/10 rounded-xl flex items-start gap-3 text-sm text-on-primary-fixed-variant">
+                <span class="material-symbols-outlined text-primary text-xl">info</span>
+                <p>Santri cukup memasukkan NIS untuk masuk tanpa kata sandi.</p>
+            </div>
+        @endif
 
         @if($errors->any())
             <div class="mb-4 p-4 bg-error-container text-on-error-container rounded-xl text-sm font-medium">

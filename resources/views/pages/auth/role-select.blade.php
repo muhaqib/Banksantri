@@ -1,38 +1,51 @@
 @extends('layouts.guest')
 
-@section('title', 'Pilih Role')
+@section('title', 'Pilih Peran')
 
 @section('content')
-<div class="w-full max-w-3xl mx-auto px-4">
-    <div class="text-center mb-8">
-        <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
-            <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+<div class="relative w-full max-w-6xl mx-auto px-2 py-3 sm:px-4 sm:py-12 overflow-hidden">
+    <div class="hidden md:block absolute -top-24 -left-24 w-72 h-72 bg-primary-fixed/40 rounded-full blur-3xl pointer-events-none"></div>
+    <div class="hidden md:block absolute -bottom-24 -right-24 w-80 h-80 bg-primary-container/10 rounded-full blur-3xl pointer-events-none"></div>
+
+    <div class="relative text-center mb-7 md:mb-14">
+        <div class="hidden md:flex w-16 h-16 bg-gradient-to-br from-primary to-primary-container rounded-2xl items-center justify-center mx-auto mb-5 shadow-xl shadow-primary/20">
+            <span class="material-symbols-outlined text-white text-4xl" style="font-variation-settings: 'FILL' 1;">account_balance</span>
         </div>
-        <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Mawa Smart</h1>
-        <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase">Ponpes Mambaul Hikmah</p>
+        <p class="hidden md:block font-headline text-sm font-bold tracking-[0.2em] text-primary uppercase mb-2">Mawa Smart</p>
+        <h1 class="font-headline text-2xl md:text-4xl font-extrabold tracking-tight text-on-surface">Pilih Peran Anda</h1>
+        <p class="hidden md:block text-on-surface-variant mt-3">Masuk ke layanan sesuai peran Anda di pesantren.</p>
     </div>
 
-    <div class="grid gap-3 sm:grid-cols-3">
-        @foreach($roles as $role => $label)
-            @php
-                $icons = ['santri' => 'school', 'admin' => 'admin_panel_settings', 'petugas' => 'badge'];
-                $descriptions = [
-                    'santri' => 'Tabungan, top up, riwayat, dan prestasi.',
-                    'admin' => 'Kontrol data, kas, settlement, dan akses.',
-                    'petugas' => 'Transaksi, riwayat, dan tarik tunai.',
-                ];
-            @endphp
+    @php
+        $roleCards = [
+            'admin' => ['label' => 'Admin', 'icon' => 'business_center', 'description' => 'Kelola data dan operasional pesantren.'],
+            'petugas' => ['label' => 'Petugas', 'icon' => 'how_to_reg', 'description' => 'Kelola transaksi dan prestasi santri.'],
+            'santri' => ['label' => 'Santri', 'icon' => 'school', 'description' => 'Akses tabungan dan pencapaian Anda.'],
+        ];
+    @endphp
+
+    <div class="relative grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-7">
+        @foreach($roleCards as $role => $card)
             <a href="{{ route('login.role', $role) }}"
-               class="group bg-surface-container-low hover:bg-surface-container-high rounded-xl border border-outline-variant/20 p-5 transition-all active:scale-[0.99]">
-                <span class="material-symbols-outlined text-primary text-4xl">{{ $icons[$role] }}</span>
-                <span class="block font-headline text-xl font-black text-on-surface mt-4">{{ $label }}</span>
-                <span class="block text-sm text-on-surface-variant mt-1 min-h-10">{{ $descriptions[$role] }}</span>
-                <span class="mt-5 inline-flex items-center gap-2 text-sm font-bold text-primary">
+               class="group min-h-24 md:min-h-64 flex flex-row md:flex-col items-center justify-start md:justify-center text-left md:text-center p-4 md:p-8 bg-surface-container-low md:bg-surface-container-lowest/90 border border-outline-variant/30 rounded-2xl md:rounded-3xl shadow-sm transition-all duration-300 hover:shadow-lg md:hover:shadow-2xl hover:shadow-primary/10 hover:border-primary/30 md:hover:-translate-y-2 focus:outline-none focus:ring-2 focus:ring-primary">
+                <div class="w-16 h-16 md:w-20 md:h-20 shrink-0 mr-5 md:mr-0 md:mb-7 flex items-center justify-center bg-surface-container-lowest md:bg-primary-fixed/40 text-primary rounded-xl md:rounded-2xl shadow-sm group-hover:bg-primary group-hover:text-on-primary group-hover:shadow-lg group-hover:shadow-primary/20 transition-all duration-300">
+                    <span class="material-symbols-outlined text-3xl md:text-4xl">{{ $card['icon'] }}</span>
+                </div>
+                <span class="font-headline text-xl md:text-2xl font-extrabold text-on-surface">{{ $card['label'] }}</span>
+                <span class="hidden md:block text-sm text-on-surface-variant mt-2">{{ $card['description'] }}</span>
+                <span class="hidden md:inline-flex items-center gap-1 text-sm font-bold text-primary mt-6 opacity-0 translate-y-2 group-hover:opacity-100 group-hover:translate-y-0 transition-all">
                     Lanjut Login
-                    <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+                    <span class="material-symbols-outlined text-lg">arrow_forward</span>
                 </span>
             </a>
         @endforeach
+    </div>
+
+    <div class="relative text-center mt-7 md:mt-14">
+        <a href="{{ route('register') }}" class="inline-flex items-center gap-2 text-sm md:text-base font-headline font-bold text-primary hover:text-primary-container transition-colors">
+            <span class="hidden md:inline material-symbols-outlined text-xl">person_add</span>
+            Pendaftaran Santri Baru
+        </a>
     </div>
 </div>
 @endsection

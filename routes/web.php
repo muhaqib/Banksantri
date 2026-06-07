@@ -1,29 +1,30 @@
 <?php
 
-use App\Http\Controllers\Auth\LoginController;
-use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\Admin\AccessController;
+use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
+use App\Http\Controllers\Admin\KamarSantriController;
 use App\Http\Controllers\Admin\KasController;
 use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
+use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
+use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\SantriController;
 use App\Http\Controllers\Admin\SettlementController;
+use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\Auth\LoginController;
+use App\Http\Controllers\Auth\RegisterController;
+use App\Http\Controllers\KitabController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
-use App\Http\Controllers\Petugas\TransaksiController;
+use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use App\Http\Controllers\Petugas\RiwayatController as PetugasRiwayatController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
+use App\Http\Controllers\Petugas\TransaksiController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
-use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
-use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
-use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
-use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
-use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
-use App\Http\Controllers\Admin\BlogController as AdminBlogController;
-use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
-use App\Http\Controllers\Admin\KamarSantriController;
-use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
+use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
+use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
+use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -43,7 +44,7 @@ Route::get('/', function () {
             return redirect()->route('santri.home');
         }
     }
-    
+
     return app(LoginController::class)->showRoleSelection();
 });
 
@@ -69,7 +70,7 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/kas', [KasController::class, 'index'])->middleware('permission:admin.finance.manage')->name('kas');
         Route::post('/kas', [KasController::class, 'store'])->middleware('permission:admin.finance.manage')->name('kas.store');
-        
+
         // Santri Management
         Route::middleware('permission:admin.santri.manage')->group(function () {
             Route::resource('santri', SantriController::class)->except(['show']);
@@ -84,11 +85,11 @@ Route::middleware('auth')->group(function () {
                 ->parameters(['petugas' => 'petugas']);
             Route::get('petugas/{petugas}/modal-data', [AdminPetugasController::class, 'getModalData'])->name('petugas.modal-data');
         });
-        
+
         Route::get('/settlement', [SettlementController::class, 'index'])->middleware('permission:admin.finance.manage')->name('settlement');
         Route::patch('/settlement/{id}/approve', [SettlementController::class, 'approve'])->middleware('permission:admin.finance.manage')->name('settlement.approve');
         Route::patch('/settlement/{id}/reject', [SettlementController::class, 'reject'])->middleware('permission:admin.finance.manage')->name('settlement.reject');
-        
+
         // Admin Transactions
         Route::middleware('permission:admin.finance.manage')->group(function () {
             Route::get('/transactions/topup', [AdminTransactionController::class, 'createTopUp'])->name('transactions.topup');
@@ -111,6 +112,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:admin.prestasi.manage')->group(function () {
             Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
             Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
+            Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
 
         // Blog Management
@@ -145,6 +147,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai.store');
 
+        Route::middleware('permission:petugas.prestasi.manage')->group(function () {
+            Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
+            Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
+            Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
+        });
+
         // Profile Management
         Route::get('/profile', [PetugasProfileController::class, 'index'])->middleware('permission:petugas.profile.manage')->name('profile');
         Route::post('/profile/email', [PetugasProfileController::class, 'updateEmail'])->middleware('permission:petugas.profile.manage')->name('profile.email');
@@ -162,7 +170,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/topup', [SantriTopUpController::class, 'create'])->middleware('permission:santri.topup.manage')->name('topup');
         Route::post('/topup', [SantriTopUpController::class, 'store'])->middleware('permission:santri.topup.manage')->name('topup.store');
         Route::get('/topup/status', [SantriTopUpController::class, 'getStatus'])->middleware('permission:santri.topup.manage')->name('topup.status');
-        
+
         // Prestasi Routes
         Route::get('/prestasi', [SantriPrestasiController::class, 'index'])->middleware('permission:santri.prestasi.view')->name('prestasi');
         Route::get('/prestasi/{prestasi}', [SantriPrestasiController::class, 'show'])->middleware('permission:santri.prestasi.view')->name('prestasi.show');

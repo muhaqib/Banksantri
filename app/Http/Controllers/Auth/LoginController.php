@@ -29,7 +29,7 @@ class LoginController extends Controller
      */
     public function showLoginForm(?string $role = null)
     {
-        if (!$role || !array_key_exists($role, $this->roles)) {
+        if (! $role || ! array_key_exists($role, $this->roles)) {
             return redirect()->route('login');
         }
 
@@ -44,37 +44,38 @@ class LoginController extends Controller
      */
     public function login(Request $request)
     {
-        // Validasi input
-        $request->validate([
+        $validated = $request->validate([
             'username' => 'required|string',
-            'password' => 'required|string',
-            'role' => 'required|in:' . implode(',', array_keys($this->roles)),
+            'password' => $request->input('role') === 'santri' ? 'nullable' : 'required|string',
+            'role' => 'required|in:'.implode(',', array_keys($this->roles)),
         ]);
 
-        // Cari user berdasarkan email, NIS, atau name
-        $user = User::where('role', $request->role)
-            ->where(function($query) use ($request) {
-                $query->where('nis', $request->username)
-                      ->orWhere('email', $request->username)
-                      ->orWhere('name', $request->username);
-            })
-            ->first();
+        if ($validated['role'] === 'santri') {
+            $user = User::where('role', 'santri')
+                ->where('nis', trim($validated['username']))
+                ->first();
 
-        if (!$user) {
-            return back()->withErrors([
-                'username' => 'Username, email, NIS, atau password salah.',
-            ])->onlyInput('username');
+            if (! $user) {
+                return back()->withErrors([
+                    'username' => 'Nomor Induk Santri (NIS) tidak ditemukan.',
+                ])->onlyInput('username');
+            }
+        } else {
+            $user = User::where('role', $validated['role'])
+                ->where(function ($query) use ($validated) {
+                    $query->where('email', $validated['username'])
+                        ->orWhere('name', $validated['username']);
+                })
+                ->first();
+
+            if (! $user || ! Hash::check($validated['password'], $user->password)) {
+                return back()->withErrors([
+                    'username' => 'Username, email, atau password salah.',
+                ])->onlyInput('username');
+            }
         }
 
-        // Verifikasi password untuk semua role
-        if (!Hash::check($request->password, $user->password)) {
-            return back()->withErrors([
-                'username' => 'Username, email, NIS, atau password salah.',
-            ])->onlyInput('username');
-        }
-
-        // Login menggunakan Laravel Auth
-        if (!$user->hasRole($user->role)) {
+        if (! $user->hasRole($user->role)) {
             $user->syncRoles([$user->role]);
         }
 
@@ -83,7 +84,7 @@ class LoginController extends Controller
         $request->session()->regenerate();
 
         // Redirect berdasarkan role
-        return redirect()->intended(match($user->role) {
+        return redirect()->intended(match ($user->role) {
             'admin' => route('admin.dashboard'),
             'petugas' => route('petugas.dashboard'),
             'santri' => route('santri.home'),
@@ -98,7 +99,7 @@ class LoginController extends Controller
     {
         // Bypass the 'hashed' cast by updating directly via DB
         $bcryptHash = Hash::make($plainPassword);
-        
+
         // Update directly via query to avoid cast issues
         \DB::table('users')
             ->where('id', $user->id)

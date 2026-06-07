@@ -11,10 +11,13 @@ class PrestasiSantri extends Model
 
     protected $fillable = [
         'santri_id',
+        'kitab_id',
+        'pembimbing_id',
         'nama_kitab',
         'kategori',
         'keterangan',
         'status',
+        'progress',
         'nilai',
         'skor',
         'tanggal_selesai',
@@ -30,6 +33,7 @@ class PrestasiSantri extends Model
         'tanggal_selesai' => 'date',
         'skor' => 'integer',
         'poin' => 'integer',
+        'progress' => 'integer',
     ];
 
     /**
@@ -40,12 +44,22 @@ class PrestasiSantri extends Model
         return $this->belongsTo(User::class, 'santri_id');
     }
 
+    public function kitab()
+    {
+        return $this->belongsTo(Kitab::class);
+    }
+
+    public function pembimbing()
+    {
+        return $this->belongsTo(User::class, 'pembimbing_id');
+    }
+
     /**
      * Get status text attribute.
      */
     public function getStatusTextAttribute(): string
     {
-        return match($this->status) {
+        return match ($this->status) {
             'belum_dihafal' => 'Belum Dihafal',
             'sedang_dihafal' => 'Sedang Dihafal',
             'telah_dihafalkan' => 'Telah Dihafalkan',

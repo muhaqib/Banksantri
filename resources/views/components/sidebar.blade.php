@@ -147,6 +147,15 @@
                     ],
                 ],
                 [
+                    'label' => 'Prestasi Santri',
+                    'icon' => 'military_tech',
+                    'active' => ['petugas.prestasi.*'],
+                    'children' => [
+                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.index', 'active' => 'petugas.prestasi.index', 'label' => 'Semua Prestasi'],
+                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.create', 'active' => 'petugas.prestasi.create', 'label' => 'Input Prestasi'],
+                    ],
+                ],
+                [
                     'label' => 'Blog & Artikel',
                     'icon' => 'article',
                     'active' => ['admin.blog.*'],

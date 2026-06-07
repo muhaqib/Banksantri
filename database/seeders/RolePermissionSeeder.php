@@ -30,6 +30,8 @@ class RolePermissionSeeder extends Seeder
 
                 if ($user->role === 'petugas' && $user->permissions()->count() === 0) {
                     $user->syncPermissions(PermissionRegistry::petugasDefaults());
+                } elseif ($user->role === 'petugas') {
+                    $user->givePermissionTo('petugas.prestasi.manage');
                 }
             });
 
