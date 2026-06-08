@@ -26,7 +26,7 @@
 
         <div class="mb-4">
             <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">
-                {{ $selectedRole === 'santri' ? 'Nomor Induk Santri (NIS)' : 'Username' }}
+                {{ $selectedRole === 'santri' ? 'Nomor Induk Santri (NIS)' : 'Email/Username' }}
             </label>
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-full scale-y-0 group-focus-within:scale-y-75 transition-transform duration-300"></div>
@@ -34,14 +34,14 @@
                        name="username"
                        value="{{ old('username') }}"
                        required
-                       placeholder="{{ $selectedRole === 'santri' ? 'Masukkan NIS' : 'Masukkan username' }}"
+                       placeholder="{{ $selectedRole === 'santri' ? 'Masukkan NIS' : 'muhammad@mawa.com' }}"
                        class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 pl-6 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
             </div>
         </div>
 
         @if($selectedRole !== 'santri')
         <div class="mb-6">
-            <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">Kata SSandi</label>
+            <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">Kata Sandi</label>
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-full scale-y-0 group-focus-within:scale-y-75 transition-transform duration-300"></div>
                 <input :type="showPassword ? 'text' : 'password'"

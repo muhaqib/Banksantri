@@ -9,20 +9,18 @@
 {{-- Header --}}
 <div class="text-center mb-10 md:mb-14">
 
-    <div class="w-12 h-12 mx-auto mb-4 rounded-2xl bg-primary flex items-center justify-center shadow-md">
-        <span class="material-symbols-outlined text-white text-2xl">
-            account_balance
-        </span>
+
+    <div class="text-center mb-8">
+        <div class="w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
+            <span class="material-symbols-outlined text-white text-5xl" style="font-variation-settings: 'FILL' 1;">shield</span>
+        </div>
+        <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Mawa Smart</h1>
+        <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase">Ponpes Mambaul Hikmah</p>
     </div>
 
-    <h1 class="text-2xl md:text-4xl font-bold text-on-surface">
+    <h2 class="text-xl md:text-2xl font-extrabold tracking-tight text-primary">
         Pilih Peran Anda
-    </h1>
-
-    <p class="mt-2 text-sm md:text-base text-on-surface-variant">
-        Masuk sesuai akses yang Anda miliki
-    </p>
-
+    </h2>
 </div>
 
 @php

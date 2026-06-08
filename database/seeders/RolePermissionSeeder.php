@@ -32,6 +32,15 @@ class RolePermissionSeeder extends Seeder
                     $user->syncPermissions(PermissionRegistry::petugasDefaults());
                 } elseif ($user->role === 'petugas') {
                     $user->givePermissionTo('petugas.prestasi.manage');
+                    if ($user->hasPermissionTo('petugas.attendance.manage')) {
+                        $user->givePermissionTo([
+                            'petugas.attendance.dashboard',
+                            'petugas.attendance.rfid',
+                            'petugas.attendance.manual',
+                            'petugas.attendance.monthly',
+                            'petugas.permissions.manage',
+                        ]);
+                    }
                 }
             });
 

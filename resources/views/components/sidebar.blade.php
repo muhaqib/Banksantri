@@ -151,9 +151,11 @@
                     'icon' => 'fact_check',
                     'active' => ['admin.attendance.*', 'admin.permissions.*'],
                     'children' => [
-                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.attendance.index', 'active' => 'admin.attendance.index', 'label' => 'Absensi Harian'],
-                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.attendance.dashboard', 'active' => 'admin.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
-                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.permissions.index', 'active' => 'admin.permissions.*', 'label' => 'Perizinan Santri'],
+                        ['permission' => 'admin.attendance.dashboard', 'route' => 'admin.attendance.dashboard', 'active' => 'admin.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
+                        ['permission' => 'admin.attendance.rfid', 'route' => 'admin.attendance.rfid', 'active' => 'admin.attendance.rfid', 'label' => 'RFID Presensi'],
+                        ['permission' => 'admin.attendance.manual', 'route' => 'admin.attendance.manual', 'active' => 'admin.attendance.manual', 'label' => 'Presensi Manual'],
+                        ['permission' => 'admin.attendance.monthly', 'route' => 'admin.attendance.monthly', 'active' => 'admin.attendance.monthly', 'label' => 'Rekap Bulanan'],
+                        ['permission' => 'admin.permissions.manage', 'route' => 'admin.permissions.index', 'active' => 'admin.permissions.*', 'label' => 'Perizinan Santri'],
                     ],
                 ],
                 [
@@ -166,13 +168,15 @@
                     ],
                 ],
                 [
-                    'label' => 'Absensi Santri',
+                    'label' => 'Kesiswaan',
                     'icon' => 'fact_check',
                     'active' => ['petugas.attendance.*', 'petugas.permissions.*'],
                     'children' => [
-                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.attendance.index', 'active' => 'petugas.attendance.index', 'label' => 'Absensi Harian'],
-                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.attendance.dashboard', 'active' => 'petugas.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
-                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.permissions.index', 'active' => 'petugas.permissions.*', 'label' => 'Perizinan Santri'],
+                        ['permission' => 'petugas.attendance.dashboard', 'route' => 'petugas.attendance.dashboard', 'active' => 'petugas.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
+                        ['permission' => 'petugas.attendance.rfid', 'route' => 'petugas.attendance.rfid', 'active' => 'petugas.attendance.rfid', 'label' => 'RFID Presensi'],
+                        ['permission' => 'petugas.attendance.manual', 'route' => 'petugas.attendance.manual', 'active' => 'petugas.attendance.manual', 'label' => 'Presensi Manual'],
+                        ['permission' => 'petugas.attendance.monthly', 'route' => 'petugas.attendance.monthly', 'active' => 'petugas.attendance.monthly', 'label' => 'Rekap Bulanan'],
+                        ['permission' => 'petugas.permissions.manage', 'route' => 'petugas.permissions.index', 'active' => 'petugas.permissions.*', 'label' => 'Perizinan Santri'],
                     ],
                 ],
                 [

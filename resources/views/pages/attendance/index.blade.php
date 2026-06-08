@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
-@section('title', 'Absensi Harian')
-@section('header-title', 'Absensi Harian')
+@section('title', ($mode ?? 'rfid') === 'manual' ? 'Presensi Manual' : 'RFID Presensi')
+@section('header-title', ($mode ?? 'rfid') === 'manual' ? 'Presensi Manual' : 'RFID Presensi')
 
 @push('styles')
 <style>
@@ -38,25 +38,21 @@
 @endpush
 
 @section('content')
+@php
+    $isManualMode = ($mode ?? 'rfid') === 'manual';
+@endphp
 <div class="space-y-8" x-data="attendancePage()">
     <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <p class="text-sm font-bold text-primary">Absensi Harian</p>
-            <h1 class="font-headline text-3xl font-black text-primary">Absensi Santri RFID</h1>
-            <p class="mt-1 text-sm text-on-surface-variant">Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini tanpa memilih kamar.</p>
-        </div>
-        <div class="flex flex-wrap gap-2">
-            <a href="{{ route($routePrefix.'.permissions.create') }}" class="btn-secondary">
-                <span class="material-symbols-outlined">badge</span> Buat Izin
-            </a>
-            <a href="{{ route($routePrefix.'.attendance.dashboard') }}" class="btn-primary">
-                <span class="material-symbols-outlined">analytics</span> Dashboard Bulanan
-            </a>
+            <p class="text-sm font-bold text-primary">Kesiswaan</p>
+            <h1 class="font-headline text-3xl font-black text-primary">{{ $isManualMode ? 'Presensi Manual Santri' : 'RFID Presensi Santri' }}</h1>
+            <p class="mt-1 text-sm text-on-surface-variant">
+                {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini tanpa memilih kamar.' }}
+            </p>
         </div>
     </header>
 
-    
-
+    @unless($isManualMode)
     <div class="grid grid-cols-1 gap-8 xl:grid-cols-12">
         <section class="relative flex min-h-[520px] flex-col items-center justify-center overflow-hidden rounded-[2rem] bg-surface-container-low p-6 sm:p-10 xl:col-span-7">
             <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
@@ -176,7 +172,10 @@
             </div>
         @endforeach
     </div>
-    <form method="GET" action="{{ route($routePrefix.'.attendance.index') }}" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-[220px_minmax(0,1fr)_auto]">
+    @endunless
+
+    @if($isManualMode)
+    <form method="GET" action="{{ route($routePrefix.'.attendance.manual') }}" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-[220px_minmax(0,1fr)_auto]">
         <label class="text-xs font-bold text-on-surface-variant">Tanggal
             <input type="date" name="date" value="{{ $date->toDateString() }}" class="input-field mt-1">
         </label>
@@ -254,6 +253,7 @@
             </table>
         </div>
     </div>
+    @endif
 </div>
 @endsection
 

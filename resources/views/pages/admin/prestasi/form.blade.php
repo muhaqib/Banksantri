@@ -1,5 +1,6 @@
 @php
     $isEdit = isset($prestasi) && $prestasi;
+    $selectedSantriId = (string) old('santri_id', $prestasi?->santri_id ?? '');
     $selectedKitabId = (string) old('kitab_id', $prestasi?->kitab_id ?? '');
     $selectedPredikat = old('nilai', $prestasi?->nilai ?? 'Mumtaz');
 @endphp
@@ -24,14 +25,42 @@
                 <span class="material-symbols-outlined text-primary text-lg">group</span>
                 Pilih Santri
             </label>
-            <select name="santri_id" required class="w-full bg-surface-container-high border-none rounded-xl py-4 px-4 text-on-surface focus:ring-2 focus:ring-primary/30">
-                <option value="">Cari Nama atau NIS</option>
-                @foreach($santriList as $santri)
-                    <option value="{{ $santri->id }}" @selected(old('santri_id', $prestasi?->santri_id) == $santri->id)>
-                        {{ $santri->name }} - {{ $santri->nis ?? 'Tanpa NIS' }}
-                    </option>
-                @endforeach
-            </select>
+            <div class="relative" @click.outside="santriDropdownOpen = false">
+                <input type="hidden" name="santri_id" :value="selectedSantriId">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+                    <input type="text"
+                           x-model="santriSearch"
+                           @focus="santriDropdownOpen = true"
+                           @input="selectedSantriId = ''; santriDropdownOpen = true"
+                           @keydown.escape.prevent="santriDropdownOpen = false"
+                           @keydown.arrow-down.prevent="$refs.santriOptions?.querySelector('button')?.focus()"
+                           :required="!selectedSantriId"
+                           placeholder="Cari nama atau NIS santri..."
+                           class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-12 text-on-surface focus:ring-2 focus:ring-primary/30"
+                           autocomplete="off">
+                    <button type="button" @click="toggleSantriDropdown" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-on-surface-variant hover:text-primary">
+                        <span class="material-symbols-outlined transition-transform" :class="{ 'rotate-180': santriDropdownOpen }">expand_more</span>
+                    </button>
+                </div>
+                <div x-show="santriDropdownOpen" x-cloak x-transition
+                     class="absolute z-30 mt-2 max-h-72 w-full overflow-hidden rounded-xl bg-surface-container-lowest shadow-xl ring-1 ring-outline-variant/30">
+                    <div x-ref="santriOptions" class="max-h-72 overflow-y-auto py-2">
+                        <template x-for="santri in filteredSantri" :key="santri.id">
+                            <button type="button"
+                                    @click="selectSantri(santri)"
+                                    class="w-full px-4 py-3 text-left hover:bg-primary/10 focus:bg-primary/10 focus:outline-none"
+                                    :class="{ 'bg-primary/10': selectedSantriId === String(santri.id) }">
+                                <span class="block font-bold text-on-surface" x-text="santri.name"></span>
+                                <span class="block text-xs text-on-surface-variant" x-text="santri.nis ? `NIS: ${santri.nis}` : 'Tanpa NIS'"></span>
+                            </button>
+                        </template>
+                        <div x-show="filteredSantri.length === 0" class="px-4 py-5 text-sm text-on-surface-variant">
+                            Santri tidak ditemukan.
+                        </div>
+                    </div>
+                </div>
+            </div>
             @error('santri_id') <p class="text-error text-xs mt-2">{{ $message }}</p> @enderror
         </div>
 
@@ -40,12 +69,42 @@
                 <span class="material-symbols-outlined text-primary text-lg">menu_book</span>
                 Pilih Kitab
             </label>
-            <select name="kitab_id" x-model="selectedKitabId" required class="w-full bg-surface-container-high border-none rounded-xl py-4 px-4 text-on-surface focus:ring-2 focus:ring-primary/30">
-                <option value="">Cari Nama Kitab</option>
-                <template x-for="kitab in kitabs" :key="kitab.id">
-                    <option :value="String(kitab.id)" x-text="`${kitab.nama} - ${kitab.kategori}`"></option>
-                </template>
-            </select>
+            <div class="relative" @click.outside="kitabDropdownOpen = false">
+                <input type="hidden" name="kitab_id" :value="selectedKitabId">
+                <div class="relative">
+                    <span class="material-symbols-outlined absolute left-4 top-1/2 -translate-y-1/2 text-on-surface-variant text-xl">search</span>
+                    <input type="text"
+                           x-model="kitabSearch"
+                           @focus="kitabDropdownOpen = true"
+                           @input="selectedKitabId = ''; kitabDropdownOpen = true"
+                           @keydown.escape.prevent="kitabDropdownOpen = false"
+                           @keydown.arrow-down.prevent="$refs.kitabOptions?.querySelector('button')?.focus()"
+                           :required="!selectedKitabId"
+                           placeholder="Cari nama kitab atau kategori..."
+                           class="w-full bg-surface-container-high border-none rounded-xl py-4 pl-12 pr-12 text-on-surface focus:ring-2 focus:ring-primary/30"
+                           autocomplete="off">
+                    <button type="button" @click="toggleKitabDropdown" class="absolute right-3 top-1/2 -translate-y-1/2 p-1 text-on-surface-variant hover:text-primary">
+                        <span class="material-symbols-outlined transition-transform" :class="{ 'rotate-180': kitabDropdownOpen }">expand_more</span>
+                    </button>
+                </div>
+                <div x-show="kitabDropdownOpen" x-cloak x-transition
+                     class="absolute z-30 mt-2 max-h-72 w-full overflow-hidden rounded-xl bg-surface-container-lowest shadow-xl ring-1 ring-outline-variant/30">
+                    <div x-ref="kitabOptions" class="max-h-72 overflow-y-auto py-2">
+                        <template x-for="kitab in filteredKitabs" :key="kitab.id">
+                            <button type="button"
+                                    @click="selectKitab(kitab)"
+                                    class="w-full px-4 py-3 text-left hover:bg-primary/10 focus:bg-primary/10 focus:outline-none"
+                                    :class="{ 'bg-primary/10': selectedKitabId === String(kitab.id) }">
+                                <span class="block font-bold text-on-surface" x-text="kitab.nama"></span>
+                                <span class="block text-xs text-on-surface-variant" x-text="kitab.kategori || '-'"></span>
+                            </button>
+                        </template>
+                        <div x-show="filteredKitabs.length === 0" class="px-4 py-5 text-sm text-on-surface-variant">
+                            Kitab tidak ditemukan.
+                        </div>
+                    </div>
+                </div>
+            </div>
             @error('kitab_id') <p class="text-error text-xs mt-2">{{ $message }}</p> @enderror
             <button type="button" @click="kitabModalOpen = true" class="mt-3 inline-flex items-center gap-2 bg-primary text-on-primary px-5 py-3 rounded-xl font-bold hover:bg-primary-container transition-colors">
                 <span class="material-symbols-outlined text-lg">add_circle</span>
@@ -151,18 +210,89 @@
 <script>
 function prestasiForm() {
     return {
+        santriList: @json($santriList->map->only(['id', 'name', 'nis'])->values()),
         kitabs: @json($kitabList->map->only(['id', 'nama', 'kategori'])->values()),
+        selectedSantriId: @js($selectedSantriId),
         selectedKitabId: @js($selectedKitabId),
         selectedPredikat: @js($selectedPredikat),
         predikat: @json($predikatList),
+        santriSearch: '',
+        kitabSearch: '',
+        santriDropdownOpen: false,
+        kitabDropdownOpen: false,
         kitabModalOpen: false,
         savingKitab: false,
         kitabError: '',
         newKitab: { nama: '', kategori: '' },
 
+        init() {
+            this.syncSelectedSantriLabel();
+            this.syncSelectedKitabLabel();
+        },
+
         get predikatInfo() {
             const nilai = this.predikat[this.selectedPredikat];
             return nilai ? `Skor ${nilai.skor} dan ${nilai.poin} poin` : '';
+        },
+
+        get filteredSantri() {
+            const term = this.normalize(this.santriSearch);
+            if (!term) return this.santriList.slice(0, 30);
+
+            return this.santriList
+                .filter((santri) => this.normalize(`${santri.name} ${santri.nis || ''}`).includes(term))
+                .slice(0, 30);
+        },
+
+        get filteredKitabs() {
+            const term = this.normalize(this.kitabSearch);
+            if (!term) return this.kitabs.slice(0, 30);
+
+            return this.kitabs
+                .filter((kitab) => this.normalize(`${kitab.nama} ${kitab.kategori || ''}`).includes(term))
+                .slice(0, 30);
+        },
+
+        normalize(value) {
+            return String(value || '').toLowerCase().trim();
+        },
+
+        santriLabel(santri) {
+            return santri ? `${santri.name} - ${santri.nis || 'Tanpa NIS'}` : '';
+        },
+
+        kitabLabel(kitab) {
+            return kitab ? `${kitab.nama} - ${kitab.kategori || '-'}` : '';
+        },
+
+        syncSelectedSantriLabel() {
+            const selected = this.santriList.find((santri) => String(santri.id) === this.selectedSantriId);
+            this.santriSearch = this.santriLabel(selected);
+        },
+
+        syncSelectedKitabLabel() {
+            const selected = this.kitabs.find((kitab) => String(kitab.id) === this.selectedKitabId);
+            this.kitabSearch = this.kitabLabel(selected);
+        },
+
+        selectSantri(santri) {
+            this.selectedSantriId = String(santri.id);
+            this.santriSearch = this.santriLabel(santri);
+            this.santriDropdownOpen = false;
+        },
+
+        selectKitab(kitab) {
+            this.selectedKitabId = String(kitab.id);
+            this.kitabSearch = this.kitabLabel(kitab);
+            this.kitabDropdownOpen = false;
+        },
+
+        toggleSantriDropdown() {
+            this.santriDropdownOpen = !this.santriDropdownOpen;
+        },
+
+        toggleKitabDropdown() {
+            this.kitabDropdownOpen = !this.kitabDropdownOpen;
         },
 
         async storeKitab() {
@@ -187,7 +317,7 @@ function prestasiForm() {
 
                 this.kitabs.push(data.kitab);
                 this.kitabs.sort((a, b) => a.nama.localeCompare(b.nama));
-                this.selectedKitabId = String(data.kitab.id);
+                this.selectKitab(data.kitab);
                 this.newKitab = { nama: '', kategori: '' };
                 this.$refs.gambarKitab.value = '';
                 this.kitabModalOpen = false;

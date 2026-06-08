@@ -7,10 +7,14 @@
 <div class="space-y-6">
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-            <p class="text-sm font-bold text-primary">Rekap Bulanan</p>
-            <h1 class="font-headline text-3xl font-black">Dashboard Kehadiran Santri</h1>
+            <p class="text-sm font-bold text-primary">Dashboard Kehadiran</p>
+            <h1 class="font-headline text-3xl font-black">
+                {{ $kamar ? ucwords(str_replace('_', ' ', $kamar)) : 'Dashboard Kehadiran Santri' }}
+            </h1>
+            <p class="mt-1 text-sm text-on-surface-variant">
+                Pantau tren, persentase, rekap kamar, dan santri dengan ghoib terbanyak.
+            </p>
         </div>
-        <a href="{{ route($routePrefix.'.attendance.index') }}" class="btn-primary"><span class="material-symbols-outlined">fact_check</span> Absensi Harian</a>
     </div>
 
     <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-4">

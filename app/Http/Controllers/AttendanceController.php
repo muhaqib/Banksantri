@@ -14,6 +14,21 @@ class AttendanceController extends Controller
 {
     public function index(Request $request)
     {
+        return redirect()->route($this->routePrefix($request).'.attendance.rfid');
+    }
+
+    public function rfid(Request $request)
+    {
+        return $this->dailyPage($request, 'rfid');
+    }
+
+    public function manual(Request $request)
+    {
+        return $this->dailyPage($request, 'manual');
+    }
+
+    private function dailyPage(Request $request, string $mode)
+    {
         $date = Carbon::parse($request->input('date', today()->toDateString()));
 
         $santriList = User::query()
@@ -56,6 +71,7 @@ class AttendanceController extends Controller
             'santriList' => $santriList,
             'recentAttendances' => $recentAttendances,
             'summary' => $summary,
+            'mode' => $mode,
         ]);
     }
 
@@ -133,6 +149,7 @@ class AttendanceController extends Controller
 
         $byKamar = Attendance::query()
             ->whereBetween('attendance_date', [$start, $end])
+            ->when($kamar, fn ($query) => $query->where('kamar', $kamar))
             ->selectRaw('kamar, status, COUNT(*) as total')
             ->groupBy('kamar', 'status')
             ->get()
@@ -166,6 +183,47 @@ class AttendanceController extends Controller
             'daysInMonth' => $start->daysInMonth,
             'byKamar' => $byKamar,
             'mostAbsent' => $mostAbsent,
+        ]);
+    }
+
+    public function monthly(Request $request)
+    {
+        $month = (int) $request->input('month', now()->month);
+        $year = (int) $request->input('year', now()->year);
+        $kamar = $request->input('kamar');
+        $search = $request->input('search');
+        $start = Carbon::create($year, $month)->startOfMonth();
+        $end = $start->copy()->endOfMonth();
+
+        $monthlySantri = User::query()
+            ->where('role', 'santri')
+            ->with([
+                'kamarSantri',
+                'attendances' => fn ($query) => $query
+                    ->whereBetween('attendance_date', [$start, $end])
+                    ->select(['id', 'santri_id', 'attendance_date', 'status', 'method', 'notes']),
+            ])
+            ->when($search, fn ($query) => $query
+                ->where(fn ($searchQuery) => $searchQuery
+                    ->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('nis', 'like', '%'.$search.'%')))
+            ->when($kamar, fn ($query) => $query
+                ->whereHas('kamarSantri', fn ($roomQuery) => $roomQuery->where('kamar', $kamar)))
+            ->orderBy('name')
+            ->paginate(15)
+            ->withQueryString();
+
+        return view('pages.attendance.monthly', [
+            'activeRole' => $this->routePrefix($request),
+            'routePrefix' => $this->routePrefix($request),
+            'month' => $month,
+            'year' => $year,
+            'kamar' => $kamar,
+            'search' => $search,
+            'kamarList' => KamarSantri::KAMAR_LIST,
+            'daysInMonth' => $start->daysInMonth,
+            'monthlySantri' => $monthlySantri,
+            'monthStart' => $start,
         ]);
     }
 

@@ -117,11 +117,14 @@ Route::middleware('auth')->group(function () {
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
 
-        Route::middleware('permission:admin.attendance.manage')->group(function () {
-            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-            Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
-            Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->name('attendance.update');
-            Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+        Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('permission:admin.attendance.rfid')->name('attendance.index');
+        Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:admin.attendance.rfid')->name('attendance.rfid');
+        Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:admin.attendance.rfid')->name('attendance.scan');
+        Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:admin.attendance.manual')->name('attendance.manual');
+        Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:admin.attendance.manual')->name('attendance.update');
+        Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:admin.attendance.dashboard')->name('attendance.dashboard');
+        Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:admin.attendance.monthly')->name('attendance.monthly');
+        Route::middleware('permission:admin.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
         });
@@ -164,11 +167,14 @@ Route::middleware('auth')->group(function () {
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
 
-        Route::middleware('permission:petugas.attendance.manage')->group(function () {
-            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
-            Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
-            Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->name('attendance.update');
-            Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+        Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('permission:petugas.attendance.rfid')->name('attendance.index');
+        Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:petugas.attendance.rfid')->name('attendance.rfid');
+        Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:petugas.attendance.rfid')->name('attendance.scan');
+        Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:petugas.attendance.manual')->name('attendance.manual');
+        Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:petugas.attendance.manual')->name('attendance.update');
+        Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:petugas.attendance.dashboard')->name('attendance.dashboard');
+        Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:petugas.attendance.monthly')->name('attendance.monthly');
+        Route::middleware('permission:petugas.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
         });
