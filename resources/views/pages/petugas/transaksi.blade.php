@@ -11,6 +11,26 @@
         <p class="text-on-surface-variant mt-1">Lakukan verifikasi identitas dan nominal pembayaran dengan aman.</p>
     </header>
 
+    @if($errors->any())
+        <div x-data="{ show: true }" x-show="show" x-transition
+             class="mb-6 rounded-xl border border-error/20 bg-error-container p-4 text-on-error-container shadow-sm">
+            <div class="flex items-start gap-3">
+                <span class="material-symbols-outlined mt-0.5 text-error">error</span>
+                <div class="min-w-0 flex-1">
+                    <p class="font-headline font-bold text-error">Transaksi gagal diproses</p>
+                    <ul class="mt-1 space-y-1 text-sm font-semibold">
+                        @foreach($errors->all() as $error)
+                            <li>{{ $error }}</li>
+                        @endforeach
+                    </ul>
+                </div>
+                <button type="button" @click="show = false" class="rounded-lg p-1 text-error hover:bg-error/10">
+                    <span class="material-symbols-outlined text-lg">close</span>
+                </button>
+            </div>
+        </div>
+    @endif
+
     <!-- Main Content -->
     <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
 

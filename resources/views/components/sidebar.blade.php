@@ -126,7 +126,7 @@
                     ],
                 ],
                 [
-                    'label' => 'Transaksi',
+                    'label' => 'Keuangan',
                     'icon' => 'receipt_long',
                     'active' => ['admin.transactions.*', 'admin.kas', 'admin.settlement', 'admin.topup'],
                     'children' => [
@@ -138,12 +138,22 @@
                     ],
                 ],
                 [
-                    'label' => 'Prestasi Santri',
+                    'label' => 'Tarbiyah',
                     'icon' => 'military_tech',
                     'active' => ['admin.prestasi.*'],
                     'children' => [
-                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.index', 'active' => 'admin.prestasi.index', 'label' => 'Semua Prestasi'],
-                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.create', 'active' => 'admin.prestasi.create', 'label' => 'Tambah Prestasi'],
+                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.index', 'active' => 'admin.prestasi.index', 'label' => 'Tahfidz'],
+                        ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.create', 'active' => 'admin.prestasi.create', 'label' => 'Tambah Tahfidz'],
+                    ],
+                ],
+                [
+                    'label' => 'Kesiswaan',
+                    'icon' => 'fact_check',
+                    'active' => ['admin.attendance.*', 'admin.permissions.*'],
+                    'children' => [
+                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.attendance.index', 'active' => 'admin.attendance.index', 'label' => 'Absensi Harian'],
+                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.attendance.dashboard', 'active' => 'admin.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
+                        ['permission' => 'admin.attendance.manage', 'route' => 'admin.permissions.index', 'active' => 'admin.permissions.*', 'label' => 'Perizinan Santri'],
                     ],
                 ],
                 [
@@ -156,6 +166,16 @@
                     ],
                 ],
                 [
+                    'label' => 'Absensi Santri',
+                    'icon' => 'fact_check',
+                    'active' => ['petugas.attendance.*', 'petugas.permissions.*'],
+                    'children' => [
+                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.attendance.index', 'active' => 'petugas.attendance.index', 'label' => 'Absensi Harian'],
+                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.attendance.dashboard', 'active' => 'petugas.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
+                        ['permission' => 'petugas.attendance.manage', 'route' => 'petugas.permissions.index', 'active' => 'petugas.permissions.*', 'label' => 'Perizinan Santri'],
+                    ],
+                ],
+                [
                     'label' => 'Blog & Artikel',
                     'icon' => 'article',
                     'active' => ['admin.blog.*'],
@@ -165,7 +185,7 @@
                     ],
                 ],
                 [
-                    'label' => 'Petugas',
+                    'label' => 'Keuangan',
                     'icon' => 'payments',
                     'active' => ['petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
                     'children' => [

@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('users', function (Blueprint $table) {
             $table->enum('role', ['admin', 'petugas', 'santri'])->default('santri')->after('password');
             $table->string('nis')->nullable()->unique()->after('role');
-            $table->string('pin', 6)->nullable()->after('nis');
+            $table->string('pin')->nullable()->after('nis');
             $table->unsignedBigInteger('saldo')->default(0)->after('pin');
             $table->string('rfid_code')->nullable()->unique()->after('saldo');
         });

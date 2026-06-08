@@ -1,0 +1,600 @@
+<!doctype html>
+<html lang="id">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              tertiary: "#755b00",
+              "on-primary-fixed": "#00201f",
+              "inverse-surface": "#2e3131",
+              "surface-container-high": "#e6e8e8",
+              primary: "#004d4c",
+              "surface-dim": "#d8dada",
+              "surface-container-highest": "#e1e3e3",
+              "surface-bright": "#f8fafa",
+              "on-secondary-fixed": "#191d0e",
+              "on-primary-fixed-variant": "#00504f",
+              surface: "#f8fafa",
+              "on-secondary-fixed-variant": "#444936",
+              "secondary-fixed": "#e0e5cc",
+              "primary-fixed": "#a2f0ee",
+              "on-error": "#ffffff",
+              "on-tertiary-fixed": "#241a00",
+              "primary-fixed-dim": "#86d4d2",
+              "primary-container": "#006766",
+              "surface-tint": "#076968",
+              "on-error-container": "#93000a",
+              "on-background": "#191c1d",
+              "tertiary-fixed": "#ffdf90",
+              secondary: "#5c614d",
+              background: "#f8fafa",
+              "secondary-container": "#dee2c9",
+              "on-primary": "#ffffff",
+              "on-tertiary-fixed-variant": "#584400",
+              "tertiary-fixed-dim": "#eac254",
+              "surface-container": "#eceeee",
+              "on-surface": "#191c1d",
+              "tertiary-container": "#cca73b",
+              "surface-variant": "#e1e3e3",
+              "inverse-primary": "#86d4d2",
+              "inverse-on-surface": "#eff1f1",
+              "surface-container-low": "#f2f4f4",
+              "on-secondary": "#ffffff",
+              outline: "#6f7978",
+              "on-tertiary": "#ffffff",
+              "on-secondary-container": "#606551",
+              error: "#ba1a1a",
+              "surface-container-lowest": "#ffffff",
+              "on-surface-variant": "#3e4948",
+              "on-primary-container": "#94e2e0",
+              "outline-variant": "#bec9c8",
+              "error-container": "#ffdad6",
+              "on-tertiary-container": "#503d00",
+              "secondary-fixed-dim": "#c4c9b1",
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+            fontFamily: {
+              headline: ["Manrope"],
+              display: ["Manrope"],
+              body: ["Inter"],
+              label: ["Inter"],
+            },
+          },
+        },
+      };
+    </script>
+    <style>
+      .material-symbols-outlined {
+        font-variation-settings:
+          "FILL" 0,
+          "wght" 400,
+          "GRAD" 0,
+          "opsz" 24;
+      }
+      .scan-ring {
+        animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955)
+          infinite;
+      }
+      @keyframes pulse-ring {
+        0% {
+          transform: scale(0.8);
+          opacity: 0.5;
+        }
+        80%,
+        100% {
+          transform: scale(1.3);
+          opacity: 0;
+        }
+      }
+      .scan-line {
+        animation: scan-move 3s ease-in-out infinite;
+      }
+      @keyframes scan-move {
+        0%,
+        100% {
+          top: 10%;
+        }
+        50% {
+          top: 90%;
+        }
+      }
+    </style>
+  </head>
+  <body class="bg-background text-on-background font-body min-h-screen">
+    <main class="ml-64 pt-24 pb-12 px-10">
+      <div class="max-w-6xl mx-auto">
+        <header class="mb-10 flex justify-between items-end">
+          <div>
+            <h2
+              class="font-headline text-3xl font-extrabold text-primary tracking-tight"
+            >
+              Absensi Santri RFID
+            </h2>
+            <p class="text-on-surface-variant mt-1">
+              Silakan tempelkan kartu RFID santri untuk mencatat kehadiran
+              harian.
+            </p>
+          </div>
+          <div class="flex gap-3">
+            <button
+              class="flex items-center gap-2 px-5 py-2.5 bg-surface-container-lowest text-primary font-semibold rounded-xl border border-primary/10 hover:bg-surface-container-low transition-all active:scale-95"
+            >
+              <span class="material-symbols-outlined text-[20px]"
+                >keyboard</span
+              >
+              Input Manual
+            </button>
+            <button
+              class="flex items-center gap-2 px-5 py-2.5 bg-primary text-on-primary font-semibold rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all active:scale-95"
+            >
+              <span class="material-symbols-outlined text-[20px]">history</span>
+              Riwayat Lengkap
+            </button>
+          </div>
+        </header>
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          <!-- RFID Scanner Area (8 Columns) -->
+          <div
+            class="lg:col-span-7 bg-surface-container-low rounded-[2rem] p-10 flex flex-col items-center justify-center relative overflow-hidden"
+          >
+            <!-- Atmospheric Background Gradient -->
+            <div
+              class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent pointer-events-none"
+            ></div>
+            <div class="relative w-72 h-72 flex items-center justify-center">
+              <!-- Pulsing Rings -->
+              <div
+                class="absolute w-full h-full rounded-full border-4 border-primary/10 scan-ring"
+              ></div>
+              <div
+                class="absolute w-4/5 h-4/5 rounded-full border-2 border-primary/20 scan-ring"
+                style="animation-delay: 0.5s"
+              ></div>
+              <!-- RFID Card UI -->
+              <div
+                class="relative z-10 w-56 h-36 bg-gradient-to-br from-primary to-primary-container rounded-2xl shadow-2xl flex flex-col justify-between p-5 transform rotate-[-5deg] hover:rotate-0 transition-transform duration-500"
+              >
+                <div class="flex justify-between items-start">
+                  <span
+                    class="material-symbols-outlined text-on-primary/30 text-4xl"
+                    style="font-variation-settings: &quot;FILL&quot; 1"
+                    >contactless</span
+                  >
+                  <div
+                    class="w-10 h-10 rounded-full bg-white/10 flex items-center justify-center"
+                  >
+                    <span
+                      class="material-symbols-outlined text-on-primary text-sm"
+                      >lock</span
+                    >
+                  </div>
+                </div>
+                <div class="space-y-1">
+                  <div class="w-16 h-2 bg-white/20 rounded-full"></div>
+                  <div class="w-32 h-3 bg-white/40 rounded-full"></div>
+                </div>
+                <!-- Scanning Laser Line -->
+                <div
+                  class="absolute inset-x-0 h-1 bg-primary-fixed shadow-[0_0_15px_#a2f0ee] opacity-70 scan-line"
+                ></div>
+              </div>
+            </div>
+            <div class="mt-12 text-center relative z-10">
+              <h3 class="font-headline text-2xl font-bold text-on-surface">
+                Tap RFID Reader
+              </h3>
+              <p class="text-on-surface-variant max-w-xs mx-auto mt-2">
+                Pastikan kartu sejajar dengan sensor untuk mempercepat proses
+                pembacaan.
+              </p>
+              <div class="mt-8 flex items-center justify-center gap-6">
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center text-primary mb-2"
+                  >
+                    <span class="material-symbols-outlined"
+                      >wifi_tethering</span
+                    >
+                  </div>
+                  <span
+                    class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest"
+                    >Siap Baca</span
+                  >
+                </div>
+                <div class="h-8 w-[1px] bg-outline-variant/30"></div>
+                <div class="flex flex-col items-center">
+                  <div
+                    class="w-12 h-12 rounded-full bg-surface-container-lowest flex items-center justify-center text-on-surface-variant mb-2"
+                  >
+                    <span class="material-symbols-outlined">sync</span>
+                  </div>
+                  <span
+                    class="text-[11px] font-bold text-on-surface-variant uppercase tracking-widest"
+                    >Real-time Sync</span
+                  >
+                </div>
+              </div>
+            </div>
+          </div>
+          <!-- Recent Activity (5 Columns) -->
+          <div class="lg:col-span-5 flex flex-col gap-6">
+            <div
+              class="bg-surface-container-lowest rounded-[2rem] p-8 shadow-sm h-full"
+            >
+              <div class="flex items-center justify-between mb-8">
+                <h3 class="font-headline text-xl font-bold text-on-surface">
+                  5 Nama Terakhir
+                </h3>
+                <span
+                  class="px-3 py-1 bg-tertiary-container/20 text-tertiary text-xs font-bold rounded-full"
+                  >LIVE</span
+                >
+              </div>
+              <div class="space-y-6">
+                <!-- Student Item 1 -->
+                <div
+                  class="flex items-center gap-4 animate-in fade-in slide-in-from-right-4 duration-500"
+                >
+                  <div class="relative">
+                    <img
+                      alt="Student Photo"
+                      class="w-14 h-14 rounded-2xl bg-secondary-container"
+                      data-alt="A portrait of a young Indonesian student wearing a traditional white songkok and a neat school uniform, set against a soft blurred Islamic school courtyard background. The lighting is bright and natural, reflecting a clean and professional sanctuary aesthetic."
+                      src="https://lh3.googleusercontent.com/aida/AP1WRLsM8lFUXSk3RGKhnVmhEv2yLEt8z6FkAcH_xJEbHXTu5ciZMznJy3V82boLjtvanlw-jVC-Cf_3ZdxfmcrIB7PMH0Tys4FXAyov8VRhgNcG0qOehLxXZFGsvDk83Xpz21wS6Mt2FoQRGL01EUKaYQoFz3aLITU_bpsUSKWbhi0Z9QmcoRuB5qac-Ec0GnxYVYmiDmWo-yNn7EFkVrcbJyTzn8-OxOlKMHKKd0JbcWpb0pLI7GIvUSwVev4b"
+                    />
+                    <div
+                      class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[10px] text-on-primary"
+                        >check</span
+                      >
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-bold text-on-surface leading-tight">
+                        M. Faisal Ramadhan
+                      </h4>
+                      <span
+                        class="text-[10px] font-medium text-primary bg-primary-fixed/30 px-2 py-0.5 rounded-full"
+                        >Baru saja</span
+                      >
+                    </div>
+                    <div class="flex gap-2 items-center mt-1">
+                      <span class="text-xs text-on-surface-variant"
+                        >NIS: 23049182</span
+                      >
+                      <span
+                        class="w-1 h-1 bg-outline-variant rounded-full"
+                      ></span>
+                      <span class="text-xs font-semibold text-secondary"
+                        >Kamar 10-A</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <!-- Student Item 2 -->
+                <div class="flex items-center gap-4 opacity-90">
+                  <div class="relative">
+                    <img
+                      alt="Student Photo"
+                      class="w-14 h-14 rounded-2xl bg-secondary-container"
+                      data-alt="A focused portrait of a student with a warm smile, wearing a modest school uniform. The background is a clean, bright, and minimalist interior of a modern institution. The image style is professional, featuring soft-focus elements and a cool-toned color palette."
+                      src="https://lh3.googleusercontent.com/aida/AP1WRLvViIO-szctHvssF7cbjTtbPDrqOSbgPWhTqn64g8EfXteVdlZuqwYhGiN42lQ4uwUyQY4D4LjpwAcJPxc3QMpbc3JAoT4gdPizLoXFyX0nUIm_QAeTSxpDNUpuEO7kVwLdNfuVX7bRuf-b_cwg-qKjcZY0ECu6G1EoLb02IpBqs0ZBy_lP9kEgoDdho6bpFCH3WIsCwqJjPgauyl-LWtERIoRJfpaVRiQUhHbhaMr6B5V6b09yEGUbYD_I"
+                    />
+                    <div
+                      class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[10px] text-on-primary"
+                        >check</span
+                      >
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-bold text-on-surface leading-tight">
+                        Zaki Al-Fatih
+                      </h4>
+                      <span
+                        class="text-[10px] font-medium text-on-surface-variant"
+                        >2 menit lalu</span
+                      >
+                    </div>
+                    <div class="flex gap-2 items-center mt-1">
+                      <span class="text-xs text-on-surface-variant"
+                        >NIS: 23049155</span
+                      >
+                      <span
+                        class="w-1 h-1 bg-outline-variant rounded-full"
+                      ></span>
+                      <span class="text-xs font-semibold text-secondary"
+                        >Kamar 12-C</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <!-- Student Item 3 -->
+                <div class="flex items-center gap-4 opacity-80">
+                  <div class="relative">
+                    <img
+                      alt="Student Photo"
+                      class="w-14 h-14 rounded-2xl bg-secondary-container"
+                      data-alt="A professional headshot of a student in an educational setting. The lighting is high-key and airy, emphasizing a modern and serene sanctuary mood. The subject is centered and looks friendly, wearing attire suitable for a religious boarding school."
+                      src="https://lh3.googleusercontent.com/aida/AP1WRLukfm_8ARzFjqNx_hL4XnDHl4ICB0T3mSmu6rMNf9oPQFITDanAa728lXhicuoNq9gPsCQqDCo1ajpnxELUzoD6WvyytR_EEAtj7c22bc3j9zCpKeviVuWa9SLn4HXl13SLJyX3dC-eneFxr-UGmOwC8gEjJ72T-pMZA75RFIir1a39EuxBo_nZp1gtOM8OzhyKZnDJGMDakQhE6BICXWjBZiiDXww9x-0-D8x5bJZIKHwxC2sFAlF4MMF-"
+                    />
+                    <div
+                      class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[10px] text-on-primary"
+                        >check</span
+                      >
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-bold text-on-surface leading-tight">
+                        Ibrahim Malik
+                      </h4>
+                      <span
+                        class="text-[10px] font-medium text-on-surface-variant"
+                        >5 menit lalu</span
+                      >
+                    </div>
+                    <div class="flex gap-2 items-center mt-1">
+                      <span class="text-xs text-on-surface-variant"
+                        >NIS: 23049101</span
+                      >
+                      <span
+                        class="w-1 h-1 bg-outline-variant rounded-full"
+                      ></span>
+                      <span class="text-xs font-semibold text-secondary"
+                        >Kamar 11-B</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <!-- Student Item 4 -->
+                <div class="flex items-center gap-4 opacity-70">
+                  <div class="relative">
+                    <img
+                      alt="Student Photo"
+                      class="w-14 h-14 rounded-2xl bg-secondary-container"
+                      data-alt="Clear profile photo of a student against a light grey professional backdrop. The student has a calm expression, wearing a tidy uniform. High-quality editorial photography with soft shadows and sharp details, perfectly matching a professional finance and educational UI."
+                      src="https://lh3.googleusercontent.com/aida/AP1WRLscpttBdjPS9onOP9G2bGhkiMNTWG8fkJhJ4mKP0MGNar-PLs-TcJUXXOLjwz0v2HRJbhBbHmj5xRMRfXo1k4IunuWmcm1VjGb_3ief6XXi3t0hGbsuII1PSvErdGCpoGAZG8s5aVZznKucdlmA5a4zQdlxgZWOhWvX3_GfDhghYUC8Dd7XobyDYdNFPQxQr5YHmTddV4pzX8XL4HobT72UxHj80SyVP9Pynex88BCt0ny2_yOQR4nnufgA"
+                    />
+                    <div
+                      class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[10px] text-on-primary"
+                        >check</span
+                      >
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-bold text-on-surface leading-tight">
+                        Yusuf Mansur
+                      </h4>
+                      <span
+                        class="text-[10px] font-medium text-on-surface-variant"
+                        >12 menit lalu</span
+                      >
+                    </div>
+                    <div class="flex gap-2 items-center mt-1">
+                      <span class="text-xs text-on-surface-variant"
+                        >NIS: 23049098</span
+                      >
+                      <span
+                        class="w-1 h-1 bg-outline-variant rounded-full"
+                      ></span>
+                      <span class="text-xs font-semibold text-secondary"
+                        >Kamar 10-A</span
+                      >
+                    </div>
+                  </div>
+                </div>
+                <!-- Student Item 5 -->
+                <div class="flex items-center gap-4 opacity-60">
+                  <div class="relative">
+                    <img
+                      alt="Student Photo"
+                      class="w-14 h-14 rounded-2xl bg-secondary-container"
+                      data-alt="A minimalist and clean portrait of a school student. The lighting is soft and professional, highlighting a calm and disciplined academic environment. The background is a simple off-white institutional wall. The overall aesthetic is editorial and sophisticated."
+                      src="https://lh3.googleusercontent.com/aida/AP1WRLtQvWZksgoIpP3Pawkdn8c5Q8meBWUPQvVbXQru67Nt4ccEaiNloxAsCQai04DySHql9BOY5-sY3XwdedtFBTL5LYRY9hiB7O1G6E2dW9welOYMsexA7bp7fbpSJSfXSmp3tsGQaHpIxqLZ47ph3ynkOOzxl9ndKXzqMqVgyeXj1Sz5eThyOfQ1YEQciBAl7PKeNQQkboYzSBym9LRQjg8zY_vSMcGIlGtLA7O0BnZ-GafQOfQNlYIAD05h"
+                    />
+                    <div
+                      class="absolute -bottom-1 -right-1 w-5 h-5 bg-primary rounded-full border-4 border-surface-container-lowest flex items-center justify-center"
+                    >
+                      <span
+                        class="material-symbols-outlined text-[10px] text-on-primary"
+                        >check</span
+                      >
+                    </div>
+                  </div>
+                  <div class="flex-1">
+                    <div class="flex justify-between items-start">
+                      <h4 class="font-bold text-on-surface leading-tight">
+                        Hasan Basri
+                      </h4>
+                      <span
+                        class="text-[10px] font-medium text-on-surface-variant"
+                        >15 menit lalu</span
+                      >
+                    </div>
+                    <div class="flex gap-2 items-center mt-1">
+                      <span class="text-xs text-on-surface-variant"
+                        >NIS: 23049077</span
+                      >
+                      <span
+                        class="w-1 h-1 bg-outline-variant rounded-full"
+                      ></span>
+                      <span class="text-xs font-semibold text-secondary"
+                        >Kamar 12-D</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="mt-10 pt-8 border-t border-outline-variant/10">
+                <div
+                  class="flex items-center justify-between text-on-surface-variant"
+                >
+                  <div class="flex items-center gap-2">
+                    <span class="material-symbols-outlined text-[20px]"
+                      >group</span
+                    >
+                    <span class="text-xs font-medium"
+                      >Total Kehadiran Hari Ini:</span
+                    >
+                  </div>
+                  <span class="text-lg font-extrabold text-primary"
+                    >248 / 312</span
+                  >
+                </div>
+                <div
+                  class="mt-3 w-full h-2 bg-surface-container rounded-full overflow-hidden"
+                >
+                  <div
+                    class="h-full bg-primary rounded-full"
+                    style="width: 79%"
+                  ></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- Bento Status Cards -->
+        <div class="mt-12 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div
+            class="bg-primary-container/10 p-6 rounded-[2rem] flex items-center gap-5"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-primary text-on-primary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-3xl">sensors</span>
+            </div>
+            <div>
+              <p
+                class="text-xs font-bold text-primary uppercase tracking-widest"
+              >
+                Status Reader
+              </p>
+              <h4 class="text-xl font-extrabold text-on-surface">Connected</h4>
+            </div>
+          </div>
+          <div
+            class="bg-secondary-container/20 p-6 rounded-[2rem] flex items-center gap-5"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-secondary text-on-secondary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-3xl"
+                >event_available</span
+              >
+            </div>
+            <div>
+              <p
+                class="text-xs font-bold text-secondary uppercase tracking-widest"
+              >
+                Sesi Aktif
+              </p>
+              <h4 class="text-xl font-extrabold text-on-surface">
+                Absen Kamar
+              </h4>
+            </div>
+          </div>
+          <div
+            class="bg-tertiary-container/10 p-6 rounded-[2rem] flex items-center gap-5"
+          >
+            <div
+              class="w-14 h-14 rounded-2xl bg-tertiary text-on-tertiary flex items-center justify-center"
+            >
+              <span class="material-symbols-outlined text-3xl">update</span>
+            </div>
+            <div>
+              <p
+                class="text-xs font-bold text-tertiary uppercase tracking-widest"
+              >
+                Last Sync
+              </p>
+              <h4 class="text-xl font-extrabold text-on-surface">30s Ago</h4>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+    <!-- Success Scan Overlay (Mock Interaction) -->
+    <div
+      class="fixed inset-0 z-50 flex items-center justify-center bg-surface/40 backdrop-blur-md transition-opacity duration-300 opacity-0 pointer-events-none"
+      id="scan-success"
+    >
+      <div
+        class="bg-surface-container-lowest p-8 rounded-[2.5rem] shadow-2xl border border-primary/10 flex flex-col items-center text-center transform transition-transform duration-300 scale-90"
+      >
+        <div
+          class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mb-6"
+        >
+          <span
+            class="material-symbols-outlined text-primary text-5xl"
+            style="font-variation-settings: &quot;FILL&quot; 1"
+            >check_circle</span
+          >
+        </div>
+        <h3 class="font-headline text-2xl font-bold text-on-surface">
+          Scan Berhasil!
+        </h3>
+        <p class="text-on-surface-variant mt-2 mb-6">
+          M. Faisal Ramadhan telah tercatat hadir.
+        </p>
+        <div
+          class="px-6 py-2 bg-primary text-on-primary rounded-full text-sm font-bold"
+        >
+          NIS: 23049182
+        </div>
+      </div>
+    </div>
+    <script>
+      // Micro-interaction simulation
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "s") {
+          // Simulate scan with 's' key
+          const overlay = document.getElementById("scan-success");
+          overlay.classList.remove("opacity-0", "pointer-events-none");
+          overlay.querySelector("div").classList.remove("scale-90");
+
+          setTimeout(() => {
+            overlay.classList.add("opacity-0", "pointer-events-none");
+            overlay.querySelector("div").classList.add("scale-90");
+          }, 2500);
+        }
+      });
+    </script>
+  </body>
+</html>

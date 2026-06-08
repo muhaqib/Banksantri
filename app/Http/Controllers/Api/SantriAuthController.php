@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
 class SantriAuthController extends Controller
@@ -24,18 +23,13 @@ class SantriAuthController extends Controller
             ->where('nis', $validated['nis'])
             ->first();
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'nis' => ['NIS atau PIN salah.'],
             ]);
         }
 
-        // Handle both plain text and hashed PINs
-        if ($user->pin === $validated['pin']) {
-            // It's a plaintext match, update to hash
-            $user->pin = Hash::make($validated['pin']);
-            $user->save();
-        } elseif (!Hash::check($validated['pin'], $user->pin)) {
+        if (! $user->verifyPin($validated['pin'])) {
             throw ValidationException::withMessages([
                 'nis' => ['NIS atau PIN salah.'],
             ]);
@@ -88,7 +82,7 @@ class SantriAuthController extends Controller
             'nis' => $user->nis,
             'role' => $user->role,
             'saldo' => (int) $user->saldo,
-            'foto' => $user->foto ? asset('storage/' . $user->foto) : null,
+            'foto' => $user->foto ? asset('storage/'.$user->foto) : null,
             'no_hp' => $user->no_hp,
             'alamat' => $user->alamat,
             'tempat_lahir' => $user->tempat_lahir,

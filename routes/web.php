@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\SantriController;
 use App\Http\Controllers\Admin\SettlementController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KitabController;
@@ -25,6 +26,7 @@ use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
 use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
+use App\Http\Controllers\SantriPermissionController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -115,6 +117,15 @@ Route::middleware('auth')->group(function () {
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
 
+        Route::middleware('permission:admin.attendance.manage')->group(function () {
+            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+            Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
+            Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->name('attendance.update');
+            Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+            Route::resource('permissions', SantriPermissionController::class)->except(['show']);
+            Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
+        });
+
         // Blog Management
         Route::middleware('permission:admin.blog.manage')->group(function () {
             Route::resource('blog', AdminBlogController::class)->except(['show']);
@@ -151,6 +162,15 @@ Route::middleware('auth')->group(function () {
             Route::resource('prestasi', AdminPrestasiSantriController::class)->except(['show']);
             Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
+        });
+
+        Route::middleware('permission:petugas.attendance.manage')->group(function () {
+            Route::get('/attendance', [AttendanceController::class, 'index'])->name('attendance.index');
+            Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->name('attendance.scan');
+            Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->name('attendance.update');
+            Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->name('attendance.dashboard');
+            Route::resource('permissions', SantriPermissionController::class)->except(['show']);
+            Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
         });
 
         // Profile Management

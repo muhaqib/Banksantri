@@ -24,7 +24,7 @@ class SantriProfileController extends Controller
                 'nis' => $santri->nis,
                 'role' => $santri->role,
                 'saldo' => (int) $santri->saldo,
-                'foto' => $santri->foto ? asset('storage/' . $santri->foto) : null,
+                'foto' => $santri->foto ? asset('storage/'.$santri->foto) : null,
                 'no_hp' => $santri->no_hp,
                 'alamat' => $santri->alamat,
                 'tempat_lahir' => $santri->tempat_lahir,
@@ -52,14 +52,7 @@ class SantriProfileController extends Controller
             'new_pin_confirmation' => 'required|string|size:6|same:new_pin',
         ]);
 
-        $isValid = false;
-        if ($santri->pin === $validated['old_pin']) {
-            $isValid = true;
-        } elseif (Hash::check($validated['old_pin'], $santri->pin)) {
-            $isValid = true;
-        }
-
-        if (!$isValid) {
+        if (! $santri->verifyPin($validated['old_pin'])) {
             return response()->json([
                 'message' => 'PIN lama salah',
                 'errors' => ['old_pin' => ['PIN lama yang Anda masukkan salah']],
@@ -82,7 +75,7 @@ class SantriProfileController extends Controller
         $santri = $request->user();
 
         $validated = $request->validate([
-            'email' => 'required|string|email|max:255|unique:users,email,' . $santri->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$santri->id,
         ]);
 
         $santri->email = $validated['email'];
@@ -106,7 +99,7 @@ class SantriProfileController extends Controller
             'password' => ['required', 'string', 'confirmed', Password::min(6)],
         ]);
 
-        if (!Hash::check($validated['current_password'], $santri->password)) {
+        if (! Hash::check($validated['current_password'], $santri->password)) {
             return response()->json([
                 'message' => 'Password saat ini salah',
                 'errors' => ['current_password' => ['Password saat ini salah']],

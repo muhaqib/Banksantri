@@ -5,10 +5,11 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
-use Illuminate\Support\Facades\File;
 
 class SantriController extends Controller
 {
@@ -22,9 +23,9 @@ class SantriController extends Controller
         // Search by name or NIS if provided
         if ($request->filled('search')) {
             $search = $request->search;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('nis', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('nis', 'like', '%'.$search.'%');
             });
         }
 
@@ -45,9 +46,9 @@ class SantriController extends Controller
 
         if ($request->filled('q')) {
             $search = $request->q;
-            $query->where(function($q) use ($search) {
-                $q->where('name', 'like', '%' . $search . '%')
-                  ->orWhere('nis', 'like', '%' . $search . '%');
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('nis', 'like', '%'.$search.'%');
             });
         }
 
@@ -55,16 +56,16 @@ class SantriController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => $santri->map(function($s) {
+            'data' => $santri->map(function ($s) {
                 return [
                     'id' => $s->id,
                     'name' => $s->name,
                     'nis' => $s->nis,
                     'email' => $s->email,
                     'saldo' => $s->saldo,
-                    'foto_url' => $s->foto ? asset('storage/' . $s->foto) : null,
+                    'foto_url' => $s->foto ? asset('storage/'.$s->foto) : null,
                 ];
-            })
+            }),
         ]);
     }
 
@@ -157,13 +158,13 @@ class SantriController extends Controller
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $santri->id,
-            'nis' => 'required|string|max:20|unique:users,nis,' . $santri->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$santri->id,
+            'nis' => 'required|string|max:20|unique:users,nis,'.$santri->id,
             'password' => 'nullable|string|min:6',
             'pin' => 'nullable|string|size:6',
             'saldo' => 'nullable|numeric|min:0',
             'foto' => 'nullable|image|max:2048',
-            'rfid_code' => 'nullable|string|max:100|unique:users,rfid_code,' . $santri->id,
+            'rfid_code' => 'nullable|string|max:100|unique:users,rfid_code,'.$santri->id,
             'tempat_lahir' => 'nullable|string|max:100',
             'tanggal_lahir' => 'nullable|date',
             'alamat' => 'nullable|string',
@@ -200,11 +201,11 @@ class SantriController extends Controller
         }
 
         // Update password if provided
-        if ($validated['password']) {
+        if (! empty($validated['password'] ?? null)) {
             $data['password'] = Hash::make($validated['password']);
         }
 
-        if ($validated['pin']) {
+        if (! empty($validated['pin'] ?? null)) {
             $data['pin'] = Hash::make($validated['pin']);
         }
 
@@ -251,17 +252,17 @@ class SantriController extends Controller
 
         return response()->json([
             'santri' => $santri,
-            'foto_url' => $santri->foto ? Storage::url($santri->foto) : null
+            'foto_url' => $santri->foto ? Storage::url($santri->foto) : null,
         ]);
     }
 
     /**
      * Resize and save uploaded image.
-     * 
-     * @param \Illuminate\Http\UploadedFile $image
-     * @param string $directory
-     * @param int $maxWidth
-     * @param int $quality
+     *
+     * @param  UploadedFile  $image
+     * @param  string  $directory
+     * @param  int  $maxWidth
+     * @param  int  $quality
      * @return string|null
      */
     private function resizeAndSaveImage($image, $directory, $maxWidth = 800, $quality = 70)
@@ -282,18 +283,18 @@ class SantriController extends Controller
 
         // Create resized image
         $resizedImg = imagecreatetruecolor($newWidth, $newHeight);
-        
+
         // Preserve transparency for PNG
         imagealphablending($resizedImg, false);
         imagesavealpha($resizedImg, true);
-        
+
         // Resize
         imagecopyresampled($resizedImg, $img, 0, 0, 0, 0, $newWidth, $newHeight, $originalWidth, $originalHeight);
 
         // Generate filename
-        $filename = time() . '_' . uniqid() . '.jpg';
-        $fullPath = $directory . '/' . $filename;
-        $storagePath = storage_path('app/public/' . $fullPath);
+        $filename = time().'_'.uniqid().'.jpg';
+        $fullPath = $directory.'/'.$filename;
+        $storagePath = storage_path('app/public/'.$fullPath);
 
         // Ensure directory exists
         File::ensureDirectoryExists(dirname($storagePath));

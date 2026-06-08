@@ -41,7 +41,7 @@
 
         @if($selectedRole !== 'santri')
         <div class="mb-6">
-            <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">Kata Sandi</label>
+            <label class="font-label text-xs font-semibold text-on-surface-variant ml-1 block mb-2">Kata SSandi</label>
             <div class="relative group">
                 <div class="absolute inset-y-0 left-0 w-1 bg-primary rounded-full scale-y-0 group-focus-within:scale-y-75 transition-transform duration-300"></div>
                 <input :type="showPassword ? 'text' : 'password'"

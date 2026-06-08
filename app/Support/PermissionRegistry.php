@@ -26,6 +26,8 @@ class PermissionRegistry
                 'admin.kamar.manage' => 'Kelola data kamar',
                 'admin.prestasi.manage' => 'Kelola prestasi santri',
                 'petugas.prestasi.manage' => 'Kelola prestasi santri',
+                'admin.attendance.manage' => 'Kelola absensi dan perizinan santri',
+                'petugas.attendance.manage' => 'Kelola absensi dan perizinan santri',
                 'santri.prestasi.view' => 'Lihat prestasi santri',
             ],
             'Publikasi' => [
@@ -84,6 +86,7 @@ class PermissionRegistry
             'petugas.history.view',
             'petugas.withdrawals.manage',
             'petugas.prestasi.manage',
+            'petugas.attendance.manage',
             'petugas.profile.manage',
         ];
     }

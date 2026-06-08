@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
@@ -123,5 +124,30 @@ class User extends Authenticatable
     public function kamarSantri()
     {
         return $this->hasOne(KamarSantri::class);
+    }
+
+    public function attendances()
+    {
+        return $this->hasMany(Attendance::class, 'santri_id');
+    }
+
+    public function santriPermissions()
+    {
+        return $this->hasMany(SantriPermission::class, 'santri_id');
+    }
+
+    public function verifyPin(string $pin): bool
+    {
+        if (! $this->pin) {
+            return false;
+        }
+
+        if ($this->pin === $pin) {
+            $this->forceFill(['pin' => Hash::make($pin)])->save();
+
+            return true;
+        }
+
+        return Hash::check($pin, $this->pin);
     }
 }
