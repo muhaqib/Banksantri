@@ -15,6 +15,42 @@
         <p class="text-on-surface-variant text-sm mt-1">Lengkapi data santri dengan benar.</p>
     </div>
 
+    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm mb-6">
+        <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div>
+                <h3 class="font-headline font-bold text-lg text-primary flex items-center gap-2">
+                    <span class="material-symbols-outlined">table_view</span>
+                    Import dan Edit Massal dengan Excel
+                </h3>
+                <p class="text-sm text-on-surface-variant mt-1">Gunakan file export atau template. Data lama diperbarui berdasarkan ID atau NIS, termasuk status dan kamar santri.</p>
+            </div>
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.santri.template') }}" class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-on-surface">Template</a>
+                <a href="{{ route('admin.santri.export') }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Semua</a>
+                <a href="{{ route('admin.santri.export', ['status' => 'aktif']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Aktif</a>
+                <a href="{{ route('admin.santri.export', ['status' => 'alumni']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Alumni</a>
+            </div>
+        </div>
+        <form action="{{ route('admin.santri.import') }}" method="POST" enctype="multipart/form-data" class="mt-5 flex flex-col md:flex-row gap-3">
+            @csrf
+            <input type="file" name="excel_file" required accept=".xlsx,.xls"
+                   class="flex-1 bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface">
+            <button type="submit" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl flex items-center justify-center gap-2">
+                <span class="material-symbols-outlined">upload_file</span>
+                Import Excel
+            </button>
+        </form>
+        @error('excel_file') <p class="text-error text-xs mt-2">{{ $message }}</p> @enderror
+        @if(session('import_errors'))
+            <div class="mt-4 p-4 rounded-xl bg-error/10 text-error text-sm max-h-48 overflow-y-auto">
+                <p class="font-bold mb-2">Baris yang gagal:</p>
+                @foreach(session('import_errors') as $importError)
+                    <p>{{ $importError }}</p>
+                @endforeach
+            </div>
+        @endif
+    </div>
+
     <!-- Form -->
     <form action="{{ route('admin.santri.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
         @csrf

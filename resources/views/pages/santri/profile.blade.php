@@ -31,6 +31,9 @@
             
             <h2 class="font-headline font-bold text-2xl mb-1">{{ auth()->user()->name ?? 'Santri' }}</h2>
             <p class="text-primary-fixed text-sm">NIS: {{ auth()->user()->nis ?? '-' }}</p>
+            @if(auth()->user()->isAlumni())
+                <span class="mt-2 px-3 py-1 rounded-full bg-white/20 text-xs font-bold">Alumni · Read-only</span>
+            @endif
         </div>
     </header>
 
@@ -62,6 +65,7 @@
             </div>
         </div>
 
+        @unless(auth()->user()->isAlumni())
         <!-- Security Settings -->
         <div class="card">
             <h3 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
@@ -80,6 +84,7 @@
                 </button>
             </div>
         </div>
+        @endunless
 
         <!-- Actions -->
         <div class="card">
@@ -120,6 +125,7 @@
     </div>
 
     <!-- Change PIN Modal -->
+    @unless(auth()->user()->isAlumni())
     <div x-show="showChangePin" x-cloak class="fixed inset-0 z-100 overflow-y-auto">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40"></div>
         <div class="flex items-center justify-center min-h-screen p-4 relative z-50">
@@ -181,6 +187,7 @@
             </div>
         </div>
     </div>
+    @endunless
 
     <!-- Bottom Navigation -->
     <x-santri.bottom-nav />

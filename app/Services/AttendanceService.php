@@ -16,7 +16,7 @@ class AttendanceService
         $date = Carbon::parse($date)->toDateString();
         $kamar = $santri->kamarSantri?->kamar ?? 'tanpa_kamar';
 
-        abort_unless($santri->role === 'santri', 422, 'Absensi hanya dapat dicatat untuk santri.');
+        abort_unless($santri->isActiveSantri(), 422, 'Absensi hanya dapat dicatat untuk santri aktif.');
 
         $attendance = Attendance::where('santri_id', $santri->id)
             ->whereDate('attendance_date', $date)
@@ -50,7 +50,7 @@ class AttendanceService
         $created = 0;
 
         User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->whereHas('kamarSantri')
             ->with('kamarSantri')
             ->chunkById(100, function ($santriList) use ($date, &$created): void {

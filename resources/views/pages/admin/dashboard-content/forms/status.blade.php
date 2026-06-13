@@ -1,0 +1,1 @@
+<div><label class="form-label">Status</label><select name="is_published" required @if($editing) x-model="selected.is_published" @endif class="input-field w-full"><option value="1">Terbitkan</option><option value="0">Simpan Draft</option></select></div>

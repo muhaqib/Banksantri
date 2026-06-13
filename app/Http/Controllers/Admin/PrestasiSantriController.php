@@ -104,6 +104,7 @@ class PrestasiSantriController extends Controller
 
     public function destroy(Request $request, PrestasiSantri $prestasi)
     {
+        abort_unless($prestasi->santri?->isActiveSantri(), 422, 'Riwayat prestasi alumni tidak dapat diubah.');
         $prestasi->delete();
 
         return redirect()
@@ -128,7 +129,7 @@ class PrestasiSantriController extends Controller
     private function validatePrestasi(Request $request): array
     {
         return $request->validate([
-            'santri_id' => ['required', Rule::exists('users', 'id')->where('role', 'santri')],
+            'santri_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
             'kitab_id' => ['required', 'exists:kitabs,id'],
             'tanggal_selesai' => ['required', 'date'],
             'progress' => ['required', 'integer', 'min:0', 'max:100'],
@@ -140,7 +141,7 @@ class PrestasiSantriController extends Controller
     private function formData(): array
     {
         return [
-            'santriList' => User::where('role', 'santri')->orderBy('name')->get(),
+            'santriList' => User::activeSantri()->orderBy('name')->get(),
             'kitabList' => Kitab::orderBy('nama')->get(),
             'predikatList' => self::PREDIKAT,
         ];

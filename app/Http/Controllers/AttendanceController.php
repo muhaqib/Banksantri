@@ -32,7 +32,7 @@ class AttendanceController extends Controller
         $date = Carbon::parse($request->input('date', today()->toDateString()));
 
         $santriList = User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->with([
                 'kamarSantri',
                 'attendances' => fn ($query) => $query->whereDate('attendance_date', $date),
@@ -83,7 +83,7 @@ class AttendanceController extends Controller
         ]);
 
         $santri = User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->where('rfid_code', $validated['rfid_code'])
             ->with('kamarSantri')
             ->first();
@@ -103,7 +103,7 @@ class AttendanceController extends Controller
 
     public function update(Request $request, User $santri, AttendanceService $attendanceService)
     {
-        abort_unless($santri->role === 'santri', 404);
+        abort_unless($santri->isActiveSantri(), 404);
 
         $validated = $request->validate([
             'date' => ['required', 'date'],
@@ -156,7 +156,7 @@ class AttendanceController extends Controller
             ->groupBy('kamar');
 
         $mostAbsent = User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->with('kamarSantri')
             ->withCount(['attendances as ghoib_count' => fn ($query) => $query
                 ->where('status', 'ghoib')
@@ -196,7 +196,7 @@ class AttendanceController extends Controller
         $end = $start->copy()->endOfMonth();
 
         $monthlySantri = User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->with([
                 'kamarSantri',
                 'attendances' => fn ($query) => $query

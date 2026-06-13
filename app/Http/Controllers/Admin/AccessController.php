@@ -38,15 +38,18 @@ class AccessController extends Controller
 
         $validated = $request->validate([
             'permissions' => ['array'],
-            'permissions.*' => ['string', 'in:' . implode(',', $availablePermissions)],
+            'permissions.*' => ['string', 'in:'.implode(',', $availablePermissions)],
         ]);
 
-        $permissions = $validated['permissions'] ?? [];
+        $permissions = array_values(array_unique([
+            ...($validated['permissions'] ?? []),
+            'petugas.dashboard.view',
+        ]));
         $petugas->syncPermissions($permissions);
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()
             ->route('admin.access.index')
-            ->with('success', 'Permission petugas ' . $petugas->name . ' berhasil diperbarui.');
+            ->with('success', 'Permission petugas '.$petugas->name.' berhasil diperbarui.');
     }
 }

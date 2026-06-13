@@ -2,14 +2,14 @@
 
 use App\Http\Controllers\Api\BlogController as ApiBlogController;
 use App\Http\Controllers\Api\GalleryController as ApiGalleryController;
-use App\Http\Controllers\Api\SliderController as ApiSliderController;
 use App\Http\Controllers\Api\RegistrationController as ApiRegistrationController;
 use App\Http\Controllers\Api\SantriAuthController;
 use App\Http\Controllers\Api\SantriDashboardController;
-use App\Http\Controllers\Api\SantriTransactionController;
-use App\Http\Controllers\Api\SantriTopUpController as ApiSantriTopUpController;
-use App\Http\Controllers\Api\SantriProfileController;
 use App\Http\Controllers\Api\SantriPrestasiController;
+use App\Http\Controllers\Api\SantriProfileController;
+use App\Http\Controllers\Api\SantriTopUpController as ApiSantriTopUpController;
+use App\Http\Controllers\Api\SantriTransactionController;
+use App\Http\Controllers\Api\SliderController as ApiSliderController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -51,15 +51,15 @@ Route::middleware('auth:sanctum')->prefix('santri')->group(function () {
 
     // Top-Up
     Route::get('/topups', [ApiSantriTopUpController::class, 'index']);
-    Route::post('/topups', [ApiSantriTopUpController::class, 'store']);
+    Route::post('/topups', [ApiSantriTopUpController::class, 'store'])->middleware('santri.active');
     Route::get('/topups/pending-count', [ApiSantriTopUpController::class, 'pendingCount']);
     Route::get('/topups/{topUp}', [ApiSantriTopUpController::class, 'show']);
 
     // Profile
     Route::get('/profile', [SantriProfileController::class, 'index']);
-    Route::post('/profile/change-pin', [SantriProfileController::class, 'changePin']);
-    Route::post('/profile/email', [SantriProfileController::class, 'updateEmail']);
-    Route::post('/profile/password', [SantriProfileController::class, 'updatePassword']);
+    Route::post('/profile/change-pin', [SantriProfileController::class, 'changePin'])->middleware('santri.active');
+    Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->middleware('santri.active');
+    Route::post('/profile/password', [SantriProfileController::class, 'updatePassword'])->middleware('santri.active');
 
     // Prestasi
     Route::get('/prestasi', [SantriPrestasiController::class, 'index']);

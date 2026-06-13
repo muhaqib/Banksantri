@@ -29,6 +29,12 @@
     </header>
 
     <main class="px-5 space-y-6">
+        @if(auth()->user()->isAlumni())
+            <section class="bg-surface-container-high p-4 rounded-xl">
+                <p class="font-bold text-on-surface">Mode Alumni</p>
+                <p class="text-xs text-on-surface-variant mt-1">Akun ini bersifat read-only. Anda tetap dapat melihat saldo, riwayat, prestasi, dan profil.</p>
+            </section>
+        @endif
         <!-- Alert Banner (Low Balance) -->
         <section x-show="saldo <= 10000" x-cloak>
             <div class="bg-error-container text-on-error-container p-4 rounded-xl flex items-center gap-3">
@@ -66,9 +72,9 @@
                             <span class="w-8 h-5 rounded-sm bg-white/20"></span>
                             <span class="text-white/60 font-mono text-xs">**** {{ substr(auth()->user()->nis ?? '0000', -4) }}</span>
                         </div>
-                        <a href="{{ route('santri.topup') }}" class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">
-                            Isi Saldo
-                        </a>
+                        @unless(auth()->user()->isAlumni())
+                            <a href="{{ route('santri.topup') }}" class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">Isi Saldo</a>
+                        @endunless
                     </div>
                 </div>
             </div>
@@ -83,24 +89,28 @@
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Riwayat</span>
                 </a>
+                @unless(auth()->user()->isAlumni())
                 <a href="{{ route('santri.topup') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">add_circle</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Top Up</span>
                 </a>
+                @endunless
                 <a href="{{ route('santri.prestasi') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Prestasi</span>
                 </a>
+                @unless(auth()->user()->isAlumni())
                 <a href="#" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">send</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tanya Ustadz</span>
                 </a>
+                @endunless
             </div>
         </section>
 

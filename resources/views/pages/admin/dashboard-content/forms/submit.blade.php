@@ -1,0 +1,1 @@
+<div class="mt-6 flex justify-end"><button class="bg-primary text-on-primary px-6 py-3 rounded-xl font-bold flex items-center gap-2"><span class="material-symbols-outlined">save</span>Simpan</button></div>

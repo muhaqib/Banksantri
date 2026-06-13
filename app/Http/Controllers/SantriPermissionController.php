@@ -98,6 +98,7 @@ class SantriPermissionController extends Controller
     public function destroy(Request $request, SantriPermission $permission, AttendanceService $attendanceService)
     {
         $permission->load('santri.kamarSantri');
+        abort_unless($permission->santri?->isActiveSantri(), 422, 'Riwayat izin alumni tidak dapat diubah.');
         $snapshot = clone $permission;
         $permission->delete();
         $attendanceService->removePermission($snapshot);
@@ -116,7 +117,7 @@ class SantriPermissionController extends Controller
     private function validatePermission(Request $request): array
     {
         return $request->validate([
-            'santri_id' => ['required', Rule::exists('users', 'id')->where('role', 'santri')],
+            'santri_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'reason' => ['required', 'string', 'max:1000'],
@@ -127,7 +128,7 @@ class SantriPermissionController extends Controller
     private function santriList()
     {
         return User::query()
-            ->where('role', 'santri')
+            ->activeSantri()
             ->whereHas('kamarSantri')
             ->with('kamarSantri')
             ->orderBy('name')

@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\Rule;
+use Illuminate\Validation\ValidationException;
 
 class TransaksiController extends Controller
 {
@@ -93,8 +95,8 @@ class TransaksiController extends Controller
             'rfid_code' => 'required|string',
         ]);
 
-        $santri = User::where('rfid_code', $request->rfid_code)
-            ->where('role', 'santri')
+        $santri = User::activeSantri()
+            ->where('rfid_code', $request->rfid_code)
             ->first();
 
         \Log::info('Santri found: '.($santri ? $santri->name : 'null'));
@@ -128,7 +130,7 @@ class TransaksiController extends Controller
     public function store(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'santri_id' => 'required|exists:users,id',
+            'santri_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
             'nominal' => 'required|numeric|min:1000',
             'kategori' => 'required|in:kantin,koperasi,laundry,fotokopi,lainnya,tarik uang,syirkah,beli kitab,mart',
             'keterangan' => 'nullable|string|max:500',
@@ -151,54 +153,54 @@ class TransaksiController extends Controller
         }
 
         $validated = $validator->validated();
-        $santri = User::findOrFail($validated['santri_id']);
-
-        // Verify hashed PIN while transparently migrating legacy plaintext PINs.
-        if (! $santri->verifyPin($validated['pin'])) {
-            return back()->withErrors(['pin' => 'PIN salah. Silakan periksa kembali PIN santri.'])->withInput($request->except('pin'));
-        }
-
-        // Check saldo
-        if ($santri->saldo < $validated['nominal']) {
-            return back()->withErrors(['nominal' => 'Saldo santri tidak mencukupi untuk nominal transaksi ini.'])->withInput($request->except('pin'));
-        }
-
-        DB::beginTransaction();
         try {
-            $saldoSebelum = $santri->saldo;
-            $saldoSetelah = $saldoSebelum - $validated['nominal'];
+            DB::transaction(function () use ($validated) {
+                $santri = User::activeSantri()
+                    ->whereKey($validated['santri_id'])
+                    ->lockForUpdate()
+                    ->firstOrFail();
+                $petugas = User::whereKey(Auth::id())
+                    ->where('role', 'petugas')
+                    ->lockForUpdate()
+                    ->firstOrFail();
 
-            // Create transaction
-            Transaction::create([
-                'santri_id' => $santri->id,
-                'petugas_id' => Auth::id(),
-                'jenis' => 'keluar',
-                'nominal' => $validated['nominal'],
-                'kategori' => $validated['kategori'],
-                'keterangan' => $validated['keterangan'] ?? null,
-                'saldo_sebelum' => $saldoSebelum,
-                'saldo_setelah' => $saldoSetelah,
-            ]);
+                // Verify hashed PIN while transparently migrating legacy plaintext PINs.
+                if (! $santri->verifyPin($validated['pin'])) {
+                    throw ValidationException::withMessages([
+                        'pin' => 'PIN salah. Silakan periksa kembali PIN santri.',
+                    ]);
+                }
 
-            // Update santri saldo
-            $santri->update([
-                'saldo' => $saldoSetelah,
-            ]);
+                $nominal = (int) $validated['nominal'];
+                $saldoSebelum = (int) $santri->saldo;
 
-            // Update petugas saldo (for certain categories)
-            if (in_array($validated['kategori'], ['kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya', 'beli kitab', 'mart'])) {
-                $petugas = Auth::user();
-                $petugas->update([
-                    'saldo' => $petugas->saldo + $validated['nominal'],
+                if ($saldoSebelum < $nominal) {
+                    throw ValidationException::withMessages([
+                        'nominal' => 'Saldo santri tidak mencukupi untuk nominal transaksi ini.',
+                    ]);
+                }
+
+                $saldoSetelah = $saldoSebelum - $nominal;
+
+                Transaction::create([
+                    'santri_id' => $santri->id,
+                    'petugas_id' => $petugas->id,
+                    'jenis' => 'keluar',
+                    'nominal' => $nominal,
+                    'kategori' => $validated['kategori'],
+                    'keterangan' => $validated['keterangan'] ?? null,
+                    'saldo_sebelum' => $saldoSebelum,
+                    'saldo_setelah' => $saldoSetelah,
                 ]);
-            }
 
-            DB::commit();
+                $santri->update(['saldo' => $saldoSetelah]);
+                $petugas->update(['saldo' => (int) $petugas->saldo + $nominal]);
+            });
 
             return redirect()->route('petugas.transaksi')->with('success', 'Transaksi berhasil diproses');
+        } catch (ValidationException $e) {
+            return back()->withErrors($e->errors())->withInput($request->except('pin'));
         } catch (\Exception $e) {
-            DB::rollBack();
-
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memproses transaksi: '.$e->getMessage()])->withInput($request->except('pin'));
         }
     }

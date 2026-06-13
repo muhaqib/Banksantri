@@ -11,10 +11,15 @@
             <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Data Santri</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola data santri dan saldo mereka.</p>
         </div>
-        <a href="{{ route('admin.santri.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
-            <span class="material-symbols-outlined">add</span>
-            <span>Tambah Santri</span>
-        </a>
+        <div class="flex gap-2">
+            <a href="{{ route('admin.santri.export', ['status' => request('status')]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
+                <span class="material-symbols-outlined">download</span><span>Export Excel</span>
+            </a>
+            <a href="{{ route('admin.santri.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+                <span class="material-symbols-outlined">add</span>
+                <span>Tambah / Import</span>
+            </a>
+        </div>
     </div>
 
     <!-- Stats Cards -->
@@ -24,7 +29,7 @@
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">group</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Santri</p>
             </div>
-            <p class="text-3xl font-bold text-on-surface">{{ $santriList->total() }}</p>
+            <p class="text-3xl font-bold text-on-surface">{{ $activeCount }}</p>
         </div>
 
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
@@ -38,12 +43,9 @@
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">add_card</span>
-                <p class="text-xs text-on-surface-variant font-medium">Quick Actions</p>
+                <p class="text-xs text-on-surface-variant font-medium">Total Alumni</p>
             </div>
-            <a href="{{ route('admin.transactions.topup') }}" class="inline-flex items-center gap-2 text-sm font-bold text-primary hover:underline">
-                <span class="material-symbols-outlined text-sm">add</span>
-                <span>Top Up Saldo</span>
-            </a>
+            <p class="text-3xl font-bold text-primary">{{ $alumniCount }}</p>
         </div>
     </div>
 
@@ -51,7 +53,10 @@
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
-            <div class="flex gap-2">
+            <div class="flex flex-wrap gap-2">
+                <a href="{{ route('admin.santri.index') }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ !request('status') ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Semua</a>
+                <a href="{{ route('admin.santri.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ request('status') === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
+                <a href="{{ route('admin.santri.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ request('status') === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
                 <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
                     <input type="text"
                            name="search"
@@ -79,6 +84,7 @@
                         <th class="px-6 py-4">NIS</th>
                         <th class="px-6 py-4">Kelas</th>
                         <th class="px-6 py-4">Kamar</th>
+                        <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Saldo</th>
                         <th class="px-6 py-4 text-center">Aksi</th>
                     </tr>
@@ -108,6 +114,11 @@
                                 </span>
                             </td>
                             <td class="px-6 py-4 text-on-surface-variant">{{ $santri->kamarSantri?->kamar ? ucfirst(str_replace('_', ' ', $santri->kamarSantri->kamar)) : '-' }}</td>
+                            <td class="px-6 py-4">
+                                <span class="text-xs font-bold px-2 py-1 rounded-full {{ $santri->isAlumni() ? 'bg-surface-container-high text-on-surface-variant' : 'bg-primary/10 text-primary' }}">
+                                    {{ $santri->isAlumni() ? 'Alumni' : 'Aktif' }}
+                                </span>
+                            </td>
                             <td class="px-6 py-4 text-right">
                                 <span class="font-headline font-bold text-primary">Rp {{ number_format($santri->saldo, 0, ',', '.') }}</span>
                             </td>
@@ -121,6 +132,17 @@
                                        class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
                                         <span class="material-symbols-outlined text-sm">edit</span>
                                     </button>
+                                    @if($santri->isAlumni())
+                                        <form action="{{ route('admin.santri.activate', $santri) }}" method="POST" onsubmit="return confirm('Aktifkan kembali santri ini?')">
+                                            @csrf @method('PATCH')
+                                            <button class="p-2 text-primary hover:bg-primary/10 rounded-lg" title="Aktifkan kembali"><span class="material-symbols-outlined text-sm">person_check</span></button>
+                                        </form>
+                                    @else
+                                        <form action="{{ route('admin.santri.graduate', $santri) }}" method="POST" onsubmit="return confirm('Jadikan santri ini alumni? Akun akan menjadi read-only dan kamar aktif dilepas.')">
+                                            @csrf @method('PATCH')
+                                            <button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg" title="Jadikan alumni"><span class="material-symbols-outlined text-sm">school</span></button>
+                                        </form>
+                                    @endif
                                     <form action="{{ route('admin.santri.destroy', $santri) }}" method="POST"
                                           onsubmit="return confirm('Yakin ingin menghapus data santri ini?')">
                                         @csrf
@@ -134,7 +156,7 @@
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="6" class="px-6 py-12 text-center">
+                            <td colspan="7" class="px-6 py-12 text-center">
                                 <span class="material-symbols-outlined text-4xl text-outline mb-3">group_off</span>
                                 <p class="text-sm text-on-surface-variant">Belum ada data santri</p>
                             </td>

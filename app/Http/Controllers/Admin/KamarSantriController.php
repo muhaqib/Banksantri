@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\KamarSantri;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class KamarSantriController extends Controller
 {
@@ -15,7 +16,7 @@ class KamarSantriController extends Controller
     public function index()
     {
         $kamarData = [];
-        
+
         foreach (KamarSantri::KAMAR_LIST as $kamar) {
             $count = KamarSantri::where('kamar', $kamar)->count();
             $kamarData[] = [
@@ -24,7 +25,7 @@ class KamarSantriController extends Controller
                 'count' => $count,
             ];
         }
-        
+
         return view('pages.admin.kamar.index', [
             'kamarData' => $kamarData,
             'activeRole' => 'admin',
@@ -36,14 +37,14 @@ class KamarSantriController extends Controller
      */
     public function show($kamar)
     {
-        if (!in_array($kamar, KamarSantri::KAMAR_LIST)) {
+        if (! in_array($kamar, KamarSantri::KAMAR_LIST)) {
             abort(404);
         }
-        
+
         $kamarSantris = KamarSantri::where('kamar', $kamar)
             ->with('user')
             ->paginate(15);
-        
+
         return view('pages.admin.kamar.show', [
             'kamar' => $kamar,
             'kamarLabel' => ucfirst(str_replace('_', ' ', $kamar)),
@@ -58,22 +59,22 @@ class KamarSantriController extends Controller
     public function store(Request $request)
     {
         $request->validate([
-            'kamar' => 'required|in:' . implode(',', KamarSantri::KAMAR_LIST),
-            'user_id' => 'required|exists:users,id',
+            'kamar' => 'required|in:'.implode(',', KamarSantri::KAMAR_LIST),
+            'user_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
         ]);
-        
+
         // Check if user already has a kamar
         $existing = KamarSantri::where('user_id', $request->user_id)->first();
         if ($existing) {
-            return redirect()->back()->with('error', 'Santri sudah terdaftar di ' . ucfirst(str_replace('_', ' ', $existing->kamar)));
+            return redirect()->back()->with('error', 'Santri sudah terdaftar di '.ucfirst(str_replace('_', ' ', $existing->kamar)));
         }
-        
+
         KamarSantri::create([
             'user_id' => $request->user_id,
             'kamar' => $request->kamar,
         ]);
-        
-        return redirect()->back()->with('success', 'Anggota berhasil ditambahkan ke ' . ucfirst(str_replace('_', ' ', $request->kamar)));
+
+        return redirect()->back()->with('success', 'Anggota berhasil ditambahkan ke '.ucfirst(str_replace('_', ' ', $request->kamar)));
     }
 
     /**
@@ -83,7 +84,7 @@ class KamarSantriController extends Controller
     {
         $kamarSantri = KamarSantri::findOrFail($id);
         $kamarSantri->delete();
-        
+
         return redirect()->back()->with('success', 'Anggota berhasil dihapus dari kamar');
     }
 
@@ -93,12 +94,12 @@ class KamarSantriController extends Controller
     public function getAvailableSantri()
     {
         $assignedUserIds = KamarSantri::pluck('user_id')->toArray();
-        
-        $santri = User::where('role', 'santri')
+
+        $santri = User::activeSantri()
             ->whereNotIn('id', $assignedUserIds)
             ->select('id', 'name', 'nis')
             ->get();
-        
+
         return response()->json(['success' => true, 'data' => $santri]);
     }
 }

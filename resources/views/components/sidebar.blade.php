@@ -104,6 +104,7 @@
             $singleMenus = [
                 ['permission' => 'admin.dashboard.view', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
                 ['permission' => 'petugas.dashboard.view', 'route' => 'petugas.dashboard', 'active' => 'petugas.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
+                ['permission' => 'admin.dashboard-content.manage', 'route' => 'admin.dashboard-content.index', 'active' => 'admin.dashboard-content.*', 'icon' => 'dynamic_feed', 'label' => 'Konten Dashboard'],
             ];
             $menuGroups = [
                 [
@@ -130,7 +131,7 @@
                     'icon' => 'receipt_long',
                     'active' => ['admin.transactions.*', 'admin.kas', 'admin.settlement', 'admin.topup'],
                     'children' => [
-                        ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.santri', 'active' => 'admin.transactions.santri', 'label' => 'Riwayat Transaksi'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.history', 'active' => 'admin.transactions.history', 'label' => 'Riwayat Eksekusi'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.topup', 'active' => 'admin.transactions.topup', 'label' => 'Top Up Saldo'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.topup', 'active' => 'admin.topup', 'label' => 'Verifikasi Top Up'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.settlement', 'active' => 'admin.settlement', 'label' => 'Settlement'],
@@ -191,8 +192,9 @@
                 [
                     'label' => 'Keuangan',
                     'icon' => 'payments',
-                    'active' => ['petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
+                    'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
                     'children' => [
+                        ['permission' => 'petugas.finance.dashboard', 'route' => 'petugas.finance-dashboard', 'active' => 'petugas.finance-dashboard', 'label' => 'Dashboard Keuangan'],
                         ['permission' => 'petugas.transactions.manage', 'route' => 'petugas.transaksi', 'active' => 'petugas.transaksi', 'label' => 'Transaksi'],
                         ['permission' => 'petugas.history.view', 'route' => 'petugas.riwayat', 'active' => 'petugas.riwayat', 'label' => 'Riwayat'],
                         ['permission' => 'petugas.withdrawals.manage', 'route' => 'petugas.tarik-tunai', 'active' => 'petugas.tarik-tunai', 'label' => 'Tarik Tunai'],

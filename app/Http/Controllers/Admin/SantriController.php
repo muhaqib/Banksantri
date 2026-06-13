@@ -4,11 +4,13 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\SantriExcelService;
 use Illuminate\Http\Request;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\File;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Facades\Storage;
 
 class SantriController extends Controller
@@ -19,6 +21,10 @@ class SantriController extends Controller
     public function index(Request $request)
     {
         $query = User::where('role', 'santri')->with('kamarSantri');
+
+        if (in_array($request->status, ['aktif', 'alumni'], true)) {
+            $query->where('santri_status', $request->status);
+        }
 
         // Search by name or NIS if provided
         if ($request->filled('search')) {
@@ -33,6 +39,8 @@ class SantriController extends Controller
 
         return view('pages.admin.santri.index', [
             'santriList' => $santriList,
+            'activeCount' => User::activeSantri()->count(),
+            'alumniCount' => User::santri()->where('santri_status', 'alumni')->count(),
             'activeRole' => 'admin',
         ]);
     }
@@ -42,7 +50,7 @@ class SantriController extends Controller
      */
     public function search(Request $request)
     {
-        $query = User::where('role', 'santri');
+        $query = User::activeSantri();
 
         if ($request->filled('q')) {
             $search = $request->q;
@@ -254,6 +262,61 @@ class SantriController extends Controller
             'santri' => $santri,
             'foto_url' => $santri->foto ? Storage::url($santri->foto) : null,
         ]);
+    }
+
+    public function import(Request $request, SantriExcelService $excelService)
+    {
+        $validated = $request->validate([
+            'excel_file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240'],
+        ]);
+
+        $result = $excelService->import($validated['excel_file']);
+
+        return back()
+            ->with('success', "Import selesai: {$result['created']} dibuat, {$result['updated']} diperbarui, {$result['failed']} gagal.")
+            ->with('import_errors', $result['errors']);
+    }
+
+    public function export(Request $request, SantriExcelService $excelService)
+    {
+        return $excelService->export($request->query('status'));
+    }
+
+    public function template(SantriExcelService $excelService)
+    {
+        return $excelService->template();
+    }
+
+    public function graduate(User $santri)
+    {
+        abort_unless($santri->role === 'santri', 404);
+
+        DB::transaction(function () use ($santri): void {
+            $kamar = $santri->kamarSantri?->kamar;
+            $santri->forceFill([
+                'santri_status' => 'alumni',
+                'alumni_at' => now(),
+                'kamar_terakhir' => $kamar ?: $santri->kamar_terakhir,
+            ])->save();
+            $santri->kamarSantri()->delete();
+            if (Schema::hasTable('personal_access_tokens')) {
+                $santri->tokens()->delete();
+            }
+        });
+
+        return back()->with('success', "{$santri->name} berhasil dimigrasikan menjadi alumni.");
+    }
+
+    public function activate(User $santri)
+    {
+        abort_unless($santri->role === 'santri', 404);
+
+        $santri->forceFill([
+            'santri_status' => 'aktif',
+            'alumni_at' => null,
+        ])->save();
+
+        return back()->with('success', "{$santri->name} berhasil diaktifkan kembali sebagai santri.");
     }
 
     /**

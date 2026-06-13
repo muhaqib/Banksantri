@@ -15,6 +15,7 @@
             </div>
         </div>
 
+        @unless(auth()->user()->isAlumni())
         <section x-data="copyRekening()" class="space-y-3">
     <h2 class="font-headline font-bold text-primary tracking-tight px-1">
         Tujuan Transfer
@@ -87,6 +88,7 @@
 
     </div>
 </section>
+        @endunless
 
     </header>
 
@@ -100,6 +102,12 @@
             </div>
         @endif
 
+        @if(auth()->user()->isAlumni())
+            <div class="card">
+                <p class="font-bold text-on-surface">Akun Alumni Read-only</p>
+                <p class="text-sm text-on-surface-variant mt-1">Pengajuan top-up dinonaktifkan. Riwayat top-up lama tetap dapat dilihat.</p>
+            </div>
+        @else
         <!-- Top Up Form -->
         <div class="card">
             <h3 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
@@ -187,6 +195,7 @@
                 </button>
             </form>
         </div>
+        @endif
 
         <!-- Recent Top Up History -->
         <div class="card">

@@ -8,7 +8,7 @@
     <!-- Page Heading -->
     <div class="flex items-end justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Financial Overview</h2>
+            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Fal Overview</h2>
             <p class="text-on-surface-variant text-sm mt-1">Real-time system health and liquidity monitoring.</p>
         </div>
         <div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">

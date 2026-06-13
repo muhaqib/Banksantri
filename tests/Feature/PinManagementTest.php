@@ -62,6 +62,59 @@ class PinManagementTest extends TestCase
         $this->assertSame('10000', $petugas->fresh()->saldo);
     }
 
+    public function test_every_petugas_transaction_category_moves_santri_balance_to_petugas(): void
+    {
+        $petugas = User::factory()->create(['role' => 'petugas', 'saldo' => 5000]);
+        $petugas->assignRole(Role::findOrCreate('petugas'));
+        $petugas->givePermissionTo(Permission::findOrCreate('petugas.transactions.manage'));
+
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'santri_status' => 'aktif',
+            'saldo' => 100000,
+            'pin' => Hash::make('123456'),
+        ]);
+
+        $categories = ['kantin', 'koperasi', 'laundry', 'fotokopi', 'lainnya', 'tarik uang', 'syirkah', 'beli kitab', 'mart'];
+
+        foreach ($categories as $category) {
+            $this->actingAs($petugas)
+                ->post(route('petugas.transaksi.store'), [
+                    'santri_id' => $santri->id,
+                    'nominal' => 1000,
+                    'kategori' => $category,
+                    'pin' => '123456',
+                ])
+                ->assertRedirect(route('petugas.transaksi'));
+        }
+
+        $this->assertSame('91000', $santri->fresh()->saldo);
+        $this->assertSame('14000', $petugas->fresh()->saldo);
+        $this->assertDatabaseCount('transactions', count($categories));
+    }
+
+    public function test_petugas_dashboards_show_the_latest_transferred_balance(): void
+    {
+        $petugas = User::factory()->create(['role' => 'petugas', 'saldo' => 10000]);
+        $petugas->assignRole(Role::findOrCreate('petugas'));
+        $petugas->givePermissionTo([
+            Permission::findOrCreate('petugas.dashboard.view'),
+            Permission::findOrCreate('petugas.finance.dashboard'),
+        ]);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.dashboard'))
+            ->assertOk()
+            ->assertSee('Saldo Digital')
+            ->assertSee('10.000');
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.finance-dashboard'))
+            ->assertOk()
+            ->assertSee('Saldo Digital Anda')
+            ->assertSee('10.000');
+    }
+
     public function test_petugas_transaction_shows_alert_when_pin_is_wrong(): void
     {
         $petugas = User::factory()->create(['role' => 'petugas', 'saldo' => 0]);

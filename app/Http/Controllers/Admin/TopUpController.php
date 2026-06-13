@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\TopUpRequest;
 use App\Models\Transaction;
-use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
@@ -43,7 +42,7 @@ class TopUpController extends Controller
     {
         return response()->json([
             'top_up' => $topUp->load('santri'),
-            'bukti_url' => $topUp->bukti_pembayaran ? Storage::url($topUp->bukti_pembayaran) : null
+            'bukti_url' => $topUp->bukti_pembayaran ? Storage::url($topUp->bukti_pembayaran) : null,
         ]);
     }
 
@@ -52,10 +51,14 @@ class TopUpController extends Controller
      */
     public function approve(TopUpRequest $topUp)
     {
-        if (!$topUp->isPending()) {
+        if (! $topUp->santri?->isActiveSantri()) {
+            return response()->json(['success' => false, 'message' => 'Top-up alumni tidak dapat diproses.'], 422);
+        }
+
+        if (! $topUp->isPending()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Top-up request sudah diproses.'
+                'message' => 'Top-up request sudah diproses.',
             ], 400);
         }
 
@@ -64,10 +67,10 @@ class TopUpController extends Controller
             // Get current balance before update
             $santri = $topUp->santri;
             $saldoSebelum = $santri->saldo;
-            
+
             // Add balance to santri
             $santri->increment('saldo', $topUp->nominal);
-            
+
             // Refresh to get updated balance
             $santri->refresh();
             $saldoSetelah = $santri->saldo;
@@ -79,7 +82,7 @@ class TopUpController extends Controller
                 'jenis' => 'masuk',
                 'nominal' => $topUp->nominal,
                 'kategori' => 'top_up',
-                'keterangan' => 'Top up saldo - Verifikasi oleh ' . Auth::user()->name,
+                'keterangan' => 'Top up saldo - Verifikasi oleh '.Auth::user()->name,
                 'saldo_sebelum' => $saldoSebelum,
                 'saldo_setelah' => $saldoSetelah,
             ]);
@@ -95,13 +98,14 @@ class TopUpController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Top-up berhasil diverifikasi. Saldo santri telah bertambah.'
+                'message' => 'Top-up berhasil diverifikasi. Saldo santri telah bertambah.',
             ]);
         } catch (\Exception $e) {
             DB::rollBack();
+
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memverifikasi top-up: ' . $e->getMessage()
+                'message' => 'Terjadi kesalahan saat memverifikasi top-up: '.$e->getMessage(),
             ], 500);
         }
     }
@@ -111,10 +115,14 @@ class TopUpController extends Controller
      */
     public function reject(TopUpRequest $topUp, Request $request)
     {
-        if (!$topUp->isPending()) {
+        if (! $topUp->santri?->isActiveSantri()) {
+            return response()->json(['success' => false, 'message' => 'Top-up alumni tidak dapat diproses.'], 422);
+        }
+
+        if (! $topUp->isPending()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Top-up request sudah diproses.'
+                'message' => 'Top-up request sudah diproses.',
             ], 400);
         }
 
@@ -131,7 +139,7 @@ class TopUpController extends Controller
 
         return response()->json([
             'success' => true,
-            'message' => 'Top-up berhasil ditolak.'
+            'message' => 'Top-up berhasil ditolak.',
         ]);
     }
 
@@ -143,7 +151,7 @@ class TopUpController extends Controller
         return response()->json([
             'top_up' => $topUp->load('santri'),
             'bukti_url' => $topUp->bukti_pembayaran ? Storage::url($topUp->bukti_pembayaran) : null,
-            'santri_foto_url' => $topUp->santri->foto ? Storage::url($topUp->santri->foto) : null
+            'santri_foto_url' => $topUp->santri->foto ? Storage::url($topUp->santri->foto) : null,
         ]);
     }
 }

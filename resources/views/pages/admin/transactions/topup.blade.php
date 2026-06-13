@@ -24,14 +24,41 @@
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">
                             Nama atau NIS Santri
                         </label>
-                        <div class="relative group">
+                        <div class="relative group" @click.outside="dropdownOpen = false">
                             <input type="text"
                                    x-model="searchInput"
                                    @input="autoSearch"
-                                   @keydown.enter.prevent="cariSantri"
+                                   @focus="dropdownOpen = searchResults.length > 0"
+                                   @keydown.enter.prevent="selectFirstResult"
+                                   @keydown.escape="dropdownOpen = false"
                                    placeholder="Contoh: Ahmad atau 12345"
+                                   autocomplete="off"
                                    class="w-full bg-surface-container-high border-none rounded-xl py-4 px-5 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all placeholder:text-outline/50 font-medium">
                             <div class="absolute left-0 top-0 h-full w-0.5 bg-primary rounded-l-xl opacity-0 group-focus-within:opacity-100 transition-opacity"></div>
+
+                            <div x-show="dropdownOpen"
+                                 x-transition
+                                 class="absolute z-30 mt-2 w-full overflow-hidden rounded-xl border border-outline-variant/20 bg-surface-container-lowest shadow-xl">
+                                <template x-for="santri in searchResults" :key="santri.id">
+                                    <button type="button"
+                                            @click="selectSantri(santri)"
+                                            class="flex w-full items-center gap-3 border-b border-outline-variant/10 px-4 py-3 text-left transition-colors last:border-0 hover:bg-primary/5">
+                                        <div class="flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary-fixed text-primary">
+                                            <template x-if="santri.foto_url">
+                                                <img :src="santri.foto_url" :alt="santri.nama" class="h-full w-full object-cover">
+                                            </template>
+                                            <template x-if="!santri.foto_url">
+                                                <span class="material-symbols-outlined">person</span>
+                                            </template>
+                                        </div>
+                                        <span class="min-w-0 flex-1">
+                                            <span class="block truncate font-bold text-on-surface" x-text="santri.nama"></span>
+                                            <span class="block text-xs text-on-surface-variant">NIS: <span x-text="santri.nis"></span></span>
+                                        </span>
+                                        <span class="text-xs font-semibold text-primary">Rp <span x-text="formatNumber(santri.saldo)"></span></span>
+                                    </button>
+                                </template>
+                            </div>
                         </div>
                         <p x-show="errorMessage" class="text-error text-sm mt-2" x-text="errorMessage"></p>
                     </div>
@@ -98,18 +125,18 @@
 
                 <form action="{{ route('admin.transactions.topup.store') }}" method="POST" class="space-y-6">
                     @csrf
-                    <input type="hidden" name="nis" x-model="santriData?.nis">
+                    <input type="hidden" name="nis" :value="santriData?.nis">
                     
                     <!-- Santri Info (Readonly) -->
                     <div class="grid grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Nama Santri</label>
-                            <input type="text" x-model="santriData?.nama" readonly
+                            <input type="text" :value="santriData?.nama" readonly
                                    class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface font-medium">
                         </div>
                         <div>
                             <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">NIS</label>
-                            <input type="text" x-model="santriData?.nis" readonly
+                            <input type="text" :value="santriData?.nis" readonly
                                    class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface font-medium">
                         </div>
                     </div>
@@ -166,18 +193,17 @@
                                 required
                                 class="w-full bg-surface-container-high border-none rounded-xl py-4 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all font-medium">
                             <option value="">Pilih Sumber Dana</option>
-                            <option value="orang_tua">Cash</option>
-                            <option value="donatur">Trasfer Bank</option>
+                            <option value="Cash">Cash</option>
+                            <option value="Transfer Bank">Transfer Bank</option>
                         </select>
                     </div>
 
                     <!-- Keterangan -->
                     <div>
                         <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">
-                            Keterangan <span class="text-error">*</span>
+                            Keterangan <span class="normal-case text-outline">(opsional)</span>
                         </label>
                         <textarea name="keterangan"
-                                  required
                                   rows="3"
                                   class="w-full bg-surface-container-high border-none rounded-xl p-4 text-sm focus:bg-surface-container-highest focus:ring-0 transition-all resize-none"
                                   placeholder="Contoh: Setoran dari orang tua santri untuk uang saku bulan ini"></textarea>
@@ -191,7 +217,7 @@
                     </button>
 
                     <p class="text-[10px] text-center text-on-surface-variant uppercase tracking-widest font-bold">
-                        Transaksi akan tercatat otomatis dalam riwayat santri
+                        Setelah berhasil, kwitansi top up akan dibuat otomatis
                     </p>
                 </form>
             </section>
@@ -212,17 +238,24 @@ function topUpForm(initialNis = '') {
         searchInput: initialNis,
         loading: false,
         santriData: null,
+        searchResults: [],
+        dropdownOpen: false,
         errorMessage: '',
         searchTimeout: null,
 
         init() {
             // Auto-search if NIS is provided in URL
             if (this.searchInput && this.searchInput.trim()) {
-                this.cariSantri();
+                this.cariSantri(true);
             }
         },
 
         autoSearch() {
+            this.santriData = null;
+            this.searchResults = [];
+            this.dropdownOpen = false;
+            this.errorMessage = '';
+
             // Clear previous timeout
             if (this.searchTimeout) {
                 clearTimeout(this.searchTimeout);
@@ -232,15 +265,14 @@ function topUpForm(initialNis = '') {
             if (this.searchInput.trim().length >= 2) {
                 this.searchTimeout = setTimeout(() => {
                     this.cariSantri();
-                }, 500);
+                }, 350);
             }
         },
 
-        async cariSantri() {
+        async cariSantri(autoSelectExact = false) {
             if (!this.searchInput.trim()) return;
 
             this.loading = true;
-            this.santriData = null;
             this.errorMessage = '';
 
             try {
@@ -257,8 +289,17 @@ function topUpForm(initialNis = '') {
                 const data = await response.json();
 
                 if (response.ok && data.success) {
-                    this.santriData = data.data;
+                    this.searchResults = data.data;
+                    const exactMatch = this.searchResults.find(santri => santri.nis === this.searchInput.trim());
+
+                    if (autoSelectExact && exactMatch) {
+                        this.selectSantri(exactMatch);
+                    } else {
+                        this.dropdownOpen = true;
+                    }
                 } else {
+                    this.searchResults = [];
+                    this.dropdownOpen = false;
                     this.errorMessage = data.message || 'Santri tidak ditemukan';
                 }
             } catch (error) {
@@ -267,6 +308,22 @@ function topUpForm(initialNis = '') {
             } finally {
                 this.loading = false;
             }
+        },
+
+        selectFirstResult() {
+            if (this.searchResults.length > 0) {
+                this.selectSantri(this.searchResults[0]);
+                return;
+            }
+
+            this.cariSantri();
+        },
+
+        selectSantri(santri) {
+            this.santriData = santri;
+            this.searchInput = `${santri.nama} (${santri.nis})`;
+            this.dropdownOpen = false;
+            this.errorMessage = '';
         },
 
         formatNumber(num) {

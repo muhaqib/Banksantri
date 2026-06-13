@@ -23,6 +23,9 @@ class User extends Authenticatable
         'email',
         'password',
         'role',
+        'santri_status',
+        'alumni_at',
+        'kamar_terakhir',
         'nis',
         'nip',
         'jabatan',
@@ -62,6 +65,7 @@ class User extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
             'saldo' => 'decimal:0',
+            'alumni_at' => 'datetime',
         ];
     }
 
@@ -149,5 +153,25 @@ class User extends Authenticatable
         }
 
         return Hash::check($pin, $this->pin);
+    }
+
+    public function scopeSantri($query)
+    {
+        return $query->where('role', 'santri');
+    }
+
+    public function scopeActiveSantri($query)
+    {
+        return $query->where('role', 'santri')->where('santri_status', 'aktif');
+    }
+
+    public function isActiveSantri(): bool
+    {
+        return $this->role === 'santri' && $this->santri_status === 'aktif';
+    }
+
+    public function isAlumni(): bool
+    {
+        return $this->role === 'santri' && $this->santri_status === 'alumni';
     }
 }

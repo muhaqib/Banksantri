@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Admin\AccessController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\DashboardContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KamarSantriController;
 use App\Http\Controllers\Admin\KasController;
@@ -67,6 +68,9 @@ Route::middleware('auth')->group(function () {
     // Admin Routes
     Route::prefix('admin')->name('admin.')->middleware('role:admin')->group(function () {
         Route::get('/dashboard', [AdminDashboardController::class, 'index'])->middleware('permission:admin.dashboard.view')->name('dashboard');
+        Route::resource('dashboard-content', DashboardContentController::class)
+            ->only(['index', 'store', 'update', 'destroy'])
+            ->middleware('permission:admin.dashboard-content.manage');
         Route::get('/akses', [AccessController::class, 'index'])->middleware('permission:admin.access.manage')->name('access.index');
         Route::put('/akses/{petugas}', [AccessController::class, 'update'])->middleware('permission:admin.access.manage')->name('access.update');
 
@@ -75,6 +79,11 @@ Route::middleware('auth')->group(function () {
 
         // Santri Management
         Route::middleware('permission:admin.santri.manage')->group(function () {
+            Route::post('santri/import', [SantriController::class, 'import'])->name('santri.import');
+            Route::get('santri-export', [SantriController::class, 'export'])->name('santri.export');
+            Route::get('santri-template', [SantriController::class, 'template'])->name('santri.template');
+            Route::patch('santri/{santri}/graduate', [SantriController::class, 'graduate'])->name('santri.graduate');
+            Route::patch('santri/{santri}/activate', [SantriController::class, 'activate'])->name('santri.activate');
             Route::resource('santri', SantriController::class)->except(['show']);
             Route::get('santri/{santri}/modal-data', [SantriController::class, 'getModalData'])->name('santri.modal-data');
             Route::get('santri/search', [SantriController::class, 'search'])->name('santri.search');
@@ -96,6 +105,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:admin.finance.manage')->group(function () {
             Route::get('/transactions/topup', [AdminTransactionController::class, 'createTopUp'])->name('transactions.topup');
             Route::post('/transactions/topup', [AdminTransactionController::class, 'storeTopUp'])->name('transactions.topup.store');
+            Route::get('/transactions/{transaction}/receipt', [AdminTransactionController::class, 'receipt'])->name('transactions.receipt');
             Route::post('/transactions/search-santri', [AdminTransactionController::class, 'searchSantri'])->name('transactions.search-santri');
             Route::get('/transactions/santri', [AdminTransactionController::class, 'santriList'])->name('transactions.santri');
             Route::get('/transactions/history', [AdminTransactionController::class, 'history'])->name('transactions.history');
@@ -154,6 +164,8 @@ Route::middleware('auth')->group(function () {
     // Petugas Routes
     Route::prefix('petugas')->name('petugas.')->middleware('role:petugas')->group(function () {
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->middleware('permission:petugas.dashboard.view')->name('dashboard');
+        Route::patch('/dashboard/todo/{assignment}/complete', [PetugasDashboardController::class, 'completeTodo'])->middleware('permission:petugas.dashboard.view')->name('dashboard.todo.complete');
+        Route::get('/keuangan/dashboard', [PetugasDashboardController::class, 'finance'])->middleware('permission:petugas.finance.dashboard')->name('finance-dashboard');
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
@@ -190,11 +202,11 @@ Route::middleware('auth')->group(function () {
         Route::get('/home', [SantriDashboardController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('home');
         Route::get('/riwayat', [SantriRiwayatController::class, 'index'])->middleware('permission:santri.history.view')->name('riwayat');
         Route::get('/profile', [SantriProfileController::class, 'index'])->middleware('permission:santri.profile.manage')->name('profile');
-        Route::post('/change-pin', [SantriProfileController::class, 'changePin'])->middleware('permission:santri.profile.manage')->name('change-pin');
-        Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->middleware('permission:santri.profile.manage')->name('profile.email');
-        Route::post('/profile/password', [SantriProfileController::class, 'updatePassword'])->middleware('permission:santri.profile.manage')->name('profile.password');
+        Route::post('/change-pin', [SantriProfileController::class, 'changePin'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('change-pin');
+        Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('profile.email');
+        Route::post('/profile/password', [SantriProfileController::class, 'updatePassword'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('profile.password');
         Route::get('/topup', [SantriTopUpController::class, 'create'])->middleware('permission:santri.topup.manage')->name('topup');
-        Route::post('/topup', [SantriTopUpController::class, 'store'])->middleware('permission:santri.topup.manage')->name('topup.store');
+        Route::post('/topup', [SantriTopUpController::class, 'store'])->middleware(['permission:santri.topup.manage', 'santri.active'])->name('topup.store');
         Route::get('/topup/status', [SantriTopUpController::class, 'getStatus'])->middleware('permission:santri.topup.manage')->name('topup.status');
 
         // Prestasi Routes

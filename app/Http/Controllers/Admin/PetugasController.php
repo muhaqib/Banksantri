@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\DashboardContent;
 use App\Models\User;
 use App\Support\PermissionRegistry;
 use Illuminate\Http\Request;
@@ -72,6 +73,9 @@ class PetugasController extends Controller
         ]);
         $petugas->syncRoles(['petugas']);
         $petugas->syncPermissions(PermissionRegistry::petugasDefaults());
+        DashboardContent::where('type', 'todo')
+            ->where('assign_to_all', true)
+            ->each(fn (DashboardContent $content) => $content->assignments()->firstOrCreate(['user_id' => $petugas->id]));
 
         return redirect()->route('admin.petugas.index')
             ->with('success', 'Data petugas berhasil ditambahkan!');
@@ -103,13 +107,13 @@ class PetugasController extends Controller
 
         \Log::info('Update request received', [
             'petugas_id' => $petugas->id,
-            'request_data' => $request->except(['_token', '_method', 'password', 'foto'])
+            'request_data' => $request->except(['_token', '_method', 'password', 'foto']),
         ]);
 
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users,email,' . $petugas->id,
-            'nip' => 'nullable|string|max:50|unique:users,nip,' . $petugas->id,
+            'email' => 'required|string|email|max:255|unique:users,email,'.$petugas->id,
+            'nip' => 'nullable|string|max:50|unique:users,nip,'.$petugas->id,
             'jabatan' => 'required|string|max:100',
             'password' => 'nullable|string|min:6',
             'foto' => 'nullable|image|max:2048',
@@ -189,7 +193,7 @@ class PetugasController extends Controller
 
         return response()->json([
             'petugas' => $petugas,
-            'foto_url' => $petugas->foto ? Storage::url($petugas->foto) : null
+            'foto_url' => $petugas->foto ? Storage::url($petugas->foto) : null,
         ]);
     }
 }

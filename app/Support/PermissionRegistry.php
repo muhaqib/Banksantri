@@ -15,6 +15,7 @@ class PermissionRegistry
             'Bank Santri' => [
                 'admin.finance.manage' => 'Kelola kas, transaksi, top up, dan settlement',
                 'petugas.transactions.manage' => 'Kelola transaksi petugas',
+                'petugas.finance.dashboard' => 'Lihat dashboard keuangan petugas',
                 'petugas.history.view' => 'Lihat riwayat transaksi petugas',
                 'petugas.withdrawals.manage' => 'Kelola tarik tunai',
                 'santri.history.view' => 'Lihat riwayat santri',
@@ -40,6 +41,7 @@ class PermissionRegistry
             ],
             'Publikasi' => [
                 'admin.blog.manage' => 'Kelola blog dan artikel',
+                'admin.dashboard-content.manage' => 'Kelola pengumuman, berita pondok, dan to do dashboard',
             ],
             'Akses & Profil' => [
                 'admin.access.manage' => 'Kelola role dan permission',
@@ -91,6 +93,7 @@ class PermissionRegistry
         return [
             'petugas.dashboard.view',
             'petugas.transactions.manage',
+            'petugas.finance.dashboard',
             'petugas.history.view',
             'petugas.withdrawals.manage',
             'petugas.prestasi.manage',
