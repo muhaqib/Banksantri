@@ -61,7 +61,7 @@ class SettlementController extends Controller
 
             DB::commit();
 
-            return redirect()->route('admin.settlement')->with('success', 'Settlement disetujui');
+            return redirect()->route('admin.settlement')->with('success', 'Penarikan tunai disetujui');
         } catch (\Exception $e) {
             DB::rollBack();
             return redirect()->route('admin.settlement')->with('error', $e->getMessage());
@@ -82,6 +82,6 @@ class SettlementController extends Controller
             'approved_at' => now()
         ]);
 
-        return redirect()->route('admin.settlement')->with('success', 'Settlement ditolak');
+        return redirect()->route('admin.settlement')->with('success', 'Penarikan tunai ditolak');
     }
 }

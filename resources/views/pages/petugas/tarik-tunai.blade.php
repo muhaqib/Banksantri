@@ -173,7 +173,7 @@
     <!-- History -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
-            <h3 class="font-headline font-bold text-xl text-primary">Settlement History</h3>
+            <h3 class="font-headline font-bold text-xl text-primary">Riwayat Penarikan Tunai</h3>
             <div class="flex gap-2">
                 <button class="px-4 py-2 text-sm font-medium bg-surface-container-high rounded-lg hover:bg-surface-container-highest transition-colors flex items-center gap-2">
                     <span class="material-symbols-outlined text-sm">filter_list</span>

@@ -38,16 +38,18 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Get petugas list with performance
+        // Kinerja petugas: transaksi yang diproses oleh petugas hari ini.
         $petugasList = User::where('role', 'petugas')
-            ->withCount(['transactions as total_transaksi' => function($query) {
+            ->withCount(['processedTransactions as total_transaksi' => function ($query) {
                 $query->whereDate('created_at', today());
             }])
-            ->withSum(['transactions as total_nominal' => function($query) {
+            ->withSum(['processedTransactions as total_nominal' => function ($query) {
                 $query->whereDate('created_at', today());
             }], 'nominal')
-            ->get()
-            ->map(function($petugas) {
+            ->orderByDesc('total_transaksi')
+            ->paginate(3, ['*'], 'petugas_page')
+            ->withQueryString()
+            ->through(function ($petugas) {
                 $petugas->saldo_digital = $petugas->saldo ?? 0;
                 $petugas->is_active = true;
                 return $petugas;

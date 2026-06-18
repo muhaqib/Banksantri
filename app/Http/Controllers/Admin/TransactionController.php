@@ -147,7 +147,7 @@ class TransactionController extends Controller
             ->get()
             ->map(fn (WithdrawalRequest $settlement) => (object) [
                 'executed_at' => $settlement->approved_at ?? $settlement->updated_at,
-                'activity' => 'Settlement',
+                'activity' => 'Penarikan Tunai',
                 'status' => $settlement->status === 'approved' ? 'Disetujui' : 'Ditolak',
                 'nominal' => $settlement->nominal,
                 'direction' => 'keluar',

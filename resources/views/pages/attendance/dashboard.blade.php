@@ -58,14 +58,14 @@
                     $max = max(1, $hadir + $izin + $ghoib);
                 @endphp
                 <div class="flex min-w-5 flex-1 flex-col items-center justify-end gap-px" title="Tanggal {{ $day }}: Hadir {{ $hadir }}, Izin {{ $izin }}, Ghoib {{ $ghoib }}">
-                    <div class="w-full rounded-t bg-green-500" style="height: {{ ($hadir / $max) * 180 }}px"></div>
-                    <div class="w-full bg-amber-400" style="height: {{ ($izin / $max) * 180 }}px"></div>
+                    <div class="w-full rounded- bg-primary" style="height: {{ ($hadir / $max) * 180 }}px"></div>
+                    <div class="w-full bg-yellow-300" style="height: {{ ($izin / $max) * 180 }}px"></div>
                     <div class="w-full bg-red-500" style="height: {{ ($ghoib / $max) * 180 }}px"></div>
                     <span class="mt-1 text-[9px] text-on-surface-variant">{{ $day }}</span>
                 </div>
             @endforeach
         </div>
-        <div class="mt-3 flex gap-4 text-xs font-bold"><span class="text-green-600">Hadir</span><span class="text-amber-600">Izin</span><span class="text-error">Ghoib</span></div>
+        <div class="mt-3 flex gap-4 text-xs font-bold"><span class="text-primary">Hadir</span><span class="text-amber-600">Izin</span><span class="text-error">Ghoib</span></div>
     </div>
 
     <div class="grid gap-6 xl:grid-cols-2">
@@ -76,8 +76,8 @@
                     @php $roomStatus = $records->keyBy('status'); @endphp
                     <div class="flex items-center justify-between rounded-lg bg-surface-container-low p-3 text-sm">
                         <strong>{{ ucwords(str_replace('_', ' ', $room)) }}</strong>
-                        <span class="text-green-700">H {{ $roomStatus->get('hadir')?->total ?? 0 }}</span>
-                        <span class="text-amber-700">I {{ $roomStatus->get('izin')?->total ?? 0 }}</span>
+                        <span class="text-green-800">H {{ $roomStatus->get('hadir')?->total ?? 0 }}</span>
+                        <span class="text-yellow-500">I {{ $roomStatus->get('izin')?->total ?? 0 }}</span>
                         <span class="text-red-700">G {{ $roomStatus->get('ghoib')?->total ?? 0 }}</span>
                     </div>
                 @empty

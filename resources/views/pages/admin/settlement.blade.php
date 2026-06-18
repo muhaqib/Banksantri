@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
-@section('header-title', 'Settlement Petugas')
+@section('header-title', 'Penarikan Tunai Petugas')
 
 @section('content')
 <div x-data="settlementManager()">
     <!-- Pending Requests -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
         <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Permintaan Penarikan Pending</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Permintaan Penarikan Tunai Pending</h3>
         </div>
         <div class="divide-y divide-gray-200">
             @forelse($pendingRequests ?? [] as $request)
@@ -39,7 +39,7 @@
                                 <svg class="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
                                 </svg>
-                                Approve & Bayar
+                                Setujui & Bayar
                             </button>
                         </form>
                         <form action="{{ route('admin.settlement.reject', $request->id) }}" method="POST" class="flex-1">
@@ -69,7 +69,7 @@
     <!-- Approved History -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
         <div class="p-6 border-b border-gray-200">
-            <h3 class="text-lg font-semibold text-gray-900">Riwayat Settlement</h3>
+            <h3 class="text-lg font-semibold text-gray-900">Riwayat Penarikan Tunai</h3>
         </div>
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -107,7 +107,7 @@
                     @empty
                         <tr>
                             <td colspan="5" class="px-6 py-8 text-center text-gray-500">
-                                Belum ada riwayat settlement
+                                Belum ada riwayat penarikan tunai
                             </td>
                         </tr>
                     @endforelse

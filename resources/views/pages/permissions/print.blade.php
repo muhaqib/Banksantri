@@ -1,32 +1,335 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Kartu Izin {{ $permission->permission_number }}</title>
+    @php
+        $logoPath = public_path('images/logo.png');
+        $logoSrc = file_exists($logoPath)
+            ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
+            : asset('images/logo.png');
+        $phone = $permission->santri->no_hp ?? $permission->santri->no_hp_wali ?? '-';
+    @endphp
     <style>
-        body{font-family:Arial,sans-serif;background:#eef2f1;margin:0;padding:32px;color:#17201f}.toolbar{max-width:850px;margin:0 auto 16px;display:flex;gap:8px;justify-content:flex-end}.toolbar a,.toolbar button{border:0;border-radius:8px;padding:10px 16px;font-weight:700;cursor:pointer;text-decoration:none;background:#004d4c;color:#fff}.card{max-width:850px;margin:auto;background:#fff;border:2px solid #004d4c;border-radius:16px;overflow:hidden}.header{background:#004d4c;color:#fff;padding:24px 30px;display:flex;justify-content:space-between}.body{padding:30px}.grid{display:grid;grid-template-columns:180px 1fr;gap:12px 20px}.label{font-size:12px;text-transform:uppercase;color:#65706f;font-weight:bold}.value{font-size:15px;font-weight:bold;border-bottom:1px solid #d8dfde;padding-bottom:8px}.reason{margin-top:24px;padding:18px;background:#f1f5f4;border-radius:10px}.signature{margin-top:54px;margin-left:auto;width:250px;text-align:center}.signature-space{height:75px}.footer{padding:14px 30px;background:#f1f5f4;font-size:11px;color:#65706f}@media print{body{background:#fff;padding:0}.toolbar{display:none}.card{border-radius:0;max-width:none}}
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            background: #eef2f1;
+            color: #202020;
+            font-family: Arial, Helvetica, sans-serif;
+            line-height: 1.25;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            width: 210mm;
+            margin: 18px auto 12px;
+        }
+
+        .toolbar a,
+        .toolbar button {
+            border: 0;
+            border-radius: 10px;
+            padding: 10px 16px;
+            background: #004d4c;
+            color: #fff;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .permit-card {
+            width: 210mm;
+            min-height: 148mm;
+            margin: 0 auto 24px;
+            padding: 10mm 11mm 8mm;
+            background: #fff;
+            border: 1px solid #d5dddc;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, .08);
+        }
+
+        .letterhead {
+            display: grid;
+            grid-template-columns: 25mm 1fr auto;
+            align-items: center;
+            gap: 7mm;
+            padding-bottom: 5mm;
+            border-bottom: 1.1mm solid #111;
+        }
+
+        .logo {
+            width: 24mm;
+            height: 24mm;
+            object-fit: contain;
+        }
+
+        .title {
+            font-size: 17pt;
+            font-weight: 900;
+            line-height: 1.05;
+            text-transform: uppercase;
+        }
+
+        .school {
+            margin-top: 1.5mm;
+            font-size: 14pt;
+            font-weight: 900;
+            text-transform: uppercase;
+        }
+
+        .address {
+            margin-top: 1mm;
+            font-size: 9.5pt;
+            font-style: italic;
+        }
+
+        .permit-number {
+            min-width: 43mm;
+            padding: 3mm 4mm;
+            border: .45mm solid #111;
+            text-align: center;
+        }
+
+        .permit-number span {
+            display: block;
+            font-size: 7.5pt;
+            font-weight: 800;
+            letter-spacing: .08em;
+            text-transform: uppercase;
+        }
+
+        .permit-number strong {
+            display: block;
+            margin-top: 1mm;
+            font-size: 10pt;
+        }
+
+        .meta-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10mm;
+            padding: 7mm 0 5mm;
+        }
+
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 10pt;
+        }
+
+        .info-table th,
+        .info-table td {
+            padding: 2.2mm 0;
+            vertical-align: top;
+            border-bottom: .25mm solid #d7d7d7;
+        }
+
+        .info-table th {
+            width: 33mm;
+            color: #4f5655;
+            font-size: 8pt;
+            font-weight: 900;
+            letter-spacing: .05em;
+            text-align: left;
+            text-transform: uppercase;
+        }
+
+        .info-table td {
+            font-weight: 800;
+        }
+
+        .info-table td::before {
+            content: ": ";
+            font-weight: 400;
+        }
+
+        .reason-box {
+            display: grid;
+            grid-template-columns: 33mm 1fr;
+            gap: 4mm;
+            min-height: 23mm;
+            padding: 4mm;
+            border: .5mm solid #111;
+            background: #f8faf9;
+            font-size: 10pt;
+        }
+
+        .reason-label {
+            color: #4f5655;
+            font-size: 8pt;
+            font-weight: 900;
+            letter-spacing: .05em;
+            text-transform: uppercase;
+        }
+
+        .reason-content {
+            font-weight: 800;
+        }
+
+        .notes {
+            margin-top: 2mm;
+            color: #555;
+            font-size: 9pt;
+            font-weight: 600;
+        }
+
+        .signatures {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 22mm;
+            margin-top: 9mm;
+            text-align: center;
+            font-size: 10pt;
+        }
+
+        .signature-space {
+            height: 17mm;
+        }
+
+        .signature-name {
+            font-weight: 900;
+            text-decoration: underline;
+        }
+
+        .footer {
+            margin-top: 7mm;
+            padding-top: 2mm;
+            border-top: .35mm dashed #bdbdbd;
+            color: #666;
+            font-size: 8pt;
+        }
+
+        @media print {
+            @page {
+                size: A5 landscape;
+                margin: 0;
+            }
+
+            html,
+            body {
+                width: 210mm;
+                min-height: 148mm;
+                background: #fff !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+
+            .toolbar {
+                display: none !important;
+            }
+
+            .permit-card {
+                width: 210mm !important;
+                min-height: 148mm !important;
+                margin: 0 !important;
+                border: 0 !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div class="toolbar"><a href="{{ route($routePrefix.'.permissions.index') }}">Kembali</a><button onclick="window.print()">Cetak Kartu Izin</button></div>
-    <div class="card">
-        <div class="header"><div><strong style="font-size:22px">KARTU IZIN SANTRI</strong><div style="margin-top:5px">Pondok Pesantren Mambaul Hikmah</div></div><strong>{{ $permission->permission_number }}</strong></div>
-        <div class="body">
-            <div class="grid">
-                <div class="label">Nama Santri</div><div class="value">{{ $permission->santri->name }}</div>
-                <div class="label">NIS</div><div class="value">{{ $permission->santri->nis ?? '-' }}</div>
-                <div class="label">Kamar</div><div class="value">{{ ucwords(str_replace('_', ' ', $permission->kamar)) }}</div>
-                <div class="label">Asal</div><div class="value">{{ $permission->santri->asal_sekolah ?? '-' }}</div>
-                <div class="label">Nomor HP</div><div class="value">{{ $permission->santri->no_hp ?? $permission->santri->no_hp_wali ?? '-' }}</div>
-                <div class="label">Tanggal Izin</div><div class="value">{{ $permission->start_date->translatedFormat('d F Y') }}</div>
-                <div class="label">Batas Akhir Izin</div><div class="value">{{ $permission->end_date->translatedFormat('d F Y') }}</div>
-                <div class="label">Yang Mengizinkan</div><div class="value">{{ $permission->creator?->name ?? '-' }} ({{ ucfirst($permission->creator?->role ?? '-') }})</div>
-            </div>
-            <div class="reason"><div class="label">Alasan Izin</div><p><strong>{{ $permission->reason }}</strong></p>@if($permission->notes)<div class="label">Catatan</div><p>{{ $permission->notes }}</p>@endif</div>
-            <div class="signature"><div>{{ $permission->created_at->translatedFormat('d F Y') }}</div><div class="signature-space"></div><strong>{{ $permission->creator?->name ?? 'Petugas/Admin' }}</strong><div>Yang Mengizinkan</div></div>
-        </div>
-        <div class="footer">Kartu ini diterbitkan oleh Mawa Smart pada {{ $permission->created_at->format('d/m/Y H:i') }} WIB. Setelah batas izin berakhir, ketidakhadiran santri akan dihitung sebagai ghoib.</div>
+    <div class="toolbar">
+        <a href="{{ route($routePrefix.'.permissions.index') }}">Kembali</a>
+        <button type="button" onclick="window.print()">Cetak Kartu Izin</button>
     </div>
-    @if(session('success'))<script>window.addEventListener('load',()=>window.print())</script>@endif
+
+    <main class="permit-card">
+        <header class="letterhead">
+            <img src="{{ $logoSrc }}" alt="Logo Pondok Pesantren Mambaul Hikmah" class="logo">
+            <div>
+                <div class="title">Kartu Izin Santri</div>
+                <div class="school">Pondok Pesantren Mambaul Hikmah</div>
+                <div class="address">Alamat: Jl Kh Muhammad Barmawi, Tegalwangi - Talang - Tegal. No Whatsapp +62 813-9375-0612.</div>
+            </div>
+            <div class="permit-number">
+                <span>Nomor Izin</span>
+                <strong>{{ $permission->permission_number }}</strong>
+            </div>
+        </header>
+
+        <section class="meta-grid">
+            <table class="info-table">
+                <tr>
+                    <th>Nama Santri</th>
+                    <td>{{ $permission->santri->name }}</td>
+                </tr>
+                <tr>
+                    <th>NIS</th>
+                    <td>{{ $permission->santri->nis ?? '-' }}</td>
+                </tr>
+                <tr>
+                    <th>Kamar</th>
+                    <td>{{ ucwords(str_replace('_', ' ', $permission->kamar)) }}</td>
+                </tr>
+                <tr>
+                    <th>Asal</th>
+                    <td>{{ $permission->santri->asal_sekolah ?? '-' }}</td>
+                </tr>
+            </table>
+
+            <table class="info-table">
+                <tr>
+                    <th>Nomor HP</th>
+                    <td>{{ $phone }}</td>
+                </tr>
+                <tr>
+                    <th>Tanggal Izin</th>
+                    <td>{{ $permission->start_date->translatedFormat('d F Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Batas Akhir</th>
+                    <td>{{ $permission->end_date->translatedFormat('d F Y') }}</td>
+                </tr>
+                <tr>
+                    <th>Mengizinkan</th>
+                    <td>{{ $permission->creator?->name ?? '-' }} ({{ ucfirst($permission->creator?->role ?? '-') }})</td>
+                </tr>
+            </table>
+        </section>
+
+        <section class="reason-box">
+            <div class="reason-label">Alasan Izin</div>
+            <div class="reason-content">
+                {{ $permission->reason }}
+                @if($permission->notes)
+                    <div class="notes">Catatan: {{ $permission->notes }}</div>
+                @endif
+            </div>
+        </section>
+
+        <section class="signatures">
+            <div>
+                <div>Santri / Wali Santri,</div>
+                <div class="signature-space"></div>
+                <div class="signature-name">{{ $permission->santri->name }}</div>
+            </div>
+            <div>
+                <div>Tegal, {{ $permission->created_at->translatedFormat('d F Y') }}</div>
+                <div class="signature-space"></div>
+                <div class="signature-name">{{ $permission->creator?->name ?? 'Petugas/Admin' }}</div>
+                <div>Yang Mengizinkan</div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            Kartu ini diterbitkan oleh Mawa Smart pada {{ $permission->created_at->format('d/m/Y H:i') }} WIB. Setelah batas izin berakhir, ketidakhadiran santri akan dihitung sebagai ghoib.
+        </footer>
+    </main>
+
+    @if(session('success'))
+        <script>
+            window.addEventListener('load', () => window.print());
+        </script>
+    @endif
 </body>
 </html>

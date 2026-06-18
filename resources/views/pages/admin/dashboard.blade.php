@@ -8,12 +8,12 @@
     <!-- Page Heading -->
     <div class="flex items-end justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Fal Overview</h2>
-            <p class="text-on-surface-variant text-sm mt-1">Real-time system health and liquidity monitoring.</p>
+            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Selamat Berkhidmah</h2>
+            <p class="text-on-surface-variant text-sm mt-1">Berkhidmah dengan Ikhlas, Menjemput berkah tanpa batas.</p>
         </div>
         <div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
             <span class="material-symbols-outlined text-sm text-primary">calendar_today</span>
-            <span class="text-xs font-semibold text-primary">{{ now()->format('M d, Y') }}</span>
+            <span class="text-xs font-semibold text-primary">{{ now()->translatedFormat('d F Y') }}</span>
         </div>
     </div>
 
@@ -47,7 +47,7 @@
             </div>
         </div>
 
-        <!-- Current Balance -->
+        <!-- Saldo Saat Ini -->
         <div class="bg-gradient-to-br from-primary to-primary-container relative overflow-hidden p-6 rounded-xl flex flex-col justify-between group shadow-xl shadow-primary/20">
             <div class="absolute inset-0 bg-gradient-to-br from-primary to-primary-container opacity-90"></div>
             <div class="relative z-10 flex justify-between items-start">
@@ -56,14 +56,14 @@
                 </div>
             </div>
             <div class="relative z-10 mt-4">
-                <p class="text-xs font-medium text-primary-fixed font-medium mb-1">Current Balance</p>
+                <p class="text-xs font-medium text-primary-fixed font-medium mb-1">Saldo Saat Ini</p>
                 <h3 class="font-headline font-extrabold text-3xl text-white mt-1">Rp {{ number_format($saldoKasUtama ?? 0, 0, ',', '.') }}</h3>
-                <p class="text-xs mt-2 text-primary-fixed-dim">Verified funds ready for settlement</p>
+                <p class="text-xs mt-2 text-primary-fixed-dim">Dana terverifikasi siap untuk penarikan tunai</p>
             </div>
             <div class="absolute -right-12 -top-12 w-32 h-32 rounded-full bg-primary-fixed opacity-5 blur-3xl"></div>
         </div>
 
-        <!-- Transactions Count -->
+        <!-- Jumlah Transaksi -->
         <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
                 <div class="p-2 bg-secondary-container rounded-lg text-secondary">
@@ -84,22 +84,22 @@
         <div class="lg:col-span-8 space-y-6">
             <!-- Top Up Verification Quick Actions -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Pending Top Up Requests -->
+                <!-- Permintaan Top Up Tertunda -->
                 <div class="bg-surface-container-lowest rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
                         <div>
-                            <h4 class="font-headline font-bold text-lg text-primary">Top Up Pending</h4>
+                            <h4 class="font-headline font-bold text-lg text-primary">Top Up Tertunda</h4>
                             <p class="text-xs text-on-surface-variant">Menunggu verifikasi</p>
                         </div>
                     </div>
                     <div class="space-y-4">
                         <div class="bg-surface-container-high rounded-xl p-4">
                             <div class="flex items-center justify-between mb-2">
-                                <span class="text-xs font-semibold text-on-surface-variant uppercase">Total Pending</span>
+                                <span class="text-xs font-semibold text-on-surface-variant uppercase">Total Tertunda</span>
                                 <span class="text-2xl font-headline font-bold text-primary">{{ $pendingTopUpCount ?? 0 }}</span>
                             </div>
-                            <p class="text-xs text-on-surface-variant">Request yang perlu diverifikasi</p>
+                            <p class="text-xs text-on-surface-variant">Permintaan yang perlu diverifikasi</p>
                         </div>
                         <a href="{{ route('admin.topup') }}" class="block w-full bg-primary text-on-primary font-bold py-4 rounded-xl shadow-lg shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-95 text-center flex items-center justify-center gap-2">
                             <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">verified</span>
@@ -108,7 +108,7 @@
                     </div>
                 </div>
 
-                <!-- Recent Top Up Activity -->
+                <!-- Aktivitas Top Up Terbaru -->
                 <div class="bg-surface-container-lowest rounded-xl p-6 border border-secondary/10 hover:border-secondary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-secondary p-2 bg-secondary-container rounded-full" style="font-variation-settings: 'FILL' 1;">history</span>
@@ -148,8 +148,8 @@
             <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm">
                 <div class="flex justify-between items-center mb-10">
                     <div>
-                        <h3 class="font-headline font-bold text-xl text-primary">Weekly Transaction Trends</h3>
-                        <p class="text-xs text-on-surface-variant">Comparing Top Up vs Transaction flow</p>
+                        <h3 class="font-headline font-bold text-xl text-primary">Tren Transaksi Mingguan</h3>
+                        <p class="text-xs text-on-surface-variant">Perbandingan arus top up dan transaksi</p>
                     </div>
                     <div class="flex gap-4">
                         <div class="flex items-center gap-2">
@@ -186,23 +186,23 @@
             <!-- Petugas Performance Table -->
             <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
                 <div class="p-6 border-b border-surface-container flex justify-between items-center">
-                    <h3 class="font-headline font-bold text-xl text-primary">Petugas Performance</h3>
-                    <a href="{{ route('admin.petugas.index') }}" class="text-xs font-bold text-primary hover:underline">View full report</a>
+                    <h3 class="font-headline font-bold text-xl text-primary">Kinerja Petugas</h3>
+                    <a href="{{ route('admin.petugas.index') }}" class="text-xs font-bold text-primary hover:underline">Lihat laporan lengkap</a>
                 </div>
                 <div class="overflow-x-auto">
                     <table class="w-full text-left">
                         <thead class="bg-surface-container-high/50 text-[10px] uppercase font-black text-on-surface-variant tracking-widest">
                             <tr>
                                 <th class="px-6 py-4">ID</th>
-                                <th class="px-6 py-4">Name</th>
-                                <th class="px-6 py-4">Total Transactions</th>
-                                <th class="px-6 py-4 text-right">Nominal Amount</th>
+                                <th class="px-6 py-4">Nama</th>
+                                <th class="px-6 py-4">Total Transaksi</th>
+                                <th class="px-6 py-4 text-right">Jumlah Nominal</th>
                             </tr>
                         </thead>
                         <tbody class="text-sm divide-y divide-outline-variant/10">
                             @forelse($petugasList ?? [] as $index => $petugas)
                                 <tr class="hover:bg-surface transition-colors group">
-                                    <td class="px-6 py-4 font-mono font-semibold text-primary">#P{{ 440 + $index }}</td>
+                                    <td class="px-6 py-4 font-mono font-semibold text-primary">#P{{ 440 + (method_exists($petugasList, 'firstItem') ? ($petugasList->firstItem() - 1) : 0) + $index }}</td>
                                     <td class="px-6 py-4">
                                         <div class="flex items-center gap-3">
                                             <div class="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center text-primary font-bold text-xs">
@@ -211,7 +211,7 @@
                                             <span class="font-bold text-on-surface">{{ $petugas->name }}</span>
                                         </div>
                                     </td>
-                                    <td class="px-6 py-4 text-on-surface-variant">{{ $petugas->total_transaksi ?? 0 }} txn</td>
+                                    <td class="px-6 py-4 text-on-surface-variant">{{ $petugas->total_transaksi ?? 0 }} transaksi</td>
                                     <td class="px-6 py-4 text-right font-headline font-bold text-on-surface">
                                         Rp {{ number_format($petugas->total_nominal ?? 0, 0, ',', '.') }}
                                     </td>
@@ -227,22 +227,28 @@
                         </tbody>
                     </table>
                 </div>
+                <!-- Pagination -->
+                @if($petugasList->hasPages())
+                    <div class="p-6 border-t border-surface-container">
+                        {{ $petugasList->links() }}
+                    </div>
+                @endif
             </div>
         </div>
 
-        <!-- Right Column: Settlement Activity -->
+        <!-- Right Column: Withdrawal Activity -->
         <div class="lg:col-span-4 space-y-6">
             <div class="bg-surface-container-lowest rounded-xl shadow-sm top-24">
                 <div class="p-6 border-b border-surface-container">
-                    <h3 class="font-headline font-bold text-xl text-primary">Recent Settlements</h3>
-                    <p class="text-xs text-on-surface-variant">Petugas payout requests</p>
+                    <h3 class="font-headline font-bold text-xl text-primary">Penarikan Tunai Terbaru</h3>
+                    <p class="text-xs text-on-surface-variant">Permintaan pencairan dana petugas</p>
                 </div>
                 <div class="p-4 space-y-4">
                     @forelse($pendingRequests ?? [] as $request)
-                        <!-- Pending Settlement -->
+                        <!-- Pending Withdrawal -->
                         <div class="p-4 rounded-xl border-l-4 border-tertiary bg-tertiary/5 hover:bg-tertiary/10 transition-colors">
                             <div class="flex justify-between items-start mb-2">
-                                <p class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Pending Approval</p>
+                                <p class="text-[10px] font-bold text-tertiary uppercase tracking-wider">Menunggu Persetujuan</p>
                                 <span class="text-[10px] text-on-surface-variant">{{ $request->created_at->diffForHumans() }}</span>
                             </div>
                             <h4 class="font-bold text-sm text-on-surface">{{ $request->petugas->name }}</h4>
@@ -252,14 +258,14 @@
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="w-full bg-primary text-on-primary py-2 rounded-lg text-xs font-bold active:scale-95 transition-all">
-                                        Approve
+                                        Setujui
                                     </button>
                                 </form>
                                 <form action="{{ route('admin.settlement.reject', $request->id) }}" method="POST" class="flex-1">
                                     @csrf
                                     @method('PATCH')
                                     <button type="submit" class="w-full bg-surface-container-high text-on-surface py-2 rounded-lg text-xs font-bold active:scale-95 transition-all">
-                                        Deny
+                                        Tolak
                                     </button>
                                 </form>
                             </div>
@@ -267,37 +273,14 @@
                     @empty
                         <div class="text-center py-8">
                             <span class="material-symbols-outlined text-4xl text-primary mb-2" style="font-variation-settings: 'FILL' 1;">check_circle</span>
-                            <p class="text-sm text-on-surface-variant">No pending settlements</p>
+                            <p class="text-sm text-on-surface-variant">Tidak ada penarikan tunai pending</p>
                         </div>
                     @endforelse
                     
                     <a href="{{ route('admin.settlement') }}" class="block w-full py-3 text-xs font-bold text-primary border border-primary/20 rounded-xl hover:bg-primary/5 transition-colors text-center">
-                        View History
+                        Lihat Riwayat
                     </a>
                 </div>
-            </div>
-
-            <!-- Stats Cards -->
-            <div class="grid grid-cols-2 gap-4">
-                <div class="bg-surface-container-low p-4 rounded-xl">
-                    <p class="text-xs text-on-surface-variant font-medium mb-1">Total Settled</p>
-                    <p class="text-lg font-bold text-on-surface">Rp 45.2M</p>
-                </div>
-                <div class="bg-surface-container-low p-4 rounded-xl">
-                    <p class="text-xs text-on-surface-variant font-medium mb-1">Avg Processing</p>
-                    <p class="text-lg font-bold text-on-surface">2.4 Hrs</p>
-                </div>
-            </div>
-
-            <!-- Additional System Note -->
-            <div class="p-6 bg-primary-container/10 rounded-xl">
-                <div class="flex items-center gap-3 mb-3">
-                    <span class="material-symbols-outlined text-primary">info</span>
-                    <h4 class="font-bold text-sm text-primary">Cash Guard Alert</h4>
-                </div>
-                <p class="text-xs text-on-primary-container leading-relaxed">
-                    System physical cash exceeds the recommended safety limit of Rp 50.0M. Please consider physical transfer to central vault.
-                </p>
             </div>
         </div>
     </div>

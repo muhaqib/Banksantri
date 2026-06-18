@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\KamarSantri;
 use App\Models\User;
 use App\Services\SantriExcelService;
 use Illuminate\Http\Request;
@@ -20,11 +21,12 @@ class SantriController extends Controller
      */
     public function index(Request $request)
     {
-        $query = User::where('role', 'santri')->with('kamarSantri');
+        $status = in_array($request->query('status'), ['aktif', 'alumni'], true)
+            ? $request->query('status')
+            : 'aktif';
 
-        if (in_array($request->status, ['aktif', 'alumni'], true)) {
-            $query->where('santri_status', $request->status);
-        }
+        $query = User::where('role', 'santri')->with('kamarSantri');
+        $query->where('santri_status', $status);
 
         // Search by name or NIS if provided
         if ($request->filled('search')) {
@@ -35,12 +37,13 @@ class SantriController extends Controller
             });
         }
 
-        $santriList = $query->orderBy('name', 'asc')->paginate(15);
+        $santriList = $query->orderBy('name', 'asc')->paginate(15)->withQueryString();
 
         return view('pages.admin.santri.index', [
             'santriList' => $santriList,
             'activeCount' => User::activeSantri()->count(),
             'alumniCount' => User::santri()->where('santri_status', 'alumni')->count(),
+            'currentStatus' => $status,
             'activeRole' => 'admin',
         ]);
     }
@@ -108,6 +111,7 @@ class SantriController extends Controller
             'no_hp_wali' => 'nullable|string|max:20',
             'asal_sekolah' => 'nullable|string|max:255',
             'kelas' => 'nullable|string|max:50',
+            'kamar' => 'nullable|in:'.implode(',', KamarSantri::KAMAR_LIST),
         ]);
 
         // Handle foto upload
@@ -135,6 +139,13 @@ class SantriController extends Controller
             'kelas' => $validated['kelas'] ?? null,
         ]);
         $santri->syncRoles(['santri']);
+
+        if (! empty($validated['kamar'] ?? null)) {
+            KamarSantri::create([
+                'user_id' => $santri->id,
+                'kamar' => $validated['kamar'],
+            ]);
+        }
 
         return redirect()->route('admin.santri.index')
             ->with('success', 'Data santri berhasil ditambahkan!');
@@ -258,9 +269,14 @@ class SantriController extends Controller
             return response()->json(['error' => 'Invalid santri'], 403);
         }
 
+        $santri->load('kamarSantri');
+
         return response()->json([
             'santri' => $santri,
             'foto_url' => $santri->foto ? Storage::url($santri->foto) : null,
+            'kamar_text' => $santri->kamarSantri?->kamar
+                ? ucfirst(str_replace('_', ' ', $santri->kamarSantri->kamar))
+                : '-',
         ]);
     }
 

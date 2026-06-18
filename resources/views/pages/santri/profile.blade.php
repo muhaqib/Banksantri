@@ -47,7 +47,7 @@
             </h3>
             <div class="space-y-3">
                 <div class="flex items-center justify-between py-3 border-b border-outline-variant/10">
-                    <span class="text-sm text-on-surface-variant">Nama Lengkap</span>
+                    <span class="text-sm text-on-surface-variant">Nama</span>
                     <span class="font-medium text-on-surface text-sm">{{ auth()->user()->name ?? '-' }}</span>
                 </div>
                 <div class="flex items-center justify-between py-3 border-b border-outline-variant/10">
@@ -64,31 +64,9 @@
                 </div>
             </div>
         </div>
-
-        @unless(auth()->user()->isAlumni())
-        <!-- Security Settings -->
-        <div class="card">
-            <h3 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
-                <span class="material-symbols-outlined text-sm">lock</span>
-                <span>Keamanan</span>
-            </h3>
-            <div class="space-y-2">
-                <button @click="showChangePin = true" class="w-full flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center">
-                            <span class="material-symbols-outlined text-primary">lock</span>
-                        </div>
-                        <span class="font-medium text-on-surface">Ganti PIN</span>
-                    </div>
-                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-                </button>
-            </div>
-        </div>
-        @endunless
-
         <!-- Actions -->
         <div class="card">
-            <h3 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
+            <h3 class="font-headline font-bold text-primary mb-4 flex items-center px-10 gap-2">
                 <span class="material-symbols-outlined text-sm">settings</span>
                 <span>Lainnya</span>
             </h3>

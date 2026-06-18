@@ -33,7 +33,7 @@
                 
                 <p class="text-primary-fixed font-medium mb-1 opacity-90">Saldo Digital Anda </p>
                 <h3 class="text-5xl font-extrabold font-headline tracking-tighter">Rp {{ number_format($saldoDigital ?? 0, 0, ',', '.') }}</h3>
-                <p class="text-sm mt-4 text-primary-fixed-dim">Verified funds ready for settlement</p>
+                <p class="text-sm mt-4 text-primary-fixed-dim">Dana terverifikasi siap untuk penarikan tunai</p>
             </div>
             
             <div class="relative z-10 flex gap-4 mt-8">

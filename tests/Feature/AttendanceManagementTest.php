@@ -16,15 +16,22 @@ class AttendanceManagementTest extends TestCase
 {
     use RefreshDatabase;
 
+    protected function tearDown(): void
+    {
+        Carbon::setTestNow();
+
+        parent::tearDown();
+    }
+
     public function test_admin_attendance_pages_can_be_rendered(): void
     {
         $admin = $this->admin();
         $this->santri();
 
         $this->actingAs($admin)
-            ->get(route('admin.attendance.index'))
+            ->get(route('admin.attendance.rfid'))
             ->assertOk()
-            ->assertSee('Absensi Santri RFID')
+            ->assertSee('RFID Presensi Santri')
             ->assertSee('tanpa memilih kamar');
 
         $this->actingAs($admin)
@@ -40,6 +47,7 @@ class AttendanceManagementTest extends TestCase
 
     public function test_petugas_can_scan_rfid_to_mark_santri_present(): void
     {
+        Carbon::setTestNow(Carbon::parse('2026-06-18 21:05:00', 'Asia/Jakarta'));
         $petugas = $this->petugas();
         $santri = $this->santri('RFID-001');
 
@@ -61,6 +69,7 @@ class AttendanceManagementTest extends TestCase
 
     public function test_rfid_scan_marks_present_even_without_kamar(): void
     {
+        Carbon::setTestNow(Carbon::parse('2026-06-18 21:05:00', 'Asia/Jakarta'));
         $petugas = $this->petugas();
         $santri = User::factory()->create([
             'role' => 'santri',
@@ -82,6 +91,23 @@ class AttendanceManagementTest extends TestCase
         $this->assertSame('hadir', $attendance->status);
         $this->assertSame('rfid', $attendance->method);
         $this->assertSame('tanpa_kamar', $attendance->kamar);
+    }
+
+    public function test_rfid_scan_is_rejected_before_nine_pm(): void
+    {
+        Carbon::setTestNow(Carbon::parse('2026-06-18 20:59:00', 'Asia/Jakarta'));
+        $petugas = $this->petugas();
+        $this->santri('RFID-EARLY');
+
+        $this->actingAs($petugas)
+            ->postJson(route('petugas.attendance.scan'), [
+                'rfid_code' => 'RFID-EARLY',
+                'date' => today()->toDateString(),
+            ])
+            ->assertStatus(422)
+            ->assertJsonPath('message', 'Absensi RFID baru bisa dibaca mulai jam 21:00 sampai 23:59 WIB pada tanggal hari ini.');
+
+        $this->assertDatabaseCount('attendances', 0);
     }
 
     public function test_permission_is_active_immediately_and_printable(): void
@@ -174,11 +200,65 @@ class AttendanceManagementTest extends TestCase
         ]);
     }
 
+    public function test_admin_can_save_all_manual_attendance_changes(): void
+    {
+        $admin = $this->admin();
+        $presentSantri = $this->santri('RFID-BULK-1');
+        $absentSantri = $this->santri('RFID-BULK-2');
+        $unchangedSantri = $this->santri('RFID-BULK-3');
+
+        $this->actingAs($admin)
+            ->put(route('admin.attendance.bulk-update'), [
+                'date' => today()->toDateString(),
+                'attendances' => [
+                    $presentSantri->id => [
+                        'santri_id' => $presentSantri->id,
+                        'status' => 'hadir',
+                        'notes' => 'Datang tepat waktu',
+                    ],
+                    $absentSantri->id => [
+                        'santri_id' => $absentSantri->id,
+                        'status' => 'ghoib',
+                        'notes' => 'Tidak tap',
+                    ],
+                    $unchangedSantri->id => [
+                        'santri_id' => $unchangedSantri->id,
+                        'status' => '',
+                        'notes' => null,
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHas('success', '2 perubahan absensi berhasil disimpan.');
+
+        $this->assertDatabaseHas('attendances', [
+            'santri_id' => $presentSantri->id,
+            'status' => 'hadir',
+            'method' => 'manual',
+            'notes' => 'Datang tepat waktu',
+        ]);
+        $this->assertDatabaseHas('attendances', [
+            'santri_id' => $absentSantri->id,
+            'status' => 'ghoib',
+            'method' => 'manual',
+            'notes' => 'Tidak tap',
+        ]);
+        $this->assertDatabaseMissing('attendances', [
+            'santri_id' => $unchangedSantri->id,
+        ]);
+    }
+
     private function admin(): User
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $admin->assignRole(Role::findOrCreate('admin'));
-        $admin->givePermissionTo(Permission::findOrCreate('admin.attendance.manage'));
+        $admin->givePermissionTo([
+            Permission::findOrCreate('admin.attendance.manage'),
+            Permission::findOrCreate('admin.attendance.dashboard'),
+            Permission::findOrCreate('admin.attendance.rfid'),
+            Permission::findOrCreate('admin.attendance.manual'),
+            Permission::findOrCreate('admin.attendance.monthly'),
+        ]);
 
         return $admin;
     }
@@ -187,7 +267,13 @@ class AttendanceManagementTest extends TestCase
     {
         $petugas = User::factory()->create(['role' => 'petugas']);
         $petugas->assignRole(Role::findOrCreate('petugas'));
-        $petugas->givePermissionTo(Permission::findOrCreate('petugas.attendance.manage'));
+        $petugas->givePermissionTo([
+            Permission::findOrCreate('petugas.attendance.manage'),
+            Permission::findOrCreate('petugas.attendance.dashboard'),
+            Permission::findOrCreate('petugas.attendance.rfid'),
+            Permission::findOrCreate('petugas.attendance.manual'),
+            Permission::findOrCreate('petugas.attendance.monthly'),
+        ]);
 
         return $petugas;
     }

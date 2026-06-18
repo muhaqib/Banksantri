@@ -30,6 +30,7 @@ class AttendanceController extends Controller
     private function dailyPage(Request $request, string $mode)
     {
         $date = Carbon::parse($request->input('date', today()->toDateString()));
+        $attendanceWindow = $this->attendanceWindow($date);
 
         $santriList = User::query()
             ->activeSantri()
@@ -72,6 +73,7 @@ class AttendanceController extends Controller
             'recentAttendances' => $recentAttendances,
             'summary' => $summary,
             'mode' => $mode,
+            'attendanceWindow' => $attendanceWindow,
         ]);
     }
 
@@ -81,6 +83,14 @@ class AttendanceController extends Controller
             'rfid_code' => ['required', 'string'],
             'date' => ['required', 'date'],
         ]);
+        $date = Carbon::parse($validated['date']);
+        $attendanceWindow = $this->attendanceWindow($date);
+
+        if (! $attendanceWindow['can_scan']) {
+            return response()->json([
+                'message' => 'Absensi RFID baru bisa dibaca mulai jam 21:00 sampai 23:59 WIB pada tanggal hari ini.',
+            ], 422);
+        }
 
         $santri = User::query()
             ->activeSantri()
@@ -92,7 +102,7 @@ class AttendanceController extends Controller
             return response()->json(['message' => 'RFID tidak ditemukan.'], 404);
         }
 
-        $attendance = $attendanceService->record($santri, $validated['date'], 'hadir', 'rfid', $request->user());
+        $attendance = $attendanceService->record($santri, $date, 'hadir', 'rfid', $request->user());
 
         return response()->json([
             'message' => $santri->name.' berhasil ditandai hadir.',
@@ -121,6 +131,48 @@ class AttendanceController extends Controller
         );
 
         return back()->with('success', 'Status absensi '.$santri->name.' berhasil diperbarui.');
+    }
+
+    public function bulkUpdate(Request $request, AttendanceService $attendanceService)
+    {
+        $validated = $request->validate([
+            'date' => ['required', 'date'],
+            'attendances' => ['required', 'array'],
+            'attendances.*.santri_id' => ['required', 'integer', 'exists:users,id'],
+            'attendances.*.status' => ['nullable', Rule::in(['hadir', 'ghoib', 'izin'])],
+            'attendances.*.notes' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $santriList = User::query()
+            ->activeSantri()
+            ->whereIn('id', collect($validated['attendances'])->pluck('santri_id'))
+            ->with('kamarSantri')
+            ->get()
+            ->keyBy('id');
+
+        $updated = 0;
+        foreach ($validated['attendances'] as $attendanceData) {
+            if (blank($attendanceData['status'] ?? null)) {
+                continue;
+            }
+
+            $santri = $santriList->get($attendanceData['santri_id']);
+            if (! $santri) {
+                continue;
+            }
+
+            $attendanceService->record(
+                $santri,
+                $validated['date'],
+                $attendanceData['status'],
+                'manual',
+                $request->user(),
+                $attendanceData['notes'] ?? null
+            );
+            $updated++;
+        }
+
+        return back()->with('success', "{$updated} perubahan absensi berhasil disimpan.");
     }
 
     public function dashboard(Request $request)
@@ -239,6 +291,21 @@ class AttendanceController extends Controller
         }
 
         return $date->isBefore(today()) ? 'ghoib' : 'belum';
+    }
+
+    private function attendanceWindow(Carbon $date): array
+    {
+        $now = now('Asia/Jakarta');
+        $selectedDate = Carbon::parse($date->toDateString(), 'Asia/Jakarta');
+        $startsAt = $selectedDate->copy()->setTime(21, 0);
+        $endsAt = $selectedDate->copy()->endOfDay();
+        $canScan = $selectedDate->isSameDay($now) && $now->betweenIncluded($startsAt, $endsAt);
+
+        return [
+            'starts_at' => $startsAt,
+            'ends_at' => $endsAt,
+            'can_scan' => $canScan,
+        ];
     }
 
     private function routePrefix(Request $request): string

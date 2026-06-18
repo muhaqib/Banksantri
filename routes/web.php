@@ -6,6 +6,7 @@ use App\Http\Controllers\Admin\DashboardContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KamarSantriController;
 use App\Http\Controllers\Admin\KasController;
+use App\Http\Controllers\Admin\LaundrySubscriptionController;
 use App\Http\Controllers\Admin\PetugasController as AdminPetugasController;
 use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriController;
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
@@ -18,6 +19,7 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KitabController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
+use App\Http\Controllers\Petugas\LaundryController;
 use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use App\Http\Controllers\Petugas\RiwayatController as PetugasRiwayatController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
@@ -100,6 +102,8 @@ Route::middleware('auth')->group(function () {
         Route::get('/settlement', [SettlementController::class, 'index'])->middleware('permission:admin.finance.manage')->name('settlement');
         Route::patch('/settlement/{id}/approve', [SettlementController::class, 'approve'])->middleware('permission:admin.finance.manage')->name('settlement.approve');
         Route::patch('/settlement/{id}/reject', [SettlementController::class, 'reject'])->middleware('permission:admin.finance.manage')->name('settlement.reject');
+        Route::get('/laundry-subscriptions', [LaundrySubscriptionController::class, 'index'])->middleware('permission:admin.finance.manage')->name('laundry-subscriptions.index');
+        Route::post('/laundry-subscriptions', [LaundrySubscriptionController::class, 'store'])->middleware('permission:admin.finance.manage')->name('laundry-subscriptions.store');
 
         // Admin Transactions
         Route::middleware('permission:admin.finance.manage')->group(function () {
@@ -131,6 +135,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:admin.attendance.rfid')->name('attendance.rfid');
         Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:admin.attendance.rfid')->name('attendance.scan');
         Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:admin.attendance.manual')->name('attendance.manual');
+        Route::put('/attendance/bulk-update', [AttendanceController::class, 'bulkUpdate'])->middleware('permission:admin.attendance.manual')->name('attendance.bulk-update');
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:admin.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:admin.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:admin.attendance.monthly')->name('attendance.monthly');
@@ -169,6 +174,9 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
+        Route::get('/laundry', [LaundryController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('laundry.index');
+        Route::post('/laundry/scan', [LaundryController::class, 'scan'])->middleware('permission:petugas.transactions.manage')->name('laundry.scan');
+        Route::post('/laundry', [LaundryController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('laundry.store');
         Route::get('/riwayat', [PetugasRiwayatController::class, 'index'])->middleware('permission:petugas.history.view')->name('riwayat');
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai.store');
@@ -183,6 +191,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:petugas.attendance.rfid')->name('attendance.rfid');
         Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:petugas.attendance.rfid')->name('attendance.scan');
         Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:petugas.attendance.manual')->name('attendance.manual');
+        Route::put('/attendance/bulk-update', [AttendanceController::class, 'bulkUpdate'])->middleware('permission:petugas.attendance.manual')->name('attendance.bulk-update');
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:petugas.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:petugas.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:petugas.attendance.monthly')->name('attendance.monthly');

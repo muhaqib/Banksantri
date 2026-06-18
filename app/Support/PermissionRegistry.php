@@ -13,7 +13,7 @@ class PermissionRegistry
                 'santri.dashboard.view' => 'Lihat beranda santri',
             ],
             'Bank Santri' => [
-                'admin.finance.manage' => 'Kelola kas, transaksi, top up, dan settlement',
+                'admin.finance.manage' => 'Kelola kas, transaksi, top up, dan penarikan tunai',
                 'petugas.transactions.manage' => 'Kelola transaksi petugas',
                 'petugas.finance.dashboard' => 'Lihat dashboard keuangan petugas',
                 'petugas.history.view' => 'Lihat riwayat transaksi petugas',

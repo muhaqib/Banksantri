@@ -339,7 +339,7 @@
                                     <option value="Kepala Unit">Kepala Unit</option>
                                     <option value="Staff Pengurus">Staff Pengurus</option>
                                     <option value="Petugas Laundry">Petugas Laundry</option>
-                                    <option value="Petugas Kantin">Petugas Kantin</option>
+                                    <option value="Petugas Syirkah">Petugas Syirkah</option>
                                     <option value="Koperasi Kitab">Koperasi Kitab</option>
                                     <option value="Petugas Mart">Petugas Mart</option>
                                 </select>

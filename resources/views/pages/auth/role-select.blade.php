@@ -30,7 +30,7 @@
             'icon' => 'business_center',
         ],
         'petugas' => [
-            'label' => 'Pengurus',
+            'label' => 'Petugas',
             'icon' => 'how_to_reg',
         ],
         'santri' => [

@@ -1,7 +1,10 @@
 @extends('layouts.app')
 
 @section('header-title', 'Data Santri')
-@php $activeRole = 'admin'; @endphp
+@php
+    $activeRole = 'admin';
+    $currentStatus = $currentStatus ?? request('status', 'aktif');
+@endphp
 
 @section('content')
 <div x-data="santriApp()">
@@ -12,7 +15,7 @@
             <p class="text-on-surface-variant text-sm mt-1">Kelola data santri dan saldo mereka.</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.santri.export', ['status' => request('status')]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
+            <a href="{{ route('admin.santri.export', ['status' => $currentStatus]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
                 <span class="material-symbols-outlined">download</span><span>Export Excel</span>
             </a>
             <a href="{{ route('admin.santri.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
@@ -54,10 +57,10 @@
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.santri.index') }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ !request('status') ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Semua</a>
-                <a href="{{ route('admin.santri.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ request('status') === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
-                <a href="{{ route('admin.santri.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ request('status') === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
+                <a href="{{ route('admin.santri.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
+                <a href="{{ route('admin.santri.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
                 <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
+                    <input type="hidden" name="status" value="{{ $currentStatus }}">
                     <input type="text"
                            name="search"
                            value="{{ request('search') }}"
@@ -68,7 +71,7 @@
                         <span class="material-symbols-outlined text-sm">search</span>
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('admin.santri.index') }}"
+                        <a href="{{ route('admin.santri.index', ['status' => $currentStatus]) }}"
                            class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-sm font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
                             <span class="material-symbols-outlined text-sm">close</span>
                         </a>
@@ -220,7 +223,7 @@
                                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
                                 </div>
-                                <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
+                                <h4 class="font-headline font-bold text-on-surface">Data Pribadi</h4>
                             </div>
 
                             <div class="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -233,12 +236,12 @@
                                     <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp || '-'"></p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tempat Lahir</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.tempat_lahir || '-'"></p>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kamar</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kamar_text || '-'"></p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tanggal Lahir</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="formatDate(selectedSantri.tanggal_lahir)"></p>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tempat, Tanggal Lahir</p>
+                                    <p class="font-medium text-on-surface text-sm" x-text="formatBirthPlaceDate(selectedSantri.tempat_lahir, selectedSantri.tanggal_lahir)"></p>
                                 </div>
                                 <div class="col-span-2">
                                     <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
@@ -253,7 +256,7 @@
                                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
                                 </div>
-                                <h4 class="font-headline font-bold text-on-surface">Informasi Akademik</h4>
+                                <h4 class="font-headline font-bold text-on-surface">Data Akademik</h4>
                             </div>
 
                             <div class="grid grid-cols-2 gap-x-6 gap-y-4">
@@ -262,7 +265,7 @@
                                     <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kelas || '-'"></p>
                                 </div>
                                 <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Asal Sekolah</p>
+                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kelas Formal</p>
                                     <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.asal_sekolah || '-'"></p>
                                 </div>
                             </div>
@@ -362,7 +365,7 @@
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">person</span>
                                 </div>
-                                <h4 class="font-headline font-bold text-on-surface">Informasi Personal</h4>
+                                <h4 class="font-headline font-bold text-on-surface">Data Pribadi</h4>
                             </div>
 
                             <div class="grid grid-cols-2 gap-4">
@@ -381,13 +384,10 @@
                                 <input type="email" name="email" x-model="editData.email" required class="input-field w-full">
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
-                                <div>
-                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat Lahir</label>
+                            <div>
+                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat, Tanggal Lahir</label>
+                                <div class="grid grid-cols-2 gap-4">
                                     <input type="text" name="tempat_lahir" x-model="editData.tempat_lahir" class="input-field w-full">
-                                </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tanggal Lahir</label>
                                     <input type="date" name="tanggal_lahir" x-model="editData.tanggal_lahir" class="input-field w-full">
                                 </div>
                             </div>
@@ -416,22 +416,27 @@
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">No HP Wali</label>
                                     <input type="text" name="no_hp_wali" x-model="editData.no_hp_wali" class="input-field w-full">
                                 </div>
-                                <div>
-                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Asal Sekolah</label>
-                                    <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
+                            </div>
+                        </div>
+
+                        <!-- Academic Info -->
+                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                            <div class="flex items-center gap-2 mb-2">
+                                <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
+                                    <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">school</span>
                                 </div>
+                                <h4 class="font-headline font-bold text-on-surface">Data Akademik</h4>
+                            </div>
+
+                            <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
                                     <input type="text" name="kelas" x-model="editData.kelas" class="input-field w-full">
                                 </div>
-                            </div>
-                        </div>
-
-                        <!-- Additional Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
-                            <div>
-                                <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Asal Sekolah</label>
-                                <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas Formal</label>
+                                    <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
+                                </div>
                             </div>
 
                             <div>
@@ -522,6 +527,7 @@ function santriApp() {
                 console.log('Data received:', data);
                 this.selectedSantri = data.santri;
                 this.selectedSantri.foto_url = data.foto_url;
+                this.selectedSantri.kamar_text = data.kamar_text;
             } catch (error) {
                 console.error('Error loading santri data:', error);
                 alert('Gagal memuat data santri: ' + error.message);
@@ -543,6 +549,7 @@ function santriApp() {
                 const data = await response.json();
                 this.selectedSantri = data.santri;
                 this.selectedSantri.foto_url = data.foto_url;
+                this.selectedSantri.kamar_text = data.kamar_text;
                 
                 // Initialize editData with current values
                 this.editData.name = data.santri.name || '';
@@ -584,6 +591,16 @@ function santriApp() {
             if (!dateStr) return '-';
             const date = new Date(dateStr);
             return date.toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        },
+
+        formatBirthPlaceDate(place, dateStr) {
+            const formattedDate = this.formatDate(dateStr);
+
+            if (place && formattedDate !== '-') {
+                return `${place}, ${formattedDate}`;
+            }
+
+            return place || formattedDate;
         }
     }
 }

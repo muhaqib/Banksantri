@@ -7,7 +7,7 @@
 <div>
     <div class="mb-8">
         <h2 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Riwayat Eksekusi Saya</h2>
-        <p class="mt-1 text-sm text-on-surface-variant">Aktivitas transaksi dan settlement yang Anda proses.</p>
+        <p class="mt-1 text-sm text-on-surface-variant">Aktivitas transaksi dan penarikan tunai yang Anda proses.</p>
     </div>
 
     <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
@@ -16,7 +16,7 @@
             <p class="mt-2 text-3xl font-extrabold text-white">Rp {{ number_format($totalTopUp, 0, ',', '.') }}</p>
         </div>
         <div class="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
-            <p class="text-xs font-medium text-on-surface-variant">Settlement Disetujui</p>
+            <p class="text-xs font-medium text-on-surface-variant">Penarikan Tunai Disetujui</p>
             <p class="mt-2 text-3xl font-bold text-error">Rp {{ number_format($totalSettlement, 0, ',', '.') }}</p>
         </div>
         <div class="rounded-xl bg-surface-container-lowest p-6 shadow-sm">

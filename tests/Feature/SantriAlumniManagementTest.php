@@ -65,6 +65,50 @@ class SantriAlumniManagementTest extends TestCase
         $this->assertDatabaseMissing('kamar_santris', ['user_id' => $santri->id]);
     }
 
+    public function test_admin_santri_index_defaults_to_active_santri(): void
+    {
+        $admin = $this->admin();
+        $active = User::factory()->create([
+            'role' => 'santri',
+            'name' => 'Santri Aktif Default',
+            'santri_status' => 'aktif',
+        ]);
+        $alumni = User::factory()->create([
+            'role' => 'santri',
+            'name' => 'Santri Alumni Tersembunyi',
+            'santri_status' => 'alumni',
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.santri.index'))
+            ->assertOk()
+            ->assertSee($active->name)
+            ->assertDontSee($alumni->name);
+    }
+
+    public function test_admin_can_create_santri_with_room_assignment(): void
+    {
+        $admin = $this->admin();
+        Role::findOrCreate('santri');
+
+        $this->actingAs($admin)
+            ->post(route('admin.santri.store'), [
+                'name' => 'Santri Kamar Baru',
+                'email' => 'santri-kamar-baru@example.test',
+                'nis' => 'KMR-001',
+                'password' => 'password',
+                'pin' => '123456',
+                'kamar' => 'kamar_2',
+            ])
+            ->assertRedirect(route('admin.santri.index'));
+
+        $santri = User::where('nis', 'KMR-001')->firstOrFail();
+        $this->assertDatabaseHas('kamar_santris', [
+            'user_id' => $santri->id,
+            'kamar' => 'kamar_2',
+        ]);
+    }
+
     public function test_petugas_cannot_execute_transaction_for_alumni(): void
     {
         $petugas = User::factory()->create(['role' => 'petugas']);

@@ -19,6 +19,10 @@ class TransaksiController extends Controller
         // Get current user's jabatan and determine category
         $jabatan = auth()->user()->jabatan ?? '';
 
+        if ($jabatan === 'Petugas Laundry') {
+            return redirect()->route('petugas.laundry.index');
+        }
+
         // Map jabatan to kategori
         $kategoriMapping = $this->getKategoriFromJabatan($jabatan);
 

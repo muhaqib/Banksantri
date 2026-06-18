@@ -92,7 +92,7 @@
                 @unless(auth()->user()->isAlumni())
                 <a href="{{ route('santri.topup') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
-                        <span class="material-symbols-outlined">add_circle</span>
+                        <span class="material-symbols-outlined">payments</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Top Up</span>
                 </a>
@@ -111,11 +111,35 @@
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tanya Ustadz</span>
                 </a>
                 @endunless
+                <a href="#" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined">handshake</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Perizinan</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined">local_police</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Keamanan</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined">school</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tarbiyah</span>
+                </a>
+                <a href="#" class="flex flex-col items-center gap-2 group">
+                    <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
+                        <span class="material-symbols-outlined">Digital_Wellbeing</span>
+                    </div>
+                    <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Kesehatan</span>
+                </a>
             </div>
         </section>
 
         <!-- Special Quick-Action: Sadaqah -->
-        <section>
+        <!-- <section>
             <div class="bg-tertiary-container/30 rounded-2xl p-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center">
@@ -128,7 +152,7 @@
                 </div>
                 <button class="bg-tertiary text-on-tertiary text-[10px] px-3 py-1.5 rounded-full font-bold">SOON</button>
             </div>
-        </section>
+        </section> -->
 
         <!-- Recent History -->
         <section class="space-y-4">

@@ -1,0 +1,1383 @@
+<!doctype html>
+<html class="light" lang="id" style="">
+    <head>
+        <meta charset="utf-8" />
+        <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+        <title>Bank Pesantren - Laundry Transaction</title>
+        <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@300;400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&amp;family=Manrope:wght@100..900&amp;display=swap"
+            rel="stylesheet"
+        />
+        <script id="tailwind-config">
+            tailwind.config = {
+                darkMode: "class",
+                theme: {
+                    extend: {
+                        colors: {
+                            "tertiary-fixed": "#ffdf90",
+                            "on-tertiary-fixed": "#241a00",
+                            "surface-bright": "#f8fafa",
+                            "secondary-fixed-dim": "#c4c9b1",
+                            "tertiary-container": "#cca73b",
+                            "primary-fixed": "#a2f0ee",
+                            "on-secondary-container": "#606551",
+                            "surface-container-lowest": "#ffffff",
+                            "surface-dim": "#d8dada",
+                            "surface-container-high": "#e6e8e8",
+                            "on-secondary": "#ffffff",
+                            "surface-container-low": "#f2f4f4",
+                            "secondary-container": "#dee2c9",
+                            "on-error": "#ffffff",
+                            "tertiary-fixed-dim": "#eac254",
+                            "on-surface-variant": "#3e4948",
+                            "secondary-fixed": "#e0e5cc",
+                            surface: "#f8fafa",
+                            "inverse-primary": "#86d4d2",
+                            "on-secondary-fixed": "#191d0e",
+                            outline: "#6f7978",
+                            "on-primary-fixed-variant": "#00504f",
+                            background: "#f8fafa",
+                            "surface-container-highest": "#e1e3e3",
+                            "surface-variant": "#e1e3e3",
+                            "on-tertiary-fixed-variant": "#584400",
+                            "outline-variant": "#bec9c8",
+                            "on-tertiary": "#ffffff",
+                            "on-background": "#191c1d",
+                            "inverse-surface": "#2e3131",
+                            tertiary: "#755b00",
+                            "on-primary": "#ffffff",
+                            "surface-container": "#eceeee",
+                            "primary-container": "#006766",
+                            primary: "#004d4c",
+                            "on-primary-container": "#94e2e0",
+                            "primary-fixed-dim": "#86d4d2",
+                            "on-tertiary-container": "#503d00",
+                            "on-error-container": "#93000a",
+                            "surface-tint": "#076968",
+                            "on-secondary-fixed-variant": "#444936",
+                            "inverse-on-surface": "#eff1f1",
+                            secondary: "#5c614d",
+                            "on-primary-fixed": "#00201f",
+                            "on-surface": "#191c1d",
+                            error: "#ba1a1a",
+                            "error-container": "#ffdad6",
+                        },
+                        borderRadius: {
+                            DEFAULT: "0.25rem",
+                            lg: "0.5rem",
+                            xl: "0.75rem",
+                            full: "9999px",
+                        },
+                        fontFamily: {
+                            headline: ["Manrope"],
+                            display: ["Manrope"],
+                            body: ["Inter"],
+                            label: ["Inter"],
+                        },
+                    },
+                },
+            };
+        </script>
+        <style>
+            .material-symbols-outlined {
+                font-variation-settings:
+                    "FILL" 0,
+                    "wght" 400,
+                    "GRAD" 0,
+                    "opsz" 24;
+                vertical-align: middle;
+            }
+            .active-pill {
+                background-color: #004d4c;
+                color: #ffffff;
+            }
+            .no-scrollbar::-webkit-scrollbar {
+                display: none;
+            }
+            .no-scrollbar {
+                -ms-overflow-style: none;
+                scrollbar-width: none;
+            }
+
+            .input-accent-border:focus-within {
+                border-left: 3px solid #004d4c;
+            }
+        </style>
+    </head>
+    <body
+        class="bg-surface font-body text-on-surface antialiased overflow-hidden"
+    >
+        <!-- TopAppBar -->
+
+        <!-- Main Content -->
+        <main
+            class="ml-64 mt-16 p-8 h-[calc(100vh-64px)] overflow-y-auto no-scrollbar"
+        >
+            <div class="max-w-6xl mx-auto grid grid-cols-12 gap-8">
+                <!-- Left Section: Transaction Form -->
+                <div class="col-span-12 lg:col-span-8 space-y-6">
+                    <!-- Header -->
+                    <div
+                        class="flex flex-col md:flex-row md:items-end justify-between gap-4"
+                    >
+                        <div>
+                            <h1
+                                class="text-3xl font-display font-extrabold text-on-surface tracking-tight"
+                            >
+                                Laundry Transaction
+                            </h1>
+                            <p class="text-on-surface-variant mt-1">
+                                Manage student laundry services and payments.
+                            </p>
+                        </div>
+                        <!-- Tabs -->
+                        <div
+                            class="flex p-1 bg-surface-container-high rounded-xl w-fit shadow-inner"
+                        >
+                            <button
+                                class="px-6 py-2 rounded-lg text-sm font-bold transition-all active-pill"
+                                id="tab-tunai"
+                                onclick="switchTab('tunai')"
+                            >
+                                Tunai
+                            </button>
+                            <button
+                                class="px-6 py-2 rounded-lg text-sm font-bold transition-all text-on-surface-variant"
+                                id="tab-bulanan"
+                                onclick="switchTab('bulanan')"
+                            >
+                                Bulanan
+                            </button>
+                        </div>
+                    </div>
+                    <!-- RFID Lookup Card -->
+                    <div
+                        class="bg-surface-container-lowest p-6 rounded-xl shadow-sm border-l-4 border-primary"
+                    >
+                        <div class="flex items-center gap-4">
+                            <div
+                                class="w-12 h-12 bg-primary/5 rounded-full flex items-center justify-center"
+                            >
+                                <span
+                                    class="material-symbols-outlined text-primary text-2xl"
+                                    >nfc</span
+                                >
+                            </div>
+                            <div class="flex-1">
+                                <label
+                                    class="block text-[10px] uppercase font-bold text-on-surface-variant tracking-widest mb-1"
+                                    >Student Identification</label
+                                >
+                                <input
+                                    class="w-full bg-surface-container-low border-none rounded-lg focus:ring-0 text-sm font-medium h-10 px-4"
+                                    placeholder="Scan RFID or enter Student ID..."
+                                    type="text"
+                                />
+                            </div>
+                            <button
+                                class="bg-primary text-on-primary px-5 h-10 rounded-lg text-xs font-bold flex items-center gap-2 hover:opacity-90 transition-opacity"
+                            >
+                                <span class="material-symbols-outlined text-sm"
+                                    >search</span
+                                >
+                                Verify
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Transaction Form Container -->
+                    <div
+                        class="bg-surface-container-lowest rounded-2xl p-8 shadow-sm transition-all duration-500"
+                        id="form-container"
+                    >
+                        <!-- Tunai Form (Visible by Default) -->
+                        <div class="space-y-8" id="form-tunai">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Current Date</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-high border-none rounded-xl text-sm font-semibold text-on-surface-variant px-4 h-12"
+                                        disabled=""
+                                        type="text"
+                                        value="Senin, 24 Mei 2024"
+                                    />
+                                </div>
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Price per KG (IDR)</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-low border-none rounded-xl focus:bg-surface-container-high text-sm font-semibold px-4 h-12 transition-all"
+                                        type="number"
+                                        value="7000"
+                                    />
+                                </div>
+                            </div>
+                            <div class="space-y-3 input-accent-border">
+                                <div
+                                    class="flex items-center justify-between mb-3"
+                                >
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Clothes Details &amp; Selection</label
+                                    >
+                                    <div class="flex items-center gap-4">
+                                        <div class="relative">
+                                            <span
+                                                class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant"
+                                                >search</span
+                                            >
+                                            <input
+                                                type="text"
+                                                placeholder="Search items..."
+                                                class="bg-surface-container-low border-none rounded-full text-[10px] pl-9 pr-4 h-8 w-40 focus:ring-1 focus:ring-primary/20 transition-all"
+                                            />
+                                        </div>
+                                        <div
+                                            class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary/10 transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >chevron_left</span
+                                                >
+                                            </button>
+                                            <span class="">1 of 2</span>
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary/10 transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >chevron_right</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div
+                                    class="grid grid-cols-2 md:grid-cols-4 gap-4"
+                                >
+                                    <!-- Item: Kemeja -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >checkroom</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Kemeja</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Celana -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >apparel</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Celana</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Sarung -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >texture</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Sarung</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Jaket -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >dry_cleaning</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Jaket</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Kaos -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >styler</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Kaos</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Mukena -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >woman</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Mukena</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Jilbab -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >face_3</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Jilbab</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                    <!-- Item: Handuk -->
+                                    <div
+                                        class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                    >
+                                        <div
+                                            class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                        >
+                                            <span
+                                                class="material-symbols-outlined text-primary"
+                                                >layers</span
+                                            >
+                                        </div>
+                                        <span class="text-xs font-bold"
+                                            >Handuk</span
+                                        >
+                                        <div
+                                            class="flex items-center gap-3 mt-1"
+                                        >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >remove</span
+                                                >
+                                            </button>
+                                            <span class="text-xs font-bold"
+                                                >0</span
+                                            >
+                                            <button
+                                                class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-xs"
+                                                    >add</span
+                                                >
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Total Pieces (pcs)</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-low border-none rounded-xl focus:bg-surface-container-high text-sm font-semibold px-4 h-12 transition-all"
+                                        placeholder="0"
+                                        type="number"
+                                    />
+                                </div>
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Estimated Weight (KG)</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-low border-none rounded-xl focus:bg-surface-container-high text-sm font-semibold px-4 h-12 transition-all"
+                                        placeholder="0.0"
+                                        step="0.1"
+                                        type="number"
+                                    />
+                                </div>
+                            </div>
+                            <!-- Summary Display -->
+                            <div
+                                class="mt-8 p-6 bg-primary/5 rounded-2xl flex flex-col items-center justify-center text-center"
+                            >
+                                <p
+                                    class="text-xs font-bold text-primary-container tracking-widest uppercase mb-2"
+                                >
+                                    Total Transaction Amount
+                                </p>
+                                <h3
+                                    class="text-4xl font-display font-extrabold text-primary"
+                                >
+                                    IDR 24.500
+                                </h3>
+                                <div class="flex gap-2 mt-4">
+                                    <span
+                                        class="bg-primary/10 text-primary text-[10px] font-bold px-3 py-1 rounded-full uppercase tracking-tighter"
+                                        >Pembayaran Tunai</span
+                                    >
+                                </div>
+                            </div>
+                            <button
+                                class="w-full bg-primary text-on-primary h-14 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >check_circle</span
+                                >
+                                Process Transaction
+                            </button>
+                        </div>
+                        <!-- Bulanan Form (Hidden Initially) -->
+                        <div class="space-y-8 hidden" id="form-bulanan">
+                            <!-- Quota Tracker -->
+                            <div
+                                class="p-6 bg-surface-container-low rounded-2xl border-l-4 border-tertiary"
+                            >
+                                <div
+                                    class="flex justify-between items-center mb-4"
+                                >
+                                    <div>
+                                        <h4
+                                            class="text-sm font-bold text-on-surface"
+                                        >
+                                            Monthly Quota Status
+                                        </h4>
+                                        <p
+                                            class="text-xs text-on-surface-variant"
+                                        >
+                                            Quota resets on the 1st of every
+                                            month.
+                                        </p>
+                                    </div>
+                                    <div class="text-right">
+                                        <span
+                                            class="text-xl font-display font-extrabold text-tertiary"
+                                            >15.2 / 20.0
+                                            <span
+                                                class="text-xs font-medium text-on-surface-variant uppercase"
+                                                >kg</span
+                                            ></span
+                                        >
+                                    </div>
+                                </div>
+                                <!-- Progress Bar -->
+                                <div
+                                    class="w-full h-3 bg-surface-container-highest rounded-full overflow-hidden"
+                                >
+                                    <div
+                                        class="h-full bg-tertiary rounded-full transition-all duration-1000 ease-out"
+                                        id="quota-bar"
+                                        style="width: 76%"
+                                    ></div>
+                                </div>
+                                <!-- Warning Message (Hidden if below 20) -->
+                                <div
+                                    class="hidden mt-4 flex items-center gap-2 text-error animate-pulse"
+                                    id="quota-warning"
+                                >
+                                    <span
+                                        class="material-symbols-outlined text-sm"
+                                        >warning</span
+                                    >
+                                    <span
+                                        class="text-[11px] font-bold uppercase tracking-tight"
+                                        >Quota limit reached. Process button
+                                        disabled.</span
+                                    >
+                                </div>
+                            </div>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Current Date</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-high border-none rounded-xl text-sm font-semibold text-on-surface-variant px-4 h-12"
+                                        disabled=""
+                                        type="text"
+                                        value="Senin, 24 Mei 2024"
+                                    />
+                                </div>
+                                <div class="space-y-1.5 input-accent-border">
+                                    <label
+                                        class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                        >Session Weight (KG)</label
+                                    >
+                                    <input
+                                        class="w-full bg-surface-container-low border-none rounded-xl focus:bg-surface-container-high text-sm font-semibold px-4 h-12 transition-all"
+                                        id="weight-input"
+                                        oninput="checkQuota(this.value)"
+                                        placeholder="0.0"
+                                        step="0.1"
+                                        type="number"
+                                    />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5 input-accent-border">
+                                <label
+                                    class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                    >Clothes Details</label
+                                >
+                                <div class="space-y-3 input-accent-border">
+                                    <div
+                                        class="flex items-center justify-between mb-3"
+                                    >
+                                        <label
+                                            class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                            >Clothes Details &amp;
+                                            Selection</label
+                                        >
+                                        <div class="flex items-center gap-4">
+                                            <div class="relative">
+                                                <span
+                                                    class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-sm text-on-surface-variant"
+                                                    >search</span
+                                                >
+                                                <input
+                                                    type="text"
+                                                    placeholder="Search items..."
+                                                    class="bg-surface-container-low border-none rounded-full text-[10px] pl-9 pr-4 h-8 w-40 focus:ring-1 focus:ring-primary/20 transition-all"
+                                                />
+                                            </div>
+                                            <div
+                                                class="flex items-center gap-2 text-[10px] font-bold text-on-surface-variant"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary/10 transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >chevron_left</span
+                                                    >
+                                                </button>
+                                                <span class="">1 of 2</span>
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-high flex items-center justify-center hover:bg-primary/10 transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >chevron_right</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="grid grid-cols-2 md:grid-cols-4 gap-4"
+                                    >
+                                        <!-- Item: Kemeja -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >checkroom</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Kemeja</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Celana -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >apparel</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Celana</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Sarung -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >texture</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Sarung</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Jaket -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >dry_cleaning</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Jaket</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Kaos -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >styler</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Kaos</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Mukena -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >woman</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Mukena</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Jilbab -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >face_3</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Jilbab</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                        <!-- Item: Handuk -->
+                                        <div
+                                            class="bg-surface-container-low p-3 rounded-xl border border-outline-variant/20 flex flex-col items-center gap-2 hover:border-primary/30 transition-all"
+                                        >
+                                            <div
+                                                class="w-10 h-10 bg-primary/5 rounded-full flex items-center justify-center"
+                                            >
+                                                <span
+                                                    class="material-symbols-outlined text-primary"
+                                                    >layers</span
+                                                >
+                                            </div>
+                                            <span class="text-xs font-bold"
+                                                >Handuk</span
+                                            >
+                                            <div
+                                                class="flex items-center gap-3 mt-1"
+                                            >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-surface-container-highest flex items-center justify-center hover:bg-primary hover:text-on-primary transition-colors"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >remove</span
+                                                    >
+                                                </button>
+                                                <span class="text-xs font-bold"
+                                                    >0</span
+                                                >
+                                                <button
+                                                    class="w-6 h-6 rounded-full bg-primary text-on-primary flex items-center justify-center hover:brightness-110 transition-all"
+                                                >
+                                                    <span
+                                                        class="material-symbols-outlined text-xs"
+                                                        >add</span
+                                                    >
+                                                </button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="space-y-1.5 input-accent-border">
+                                <label
+                                    class="text-[11px] font-bold text-on-surface-variant uppercase tracking-wider ml-1"
+                                    >Total Pieces (pcs)</label
+                                >
+                                <input
+                                    class="w-full bg-surface-container-low border-none rounded-xl focus:bg-surface-container-high text-sm font-semibold px-4 h-12 transition-all"
+                                    placeholder="0"
+                                    type="number"
+                                />
+                            </div>
+                            <button
+                                class="w-full bg-primary text-on-primary h-14 rounded-xl font-bold text-sm tracking-wide shadow-lg shadow-primary/20 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+                                id="process-bulanan"
+                            >
+                                <span class="material-symbols-outlined"
+                                    >hourglass_top</span
+                                >
+                                Deduct Monthly Quota
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Right Section: Sidebar Recent Transactions -->
+                <div class="col-span-12 lg:col-span-4 space-y-6">
+                    <div
+                        class="bg-white/50 backdrop-blur-md rounded-2xl p-6 h-fit border border-white"
+                    >
+                        <div class="flex items-center justify-between mb-6">
+                            <h3
+                                class="text-sm font-extrabold text-on-surface font-display flex items-center gap-2"
+                            >
+                                <span
+                                    class="material-symbols-outlined text-primary text-lg"
+                                    >history</span
+                                >
+                                Recent Sessions
+                            </h3>
+                            <button
+                                class="text-[11px] font-bold text-primary uppercase tracking-wider hover:underline"
+                            >
+                                View All
+                            </button>
+                        </div>
+                        <div class="space-y-4">
+                            <!-- Transaction Item 1 -->
+                            <div class="group cursor-pointer">
+                                <div
+                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-colors"
+                                >
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center flex-shrink-0"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined text-primary text-lg"
+                                            style="
+                                                font-variation-settings: &quot;FILL&quot;
+                                                    1;
+                                            "
+                                            >dry_cleaning</span
+                                        >
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <div class="flex justify-between">
+                                            <p
+                                                class="text-xs font-bold truncate"
+                                            >
+                                                Zaidan Al-Ghifari
+                                            </p>
+                                            <span
+                                                class="text-[10px] font-bold text-tertiary uppercase"
+                                                >Bulanan</span
+                                            >
+                                        </div>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant"
+                                        >
+                                            3.5 KG • 12 pcs
+                                        </p>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant mt-1"
+                                        >
+                                            Today, 10:45 AM
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Transaction Item 2 -->
+                            <div class="group cursor-pointer">
+                                <div
+                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-colors"
+                                >
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center flex-shrink-0"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined text-on-secondary-container text-lg"
+                                            style="
+                                                font-variation-settings: &quot;FILL&quot;
+                                                    1;
+                                            "
+                                            >local_atm</span
+                                        >
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <div class="flex justify-between">
+                                            <p
+                                                class="text-xs font-bold truncate"
+                                            >
+                                                Ahmad Subarkah
+                                            </p>
+                                            <span
+                                                class="text-[10px] font-bold text-primary uppercase"
+                                                >Tunai</span
+                                            >
+                                        </div>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant"
+                                        >
+                                            2.1 KG • 8 pcs
+                                        </p>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant mt-1"
+                                        >
+                                            Today, 09:12 AM
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- Transaction Item 3 -->
+                            <div class="group cursor-pointer">
+                                <div
+                                    class="flex items-start gap-3 p-3 rounded-xl hover:bg-surface-container-low transition-colors"
+                                >
+                                    <div
+                                        class="w-10 h-10 rounded-full bg-primary-fixed-dim flex items-center justify-center flex-shrink-0"
+                                    >
+                                        <span
+                                            class="material-symbols-outlined text-primary text-lg"
+                                            style="
+                                                font-variation-settings: &quot;FILL&quot;
+                                                    1;
+                                            "
+                                            >dry_cleaning</span
+                                        >
+                                    </div>
+                                    <div class="flex-1 overflow-hidden">
+                                        <div class="flex justify-between">
+                                            <p
+                                                class="text-xs font-bold truncate"
+                                            >
+                                                Fahreza Hakim
+                                            </p>
+                                            <span
+                                                class="text-[10px] font-bold text-tertiary uppercase"
+                                                >Bulanan</span
+                                            >
+                                        </div>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant"
+                                        >
+                                            4.2 KG • 15 pcs
+                                        </p>
+                                        <p
+                                            class="text-[10px] text-on-surface-variant mt-1"
+                                        >
+                                            Yesterday, 04:30 PM
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Terminal Status -->
+                        <div
+                            class="mt-10 p-4 bg-surface-container-high rounded-xl"
+                        >
+                            <div class="flex items-center justify-between mb-2">
+                                <p
+                                    class="text-[10px] font-bold text-on-surface-variant uppercase tracking-widest"
+                                >
+                                    Terminal #4 Status
+                                </p>
+                                <span
+                                    class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"
+                                ></span>
+                            </div>
+                            <div class="flex items-center gap-2">
+                                <span
+                                    class="material-symbols-outlined text-primary text-sm"
+                                    >wifi</span
+                                >
+                                <p
+                                    class="text-[11px] font-medium text-on-surface-variant"
+                                >
+                                    Connected to Central Server
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Quick Action Card -->
+                    <div
+                        class="relative overflow-hidden bg-primary p-6 rounded-2xl text-on-primary"
+                    >
+                        <div class="relative z-10">
+                            <h4 class="text-sm font-bold mb-2">
+                                Quick Zakat Calculation
+                            </h4>
+                            <p
+                                class="text-[11px] text-primary-fixed mb-4 opacity-80 leading-relaxed"
+                            >
+                                Calculating Zakat for institution revenue has
+                                never been easier with our automated portal.
+                            </p>
+                            <button
+                                class="bg-tertiary-container text-on-tertiary-container px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest hover:brightness-110 transition-all"
+                            >
+                                Launch Calculator
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+        <script>
+            function switchTab(type) {
+                const tunaiTab = document.getElementById("tab-tunai");
+                const bulananTab = document.getElementById("tab-bulanan");
+                const tunaiForm = document.getElementById("form-tunai");
+                const bulananForm = document.getElementById("form-bulanan");
+
+                if (type === "tunai") {
+                    tunaiTab.classList.add("active-pill");
+                    tunaiTab.classList.remove("text-on-surface-variant");
+                    bulananTab.classList.remove("active-pill");
+                    bulananTab.classList.add("text-on-surface-variant");
+
+                    tunaiForm.classList.remove("hidden");
+                    bulananForm.classList.add("hidden");
+                } else {
+                    bulananTab.classList.add("active-pill");
+                    bulananTab.classList.remove("text-on-surface-variant");
+                    tunaiTab.classList.remove("active-pill");
+                    tunaiTab.classList.add("text-on-surface-variant");
+
+                    bulananForm.classList.remove("hidden");
+                    tunaiForm.classList.add("hidden");
+                }
+            }
+
+            function checkQuota(val) {
+                const currentUsage = 15.2;
+                const limit = 20.0;
+                const newTotal = parseFloat(val || 0) + currentUsage;
+                const bar = document.getElementById("quota-bar");
+                const warning = document.getElementById("quota-warning");
+                const btn = document.getElementById("process-bulanan");
+
+                const percentage = Math.min((newTotal / limit) * 100, 100);
+                bar.style.width = percentage + "%";
+
+                if (newTotal >= limit) {
+                    bar.classList.remove("bg-tertiary");
+                    bar.classList.add("bg-error");
+                    warning.classList.remove("hidden");
+                    btn.disabled = true;
+                    btn.classList.add(
+                        "opacity-50",
+                        "cursor-not-allowed",
+                        "bg-slate-400",
+                    );
+                    btn.classList.remove("bg-primary");
+                } else {
+                    bar.classList.add("bg-tertiary");
+                    bar.classList.remove("bg-error");
+                    warning.classList.add("hidden");
+                    btn.disabled = false;
+                    btn.classList.remove(
+                        "opacity-50",
+                        "cursor-not-allowed",
+                        "bg-slate-400",
+                    );
+                    btn.classList.add("bg-primary");
+                }
+            }
+        </script>
+    </body>
+</html>

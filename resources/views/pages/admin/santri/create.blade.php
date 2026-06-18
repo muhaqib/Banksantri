@@ -79,6 +79,21 @@
                     @enderror
                 </div>
                 <div>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kamar</label>
+                    <select name="kamar"
+                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                        <option value="">Pilih kamar santri</option>
+                        @foreach(\App\Models\KamarSantri::KAMAR_LIST as $kamar)
+                            <option value="{{ $kamar }}" @selected(old('kamar') === $kamar)>
+                                {{ ucfirst(str_replace('_', ' ', $kamar)) }}
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('kamar')
+                        <p class="text-error text-xs mt-1">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Email <span class="text-error">*</span></label>
                     <input type="email" name="email" required value="{{ old('email') }}"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
@@ -86,21 +101,24 @@
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat Lahir</label>
-                    <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}"
-                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
-                    @error('tempat_lahir')
-                        <p class="text-error text-xs mt-1">{{ $message }}</p>
-                    @enderror
-                </div>
-                <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tanggal Lahir</label>
-                    <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
-                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
-                    @error('tanggal_lahir')
-                        <p class="text-error text-xs mt-1">{{ $message }}</p>
-                    @enderror
+                <div class="md:col-span-2">
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Tempat, Tanggal Lahir</label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <input type="text" name="tempat_lahir" value="{{ old('tempat_lahir') }}" placeholder="Contoh: Tegal"
+                                   class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                            @error('tempat_lahir')
+                                <p class="text-error text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                        <div>
+                            <input type="date" name="tanggal_lahir" value="{{ old('tanggal_lahir') }}"
+                                   class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                            @error('tanggal_lahir')
+                                <p class="text-error text-xs mt-1">{{ $message }}</p>
+                            @enderror
+                        </div>
+                    </div>
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">RFID Code</label>
@@ -148,15 +166,15 @@
             </div>
         </div>
 
-        <!-- Section: Data Sekolah -->
+        <!-- Section: Data Akademik -->
         <div>
             <h3 class="font-headline font-bold text-lg text-primary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined">school</span>
-                <span>Data Sekolah</span>
+                <span>Data Akademik</span>
             </h3>
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Asal Sekolah</label>
+                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas Formal</label>
                     <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
                     @error('asal_sekolah')

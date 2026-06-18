@@ -40,6 +40,7 @@
 @section('content')
 @php
     $isManualMode = ($mode ?? 'rfid') === 'manual';
+    $canScanAttendance = $attendanceWindow['can_scan'] ?? false;
 @endphp
 <div class="space-y-8" x-data="attendancePage()">
     <header class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
@@ -77,19 +78,24 @@
             <div class="relative z-10 mt-10 w-full max-w-xl text-center">
                 <h2 class="font-headline text-2xl font-black text-on-surface">Tap RFID Reader</h2>
                 <p class="mx-auto mt-2 max-w-sm text-sm text-on-surface-variant">Setiap kartu RFID santri yang berhasil terbaca akan langsung dianggap hadir pada tanggal terpilih.</p>
+                <div class="mx-auto mt-4 inline-flex items-center gap-2 rounded-full px-4 py-2 text-xs font-black uppercase tracking-widest {{ $canScanAttendance ? 'bg-primary-fixed/40 text-primary' : 'bg-surface-container-high text-on-surface-variant' }}">
+                    <span class="material-symbols-outlined text-base">{{ $canScanAttendance ? 'wifi_tethering' : 'schedule' }}</span>
+                    {{ $canScanAttendance ? 'Siap Baca' : 'Belum Siap Baca' }}
+                </div>
+                <p class="mt-3 text-xs font-semibold text-on-surface-variant">Absensi RFID dibuka pukul 21:00-23:59 WIB. Santri yang belum tap akan otomatis menjadi ghoib saat pergantian hari.</p>
                 <form @submit.prevent="scan" class="mt-6 flex gap-2 rounded-2xl bg-surface-container-lowest p-2 shadow-sm">
-                    <input x-ref="rfid" x-model="rfid" autofocus autocomplete="off" placeholder="Tempelkan kartu RFID..." class="min-w-0 flex-1 rounded-xl border-none bg-transparent px-4 py-3 text-on-surface outline-none focus:ring-2 focus:ring-primary/20">
-                    <button :disabled="loading" class="flex h-12 w-14 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary transition disabled:opacity-50">
+                    <input x-ref="rfid" x-model="rfid" :disabled="!canScan" autofocus autocomplete="off" placeholder="Tempelkan kartu RFID..." class="min-w-0 flex-1 rounded-xl border-none bg-transparent px-4 py-3 text-on-surface outline-none focus:ring-2 focus:ring-primary/20 disabled:cursor-not-allowed disabled:text-on-surface-variant">
+                    <button :disabled="loading || !canScan" class="flex h-12 w-14 shrink-0 items-center justify-center rounded-xl bg-primary text-on-primary transition disabled:opacity-50">
                         <span class="material-symbols-outlined" :class="loading && 'animate-spin'" x-text="loading ? 'progress_activity' : 'sensors'"></span>
                     </button>
                 </form>
                 <p x-show="message" x-cloak x-text="message" :class="success ? 'bg-primary-fixed/40 text-primary' : 'bg-error-container text-on-error-container'" class="mt-4 rounded-xl px-4 py-3 text-sm font-bold"></p>
                 <div class="mt-8 flex items-center justify-center gap-6">
                     <div class="flex flex-col items-center">
-                        <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-lowest text-primary">
+                        <div class="mb-2 flex h-12 w-12 items-center justify-center rounded-full bg-surface-container-lowest {{ $canScanAttendance ? 'text-primary' : 'text-on-surface-variant' }}">
                             <span class="material-symbols-outlined">wifi_tethering</span>
                         </div>
-                        <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">Siap Baca</span>
+                        <span class="text-[11px] font-bold uppercase tracking-widest text-on-surface-variant">{{ $canScanAttendance ? 'Siap Baca' : 'Mulai 21:00' }}</span>
                     </div>
                     <div class="h-8 w-px bg-outline-variant/30"></div>
                     <div class="flex flex-col items-center">
@@ -185,10 +191,21 @@
         <button class="btn-primary self-end"><span class="material-symbols-outlined">filter_alt</span> Terapkan</button>
     </form>
 
-    <div class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
-        <div class="border-b border-outline-variant/10 p-5">
-            <h2 class="font-headline text-lg font-black text-primary">Daftar Absensi Santri</h2>
-            <p class="mt-1 text-sm text-on-surface-variant">{{ $date->translatedFormat('d F Y') }}</p>
+    <form method="POST" action="{{ route($routePrefix.'.attendance.bulk-update') }}" class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
+        @csrf
+        @method('PUT')
+        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+        <div class="flex flex-col gap-4 border-b border-outline-variant/10 p-5 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+                <h2 class="font-headline text-lg font-black text-primary">Daftar Absensi Santri</h2>
+                <p class="mt-1 text-sm text-on-surface-variant">{{ $date->translatedFormat('d F Y') }}</p>
+            </div>
+            @if($santriList->isNotEmpty())
+                <button class="btn-primary justify-center">
+                    <span class="material-symbols-outlined">save</span>
+                    Simpan Semua Perubahan
+                </button>
+            @endif
         </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left">
@@ -232,18 +249,18 @@
                                 @endif
                             </td>
                             <td class="px-5 py-4">
-                                <form method="POST" action="{{ route($routePrefix.'.attendance.update', $santri) }}" class="flex min-w-[310px] gap-2">
-                                    @csrf
-                                    @method('PUT')
-                                    <input type="hidden" name="date" value="{{ $date->toDateString() }}">
-                                    <select name="status" class="input-field py-2 text-sm">
+                                <div class="flex min-w-[310px] gap-2">
+                                    <input type="hidden" name="attendances[{{ $santri->id }}][santri_id]" value="{{ $santri->id }}">
+                                    <select name="attendances[{{ $santri->id }}][status]" class="input-field py-2 text-sm">
+                                        @if($status === 'belum')
+                                            <option value="" selected>Belum dicatat</option>
+                                        @endif
                                         @foreach(['hadir' => 'Hadir', 'izin' => 'Izin', 'ghoib' => 'Ghoib'] as $value => $label)
                                             <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
                                         @endforeach
                                     </select>
-                                    <input name="notes" value="{{ $attendance?->notes }}" placeholder="Catatan" class="input-field py-2 text-sm">
-                                    <button class="rounded-lg bg-primary px-3 text-on-primary"><span class="material-symbols-outlined text-lg">save</span></button>
-                                </form>
+                                    <input name="attendances[{{ $santri->id }}][notes]" value="{{ $attendance?->notes }}" placeholder="Catatan" class="input-field py-2 text-sm">
+                                </div>
                             </td>
                         </tr>
                     @empty
@@ -252,7 +269,7 @@
                 </tbody>
             </table>
         </div>
-    </div>
+    </form>
     @endif
 </div>
 @endsection
@@ -265,7 +282,13 @@ function attendancePage() {
         loading: false,
         message: '',
         success: false,
+        canScan: @js($canScanAttendance),
         async scan() {
+            if (!this.canScan) {
+                this.success = false;
+                this.message = 'Absensi RFID baru bisa dibaca mulai jam 21:00 sampai 23:59 WIB.';
+                return;
+            }
             if (!this.rfid) return;
             this.loading = true;
             this.message = '';
@@ -285,7 +308,7 @@ function attendancePage() {
             } finally {
                 this.rfid = '';
                 this.loading = false;
-                this.$refs.rfid.focus();
+                if (this.canScan) this.$refs.rfid.focus();
             }
         }
     }

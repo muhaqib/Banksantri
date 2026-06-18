@@ -8,8 +8,9 @@
     <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-primary-container text-white p-6 md:p-9 shadow-xl shadow-primary/15">
         <div class="relative z-10 max-w-3xl">
             <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary-fixed-dim">{{ now()->translatedFormat('l, d F Y') }}</p>
-            <h2 class="mt-3 font-headline text-3xl md:text-5xl font-extrabold tracking-tight">Selamat bekerja, {{ auth()->user()->name }}.</h2>
-            <p class="mt-3 text-sm md:text-base text-primary-fixed/80 leading-relaxed">Satu tempat untuk mengikuti kabar pondok, arahan penting, dan agenda bersama hari ini.</p>
+            <h2 class="mt-3 font-headline text-lg md:text-3xl font-extrabold tracking-tight">Selamat berkhidmah,
+                <div> {{ auth()->user()->name }}.</h2> </div>
+            <p class="mt-3 text-sm md:text-base text-primary-fixed/80 leading-relaxed">"Berkhidmah dengan Ikhlas, Menjemput berkah tanpa batas."</p>
         </div>
         <div class="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-white/10 blur-2xl"></div>
         <div class="absolute right-8 bottom-6 hidden md:block opacity-20">
@@ -17,31 +18,8 @@
         </div>
     </section>
 
-    <section class="grid grid-cols-1 gap-4 md:grid-cols-2">
-        <a href="{{ route('petugas.finance-dashboard') }}" class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-primary">Saldo Digital</p>
-                    <p class="mt-2 font-headline text-3xl font-extrabold text-on-surface">Rp {{ number_format($saldoDigital ?? 0, 0, ',', '.') }}</p>
-                    <p class="mt-1 text-xs text-on-surface-variant">Dana transaksi yang siap disettlement.</p>
-                </div>
-                <span class="material-symbols-outlined rounded-xl bg-primary/10 p-3 text-3xl text-primary">account_balance_wallet</span>
-            </div>
-        </a>
-        <a href="{{ route('petugas.finance-dashboard') }}" class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm transition-all hover:-translate-y-0.5 hover:shadow-md">
-            <div class="flex items-center justify-between gap-4">
-                <div>
-                    <p class="text-xs font-bold uppercase tracking-widest text-primary">Pemasukan Hari Ini</p>
-                    <p class="mt-2 font-headline text-3xl font-extrabold text-on-surface">Rp {{ number_format($penghasilanHariIni ?? 0, 0, ',', '.') }}</p>
-                    <p class="mt-1 text-xs text-on-surface-variant">Total dana dari transaksi hari ini.</p>
-                </div>
-                <span class="material-symbols-outlined rounded-xl bg-primary/10 p-3 text-3xl text-primary">trending_up</span>
-            </div>
-        </a>
-    </section>
-
     <div class="grid grid-cols-1 xl:grid-cols-12 gap-6">
-        <section class="xl:col-span-7 space-y-4">
+        <section class=" py-3 xl:col-span-7 space-y-4">
             <div class="flex items-center justify-between">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-primary">Informasi Utama</p>

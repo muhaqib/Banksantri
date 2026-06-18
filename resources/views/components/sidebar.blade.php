@@ -129,12 +129,13 @@
                 [
                     'label' => 'Keuangan',
                     'icon' => 'receipt_long',
-                    'active' => ['admin.transactions.*', 'admin.kas', 'admin.settlement', 'admin.topup'],
+                    'active' => ['admin.transactions.*', 'admin.kas', 'admin.settlement', 'admin.topup', 'admin.laundry-subscriptions.*'],
                     'children' => [
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.history', 'active' => 'admin.transactions.history', 'label' => 'Riwayat Eksekusi'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.transactions.topup', 'active' => 'admin.transactions.topup', 'label' => 'Top Up Saldo'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.topup', 'active' => 'admin.topup', 'label' => 'Verifikasi Top Up'],
-                        ['permission' => 'admin.finance.manage', 'route' => 'admin.settlement', 'active' => 'admin.settlement', 'label' => 'Settlement'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.settlement', 'active' => 'admin.settlement', 'label' => 'Penarikan Tunai'],
+                        ['permission' => 'admin.finance.manage', 'route' => 'admin.laundry-subscriptions.index', 'active' => 'admin.laundry-subscriptions.*', 'label' => 'Laundry Bulanan'],
                         ['permission' => 'admin.finance.manage', 'route' => 'admin.kas', 'active' => 'admin.kas', 'label' => 'Kas'],
                     ],
                 ],
@@ -192,10 +193,11 @@
                 [
                     'label' => 'Keuangan',
                     'icon' => 'payments',
-                    'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
+                    'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.laundry.*', 'petugas.riwayat', 'petugas.tarik-tunai'],
                     'children' => [
                         ['permission' => 'petugas.finance.dashboard', 'route' => 'petugas.finance-dashboard', 'active' => 'petugas.finance-dashboard', 'label' => 'Dashboard Keuangan'],
                         ['permission' => 'petugas.transactions.manage', 'route' => 'petugas.transaksi', 'active' => 'petugas.transaksi', 'label' => 'Transaksi'],
+                        ['permission' => 'petugas.transactions.manage', 'route' => 'petugas.laundry.index', 'active' => 'petugas.laundry.*', 'label' => 'Laundry'],
                         ['permission' => 'petugas.history.view', 'route' => 'petugas.riwayat', 'active' => 'petugas.riwayat', 'label' => 'Riwayat'],
                         ['permission' => 'petugas.withdrawals.manage', 'route' => 'petugas.tarik-tunai', 'active' => 'petugas.tarik-tunai', 'label' => 'Tarik Tunai'],
                     ],
