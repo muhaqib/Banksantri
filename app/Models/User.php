@@ -140,6 +140,21 @@ class User extends Authenticatable
         return $this->hasMany(SantriPermission::class, 'santri_id');
     }
 
+    public function healthRecords()
+    {
+        return $this->hasMany(SantriHealthRecord::class, 'santri_id');
+    }
+
+    public function violations()
+    {
+        return $this->hasMany(SantriViolation::class, 'santri_id');
+    }
+
+    public function laundrySubscriptions()
+    {
+        return $this->hasMany(LaundrySubscription::class, 'santri_id');
+    }
+
     public function verifyPin(string $pin): bool
     {
         if (! $this->pin) {

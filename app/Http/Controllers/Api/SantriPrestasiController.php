@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\PrestasiSantri;
+use App\Models\SantriViolation;
 use Illuminate\Http\Request;
 
 class SantriPrestasiController extends Controller
@@ -25,11 +26,13 @@ class SantriPrestasiController extends Controller
 
         $prestasiList = $query->get();
 
-        $totalPoin = $prestasiList->sum('poin');
+        $totalPenguranganPoin = SantriViolation::where('santri_id', $santri->id)->sum('pengurangan_point');
+        $totalPoin = max(0, $prestasiList->sum('poin') - $totalPenguranganPoin);
 
         return response()->json([
             'data' => $prestasiList->map(fn($prestasi) => $this->formatPrestasi($prestasi)),
             'total_poin' => $totalPoin,
+            'total_pengurangan_poin' => $totalPenguranganPoin,
         ]);
     }
 

@@ -40,6 +40,7 @@ class SantriPermissionController extends Controller
         return view('pages.permissions.form', [
             'permission' => null,
             'santriList' => $this->santriList(),
+            'approvers' => SantriPermission::APPROVERS,
             'activeRole' => $this->routePrefix($request),
             'routePrefix' => $this->routePrefix($request),
         ]);
@@ -69,6 +70,7 @@ class SantriPermissionController extends Controller
         return view('pages.permissions.form', [
             'permission' => $permission,
             'santriList' => $this->santriList(),
+            'approvers' => SantriPermission::APPROVERS,
             'activeRole' => $this->routePrefix($request),
             'routePrefix' => $this->routePrefix($request),
         ]);
@@ -116,13 +118,18 @@ class SantriPermissionController extends Controller
 
     private function validatePermission(Request $request): array
     {
-        return $request->validate([
+        $validated = $request->validate([
             'santri_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
             'start_date' => ['required', 'date'],
             'end_date' => ['required', 'date', 'after_or_equal:start_date'],
             'reason' => ['required', 'string', 'max:1000'],
             'notes' => ['nullable', 'string', 'max:1000'],
+            'approved_by' => ['nullable', 'string', Rule::in(SantriPermission::APPROVERS)],
         ]);
+
+        $validated['approved_by'] ??= SantriPermission::APPROVERS[0];
+
+        return $validated;
     }
 
     private function santriList()

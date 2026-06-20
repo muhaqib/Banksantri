@@ -5,7 +5,7 @@
 @section('content')
 <div x-data="profileSantri()" class="pb-20">
     <!-- Header -->
-    <header class="sanctuary-gradient text-white pt-12 pb-20 px-6 rounded-b-3xl shadow-xl shadow-primary/20">
+    <header class="sanctuary-gradient text-white pt-4 pb-20 px-6 rounded-b-3xl shadow-xl shadow-primary/20">
         <div class="flex items-center justify-between mb-6">
             <div class="flex items-center gap-3">
                 <a href="{{ route('santri.home') }}" class="p-2 hover:bg-white/10 rounded-lg transition-colors">

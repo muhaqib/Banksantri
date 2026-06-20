@@ -21,10 +21,17 @@ class PermissionRegistry
                 'santri.history.view' => 'Lihat riwayat santri',
                 'santri.topup.manage' => 'Ajukan top up santri',
             ],
+            'Laundry' => [
+                'admin.laundry.manage' => 'Kelola paket dan rincian laundry',
+                'petugas.laundry.manage' => 'Kelola transaksi laundry',
+                'petugas.laundry.history' => 'Lihat dashboard dan riwayat laundry',
+            ],
             'Data Pesantren' => [
                 'admin.santri.manage' => 'Kelola data santri',
                 'admin.petugas.manage' => 'Kelola data petugas',
                 'admin.kamar.manage' => 'Kelola data kamar',
+                'petugas.health.manage' => 'Kelola kesehatan santri',
+                'petugas.security.manage' => 'Kelola pelanggaran santri',
                 'admin.prestasi.manage' => 'Kelola prestasi santri',
                 'petugas.prestasi.manage' => 'Kelola prestasi santri',
                 'admin.attendance.dashboard' => 'Lihat dashboard kehadiran',
@@ -38,6 +45,8 @@ class PermissionRegistry
                 'petugas.attendance.monthly' => 'Lihat rekap bulanan absensi',
                 'petugas.permissions.manage' => 'Kelola perizinan santri',
                 'santri.prestasi.view' => 'Lihat prestasi santri',
+                'santri.health.view' => 'Lihat kesehatan santri',
+                'santri.security.view' => 'Lihat keamanan santri',
             ],
             'Publikasi' => [
                 'admin.blog.manage' => 'Kelola blog dan artikel',
@@ -84,6 +93,8 @@ class PermissionRegistry
                 'santri.profile.manage',
                 'santri.topup.manage',
                 'santri.prestasi.view',
+                'santri.health.view',
+                'santri.security.view',
             ],
         ];
     }
@@ -93,10 +104,14 @@ class PermissionRegistry
         return [
             'petugas.dashboard.view',
             'petugas.transactions.manage',
+            'petugas.laundry.manage',
+            'petugas.laundry.history',
             'petugas.finance.dashboard',
             'petugas.history.view',
             'petugas.withdrawals.manage',
             'petugas.prestasi.manage',
+            'petugas.health.manage',
+            'petugas.security.manage',
             'petugas.attendance.dashboard',
             'petugas.attendance.rfid',
             'petugas.attendance.manual',

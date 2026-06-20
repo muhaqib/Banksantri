@@ -1,14 +1,20 @@
 @extends('layouts.app')
 
-@section('title', $permission ? 'Edit Perizinan' : 'Buat Perizinan')
-@section('header-title', $permission ? 'Edit Perizinan' : 'Buat Perizinan')
+@section('title', $violation ? 'Edit Pelanggaran' : 'Input Pelanggaran')
+@section('header-title', $violation ? 'Edit Pelanggaran' : 'Input Pelanggaran')
 
 @section('content')
-<div class="mx-auto max-w-3xl" x-data="permissionSantriSearch()" x-init="init()">
-    <div class="mb-6"><p class="text-sm font-bold text-primary">Tanpa proses persetujuan</p><h1 class="font-headline text-3xl font-black">{{ $permission ? 'Edit Perizinan Santri' : 'Buat Perizinan Santri' }}</h1><p class="text-sm text-on-surface-variant">Setelah disimpan, status absensi santri otomatis dianggap izin selama periode berikut.</p></div>
-    <form method="POST" action="{{ $permission ? route($routePrefix.'.permissions.update', $permission) : route($routePrefix.'.permissions.store') }}" class="space-y-5 rounded-2xl bg-surface-container-lowest p-6 shadow-sm">
+<div class="mx-auto max-w-3xl" x-data="securitySantriSearch()" x-init="init()">
+    <div class="mb-6">
+        <p class="text-sm font-bold text-primary">Keamanan Santri</p>
+        <h1 class="font-headline text-3xl font-black">{{ $violation ? 'Edit Pelanggaran Santri' : 'Input Pelanggaran Santri' }}</h1>
+        <p class="text-sm text-on-surface-variant">Pengurangan poin akan memengaruhi total poin prestasi santri.</p>
+    </div>
+
+    <form method="POST" action="{{ $violation ? route('petugas.security.update', $violation) : route('petugas.security.store') }}" class="space-y-5 rounded-2xl bg-surface-container-lowest p-6 shadow-sm">
         @csrf
-        @if($permission) @method('PUT') @endif
+        @if($violation) @method('PUT') @endif
+
         <div>
             <label class="block text-sm font-bold">Santri</label>
             <div class="relative mt-2" @click.outside="dropdownOpen = false">
@@ -40,27 +46,39 @@
             </div>
             @error('santri_id') <p class="text-error text-xs mt-2">{{ $message }}</p> @enderror
         </div>
-        <div class="grid gap-4 md:grid-cols-2">
-            <label class="text-sm font-bold">Tanggal Izin<input type="date" name="start_date" required value="{{ old('start_date', $permission?->start_date?->toDateString() ?? today()->toDateString()) }}" class="input-field mt-2"></label>
-            <label class="text-sm font-bold">Batas Akhir Izin<input type="date" name="end_date" required value="{{ old('end_date', $permission?->end_date?->toDateString() ?? today()->toDateString()) }}" class="input-field mt-2"></label>
-        </div>
-        <label class="block text-sm font-bold">Alasan<textarea name="reason" required rows="4" class="input-field mt-2" placeholder="Tuliskan alasan izin secara lengkap">{{ old('reason', $permission?->reason) }}</textarea></label>
-        <label class="block text-sm font-bold">Yang Mengizinkan
-            <select name="approved_by" required class="input-field mt-2">
-                <option value="">Pilih yang mengizinkan</option>
-                @foreach($approvers as $approver)
-                    <option value="{{ $approver }}" @selected(old('approved_by', $permission?->approved_by) === $approver)>{{ $approver }}</option>
-                @endforeach
-            </select>
+
+        <label class="block text-sm font-bold">Jenis Pelanggaran
+            <input name="jenis_pelanggaran" required value="{{ old('jenis_pelanggaran', $violation?->jenis_pelanggaran) }}" class="input-field mt-2" placeholder="Contoh: Terlambat kembali ke pondok">
         </label>
-        <label class="block text-sm font-bold">Catatan Tambahan<textarea name="notes" rows="3" class="input-field mt-2">{{ old('notes', $permission?->notes) }}</textarea></label>
-        @if($errors->any())<div class="rounded-xl bg-error-container p-4 text-sm text-on-error-container">@foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach</div>@endif
-        <div class="flex justify-end gap-3"><a href="{{ route($routePrefix.'.permissions.index') }}" class="btn-secondary">Batal</a><button class="btn-primary"><span class="material-symbols-outlined">save</span> {{ $permission ? 'Simpan Perubahan' : 'Simpan & Cetak Izin' }}</button></div>
+
+        <div class="grid gap-4 md:grid-cols-2">
+            <label class="text-sm font-bold">Waktu
+                <input type="datetime-local" name="waktu" required value="{{ old('waktu', $violation?->waktu?->format('Y-m-d\TH:i') ?? now()->format('Y-m-d\TH:i')) }}" class="input-field mt-2">
+            </label>
+            <label class="text-sm font-bold">Pengurangan Point
+                <input type="number" name="pengurangan_point" required min="1" max="10" value="{{ old('pengurangan_point', $violation?->pengurangan_point ?? 1) }}" class="input-field mt-2">
+            </label>
+        </div>
+
+        <label class="block text-sm font-bold">Keterangan
+            <textarea name="keterangan" rows="4" class="input-field mt-2" placeholder="Tuliskan kronologi atau catatan tambahan">{{ old('keterangan', $violation?->keterangan) }}</textarea>
+        </label>
+
+        @if($errors->any())
+            <div class="rounded-xl bg-error-container p-4 text-sm text-on-error-container">
+                @foreach($errors->all() as $error)<p>{{ $error }}</p>@endforeach
+            </div>
+        @endif
+
+        <div class="flex justify-end gap-3">
+            <a href="{{ route('petugas.security.index') }}" class="btn-secondary">Batal</a>
+            <button class="btn-primary"><span class="material-symbols-outlined">save</span> {{ $violation ? 'Simpan Perubahan' : 'Simpan Pelanggaran' }}</button>
+        </div>
     </form>
 </div>
 
 <script>
-function permissionSantriSearch() {
+function securitySantriSearch() {
     return {
         santriList: @js($santriList->map(fn ($santri) => [
             'id' => $santri->id,
@@ -69,7 +87,7 @@ function permissionSantriSearch() {
             'kamar' => $santri->kamarSantri?->kamar ? ucwords(str_replace('_', ' ', $santri->kamarSantri->kamar)) : 'Tanpa kamar',
             'meta' => ($santri->nis ?? '-') . ' - ' . ($santri->kamarSantri?->kamar ? ucwords(str_replace('_', ' ', $santri->kamarSantri->kamar)) : 'Tanpa kamar'),
         ])->values()),
-        selectedSantriId: @js((string) old('santri_id', $permission?->santri_id ?? '')),
+        selectedSantriId: @js((string) old('santri_id', $violation?->santri_id ?? '')),
         search: '',
         dropdownOpen: false,
 

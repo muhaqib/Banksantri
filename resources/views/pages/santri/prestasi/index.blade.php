@@ -6,7 +6,10 @@
 <div class="pb-24">
     <!-- TopAppBar -->
     <header class="w-full pt-4 pb-2 flex items-center justify-between px-5 sticky top-0 z-40 bg-surface">
-        <div class="flex items-center gap-3">
+        <a href="{{ route('santri.home') }}" class="w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center transition-colors shrink-0">
+                    <span class="material-symbols-outlined text-primary">arrow_back</span>
+                </a>
+    <!-- <div class="flex items-center gap-3">
             
             <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center ring-4 ring-white/30">
                     @if(auth()->user()->foto)
@@ -19,7 +22,7 @@
                 <span class="block text-xs font-medium text-on-surface-variant opacity-70">Assalamu'alaikum,</span>
                 <h1 class="font-headline text-xl font-bold tracking-tight text-primary">{{ auth()->user()->name ?? 'Santri' }}</h1>
             </div>
-        </div>
+        </div> -->
         <div class="flex items-center gap-4">
             <button class="relative hover:opacity-80 transition-opacity">
                 <span class="material-symbols-outlined text-primary">notifications</span>
@@ -34,7 +37,7 @@
             <div class="flex justify-between items-start mb-6">
                 <div>
                     <h2 class="font-headline text-2xl font-extrabold tracking-tight">Prestasi Santri</h2>
-                    <p class="text-primary-fixed text-sm opacity-80 mt-1">Pencapaian Kurikulum Kitab</p>
+                    <p class="text-primary-fixed text-sm opacity-80 mt-1">{{ auth()->user()->name ?? 'Santri' }}</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md rounded-xl p-2">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">military_tech</span>
@@ -44,6 +47,9 @@
                 <span class="text-5xl font-headline font-extrabold">{{ number_format($totalPoin, 0, ',', '.') }}</span>
                 <span class="text-primary-fixed text-lg font-bold ml-2 mb-1.5">Poin</span>
             </div>
+            @if(($totalPenguranganPoin ?? 0) > 0)
+                <p class="mt-3 text-xs font-semibold text-primary-fixed">Sudah dikurangi {{ number_format($totalPenguranganPoin, 0, ',', '.') }} poin pelanggaran.</p>
+            @endif
         </section>
 
         <!-- Kitab List -->

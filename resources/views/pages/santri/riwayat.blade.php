@@ -9,7 +9,7 @@
     'currentKategori' => $currentKategori ?? 'all'
 ]) }})" class="pb-24">
     <!-- Header -->
-    <header class="w-full pt-12 pb-6 px-5 sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
+    <header class="w-full pt-4 pb-6 px-5 sticky top-0 z-40 bg-surface/80 backdrop-blur-md">
         <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
                 <a href="{{ route('santri.home') }}" class="p-2 hover:bg-surface-container-low rounded-full transition-colors">

@@ -3,9 +3,11 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\LaundryCloth;
 use App\Models\LaundrySubscription;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
 
 class LaundrySubscriptionController extends Controller
@@ -26,6 +28,7 @@ class LaundrySubscriptionController extends Controller
                 ->paginate(15)
                 ->withQueryString(),
             'santriList' => User::activeSantri()->orderBy('name')->get(['id', 'name', 'nis']),
+            'clothes' => LaundryCloth::orderBy('sort_order')->orderBy('label')->get(),
         ]);
     }
 
@@ -49,7 +52,7 @@ class LaundrySubscriptionController extends Controller
             [
                 'created_by' => $request->user()->id,
                 'monthly_fee' => $validated['monthly_fee'],
-                'quota_kg' => $validated['quota_kg'] ?? 20,
+                'quota_kg' => $validated['quota_kg'] ?? 12,
                 'status' => 'active',
                 'notes' => $validated['notes'] ?? null,
             ]
@@ -58,5 +61,51 @@ class LaundrySubscriptionController extends Controller
         return redirect()
             ->route('admin.laundry-subscriptions.index', ['month' => $validated['month'], 'year' => $validated['year']])
             ->with('success', 'Pendaftaran laundry bulanan berhasil disimpan.');
+    }
+
+    public function storeCloth(Request $request)
+    {
+        $validated = $request->validate([
+            'label' => ['required', 'string', 'max:80'],
+            'icon' => ['nullable', 'string', 'max:50'],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
+        ]);
+
+        $baseKey = Str::slug($validated['label'], '_');
+        $key = $baseKey;
+        $suffix = 2;
+
+        while (LaundryCloth::where('key', $key)->exists()) {
+            $key = $baseKey.'_'.$suffix++;
+        }
+
+        LaundryCloth::create([
+            'key' => $key,
+            'label' => $validated['label'],
+            'icon' => $validated['icon'] ?: 'checkroom',
+            'sort_order' => $validated['sort_order'] ?? 100,
+            'is_active' => true,
+        ]);
+
+        return back()->with('success', 'Rincian baju berhasil ditambahkan.');
+    }
+
+    public function updateCloth(Request $request, LaundryCloth $cloth)
+    {
+        $validated = $request->validate([
+            'label' => ['required', 'string', 'max:80'],
+            'icon' => ['nullable', 'string', 'max:50'],
+            'sort_order' => ['nullable', 'integer', 'min:0', 'max:999'],
+            'is_active' => ['nullable', 'boolean'],
+        ]);
+
+        $cloth->update([
+            'label' => $validated['label'],
+            'icon' => $validated['icon'] ?: 'checkroom',
+            'sort_order' => $validated['sort_order'] ?? 100,
+            'is_active' => $request->boolean('is_active'),
+        ]);
+
+        return back()->with('success', 'Rincian baju berhasil diperbarui.');
     }
 }

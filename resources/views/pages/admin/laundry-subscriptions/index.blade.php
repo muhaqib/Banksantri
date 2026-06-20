@@ -8,7 +8,7 @@
     <header class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
             <h2 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Pendaftaran Laundry Bulanan</h2>
-            <p class="mt-1 text-sm text-on-surface-variant">Top up paket laundry khusus bulanan tanpa mengubah saldo santri.</p>
+            <p class="mt-1 text-sm text-on-surface-variant">Paket laundry khusus bulanan tanpa mengubah saldo santri.</p>
         </div>
     </header>
 
@@ -51,7 +51,7 @@
                     @error('monthly_fee') <span class="mt-1 block text-xs text-error">{{ $message }}</span> @enderror
                 </label>
                 <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Kuota Kg
-                    <input type="number" name="quota_kg" value="{{ old('quota_kg', 20) }}" min="1" max="99" step="0.1" class="input-field mt-2">
+                    <input type="number" name="quota_kg" value="{{ old('quota_kg', 12) }}" min="1" max="99" step="0.1" class="input-field mt-2">
                     @error('quota_kg') <span class="mt-1 block text-xs text-error">{{ $message }}</span> @enderror
                 </label>
             </div>
@@ -120,5 +120,72 @@
             @endif
         </section>
     </div>
+
+    <section class="rounded-xl bg-surface-container-lowest shadow-sm">
+        <div class="border-b border-surface-container p-6">
+            <h3 class="font-headline text-lg font-bold text-primary">Master Rincian Baju</h3>
+            <p class="mt-1 text-xs text-on-surface-variant">Item aktif akan muncul di form transaksi laundry petugas.</p>
+        </div>
+        <div class="grid grid-cols-1 gap-6 p-6 xl:grid-cols-12">
+            <form action="{{ route('admin.laundry-clothes.store') }}" method="POST" class="space-y-4 xl:col-span-4">
+                @csrf
+                <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Nama Item
+                    <input name="label" value="{{ old('label') }}" required class="input-field mt-2" placeholder="Contoh: Selimut">
+                </label>
+                <div class="grid grid-cols-2 gap-4">
+                    <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Icon
+                        <input name="icon" value="{{ old('icon', 'checkroom') }}" class="input-field mt-2">
+                    </label>
+                    <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Urutan
+                        <input type="number" name="sort_order" value="{{ old('sort_order', 100) }}" min="0" max="999" class="input-field mt-2">
+                    </label>
+                </div>
+                <button class="w-full rounded-xl bg-primary py-3 font-headline font-bold text-on-primary">Tambah Rincian</button>
+            </form>
+
+            <div class="xl:col-span-8 overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-surface-container-high/50 text-[10px] font-black uppercase tracking-widest text-on-surface-variant">
+                        <tr>
+                            <th class="px-4 py-3">Item</th>
+                            <th class="px-4 py-3">Icon</th>
+                            <th class="px-4 py-3">Urutan</th>
+                            <th class="px-4 py-3">Aktif</th>
+                            <th class="px-4 py-3"></th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/10">
+                        @foreach($clothes as $cloth)
+                            <tr>
+                                <form action="{{ route('admin.laundry-clothes.update', $cloth) }}" method="POST">
+                                    @csrf
+                                    @method('PATCH')
+                                    <td class="px-4 py-3">
+                                        <input name="label" value="{{ $cloth->label }}" required class="input-field h-10">
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <input name="icon" value="{{ $cloth->icon }}" class="input-field h-10">
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <input type="number" name="sort_order" value="{{ $cloth->sort_order }}" min="0" max="999" class="input-field h-10 w-24">
+                                    </td>
+                                    <td class="px-4 py-3">
+                                        <input type="hidden" name="is_active" value="0">
+                                        <label class="inline-flex items-center gap-2 text-xs font-bold text-on-surface-variant">
+                                            <input type="checkbox" name="is_active" value="1" @checked($cloth->is_active) class="rounded border-outline-variant text-primary">
+                                            Aktif
+                                        </label>
+                                    </td>
+                                    <td class="px-4 py-3 text-right">
+                                        <button class="rounded-lg bg-surface-container-high px-3 py-2 text-xs font-bold text-on-surface">Simpan</button>
+                                    </td>
+                                </form>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </section>
 </div>
 @endsection

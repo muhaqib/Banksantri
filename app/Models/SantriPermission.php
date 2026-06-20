@@ -9,6 +9,11 @@ class SantriPermission extends Model
 {
     use HasFactory;
 
+    public const APPROVERS = [
+        "Mudirul Ma'had",
+        'Ustadz Muhtadi',
+    ];
+
     protected $fillable = [
         'permission_number',
         'santri_id',
@@ -17,6 +22,7 @@ class SantriPermission extends Model
         'end_date',
         'reason',
         'notes',
+        'approved_by',
         'created_by',
     ];
 

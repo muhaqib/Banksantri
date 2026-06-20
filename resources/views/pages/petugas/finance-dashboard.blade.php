@@ -6,9 +6,8 @@
 @section('content')
 <div x-data="petugasDashboard()">
     <div class="mb-6">
-        <p class="text-xs font-bold uppercase tracking-widest text-primary">Keuangan</p>
-        <h2 class="font-headline font-extrabold text-3xl text-on-surface">Dashboard Keuangan Petugas</h2>
-        <p class="text-sm text-on-surface-variant mt-1">Ringkasan saldo dan aktivitas transaksi sesuai akses Anda.</p>
+        <h2 class="font-headline font-extrabold text-3xl text-on-surface">Dashboard Keuangan</h2>
+        <p class="text-sm text-on-surface-variant mt-1">Ringkasan saldo dan aktivitas transaksi.</p>
     </div>
     <!-- Hero Layout: Bento Grid Style -->
     <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
@@ -25,10 +24,6 @@
                             <p class="text-xs text-primary-fixed-dim">ID: {{ auth()->user()->id ?? '-' }}</p>
                         </div>
                     </div>
-                    <a href="{{ route('petugas.transaksi') }}" class="bg-white text-primary px-6 py-3 rounded-xl font-bold shadow-lg hover:shadow-xl active:scale-95 transition-all flex items-center gap-2">
-                        <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add</span>
-                        <span>Transaksi Baru</span>
-                    </a>
                 </div>
                 
                 <p class="text-primary-fixed font-medium mb-1 opacity-90">Saldo Digital Anda </p>
@@ -84,7 +79,7 @@
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-on-tertiary-container font-bold mb-1">Tarik Tunai</p>
-                        <p class="text-sm text-on-tertiary-container/80">Convert to physical cash</p>
+                        <p class="text-sm text-on-tertiary-container/80">Tarik dana tunai dari saldo</p>
                     </div>
                     <span class="material-symbols-outlined text-tertiary transition-transform group-hover:translate-x-1">download</span>
                 </div>
@@ -123,7 +118,7 @@
     <!-- Recent Transactions -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
-            <h3 class="font-headline font-bold text-xl text-primary">Recent Transactions</h3>
+            <h3 class="font-headline font-bold text-xl text-primary">Riwayat Transaksi</h3>
             <a href="{{ route('petugas.riwayat') }}" class="text-xs font-bold text-primary hover:underline">View All</a>
         </div>
         <div class="divide-y divide-outline-variant/10">

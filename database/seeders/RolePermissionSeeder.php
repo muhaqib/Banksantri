@@ -34,13 +34,23 @@ class RolePermissionSeeder extends Seeder
                     $user->givePermissionTo([
                         'petugas.dashboard.view',
                         'petugas.prestasi.manage',
+                        'petugas.health.manage',
+                        'petugas.security.manage',
                     ]);
                     if ($user->hasAnyPermission([
                         'petugas.transactions.manage',
                         'petugas.history.view',
                         'petugas.withdrawals.manage',
+                        'petugas.laundry.manage',
+                        'petugas.laundry.history',
                     ])) {
                         $user->givePermissionTo('petugas.finance.dashboard');
+                    }
+                    if ($user->jabatan === 'Petugas Laundry' || $user->hasPermissionTo('petugas.transactions.manage')) {
+                        $user->givePermissionTo([
+                            'petugas.laundry.manage',
+                            'petugas.laundry.history',
+                        ]);
                     }
                     if ($user->hasPermissionTo('petugas.attendance.manage')) {
                         $user->givePermissionTo([

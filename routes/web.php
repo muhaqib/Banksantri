@@ -19,15 +19,20 @@ use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
 use App\Http\Controllers\KitabController;
 use App\Http\Controllers\Petugas\DashboardController as PetugasDashboardController;
+use App\Http\Controllers\Petugas\HealthRecordController as PetugasHealthRecordController;
 use App\Http\Controllers\Petugas\LaundryController;
 use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use App\Http\Controllers\Petugas\RiwayatController as PetugasRiwayatController;
+use App\Http\Controllers\Petugas\SecurityViolationController as PetugasSecurityViolationController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
 use App\Http\Controllers\Petugas\TransaksiController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
+use App\Http\Controllers\Santri\HealthController as SantriHealthController;
+use App\Http\Controllers\Santri\PermissionController as SantriPermissionHistoryController;
 use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
+use App\Http\Controllers\Santri\SecurityController as SantriSecurityController;
 use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use App\Http\Controllers\SantriPermissionController;
 use Illuminate\Support\Facades\Route;
@@ -102,8 +107,12 @@ Route::middleware('auth')->group(function () {
         Route::get('/settlement', [SettlementController::class, 'index'])->middleware('permission:admin.finance.manage')->name('settlement');
         Route::patch('/settlement/{id}/approve', [SettlementController::class, 'approve'])->middleware('permission:admin.finance.manage')->name('settlement.approve');
         Route::patch('/settlement/{id}/reject', [SettlementController::class, 'reject'])->middleware('permission:admin.finance.manage')->name('settlement.reject');
-        Route::get('/laundry-subscriptions', [LaundrySubscriptionController::class, 'index'])->middleware('permission:admin.finance.manage')->name('laundry-subscriptions.index');
-        Route::post('/laundry-subscriptions', [LaundrySubscriptionController::class, 'store'])->middleware('permission:admin.finance.manage')->name('laundry-subscriptions.store');
+        Route::middleware('permission:admin.laundry.manage')->group(function () {
+            Route::get('/laundry-subscriptions', [LaundrySubscriptionController::class, 'index'])->name('laundry-subscriptions.index');
+            Route::post('/laundry-subscriptions', [LaundrySubscriptionController::class, 'store'])->name('laundry-subscriptions.store');
+            Route::post('/laundry-clothes', [LaundrySubscriptionController::class, 'storeCloth'])->name('laundry-clothes.store');
+            Route::patch('/laundry-clothes/{cloth}', [LaundrySubscriptionController::class, 'updateCloth'])->name('laundry-clothes.update');
+        });
 
         // Admin Transactions
         Route::middleware('permission:admin.finance.manage')->group(function () {
@@ -174,9 +183,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
-        Route::get('/laundry', [LaundryController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('laundry.index');
-        Route::post('/laundry/scan', [LaundryController::class, 'scan'])->middleware('permission:petugas.transactions.manage')->name('laundry.scan');
-        Route::post('/laundry', [LaundryController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('laundry.store');
+        Route::middleware('permission:petugas.laundry.manage')->group(function () {
+            Route::get('/laundry', [LaundryController::class, 'index'])->name('laundry.index');
+            Route::post('/laundry/scan', [LaundryController::class, 'scan'])->name('laundry.scan');
+            Route::get('/laundry/search', [LaundryController::class, 'search'])->name('laundry.search');
+            Route::post('/laundry', [LaundryController::class, 'store'])->name('laundry.store');
+            Route::get('/laundry/{laundryTransaction}/receipt', [LaundryController::class, 'receipt'])->name('laundry.receipt');
+        });
+        Route::get('/laundry-history', [LaundryController::class, 'history'])->middleware('permission:petugas.laundry.history')->name('laundry.history');
+        Route::resource('health', PetugasHealthRecordController::class)->middleware('permission:petugas.health.manage')->except(['show']);
+        Route::resource('security', PetugasSecurityViolationController::class)->middleware('permission:petugas.security.manage')->except(['show']);
         Route::get('/riwayat', [PetugasRiwayatController::class, 'index'])->middleware('permission:petugas.history.view')->name('riwayat');
         Route::get('/tarik-tunai', [TarikTunaiController::class, 'index'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai');
         Route::post('/tarik-tunai', [TarikTunaiController::class, 'store'])->middleware('permission:petugas.withdrawals.manage')->name('tarik-tunai.store');
@@ -210,6 +226,9 @@ Route::middleware('auth')->group(function () {
     Route::prefix('santri')->name('santri.')->middleware('role:santri')->group(function () {
         Route::get('/home', [SantriDashboardController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('home');
         Route::get('/riwayat', [SantriRiwayatController::class, 'index'])->middleware('permission:santri.history.view')->name('riwayat');
+        Route::get('/permissions', [SantriPermissionHistoryController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('permissions.index');
+        Route::get('/health', [SantriHealthController::class, 'index'])->middleware('permission:santri.health.view')->name('health.index');
+        Route::get('/security', [SantriSecurityController::class, 'index'])->middleware('permission:santri.security.view')->name('security.index');
         Route::get('/profile', [SantriProfileController::class, 'index'])->middleware('permission:santri.profile.manage')->name('profile');
         Route::post('/change-pin', [SantriProfileController::class, 'changePin'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('change-pin');
         Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('profile.email');

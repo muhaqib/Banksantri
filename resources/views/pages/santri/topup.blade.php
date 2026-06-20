@@ -17,7 +17,7 @@
 
         @unless(auth()->user()->isAlumni())
         <section x-data="copyRekening()" class="space-y-3">
-    <h2 class="font-headline font-bold text-primary tracking-tight px-1">
+    <h2 class="font-headline font-bold text-surface tracking-tight px-1">
         Tujuan Transfer
     </h2>
 
@@ -30,7 +30,7 @@
         <div class="flex items-center gap-3 mb-6">
             <div class="w-12 h-12 bg-surface-container-low rounded-xl flex items-center justify-center">
                 <img class="w-8 h-auto object-contain"
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuBMMvjWQUqgCzDFdLv5G5WxpPN-ykKw1RSWZ8NwcJs8RWnr2aOLdfTfOF2C_zAdaMuOAuqIoZLK6vndDBob7Uj_PVRMSPjVUQBwmBWMRSYCZN3ktBAV5cDO_gpJjRn7E8oM__aGYFPxw1th7QI7ijoMCKJwgmnPV74BK9roYlnn0E8V73dRP9m69GDjPSE5Z80Xva-m1ZWQz7Q1758Jihz221CgJHH9vzTdPNqNv1wfNSh7J9kNEzjxuXaigpb6Ysqkw9IdoocQgoTo"
+                    src="{{ asset('images/bsi.webp') }}"
                     alt="BSI Logo">
             </div>
 
@@ -240,7 +240,7 @@
 
 function copyRekening() {
     return {
-        rekening: "712 888 2026",
+        rekening: "733 930 6308",
         copied: false,
         showToast: false,
 

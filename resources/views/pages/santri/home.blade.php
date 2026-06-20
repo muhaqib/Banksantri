@@ -111,13 +111,13 @@
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tanya Ustadz</span>
                 </a>
                 @endunless
-                <a href="#" class="flex flex-col items-center gap-2 group">
+                <a href="{{ route('santri.permissions.index') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">handshake</span>
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Perizinan</span>
                 </a>
-                <a href="#" class="flex flex-col items-center gap-2 group">
+                <a href="{{ route('santri.security.index') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">local_police</span>
                     </div>
@@ -129,7 +129,7 @@
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Tarbiyah</span>
                 </a>
-                <a href="#" class="flex flex-col items-center gap-2 group">
+                <a href="{{ route('santri.health.index') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">Digital_Wellbeing</span>
                     </div>

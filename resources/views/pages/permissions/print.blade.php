@@ -10,6 +10,7 @@
             ? 'data:image/png;base64,'.base64_encode(file_get_contents($logoPath))
             : asset('images/logo.png');
         $phone = $permission->santri->no_hp ?? $permission->santri->no_hp_wali ?? '-';
+        $approver = $permission->approved_by ?? "Mudirul Ma'had";
     @endphp
     <style>
         * {
@@ -80,7 +81,7 @@
 
         .school {
             margin-top: 1.5mm;
-            font-size: 14pt;
+            font-size: 12pt;
             font-weight: 900;
             text-transform: uppercase;
         }
@@ -249,7 +250,7 @@
             <div>
                 <div class="title">Kartu Izin Santri</div>
                 <div class="school">Pondok Pesantren Mambaul Hikmah</div>
-                <div class="address">Alamat: Jl Kh Muhammad Barmawi, Tegalwangi - Talang - Tegal. No Whatsapp +62 813-9375-0612.</div>
+                <div class="address">Alamat: Jl Kh Muhammad Barmawi, Tegalwangi - Talang - Tegal. www.mambaulhikmah.com</div>
             </div>
             <div class="permit-number">
                 <span>Nomor Izin</span>
@@ -292,7 +293,7 @@
                 </tr>
                 <tr>
                     <th>Mengizinkan</th>
-                    <td>{{ $permission->creator?->name ?? '-' }} ({{ ucfirst($permission->creator?->role ?? '-') }})</td>
+                    <td>{{ $approver }}</td>
                 </tr>
             </table>
         </section>
@@ -309,15 +310,15 @@
 
         <section class="signatures">
             <div>
-                <div>Santri / Wali Santri,</div>
+                <div>Yang Mengizinkan,</div>
                 <div class="signature-space"></div>
-                <div class="signature-name">{{ $permission->santri->name }}</div>
+                <div class="signature-name">{{ $approver }}</div>
             </div>
             <div>
                 <div>Tegal, {{ $permission->created_at->translatedFormat('d F Y') }}</div>
                 <div class="signature-space"></div>
                 <div class="signature-name">{{ $permission->creator?->name ?? 'Petugas/Admin' }}</div>
-                <div>Yang Mengizinkan</div>
+                <div>Petugas</div>
             </div>
         </section>
 

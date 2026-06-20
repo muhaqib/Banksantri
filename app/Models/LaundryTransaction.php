@@ -11,7 +11,9 @@ class LaundryTransaction extends Model
         'santri_id',
         'petugas_id',
         'laundry_subscription_id',
+        'transaction_id',
         'payment_type',
+        'payment_method',
         'laundry_date',
         'weight_kg',
         'price_per_kg',
@@ -23,6 +25,7 @@ class LaundryTransaction extends Model
 
     protected $casts = [
         'laundry_date' => 'date',
+        'payment_method' => 'string',
         'weight_kg' => 'decimal:2',
         'price_per_kg' => 'integer',
         'total_price' => 'integer',
@@ -43,5 +46,10 @@ class LaundryTransaction extends Model
     public function subscription(): BelongsTo
     {
         return $this->belongsTo(LaundrySubscription::class, 'laundry_subscription_id');
+    }
+
+    public function transaction(): BelongsTo
+    {
+        return $this->belongsTo(Transaction::class);
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Santri;
 
 use App\Http\Controllers\Controller;
 use App\Models\PrestasiSantri;
+use App\Models\SantriViolation;
 use Illuminate\Http\Request;
 
 class PrestasiController extends Controller
@@ -19,11 +20,13 @@ class PrestasiController extends Controller
             ->orderBy('created_at', 'desc')
             ->get();
 
-        $totalPoin = $prestasiList->sum('poin');
+        $totalPenguranganPoin = SantriViolation::where('santri_id', $santri->id)->sum('pengurangan_point');
+        $totalPoin = max(0, $prestasiList->sum('poin') - $totalPenguranganPoin);
 
         return view('pages.santri.prestasi.index', [
             'prestasiList' => $prestasiList,
             'totalPoin' => $totalPoin,
+            'totalPenguranganPoin' => $totalPenguranganPoin,
         ]);
     }
 
