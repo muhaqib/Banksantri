@@ -150,6 +150,11 @@ class User extends Authenticatable
         return $this->hasMany(SantriViolation::class, 'santri_id');
     }
 
+    public function tarbiyahGrades()
+    {
+        return $this->hasMany(TarbiyahGrade::class, 'santri_id');
+    }
+
     public function laundrySubscriptions()
     {
         return $this->hasMany(LaundrySubscription::class, 'santri_id');

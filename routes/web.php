@@ -12,6 +12,7 @@ use App\Http\Controllers\Admin\PrestasiSantriController as AdminPrestasiSantriCo
 use App\Http\Controllers\Admin\ProfileController as AdminProfileController;
 use App\Http\Controllers\Admin\SantriController;
 use App\Http\Controllers\Admin\SettlementController;
+use App\Http\Controllers\Admin\TarbiyahSubjectController as AdminTarbiyahSubjectController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
 use App\Http\Controllers\AttendanceController;
@@ -24,6 +25,7 @@ use App\Http\Controllers\Petugas\LaundryController;
 use App\Http\Controllers\Petugas\ProfileController as PetugasProfileController;
 use App\Http\Controllers\Petugas\RiwayatController as PetugasRiwayatController;
 use App\Http\Controllers\Petugas\SecurityViolationController as PetugasSecurityViolationController;
+use App\Http\Controllers\Petugas\TarbiyahGradeController as PetugasTarbiyahGradeController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
 use App\Http\Controllers\Petugas\TransaksiController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
@@ -33,6 +35,7 @@ use App\Http\Controllers\Santri\PrestasiController as SantriPrestasiController;
 use App\Http\Controllers\Santri\ProfileController as SantriProfileController;
 use App\Http\Controllers\Santri\RiwayatController as SantriRiwayatController;
 use App\Http\Controllers\Santri\SecurityController as SantriSecurityController;
+use App\Http\Controllers\Santri\TarbiyahController as SantriTarbiyahController;
 use App\Http\Controllers\Santri\TopUpController as SantriTopUpController;
 use App\Http\Controllers\SantriPermissionController;
 use Illuminate\Support\Facades\Route;
@@ -139,6 +142,12 @@ Route::middleware('auth')->group(function () {
             Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
+        Route::middleware('permission:admin.tarbiyah.manage')->group(function () {
+            Route::get('/tarbiyah/subjects', [AdminTarbiyahSubjectController::class, 'index'])->name('tarbiyah.subjects.index');
+            Route::post('/tarbiyah/subjects', [AdminTarbiyahSubjectController::class, 'store'])->name('tarbiyah.subjects.store');
+            Route::patch('/tarbiyah/subjects/{subject}', [AdminTarbiyahSubjectController::class, 'update'])->name('tarbiyah.subjects.update');
+            Route::delete('/tarbiyah/subjects/{subject}', [AdminTarbiyahSubjectController::class, 'destroy'])->name('tarbiyah.subjects.destroy');
+        });
 
         Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('permission:admin.attendance.rfid')->name('attendance.index');
         Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:admin.attendance.rfid')->name('attendance.rfid');
@@ -202,6 +211,13 @@ Route::middleware('auth')->group(function () {
             Route::get('prestasi/{prestasi}/modal-data', [AdminPrestasiSantriController::class, 'getModalData'])->name('prestasi.modal-data');
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
+        Route::middleware('permission:petugas.tarbiyah.manage')->group(function () {
+            Route::get('/tarbiyah', [PetugasTarbiyahGradeController::class, 'index'])->name('tarbiyah.index');
+            Route::post('/tarbiyah', [PetugasTarbiyahGradeController::class, 'store'])->name('tarbiyah.store');
+            Route::post('/tarbiyah/import', [PetugasTarbiyahGradeController::class, 'import'])->name('tarbiyah.import');
+            Route::get('/tarbiyah/template', [PetugasTarbiyahGradeController::class, 'template'])->name('tarbiyah.template');
+            Route::post('/tarbiyah/promote', [PetugasTarbiyahGradeController::class, 'promote'])->name('tarbiyah.promote');
+        });
 
         Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('permission:petugas.attendance.rfid')->name('attendance.index');
         Route::get('/attendance/rfid', [AttendanceController::class, 'rfid'])->middleware('permission:petugas.attendance.rfid')->name('attendance.rfid');
@@ -229,6 +245,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/permissions', [SantriPermissionHistoryController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('permissions.index');
         Route::get('/health', [SantriHealthController::class, 'index'])->middleware('permission:santri.health.view')->name('health.index');
         Route::get('/security', [SantriSecurityController::class, 'index'])->middleware('permission:santri.security.view')->name('security.index');
+        Route::get('/tarbiyah', [SantriTarbiyahController::class, 'index'])->middleware('permission:santri.tarbiyah.view')->name('tarbiyah.index');
         Route::get('/profile', [SantriProfileController::class, 'index'])->middleware('permission:santri.profile.manage')->name('profile');
         Route::post('/change-pin', [SantriProfileController::class, 'changePin'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('change-pin');
         Route::post('/profile/email', [SantriProfileController::class, 'updateEmail'])->middleware(['permission:santri.profile.manage', 'santri.active'])->name('profile.email');

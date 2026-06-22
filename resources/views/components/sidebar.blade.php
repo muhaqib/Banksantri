@@ -149,8 +149,9 @@
                 [
                     'label' => 'Tarbiyah',
                     'icon' => 'military_tech',
-                    'active' => ['admin.prestasi.*'],
+                    'active' => ['admin.prestasi.*', 'admin.tarbiyah.*'],
                     'children' => [
+                        ['permission' => 'admin.tarbiyah.manage', 'route' => 'admin.tarbiyah.subjects.index', 'active' => 'admin.tarbiyah.*', 'label' => 'Mapel Tarbiyah'],
                         ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.index', 'active' => 'admin.prestasi.index', 'label' => 'Tahfidz'],
                         ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.create', 'active' => 'admin.prestasi.create', 'label' => 'Tambah Tahfidz'],
                     ],
@@ -172,6 +173,7 @@
                     'icon' => 'military_tech',
                     'active' => ['petugas.prestasi.*', 'petugas.health.*', 'petugas.security.*'],
                     'children' => [
+                        ['permission' => 'petugas.tarbiyah.manage', 'route' => 'petugas.tarbiyah.index', 'active' => 'petugas.tarbiyah.*', 'label' => 'Nilai Tarbiyah'],
                         ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.index', 'active' => 'petugas.prestasi.index', 'label' => 'Semua Prestasi'],
                         ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.create', 'active' => 'petugas.prestasi.create', 'label' => 'Input Prestasi'],
                         ['permission' => 'petugas.health.manage', 'route' => 'petugas.health.index', 'active' => 'petugas.health.*', 'label' => 'Kesehatan Santri'],
@@ -261,14 +263,6 @@
                     </div>
                 @endcanany
             @endforeach
-
-            @can('admin.access.manage')
-                <a href="{{ route('admin.access.index') }}"
-                   class="{{ request()->routeIs('admin.access.*') ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                    <span class="material-symbols-outlined">admin_panel_settings</span>
-                    <span>Manajemen Akses</span>
-                </a>
-            @endcan
         </nav>
 
         <!-- User Profile & Logout -->

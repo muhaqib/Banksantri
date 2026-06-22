@@ -10,18 +10,21 @@ use Spatie\Permission\PermissionRegistrar;
 
 class AccessController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $petugasList = User::query()
+        if (! $request->filled('petugas')) {
+            return redirect()->route('admin.petugas.index');
+        }
+
+        $petugas = User::query()
             ->where('role', 'petugas')
             ->with('permissions')
-            ->orderBy('name')
-            ->get();
+            ->findOrFail($request->integer('petugas'));
 
         return view('pages.admin.access.index', [
             'activeRole' => 'admin',
             'groups' => PermissionRegistry::petugasGrouped(),
-            'petugasList' => $petugasList,
+            'petugas' => $petugas,
         ]);
     }
 
@@ -49,7 +52,7 @@ class AccessController extends Controller
         app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         return redirect()
-            ->route('admin.access.index')
+            ->route('admin.access.index', ['petugas' => $petugas->id])
             ->with('success', 'Permission petugas '.$petugas->name.' berhasil diperbarui.');
     }
 }

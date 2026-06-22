@@ -30,6 +30,8 @@ class PermissionRegistry
                 'admin.santri.manage' => 'Kelola data santri',
                 'admin.petugas.manage' => 'Kelola data petugas',
                 'admin.kamar.manage' => 'Kelola data kamar',
+                'admin.tarbiyah.manage' => 'Kelola mata pelajaran Tarbiyah',
+                'petugas.tarbiyah.manage' => 'Kelola nilai Tarbiyah',
                 'petugas.health.manage' => 'Kelola kesehatan santri',
                 'petugas.security.manage' => 'Kelola pelanggaran santri',
                 'admin.prestasi.manage' => 'Kelola prestasi santri',
@@ -47,6 +49,7 @@ class PermissionRegistry
                 'santri.prestasi.view' => 'Lihat prestasi santri',
                 'santri.health.view' => 'Lihat kesehatan santri',
                 'santri.security.view' => 'Lihat keamanan santri',
+                'santri.tarbiyah.view' => 'Lihat nilai Tarbiyah',
             ],
             'Publikasi' => [
                 'admin.blog.manage' => 'Kelola blog dan artikel',
@@ -95,6 +98,7 @@ class PermissionRegistry
                 'santri.prestasi.view',
                 'santri.health.view',
                 'santri.security.view',
+                'santri.tarbiyah.view',
             ],
         ];
     }
@@ -110,6 +114,7 @@ class PermissionRegistry
             'petugas.history.view',
             'petugas.withdrawals.manage',
             'petugas.prestasi.manage',
+            'petugas.tarbiyah.manage',
             'petugas.health.manage',
             'petugas.security.manage',
             'petugas.attendance.dashboard',

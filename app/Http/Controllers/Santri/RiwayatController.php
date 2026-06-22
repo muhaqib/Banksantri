@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Santri;
 
 use App\Http\Controllers\Controller;
 use App\Models\Transaction;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -94,27 +95,39 @@ class RiwayatController extends Controller
         $daysInMonth = cal_days_in_month(CAL_GREGORIAN, $month, $year);
         
         $labels = [];
-        $pemasukan = [];
         $pengeluaran = [];
+        $saldoHarian = [];
+        $startOfMonth = Carbon::createFromDate($year, $month, 1)->startOfDay();
+        $endOfMonth = (clone $startOfMonth)->endOfMonth();
+
+        $monthTransactions = Transaction::where('santri_id', $santri->id)
+            ->whereBetween('created_at', [$startOfMonth, $endOfMonth])
+            ->orderBy('created_at')
+            ->get();
+
+        $previousBalance = Transaction::where('santri_id', $santri->id)
+            ->where('created_at', '<', $startOfMonth)
+            ->latest('created_at')
+            ->value('saldo_setelah');
+
+        $runningBalance = (int) ($previousBalance ?? $monthTransactions->first()?->saldo_sebelum ?? $santri->saldo ?? 0);
 
         // Generate data for each day
         for ($day = 1; $day <= $daysInMonth; $day++) {
             $date = sprintf('%04d-%02d-%02d', $year, $month, $day);
             $labels[] = $day;
 
-            // Get transactions for this day
-            $dailyPemasukan = Transaction::where('santri_id', $santri->id)
-                ->where('jenis', 'masuk')
-                ->whereDate('created_at', $date)
-                ->sum('nominal');
-
-            $dailyPengeluaran = Transaction::where('santri_id', $santri->id)
+            $dailyTransactions = $monthTransactions->filter(fn (Transaction $transaction) => $transaction->created_at->isSameDay($date));
+            $dailyPengeluaran = $dailyTransactions
                 ->where('jenis', 'keluar')
-                ->whereDate('created_at', $date)
                 ->sum('nominal');
 
-            $pemasukan[] = $dailyPemasukan;
-            $pengeluaran[] = $dailyPengeluaran;
+            if ($dailyTransactions->isNotEmpty()) {
+                $runningBalance = (int) $dailyTransactions->last()->saldo_setelah;
+            }
+
+            $pengeluaran[] = (int) $dailyPengeluaran;
+            $saldoHarian[] = $runningBalance;
         }
 
         // Calculate totals for the month
@@ -132,11 +145,12 @@ class RiwayatController extends Controller
 
         return response()->json([
             'success' => true,
+            'saldoHarian' => $saldoHarian ? end($saldoHarian) : (int) $santri->saldo,
             'pemasukan' => $totalPemasukan,
             'pengeluaran' => $totalPengeluaran,
             'chartData' => [
                 'labels' => $labels,
-                'pemasukan' => $pemasukan,
+                'saldoHarian' => $saldoHarian,
                 'pengeluaran' => $pengeluaran
             ]
         ]);

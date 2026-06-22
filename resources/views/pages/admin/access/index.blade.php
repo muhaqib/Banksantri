@@ -17,62 +17,50 @@
         </a>
     </div>
 
-    @if($petugasList->isEmpty())
-        <div class="rounded-xl border border-outline-variant/20 bg-surface-container-low p-6 text-center">
-            <span class="material-symbols-outlined text-primary text-4xl">badge</span>
-            <p class="mt-3 font-headline font-bold text-on-surface">Belum ada petugas</p>
-            <p class="text-sm text-on-surface-variant mt-1">Tambahkan akun petugas terlebih dahulu untuk mengatur aksesnya.</p>
+    <form action="{{ route('admin.access.update', $petugas) }}" method="POST" class="bg-surface-container-low rounded-xl border border-primary ring-2 ring-primary/20 p-5">
+        @csrf
+        @method('PUT')
+
+        <div class="flex items-center gap-3 mb-5">
+            <div class="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
+                @if($petugas->foto)
+                    <img src="{{ Storage::url($petugas->foto) }}" alt="{{ $petugas->name }}" class="w-full h-full object-cover">
+                @else
+                    <span class="material-symbols-outlined text-primary">badge</span>
+                @endif
+            </div>
+            <div class="min-w-0">
+                <h2 class="font-headline font-bold text-lg text-on-surface truncate">{{ $petugas->name }}</h2>
+                <p class="text-xs text-on-surface-variant">{{ $petugas->jabatan ?? 'Petugas' }} · {{ $petugas->permissions->count() }} permission aktif</p>
+            </div>
         </div>
-    @else
-        <div class="grid gap-4 lg:grid-cols-2">
-            @foreach($petugasList as $petugas)
-                <form action="{{ route('admin.access.update', $petugas) }}" method="POST" class="bg-surface-container-low rounded-xl border border-outline-variant/20 p-5">
-                    @csrf
-                    @method('PUT')
 
-                    <div class="flex items-center gap-3 mb-5">
-                        <div class="w-11 h-11 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
-                            @if($petugas->foto)
-                                <img src="{{ Storage::url($petugas->foto) }}" alt="{{ $petugas->name }}" class="w-full h-full object-cover">
-                            @else
-                                <span class="material-symbols-outlined text-primary">badge</span>
-                            @endif
-                        </div>
-                        <div class="min-w-0">
-                            <h2 class="font-headline font-bold text-lg text-on-surface truncate">{{ $petugas->name }}</h2>
-                            <p class="text-xs text-on-surface-variant">{{ $petugas->jabatan ?? 'Petugas' }} · {{ $petugas->permissions->count() }} permission aktif</p>
-                        </div>
-                    </div>
-
-                    <div class="space-y-5">
-                        @foreach($groups as $group => $permissions)
-                            <section>
-                                <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">{{ $group }}</h3>
-                                <div class="space-y-2">
-                                    @foreach($permissions as $permission => $label)
-                                        <label class="flex items-start gap-3 rounded-lg bg-surface px-3 py-3 border border-outline-variant/10">
-                                            <input type="checkbox"
-                                                   name="permissions[]"
-                                                   value="{{ $permission }}"
-                                                   @checked($petugas->hasDirectPermission($permission))
-                                                   class="mt-1 rounded border-outline-variant text-primary focus:ring-primary">
-                                            <span>
-                                                <span class="block text-sm font-semibold text-on-surface">{{ $label }}</span>
-                                                <span class="block text-[11px] text-on-surface-variant">{{ $permission }}</span>
-                                            </span>
-                                        </label>
-                                    @endforeach
-                                </div>
-                            </section>
+        <div class="grid gap-5 lg:grid-cols-2">
+            @foreach($groups as $group => $permissions)
+                <section>
+                    <h3 class="text-xs font-bold uppercase tracking-widest text-on-surface-variant mb-2">{{ $group }}</h3>
+                    <div class="space-y-2">
+                        @foreach($permissions as $permission => $label)
+                            <label class="flex items-start gap-3 rounded-lg bg-surface px-3 py-3 border border-outline-variant/10">
+                                <input type="checkbox"
+                                       name="permissions[]"
+                                       value="{{ $permission }}"
+                                       @checked($petugas->hasDirectPermission($permission))
+                                       class="mt-1 rounded border-outline-variant text-primary focus:ring-primary">
+                                <span>
+                                    <span class="block text-sm font-semibold text-on-surface">{{ $label }}</span>
+                                    <span class="block text-[11px] text-on-surface-variant">{{ $permission }}</span>
+                                </span>
+                            </label>
                         @endforeach
                     </div>
-
-                    <button type="submit" class="mt-5 w-full bg-primary text-on-primary rounded-xl px-4 py-3 font-bold hover:opacity-90 transition-all">
-                        Simpan Akses Petugas
-                    </button>
-                </form>
+                </section>
             @endforeach
         </div>
-    @endif
+
+        <button type="submit" class="mt-5 w-full bg-primary text-on-primary rounded-xl px-4 py-3 font-bold hover:opacity-90 transition-all">
+            Simpan Akses Petugas
+        </button>
+    </form>
 </div>
 @endsection

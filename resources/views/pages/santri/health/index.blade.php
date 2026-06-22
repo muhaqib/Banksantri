@@ -61,6 +61,7 @@
                     </div>
                 </div>
             </div>
+            <a href="#" class="bg-primary-fixed-dim text-on-primary-fixed-variant px-3 py-1.5 rounded-lg text-xs font-bold hover:opacity-90 transition-opacity">Lihat Statistik</a>
         </section>
 
         <div class="inline-flex rounded-lg bg-primary-fixed px-3 py-2 text-sm font-bold text-primary">

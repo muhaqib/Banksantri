@@ -15,6 +15,7 @@ class DatabaseSeeder extends Seeder
             RolePermissionSeeder::class,
             UserSeeder::class,
             SantriSeeder::class,
+            TarbiyahSubjectSeeder::class,
             RolePermissionSeeder::class,
         ]);
     }

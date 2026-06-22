@@ -183,8 +183,15 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
-                    <input type="text" name="kelas" value="{{ old('kelas') }}"
-                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                    <select name="kelas"
+                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                        <option value="">Pilih kelas</option>
+                        @foreach(\App\Support\TarbiyahClass::LEVELS as $classLevel)
+                            <option value="{{ $classLevel }}" @selected(old('kelas') === $classLevel)>
+                                {{ $classLevel }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('kelas')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror

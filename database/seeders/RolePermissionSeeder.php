@@ -34,6 +34,7 @@ class RolePermissionSeeder extends Seeder
                     $user->givePermissionTo([
                         'petugas.dashboard.view',
                         'petugas.prestasi.manage',
+                        'petugas.tarbiyah.manage',
                         'petugas.health.manage',
                         'petugas.security.manage',
                     ]);

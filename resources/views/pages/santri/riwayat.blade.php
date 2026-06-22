@@ -76,11 +76,11 @@
                     <div class="flex-1">
                         <div class="flex items-center gap-2 mb-1">
                             <div class="w-6 h-6 rounded-full bg-primary-fixed flex items-center justify-center">
-                                <span class="material-symbols-outlined text-primary text-sm">trending_up</span>
+                                <span class="material-symbols-outlined text-primary text-sm">account_balance_wallet</span>
                             </div>
-                            <span class="text-xs font-medium text-on-surface-variant">Total Pemasukan</span>
+                            <span class="text-xs font-medium text-on-surface-variant">Sisa Saldo</span>
                         </div>
-                        <p class="text-primary font-headline font-bold text-sm">Rp <span x-text="formatNumber(pemasukan)"></span></p>
+                        <p class="text-primary font-headline font-bold text-sm">Rp <span x-text="formatNumber(sisaSaldo)"></span></p>
                     </div>
                 </div>
             </div>
@@ -233,10 +233,10 @@ function riwayatSantri(config) {
         chart: null,
         chartData: {
             labels: [],
-            pemasukan: [],
+            saldoHarian: [],
             pengeluaran: []
         },
-        pemasukan: 0,
+        sisaSaldo: 0,
         pengeluaran: 0,
 
         get selectedMonthLabel() {
@@ -304,12 +304,12 @@ function riwayatSantri(config) {
                 const data = await response.json();
 
                 if (data.success) {
-                    this.pemasukan = data.pemasukan || 0;
+                    this.sisaSaldo = data.saldoHarian || 0;
                     this.pengeluaran = data.pengeluaran || 0;
-                    this.chartData = data.chartData || { labels: [], pemasukan: [], pengeluaran: [] };
+                    this.chartData = data.chartData || { labels: [], saldoHarian: [], pengeluaran: [] };
                     
                     console.log('Chart data received:', this.chartData);
-                    console.log('Pemasukan data:', this.chartData.pemasukan);
+                    console.log('Saldo harian data:', this.chartData.saldoHarian);
                     console.log('Pengeluaran data:', this.chartData.pengeluaran);
                     
                     this.$nextTick(() => {
@@ -351,8 +351,8 @@ function riwayatSantri(config) {
                     labels: this.chartData.labels,
                     datasets: [
                         {
-                            label: 'Pemasukan',
-                            data: this.chartData.pemasukan,
+                            label: 'Sisa Saldo',
+                            data: this.chartData.saldoHarian,
                             borderColor: '#10b981',
                             backgroundColor: 'rgba(16, 185, 129, 0.1)',
                             borderWidth: 2,
@@ -492,7 +492,7 @@ function riwayatSantri(config) {
 
             console.log('Updating chart with data:', {
                 labels: this.chartData.labels,
-                pemasukan: this.chartData.pemasukan,
+                saldoHarian: this.chartData.saldoHarian,
                 pengeluaran: this.chartData.pengeluaran
             });
 
@@ -501,7 +501,7 @@ function riwayatSantri(config) {
             
             // Update datasets
             if (this.chart.data.datasets && this.chart.data.datasets.length >= 2) {
-                this.chart.data.datasets[0].data = [...this.chartData.pemasukan];
+                this.chart.data.datasets[0].data = [...this.chartData.saldoHarian];
                 this.chart.data.datasets[1].data = [...this.chartData.pengeluaran];
             }
             

@@ -123,7 +123,7 @@
                     </div>
                     <span class="text-[10px] font-bold text-on-surface-variant tracking-tighter font-headline">Keamanan</span>
                 </a>
-                <a href="#" class="flex flex-col items-center gap-2 group">
+                <a href="{{ route('santri.tarbiyah.index') }}" class="flex flex-col items-center gap-2 group">
                     <div class="w-12 h-12 bg-surface-container-lowest rounded-xl flex items-center justify-center text-primary shadow-sm group-active:scale-90 transition-transform">
                         <span class="material-symbols-outlined">school</span>
                     </div>

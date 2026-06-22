@@ -103,6 +103,12 @@
                                        class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
                                         <span class="material-symbols-outlined text-sm">edit</span>
                                     </button>
+                                    @can('admin.access.manage')
+                                        <a href="{{ route('admin.access.index', ['petugas' => $petugas->id]) }}"
+                                           class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Manajemen Akses">
+                                            <span class="material-symbols-outlined text-sm">settings</span>
+                                        </a>
+                                    @endcan
                                     <form action="{{ route('admin.petugas.destroy', $petugas) }}" method="POST"
                                           onsubmit="return confirm('Yakin ingin menghapus data petugas ini?')">
                                         @csrf
@@ -226,6 +232,12 @@
                                 <span class="material-symbols-outlined text-sm">edit</span>
                                 <span>Edit Data</span>
                             </button>
+                            @can('admin.access.manage')
+                                <a :href="`{{ route('admin.access.index') }}?petugas=${selectedPetugas.id}`" class="flex-1 bg-surface-container-high text-primary font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all flex items-center justify-center gap-2">
+                                    <span class="material-symbols-outlined text-sm">settings</span>
+                                    <span>Akses</span>
+                                </a>
+                            @endcan
                             <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
                                 Tutup
                             </button>

@@ -18,22 +18,22 @@
         </form>
     </header>
 
-    <div class="grid grid-cols-1 gap-4 md:grid-cols-4">
-        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Transaksi</p>
-            <p class="mt-2 font-headline text-3xl font-extrabold text-primary">{{ number_format($totalTransactions, 0, ',', '.') }}</p>
+    <div class="flex gap-3 overflow-x-auto pb-1">
+        <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Transaksi</p>
+            <p class="mt-2 font-headline text-2xl md:text-3xl font-extrabold text-primary">{{ number_format($totalTransactions, 0, ',', '.') }}</p>
         </div>
-        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Berat</p>
-            <p class="mt-2 font-headline text-3xl font-extrabold text-on-surface">{{ number_format($totalWeight, 1, ',', '.') }} Kg</p>
+        <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Berat</p>
+            <p class="mt-2 font-headline text-2xl md:text-3xl font-extrabold text-on-surface">{{ number_format($totalWeight, 1, ',', '.') }} Kg</p>
         </div>
-        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Cash</p>
-            <p class="mt-2 font-headline text-2xl font-extrabold text-primary">Rp {{ number_format($totalCash, 0, ',', '.') }}</p>
+        <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Cash</p>
+            <p class="mt-2 font-headline text-xl md:text-2xl font-extrabold text-primary">Rp {{ number_format($totalCash, 0, ',', '.') }}</p>
         </div>
-        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-            <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Saldo Tabungan</p>
-            <p class="mt-2 font-headline text-2xl font-extrabold text-primary">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+        <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
+            <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Saldo Tabungan</p>
+            <p class="mt-2 font-headline text-xl md:text-2xl font-extrabold text-primary">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
         </div>
     </div>
 
