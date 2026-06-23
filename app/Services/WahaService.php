@@ -40,51 +40,92 @@ class WahaService
 
     public function getWahaGroups(): array
     {
-        try {
-            $groups = $this->http()->get($this->path('/'.config('services.waha.session', 'WAHA').'/chats'), [
-                'chatsType' => 'GROUPS',
-            ])->throw()->json();
+        foreach ($this->sessionCandidates() as $session) {
+            try {
+                $groups = $this->http()->get($this->path('/'.$session.'/chats'), [
+                    'chatsType' => 'GROUPS',
+                ])->throw()->json();
 
-            $groups = data_get($groups, 'data', $groups);
+                $groups = data_get($groups, 'data', $groups);
 
-            return collect(is_array($groups) ? $groups : [])
-                ->filter(fn (mixed $group): bool => is_array($group))
-                ->map(function (array $group): array {
-                    $id = data_get($group, 'id._serialized')
-                        ?? data_get($group, 'id')
-                        ?? data_get($group, 'chatId');
+                return collect(is_array($groups) ? $groups : [])
+                    ->filter(fn (mixed $group): bool => is_array($group))
+                    ->map(function (array $group): array {
+                        $id = data_get($group, 'id._serialized')
+                            ?? data_get($group, 'id')
+                            ?? data_get($group, 'chatId');
 
-                    $id = is_string($id) ? $id : null;
+                        $id = is_string($id) ? $id : null;
 
-                    return [
-                        'id' => $id,
-                        'name' => data_get($group, 'name')
-                            ?? data_get($group, 'title')
-                            ?? data_get($group, 'pushname')
-                            ?? $id,
-                    ];
-                })
-                ->filter(fn (array $group): bool => filled($group['id']) && Str::endsWith($group['id'], '@g.us'))
-                ->values()
-                ->all();
-        } catch (Throwable) {
-            return [];
+                        return [
+                            'id' => $id,
+                            'name' => data_get($group, 'name')
+                                ?? data_get($group, 'title')
+                                ?? data_get($group, 'pushname')
+                                ?? $id,
+                        ];
+                    })
+                    ->filter(fn (array $group): bool => filled($group['id']) && Str::endsWith($group['id'], '@g.us'))
+                    ->values()
+                    ->all();
+            } catch (Throwable) {
+                continue;
+            }
         }
+
+        return [];
     }
 
     public function sendMessage(string $chatId, string $message): bool
     {
-        try {
-            $this->http()->post($this->path('/sendText'), [
-                'session' => config('services.waha.session', 'WAHA'),
-                'chatId' => $chatId,
-                'text' => $message,
-            ])->throw();
+        return $this->sendMessageResult($chatId, $message)['success'];
+    }
 
-            return true;
-        } catch (Throwable) {
-            return false;
+    public function sendMessageResult(string $chatId, string $message): array
+    {
+        foreach ($this->sessionCandidates() as $session) {
+            try {
+                $response = $this->http()->post($this->path('/sendText'), [
+                    'session' => $session,
+                    'chatId' => $chatId,
+                    'text' => $message,
+                ]);
+
+                if ($response->successful()) {
+                    return [
+                        'success' => true,
+                        'session' => $session,
+                        'http_status' => $response->status(),
+                        'response_body' => $this->limitBody($response->body()),
+                        'error_message' => null,
+                    ];
+                }
+
+                $lastResult = [
+                    'success' => false,
+                    'session' => $session,
+                    'http_status' => $response->status(),
+                    'response_body' => $this->limitBody($response->body()),
+                    'error_message' => null,
+                ];
+            } catch (Throwable $exception) {
+                $lastResult = [
+                    'success' => false,
+                    'session' => $session,
+                    'http_status' => null,
+                    'response_body' => null,
+                    'error_message' => $exception->getMessage(),
+                ];
+            }
         }
+
+        return $lastResult ?? [
+            'success' => false,
+            'session' => null,
+            'http_status' => null,
+            'response_body' => null,
+            'error_message' => 'Tidak ada session WAHA yang dapat digunakan.',
+        ];
     }
 
     private function http(): PendingRequest
@@ -103,6 +144,24 @@ class WahaService
         $baseUrl = rtrim((string) config('services.waha.base_url'), '/');
 
         return Str::endsWith($baseUrl, '/api') ? $path : '/api'.$path;
+    }
+
+    private function sessionCandidates(): array
+    {
+        return collect([config('services.waha.session', 'WAHA'), 'default'])
+            ->filter()
+            ->unique()
+            ->values()
+            ->all();
+    }
+
+    private function limitBody(?string $body): ?string
+    {
+        if ($body === null || $body === '') {
+            return null;
+        }
+
+        return Str::limit($body, 2000, '');
     }
 
     private function findDefaultSession(mixed $sessions): array

@@ -88,6 +88,13 @@ class WahaScheduleManagementTest extends TestCase
             && $request['chatId'] === 'group-edu-123@g.us'
             && $request['text'] === 'Halo Rahmat Hidayat, jadwal mengajar dimulai.');
 
+        $this->assertDatabaseHas('waha_message_logs', [
+            'target_id' => 'group-edu-123@g.us',
+            'session' => 'WAHA',
+            'status' => 'success',
+            'http_status' => 200,
+        ]);
+
         Carbon::setTestNow();
     }
 

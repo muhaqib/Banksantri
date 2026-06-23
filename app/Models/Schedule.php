@@ -50,4 +50,9 @@ class Schedule extends Model
 
         return $this->target_id;
     }
+
+    public function messageLogs()
+    {
+        return $this->hasMany(WahaMessageLog::class);
+    }
 }

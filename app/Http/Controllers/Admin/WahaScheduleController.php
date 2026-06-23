@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Schedule;
+use App\Models\WahaMessageLog;
 use App\Services\WahaService;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
@@ -17,7 +18,11 @@ class WahaScheduleController extends Controller
             'activeRole' => 'admin',
             'connection' => $wahaService->getConnectionStatus(),
             'groups' => $wahaService->getWahaGroups(),
-            'schedules' => Schedule::latest()->paginate(10),
+            'schedules' => Schedule::latest()->paginate(10, ['*'], 'schedule_page'),
+            'messageLogs' => WahaMessageLog::with('schedule')
+                ->latest('sent_at')
+                ->latest()
+                ->paginate(10, ['*'], 'log_page'),
             'days' => Schedule::DAYS,
         ]);
     }

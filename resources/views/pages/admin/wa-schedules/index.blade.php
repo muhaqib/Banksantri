@@ -232,6 +232,69 @@
             </div>
         @endif
     </section>
+
+    <section class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
+        <div class="flex items-center justify-between border-b border-outline-variant/10 px-5 py-4">
+            <div>
+                <h2 class="font-headline text-lg font-bold text-primary">Riwayat Pengiriman</h2>
+                <p class="text-xs text-on-surface-variant">Catatan hasil pengiriman otomatis dari scheduler.</p>
+            </div>
+            <span class="text-xs font-bold text-on-surface-variant">{{ $messageLogs->total() }} riwayat</span>
+        </div>
+        <div class="overflow-x-auto">
+            <table class="w-full text-left text-sm">
+                <thead class="bg-surface-container-low text-xs uppercase text-on-surface-variant">
+                    <tr>
+                        <th class="px-5 py-4">Waktu</th>
+                        <th class="px-5 py-4">Guru</th>
+                        <th class="px-5 py-4">Target</th>
+                        <th class="px-5 py-4">Status</th>
+                        <th class="px-5 py-4">Detail</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-outline-variant/10">
+                    @forelse($messageLogs as $log)
+                        <tr>
+                            <td class="px-5 py-4 whitespace-nowrap">
+                                <div class="font-bold">{{ $log->sent_at?->timezone('Asia/Jakarta')->format('d/m/Y') }}</div>
+                                <div class="text-xs text-on-surface-variant">{{ $log->sent_at?->timezone('Asia/Jakarta')->format('H:i:s') }}</div>
+                            </td>
+                            <td class="px-5 py-4 font-semibold">{{ $log->teacher_name ?? '-' }}</td>
+                            <td class="px-5 py-4">
+                                <div class="font-mono text-xs">{{ $log->target_id }}</div>
+                                <div class="text-xs text-on-surface-variant">Session: {{ $log->session ?? '-' }}</div>
+                            </td>
+                            <td class="px-5 py-4">
+                                <span class="rounded-full px-3 py-1 text-xs font-bold {{ $log->status === 'success' ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error' }}">
+                                    {{ $log->status_label }}
+                                </span>
+                                @if($log->http_status)
+                                    <div class="mt-1 text-xs text-on-surface-variant">HTTP {{ $log->http_status }}</div>
+                                @endif
+                            </td>
+                            <td class="px-5 py-4 max-w-md">
+                                <p class="line-clamp-2 text-xs text-on-surface-variant">{{ $log->message_content }}</p>
+                                @if($log->error_message)
+                                    <p class="mt-2 line-clamp-2 text-xs font-semibold text-error">{{ $log->error_message }}</p>
+                                @elseif($log->response_body)
+                                    <p class="mt-2 line-clamp-1 text-xs text-on-surface-variant">{{ $log->response_body }}</p>
+                                @endif
+                            </td>
+                        </tr>
+                    @empty
+                        <tr>
+                            <td colspan="5" class="px-5 py-14 text-center text-on-surface-variant">Belum ada riwayat pengiriman.</td>
+                        </tr>
+                    @endforelse
+                </tbody>
+            </table>
+        </div>
+        @if($messageLogs->hasPages())
+            <div class="border-t border-outline-variant/10 px-5 py-4">
+                {{ $messageLogs->links() }}
+            </div>
+        @endif
+    </section>
 </div>
 
 <script>
