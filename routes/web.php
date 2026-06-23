@@ -92,6 +92,7 @@ Route::middleware('auth')->group(function () {
             Route::get('/wa-schedules/status', [WahaScheduleController::class, 'status'])->name('wa-schedules.status');
             Route::get('/wa-schedules/groups', [WahaScheduleController::class, 'groups'])->name('wa-schedules.groups');
             Route::patch('/wa-schedules/{waSchedule}/toggle', [WahaScheduleController::class, 'toggle'])->name('wa-schedules.toggle');
+            Route::post('/wa-schedules/{waSchedule}/send-now', [WahaScheduleController::class, 'sendNow'])->name('wa-schedules.send-now');
             Route::resource('wa-schedules', WahaScheduleController::class)
                 ->only(['index', 'store', 'update', 'destroy'])
                 ->parameters(['wa-schedules' => 'waSchedule']);

@@ -98,6 +98,36 @@ class WahaScheduleManagementTest extends TestCase
         Carbon::setTestNow();
     }
 
+    public function test_admin_can_send_schedule_now_and_store_log(): void
+    {
+        Http::fake([
+            '*sendText' => Http::response(['ok' => true], 201),
+        ]);
+
+        $admin = $this->admin();
+        $schedule = WahaSchedule::create([
+            'teacher_name' => 'Mas Guru',
+            'recipient_type' => 'personal',
+            'target_id' => '62882005266580@c.us',
+            'day_of_week' => 'Tuesday',
+            'send_time' => '08:05:00',
+            'message_content' => 'Halo [nama_guru], ini test.',
+            'is_active' => true,
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.wa-schedules.send-now', $schedule))
+            ->assertRedirect();
+
+        $this->assertDatabaseHas('waha_message_logs', [
+            'schedule_id' => $schedule->id,
+            'target_id' => '62882005266580@c.us',
+            'message_content' => 'Halo Mas Guru, ini test.',
+            'status' => 'success',
+            'http_status' => 201,
+        ]);
+    }
+
     private function admin(): User
     {
         $admin = User::factory()->create(['role' => 'admin']);

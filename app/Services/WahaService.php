@@ -84,38 +84,50 @@ class WahaService
     public function sendMessageResult(string $chatId, string $message): array
     {
         foreach ($this->sessionCandidates() as $session) {
-            try {
-                $response = $this->http()->post($this->path('/sendText'), [
-                    'session' => $session,
-                    'chatId' => $chatId,
-                    'text' => $message,
-                ]);
+            for ($attempt = 1; $attempt <= 3; $attempt++) {
+                try {
+                    $response = $this->http()->post($this->path('/sendText'), [
+                        'session' => $session,
+                        'chatId' => $chatId,
+                        'text' => $message,
+                    ]);
 
-                if ($response->successful()) {
-                    return [
-                        'success' => true,
+                    if ($response->successful()) {
+                        return [
+                            'success' => true,
+                            'session' => $session,
+                            'http_status' => $response->status(),
+                            'response_body' => $this->limitBody($response->body()),
+                            'error_message' => null,
+                        ];
+                    }
+
+                    $lastResult = [
+                        'success' => false,
                         'session' => $session,
                         'http_status' => $response->status(),
                         'response_body' => $this->limitBody($response->body()),
                         'error_message' => null,
                     ];
+
+                    if (! $this->shouldRetry($response->status()) || $attempt === 3) {
+                        break;
+                    }
+                } catch (Throwable $exception) {
+                    $lastResult = [
+                        'success' => false,
+                        'session' => $session,
+                        'http_status' => null,
+                        'response_body' => null,
+                        'error_message' => $exception->getMessage(),
+                    ];
+
+                    if ($attempt === 3) {
+                        break;
+                    }
                 }
 
-                $lastResult = [
-                    'success' => false,
-                    'session' => $session,
-                    'http_status' => $response->status(),
-                    'response_body' => $this->limitBody($response->body()),
-                    'error_message' => null,
-                ];
-            } catch (Throwable $exception) {
-                $lastResult = [
-                    'success' => false,
-                    'session' => $session,
-                    'http_status' => null,
-                    'response_body' => null,
-                    'error_message' => $exception->getMessage(),
-                ];
+                usleep(800000);
             }
         }
 
@@ -162,6 +174,11 @@ class WahaService
         }
 
         return Str::limit($body, 2000, '');
+    }
+
+    private function shouldRetry(?int $status): bool
+    {
+        return $status === null || $status === 408 || $status === 429 || $status >= 500;
     }
 
     private function findDefaultSession(mixed $sessions): array

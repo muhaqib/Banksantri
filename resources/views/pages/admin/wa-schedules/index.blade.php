@@ -33,6 +33,9 @@
     @if(session('success'))
         <div class="rounded-xl bg-primary/10 px-4 py-3 text-sm font-bold text-primary">{{ session('success') }}</div>
     @endif
+    @if(session('error'))
+        <div class="rounded-xl bg-error/10 px-4 py-3 text-sm font-bold text-error">{{ session('error') }}</div>
+    @endif
 
     <div class="grid gap-5 xl:grid-cols-5">
         <section class="rounded-xl bg-surface-container-lowest p-5 shadow-sm xl:col-span-3">
@@ -205,6 +208,12 @@
                                     <button type="button" @click="editSchedule({{ $schedule->id }})" class="text-primary" title="Edit">
                                         <span class="material-symbols-outlined">edit</span>
                                     </button>
+                                    <form method="POST" action="{{ route('admin.wa-schedules.send-now', $schedule) }}" onsubmit="return confirm('Kirim pesan jadwal ini sekarang?')">
+                                        @csrf
+                                        <button class="text-primary" title="Kirim sekarang">
+                                            <span class="material-symbols-outlined">send</span>
+                                        </button>
+                                    </form>
                                     <form method="POST" action="{{ route('admin.wa-schedules.destroy', $schedule) }}" onsubmit="return confirm('Hapus jadwal ini?')">
                                         @csrf @method('DELETE')
                                         <button class="text-error" title="Hapus"><span class="material-symbols-outlined">delete</span></button>

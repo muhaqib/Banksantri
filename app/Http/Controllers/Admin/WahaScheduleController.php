@@ -66,6 +66,32 @@ class WahaScheduleController extends Controller
         return back()->with('success', 'Status jadwal berhasil diubah.');
     }
 
+    public function sendNow(Schedule $waSchedule, WahaService $wahaService)
+    {
+        $message = str_replace('[nama_guru]', $waSchedule->teacher_name, $waSchedule->message_content);
+        $result = $wahaService->sendMessageResult($waSchedule->target_id, $message);
+
+        WahaMessageLog::create([
+            'schedule_id' => $waSchedule->id,
+            'teacher_name' => $waSchedule->teacher_name,
+            'target_id' => $waSchedule->target_id,
+            'session' => $result['session'],
+            'message_content' => $message,
+            'status' => $result['success'] ? WahaMessageLog::STATUS_SUCCESS : WahaMessageLog::STATUS_FAILED,
+            'http_status' => $result['http_status'],
+            'response_body' => $result['response_body'],
+            'error_message' => $result['error_message'],
+            'sent_at' => now('Asia/Jakarta'),
+        ]);
+
+        return back()->with(
+            $result['success'] ? 'success' : 'error',
+            $result['success']
+                ? 'Pesan berhasil dikirim sekarang.'
+                : 'Pesan gagal dikirim. Detailnya sudah tercatat di riwayat.'
+        );
+    }
+
     public function destroy(Schedule $waSchedule)
     {
         $waSchedule->delete();
