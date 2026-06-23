@@ -15,6 +15,7 @@ use App\Http\Controllers\Admin\SettlementController;
 use App\Http\Controllers\Admin\TarbiyahSubjectController as AdminTarbiyahSubjectController;
 use App\Http\Controllers\Admin\TopUpController as AdminTopUpController;
 use App\Http\Controllers\Admin\TransactionController as AdminTransactionController;
+use App\Http\Controllers\Admin\WahaScheduleController;
 use App\Http\Controllers\AttendanceController;
 use App\Http\Controllers\Auth\LoginController;
 use App\Http\Controllers\Auth\RegisterController;
@@ -86,6 +87,15 @@ Route::middleware('auth')->group(function () {
 
         Route::get('/kas', [KasController::class, 'index'])->middleware('permission:admin.finance.manage')->name('kas');
         Route::post('/kas', [KasController::class, 'store'])->middleware('permission:admin.finance.manage')->name('kas.store');
+
+        Route::middleware('permission:admin.wa-schedules.manage')->group(function () {
+            Route::get('/wa-schedules/status', [WahaScheduleController::class, 'status'])->name('wa-schedules.status');
+            Route::get('/wa-schedules/groups', [WahaScheduleController::class, 'groups'])->name('wa-schedules.groups');
+            Route::patch('/wa-schedules/{waSchedule}/toggle', [WahaScheduleController::class, 'toggle'])->name('wa-schedules.toggle');
+            Route::resource('wa-schedules', WahaScheduleController::class)
+                ->only(['index', 'store', 'update', 'destroy'])
+                ->parameters(['wa-schedules' => 'waSchedule']);
+        });
 
         // Santri Management
         Route::middleware('permission:admin.santri.manage')->group(function () {

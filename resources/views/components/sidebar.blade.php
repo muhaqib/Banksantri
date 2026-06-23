@@ -105,6 +105,7 @@
                 ['permission' => 'admin.dashboard.view', 'route' => 'admin.dashboard', 'active' => 'admin.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
                 ['permission' => 'petugas.dashboard.view', 'route' => 'petugas.dashboard', 'active' => 'petugas.dashboard', 'icon' => 'dashboard', 'label' => 'Dashboard'],
                 ['permission' => 'admin.dashboard-content.manage', 'route' => 'admin.dashboard-content.index', 'active' => 'admin.dashboard-content.*', 'icon' => 'dynamic_feed', 'label' => 'Konten Dashboard'],
+                ['permission' => 'admin.wa-schedules.manage', 'route' => 'admin.wa-schedules.index', 'active' => 'admin.wa-schedules.*', 'icon' => 'forum', 'label' => 'WA Recurring'],
             ];
             $menuGroups = [
                 [

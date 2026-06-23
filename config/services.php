@@ -35,4 +35,11 @@ return [
         ],
     ],
 
+    'waha' => [
+        'base_url' => env('WAHA_BASE_URL', 'https://wa.mambaulhikmah.com'),
+        'api_key' => env('WAHA_API_KEY'),
+        'session' => env('WAHA_SESSION', 'WAHA'),
+        'timeout' => env('WAHA_TIMEOUT', 15),
+    ],
+
 ];

@@ -12,3 +12,8 @@ Schedule::command('attendance:finalize')
     ->dailyAt('00:00')
     ->timezone('Asia/Jakarta')
     ->withoutOverlapping();
+
+Schedule::command('waha:send-recurring-schedules')
+    ->everyMinute()
+    ->timezone('Asia/Jakarta')
+    ->withoutOverlapping();

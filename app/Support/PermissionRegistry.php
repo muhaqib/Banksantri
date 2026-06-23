@@ -54,6 +54,7 @@ class PermissionRegistry
             'Publikasi' => [
                 'admin.blog.manage' => 'Kelola blog dan artikel',
                 'admin.dashboard-content.manage' => 'Kelola pengumuman, berita pondok, dan to do dashboard',
+                'admin.wa-schedules.manage' => 'Kelola jadwal WhatsApp berulang',
             ],
             'Akses & Profil' => [
                 'admin.access.manage' => 'Kelola role dan permission',
