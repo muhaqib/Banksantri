@@ -47,16 +47,22 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+if (! function_exists('redirectToAuthenticatedDashboard')) {
+    function redirectToAuthenticatedDashboard()
+    {
+        return match (auth()->user()?->role) {
+            'admin' => redirect()->route('admin.dashboard'),
+            'petugas' => redirect()->route('petugas.dashboard'),
+            'santri' => redirect()->route('santri.home'),
+            default => redirect()->route('login'),
+        };
+    }
+}
+
 // Default redirect - MUST be before guest/auth middleware groups
 Route::get('/', function () {
     if (auth()->check()) {
-        if (auth()->user()->role === 'admin') {
-            return redirect()->route('admin.dashboard');
-        } elseif (auth()->user()->role === 'petugas') {
-            return redirect()->route('petugas.dashboard');
-        } else {
-            return redirect()->route('santri.home');
-        }
+        return redirectToAuthenticatedDashboard();
     }
 
     return app(LoginController::class)->showRoleSelection();
@@ -73,6 +79,8 @@ Route::middleware('guest')->group(function () {
 
 // Authenticated routes
 Route::middleware('auth')->group(function () {
+    Route::get('/dashboard', fn () => redirectToAuthenticatedDashboard())->name('dashboard');
+
     // Logout
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
 

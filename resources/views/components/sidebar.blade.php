@@ -40,21 +40,6 @@
             <button @click="sidebarOpen = true" class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
                 <span class="material-symbols-outlined text-on-surface">menu</span>
             </button>
-            <div class="flex items-center gap-2">
-                <div class="w-8 h-8 bg-primary-container rounded-lg flex items-center justify-center">
-                    <span class="material-symbols-outlined text-white text-sm">mh</span>
-                </div>
-                <h1 class="font-headline font-bold text-primary text-sm">Mawa Smart</h1>
-            </div>
-        </div>
-        <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-primary/10 rounded-full flex items-center justify-center overflow-hidden">
-                @if(auth()->user()->foto)
-                    <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover">
-                @else
-                    <span class="material-symbols-outlined text-primary text-sm">account_circle</span>
-                @endif
-            </div>
         </div>
     </header>
 

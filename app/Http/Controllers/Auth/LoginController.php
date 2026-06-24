@@ -79,17 +79,14 @@ class LoginController extends Controller
             $user->syncRoles([$user->role]);
         }
 
+        $request->session()->forget('url.intended');
+
         Auth::login($user, $request->filled('remember'));
 
         $request->session()->regenerate();
+        $request->session()->forget('url.intended');
 
-        // Redirect berdasarkan role
-        return redirect()->intended(match ($user->role) {
-            'admin' => route('admin.dashboard'),
-            'petugas' => route('petugas.dashboard'),
-            'santri' => route('santri.home'),
-            default => '/'
-        });
+        return redirect()->to($this->dashboardUrlFor($user));
     }
 
     /**
@@ -116,6 +113,27 @@ class LoginController extends Controller
         $request->session()->invalidate();
         $request->session()->regenerateToken();
 
-        return redirect()->route('login');
+        return redirect()
+            ->route('login')
+            ->withHeaders($this->noCacheHeaders());
+    }
+
+    private function noCacheHeaders(): array
+    {
+        return [
+            'Cache-Control' => 'no-store, no-cache, must-revalidate, max-age=0',
+            'Pragma' => 'no-cache',
+            'Expires' => 'Sat, 01 Jan 2000 00:00:00 GMT',
+        ];
+    }
+
+    private function dashboardUrlFor(User $user): string
+    {
+        return match ($user->role) {
+            'admin' => route('admin.dashboard'),
+            'petugas' => route('petugas.dashboard'),
+            'santri' => route('santri.home'),
+            default => route('dashboard'),
+        };
     }
 }
