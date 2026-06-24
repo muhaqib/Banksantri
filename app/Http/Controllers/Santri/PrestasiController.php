@@ -16,12 +16,14 @@ class PrestasiController extends Controller
     {
         $santri = auth()->user();
         
+        $allPrestasi = PrestasiSantri::where('santri_id', $santri->id)->get();
         $prestasiList = PrestasiSantri::where('santri_id', $santri->id)
+            ->whereNull('tarbiyah_monthly_exam_id')
             ->orderBy('created_at', 'desc')
             ->get();
 
         $totalPenguranganPoin = SantriViolation::where('santri_id', $santri->id)->sum('pengurangan_point');
-        $totalPoin = max(0, $prestasiList->sum('poin') - $totalPenguranganPoin);
+        $totalPoin = max(0, $allPrestasi->sum('poin') - $totalPenguranganPoin);
 
         return view('pages.santri.prestasi.index', [
             'prestasiList' => $prestasiList,

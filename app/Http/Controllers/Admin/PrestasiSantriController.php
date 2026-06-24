@@ -23,6 +23,7 @@ class PrestasiSantriController extends Controller
     {
         return view('pages.admin.prestasi.index', [
             'prestasiList' => PrestasiSantri::with(['santri', 'kitab', 'pembimbing'])
+                ->whereNull('tarbiyah_monthly_exam_id')
                 ->latest()
                 ->paginate(15),
             ...$this->viewContext($request),

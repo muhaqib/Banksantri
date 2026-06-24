@@ -145,6 +145,11 @@ class User extends Authenticatable
         return $this->hasMany(SantriHealthRecord::class, 'santri_id');
     }
 
+    public function latestHealthRecord()
+    {
+        return $this->hasOne(SantriHealthRecord::class, 'santri_id')->latestOfMany('checkup_date');
+    }
+
     public function violations()
     {
         return $this->hasMany(SantriViolation::class, 'santri_id');
@@ -153,6 +158,11 @@ class User extends Authenticatable
     public function tarbiyahGrades()
     {
         return $this->hasMany(TarbiyahGrade::class, 'santri_id');
+    }
+
+    public function tarbiyahMonthlyGrades()
+    {
+        return $this->hasMany(TarbiyahMonthlyGrade::class, 'santri_id');
     }
 
     public function laundrySubscriptions()

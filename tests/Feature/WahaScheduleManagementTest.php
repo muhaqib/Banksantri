@@ -86,7 +86,7 @@ class WahaScheduleManagementTest extends TestCase
         Http::assertSent(fn ($request): bool => $request->url() === 'https://wa.mambaulhikmah.com/api/sendText'
             && $request['session'] === 'WAHA'
             && $request['chatId'] === 'group-edu-123@g.us'
-            && $request['text'] === 'Halo Rahmat Hidayat, jadwal mengajar dimulai.');
+            && $request['text'] === "Halo Rahmat Hidayat, jadwal mengajar dimulai.\n\nPesan otomatis by: MawaSmart.");
 
         $this->assertDatabaseHas('waha_message_logs', [
             'target_id' => 'group-edu-123@g.us',
@@ -122,7 +122,44 @@ class WahaScheduleManagementTest extends TestCase
         $this->assertDatabaseHas('waha_message_logs', [
             'schedule_id' => $schedule->id,
             'target_id' => '62882005266580@c.us',
-            'message_content' => 'Halo Mas Guru, ini test.',
+            'message_content' => "Halo Mas Guru, ini test.\n\nPesan otomatis by: MawaSmart.",
+            'status' => 'success',
+            'http_status' => 201,
+        ]);
+    }
+
+    public function test_admin_can_broadcast_to_selected_santri_guardians(): void
+    {
+        Http::fake([
+            '*sendText' => Http::response(['ok' => true], 201),
+        ]);
+
+        $admin = $this->admin();
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'santri_status' => 'aktif',
+            'name' => 'Ahmad Santri',
+            'nis' => 'S001',
+            'no_hp_wali' => '081234567890',
+        ]);
+
+        $this->actingAs($admin)
+            ->post(route('admin.wa-schedules.broadcast'), [
+                'source' => 'database',
+                'audience' => 'selected_santri',
+                'santri_ids' => [$santri->id],
+                'message_content' => 'Assalamualaikum wali [nama], NIS [nis].',
+            ])
+            ->assertRedirect();
+
+        Http::assertSent(fn ($request): bool => $request['chatId'] === '6281234567890@c.us'
+            && $request['text'] === "Assalamualaikum wali Ahmad Santri, NIS S001.\n\nPesan otomatis by: MawaSmart.");
+
+        $this->assertDatabaseHas('waha_message_logs', [
+            'schedule_id' => null,
+            'teacher_name' => 'Broadcast - Ahmad Santri',
+            'target_id' => '6281234567890@c.us',
+            'message_content' => "Assalamualaikum wali Ahmad Santri, NIS S001.\n\nPesan otomatis by: MawaSmart.",
             'status' => 'success',
             'http_status' => 201,
         ]);

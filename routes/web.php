@@ -91,6 +91,8 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:admin.wa-schedules.manage')->group(function () {
             Route::get('/wa-schedules/status', [WahaScheduleController::class, 'status'])->name('wa-schedules.status');
             Route::get('/wa-schedules/groups', [WahaScheduleController::class, 'groups'])->name('wa-schedules.groups');
+            Route::post('/wa-schedules/broadcast', [WahaScheduleController::class, 'broadcast'])->name('wa-schedules.broadcast');
+            Route::delete('/wa-schedules/logs', [WahaScheduleController::class, 'clearLogs'])->name('wa-schedules.logs.clear');
             Route::patch('/wa-schedules/{waSchedule}/toggle', [WahaScheduleController::class, 'toggle'])->name('wa-schedules.toggle');
             Route::post('/wa-schedules/{waSchedule}/send-now', [WahaScheduleController::class, 'sendNow'])->name('wa-schedules.send-now');
             Route::resource('wa-schedules', WahaScheduleController::class)
@@ -158,6 +160,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/tarbiyah/subjects', [AdminTarbiyahSubjectController::class, 'store'])->name('tarbiyah.subjects.store');
             Route::patch('/tarbiyah/subjects/{subject}', [AdminTarbiyahSubjectController::class, 'update'])->name('tarbiyah.subjects.update');
             Route::delete('/tarbiyah/subjects/{subject}', [AdminTarbiyahSubjectController::class, 'destroy'])->name('tarbiyah.subjects.destroy');
+            Route::post('/tarbiyah/monthly-exams', [AdminTarbiyahSubjectController::class, 'storeMonthlyExam'])->name('tarbiyah.monthly-exams.store');
+            Route::patch('/tarbiyah/monthly-exams/{monthlyExam}', [AdminTarbiyahSubjectController::class, 'updateMonthlyExam'])->name('tarbiyah.monthly-exams.update');
+            Route::delete('/tarbiyah/monthly-exams/{monthlyExam}', [AdminTarbiyahSubjectController::class, 'destroyMonthlyExam'])->name('tarbiyah.monthly-exams.destroy');
         });
 
         Route::get('/attendance', [AttendanceController::class, 'index'])->middleware('permission:admin.attendance.rfid')->name('attendance.index');
@@ -227,6 +232,9 @@ Route::middleware('auth')->group(function () {
             Route::post('/tarbiyah', [PetugasTarbiyahGradeController::class, 'store'])->name('tarbiyah.store');
             Route::post('/tarbiyah/import', [PetugasTarbiyahGradeController::class, 'import'])->name('tarbiyah.import');
             Route::get('/tarbiyah/template', [PetugasTarbiyahGradeController::class, 'template'])->name('tarbiyah.template');
+            Route::post('/tarbiyah/monthly', [PetugasTarbiyahGradeController::class, 'storeMonthly'])->name('tarbiyah.monthly.store');
+            Route::post('/tarbiyah/monthly/import', [PetugasTarbiyahGradeController::class, 'importMonthly'])->name('tarbiyah.monthly.import');
+            Route::get('/tarbiyah/monthly/export', [PetugasTarbiyahGradeController::class, 'exportMonthly'])->name('tarbiyah.monthly.export');
             Route::post('/tarbiyah/promote', [PetugasTarbiyahGradeController::class, 'promote'])->name('tarbiyah.promote');
         });
 

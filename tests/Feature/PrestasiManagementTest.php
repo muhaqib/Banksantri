@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\Kitab;
 use App\Models\PrestasiSantri;
+use App\Models\TarbiyahMonthlyExam;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Spatie\Permission\Models\Permission;
@@ -66,5 +67,39 @@ class PrestasiManagementTest extends TestCase
             'nama' => 'Safinatun Najah',
             'created_by' => $petugas->id,
         ]);
+    }
+
+    public function test_santri_prestasi_hides_monthly_exam_record_but_counts_points(): void
+    {
+        $santri = User::factory()->create(['role' => 'santri']);
+        $santri->assignRole(Role::findOrCreate('santri'));
+        $santri->givePermissionTo(Permission::findOrCreate('santri.prestasi.view'));
+        $exam = TarbiyahMonthlyExam::create([
+            'name' => 'Ujian Bulanan Muharram',
+            'exam_date' => '2026-07-10',
+        ]);
+
+        PrestasiSantri::create([
+            'santri_id' => $santri->id,
+            'nama_kitab' => 'Safinatun Najah',
+            'status' => 'telah_dihafalkan',
+            'progress' => 100,
+            'poin' => 9,
+        ]);
+        PrestasiSantri::create([
+            'santri_id' => $santri->id,
+            'tarbiyah_monthly_exam_id' => $exam->id,
+            'nama_kitab' => 'Ujian Bulanan: Ujian Bulanan Muharram',
+            'status' => 'telah_dihafalkan',
+            'progress' => 100,
+            'poin' => 10,
+        ]);
+
+        $this->actingAs($santri)
+            ->get(route('santri.prestasi'))
+            ->assertOk()
+            ->assertSee('19')
+            ->assertSee('Safinatun Najah')
+            ->assertDontSee('Ujian Bulanan: Ujian Bulanan Muharram');
     }
 }

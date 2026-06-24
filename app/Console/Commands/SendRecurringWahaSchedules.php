@@ -10,6 +10,8 @@ use Illuminate\Support\Facades\Log;
 
 class SendRecurringWahaSchedules extends Command
 {
+    private const AUTO_SIGNATURE = 'Pesan otomatis by: MawaSmart.';
+
     protected $signature = 'waha:send-recurring-schedules';
 
     protected $description = 'Send active recurring WhatsApp schedules for the current day and minute.';
@@ -31,7 +33,7 @@ class SendRecurringWahaSchedules extends Command
         }
 
         foreach ($schedules as $index => $schedule) {
-            $message = str_replace('[nama_guru]', $schedule->teacher_name, $schedule->message_content);
+            $message = $this->appendAutoSignature(str_replace('[nama_guru]', $schedule->teacher_name, $schedule->message_content));
             $result = $wahaService->sendMessageResult($schedule->target_id, $message);
 
             WahaMessageLog::create([
@@ -63,5 +65,16 @@ class SendRecurringWahaSchedules extends Command
         }
 
         return self::SUCCESS;
+    }
+
+    private function appendAutoSignature(string $message): string
+    {
+        $message = trim($message);
+
+        if (str_contains($message, self::AUTO_SIGNATURE)) {
+            return $message;
+        }
+
+        return $message."\n\n".self::AUTO_SIGNATURE;
     }
 }

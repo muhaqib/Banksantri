@@ -17,53 +17,128 @@
     </header>
 
     <main class="px-5 space-y-6">
-        <section class="rounded-2xl bg-primary p-6 text-on-primary shadow-xl shadow-primary/10">
-            <p class="text-xs font-bold uppercase tracking-widest text-primary-fixed/80">Rata-rata Nilai</p>
-            <div class="mt-5 grid grid-cols-2 gap-4">
-                <div>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed/70">Semester 1</p>
-                    <p class="mt-1 font-headline text-4xl font-extrabold">{{ $semesterAverages[1] ?? '-' }}</p>
-                </div>
-                <div>
-                    <p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed/70">Semester 2</p>
-                    <p class="mt-1 font-headline text-4xl font-extrabold">{{ $semesterAverages[2] ?? '-' }}</p>
-                </div>
-            </div>
+        <section class="grid grid-cols-2 gap-3">
+            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'monthly', 'class_level' => $classLevel, 'month' => $month]) }}" class="rounded-2xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'monthly' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
+                Lihat Nilai Bulanan
+            </a>
+            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'semester', 'class_level' => $classLevel]) }}" class="rounded-2xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'semester' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
+                Lihat Nilai Semester
+            </a>
         </section>
 
-        <section class="space-y-4">
-            <h2 class="font-headline text-lg font-extrabold text-on-surface">Daftar Nilai</h2>
-            @forelse($subjects as $subject)
-                @php
-                    $subjectGrades = $grades->where('subject_id', $subject->id)->keyBy('semester');
-                @endphp
-                <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
-                    <div class="flex items-start justify-between gap-3">
-                        <div>
-                            <h3 class="font-headline text-lg font-extrabold text-on-surface">{{ $subject->name }}</h3>
-                            <p class="mt-1 text-xs text-on-surface-variant">Mata pelajaran kelas {{ $classLevel }}</p>
-                        </div>
-                        <span class="material-symbols-outlined text-primary">menu_book</span>
+        @if($mode === 'semester')
+            <form method="GET" class="rounded-2xl bg-surface-container-lowest p-4 shadow-sm">
+                <input type="hidden" name="mode" value="semester">
+                <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Filter Kelas</label>
+                <select name="class_level" class="input-field w-full" onchange="this.form.submit()">
+                    @foreach($classLevels as $level)
+                        <option value="{{ $level }}" @selected($classLevel === $level)>{{ $level }}</option>
+                    @endforeach
+                </select>
+            </form>
+
+            <section class="rounded-2xl bg-primary p-6 text-on-primary shadow-xl shadow-primary/10">
+                <p class="text-xs font-bold uppercase tracking-widest text-primary-fixed/80">Rata-rata Nilai</p>
+                <div class="mt-5 grid grid-cols-2 gap-4">
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed/70">Semester 1</p>
+                        <p class="mt-1 font-headline text-4xl font-extrabold">{{ $semesterAverages[1] ?? '-' }}</p>
                     </div>
-                    <div class="mt-4 grid grid-cols-2 gap-3">
-                        <div class="rounded-xl bg-surface-container-low p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 1</p>
-                            <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[1]) ? rtrim(rtrim($subjectGrades[1]->score, '0'), '.') : '-' }}</p>
-                        </div>
-                        <div class="rounded-xl bg-surface-container-low p-4">
-                            <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 2</p>
-                            <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[2]) ? rtrim(rtrim($subjectGrades[2]->score, '0'), '.') : '-' }}</p>
-                        </div>
+                    <div>
+                        <p class="text-[10px] font-bold uppercase tracking-widest text-primary-fixed/70">Semester 2</p>
+                        <p class="mt-1 font-headline text-4xl font-extrabold">{{ $semesterAverages[2] ?? '-' }}</p>
                     </div>
-                </article>
-            @empty
-                <div class="rounded-[1.75rem] bg-surface-container-lowest p-10 text-center">
-                    <span class="material-symbols-outlined text-6xl text-outline">school</span>
-                    <p class="mt-3 text-sm font-bold text-on-surface">Belum ada nilai Tarbiyah</p>
-                    <p class="mt-1 text-xs text-on-surface-variant">Nilai akan muncul setelah petugas menginput data semester.</p>
                 </div>
-            @endforelse
-        </section>
+            </section>
+
+            <section class="space-y-4">
+                <h2 class="font-headline text-lg font-extrabold text-on-surface">Nilai Semester</h2>
+                @forelse($subjects as $subject)
+                    @php $subjectGrades = $grades->where('subject_id', $subject->id)->keyBy('semester'); @endphp
+                    <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h3 class="font-headline text-lg font-extrabold text-on-surface">{{ $subject->name }}</h3>
+                                <p class="mt-1 text-xs text-on-surface-variant">Mata pelajaran kelas {{ $classLevel }}</p>
+                            </div>
+                            <span class="material-symbols-outlined text-primary">menu_book</span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-2 gap-3">
+                            <div class="rounded-xl bg-surface-container-low p-4">
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 1</p>
+                                <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[1]) ? rtrim(rtrim($subjectGrades[1]->score, '0'), '.') : '-' }}</p>
+                            </div>
+                            <div class="rounded-xl bg-surface-container-low p-4">
+                                <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 2</p>
+                                <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[2]) ? rtrim(rtrim($subjectGrades[2]->score, '0'), '.') : '-' }}</p>
+                            </div>
+                        </div>
+                    </article>
+                @empty
+                    <div class="rounded-[1.75rem] bg-surface-container-lowest p-10 text-center">
+                        <span class="material-symbols-outlined text-6xl text-outline">school</span>
+                        <p class="mt-3 text-sm font-bold text-on-surface">Belum ada nilai semester</p>
+                    </div>
+                @endforelse
+            </section>
+        @else
+            <form method="GET" class="grid gap-3 rounded-2xl bg-surface-container-lowest p-4 shadow-sm">
+                <input type="hidden" name="mode" value="monthly">
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Filter Kelas</label>
+                    <select name="class_level" class="input-field w-full">
+                        @foreach($classLevels as $level)
+                            <option value="{{ $level }}" @selected($classLevel === $level)>{{ $level }}</option>
+                        @endforeach
+                    </select>
+                </div>
+                <div>
+                    <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Filter Bulan</label>
+                    <input type="month" name="month" value="{{ $month }}" class="input-field w-full">
+                </div>
+                <button class="btn-primary justify-center"><span class="material-symbols-outlined">filter_alt</span> Tampilkan</button>
+            </form>
+
+            <section class="space-y-4">
+                <h2 class="font-headline text-lg font-extrabold text-on-surface">Nilai Bulanan</h2>
+                @forelse($monthlyExams as $exam)
+                    @php
+                        $examGrades = $monthlyGrades->where('monthly_exam_id', $exam->id)->keyBy('subject');
+                        $complete = collect($monthlySubjects)->every(fn ($subject) => isset($examGrades[$subject]));
+                        $total = collect($monthlySubjects)->sum(fn ($subject) => (float) ($examGrades[$subject]->score ?? 0));
+                        $point = $total >= 300 ? 10 : ($total > 180 ? 5 : ($total >= 90 ? 3 : ($complete ? -3 : 0)));
+                    @endphp
+                    <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h3 class="font-headline text-lg font-extrabold text-on-surface">{{ $exam->name }}</h3>
+                                <p class="mt-1 text-xs text-on-surface-variant">{{ $exam->exam_date?->format('d M Y') }} | Kelas {{ $classLevel }}</p>
+                            </div>
+                            <span class="rounded-full px-3 py-1 text-xs font-bold {{ $point >= 0 ? 'bg-primary/10 text-primary' : 'bg-error/10 text-error' }}">
+                                {{ $complete ? ($point > 0 ? '+'.$point : $point).' poin' : 'Belum lengkap' }}
+                            </span>
+                        </div>
+                        <div class="mt-4 grid grid-cols-3 gap-2">
+                            @foreach($monthlySubjects as $subject)
+                                <div class="rounded-xl bg-surface-container-low p-3">
+                                    <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{{ $subject }}</p>
+                                    <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($examGrades[$subject]) ? rtrim(rtrim($examGrades[$subject]->score, '0'), '.') : '-' }}</p>
+                                </div>
+                            @endforeach
+                        </div>
+                        <div class="mt-3 rounded-xl bg-primary/10 px-4 py-3 text-sm font-extrabold text-primary">
+                            Total: {{ $complete ? rtrim(rtrim(number_format($total, 2, '.', ''), '0'), '.') : '-' }}
+                        </div>
+                    </article>
+                @empty
+                    <div class="rounded-[1.75rem] bg-surface-container-lowest p-10 text-center">
+                        <span class="material-symbols-outlined text-6xl text-outline">calendar_month</span>
+                        <p class="mt-3 text-sm font-bold text-on-surface">Belum ada nilai bulanan</p>
+                        <p class="mt-1 text-xs text-on-surface-variant">Pilih bulan lain atau tunggu petugas menginput nilai.</p>
+                    </div>
+                @endforelse
+            </section>
+        @endif
     </main>
 
     <x-santri.bottom-nav />

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\TarbiyahMonthlyExam;
 use App\Models\TarbiyahSubject;
 use App\Support\TarbiyahClass;
 use Illuminate\Http\Request;
@@ -22,6 +23,11 @@ class TarbiyahSubjectController extends Controller
                 ->orderBy('sort_order')
                 ->orderBy('name')
                 ->get(),
+            'monthlyExams' => TarbiyahMonthlyExam::query()
+                ->latest('exam_date')
+                ->latest()
+                ->paginate(10, ['*'], 'exam_page')
+                ->withQueryString(),
         ]);
     }
 
@@ -67,5 +73,39 @@ class TarbiyahSubjectController extends Controller
         $subject->delete();
 
         return back()->with('success', 'Mata pelajaran Tarbiyah berhasil dihapus.');
+    }
+
+    public function storeMonthlyExam(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'exam_date' => ['required', 'date'],
+        ]);
+
+        TarbiyahMonthlyExam::create([
+            ...$validated,
+            'created_by' => $request->user()->id,
+        ]);
+
+        return back()->with('success', 'Ujian bulanan berhasil dibuat.');
+    }
+
+    public function updateMonthlyExam(Request $request, TarbiyahMonthlyExam $monthlyExam)
+    {
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'exam_date' => ['required', 'date'],
+        ]);
+
+        $monthlyExam->update($validated);
+
+        return back()->with('success', 'Ujian bulanan berhasil diperbarui.');
+    }
+
+    public function destroyMonthlyExam(TarbiyahMonthlyExam $monthlyExam)
+    {
+        $monthlyExam->delete();
+
+        return back()->with('success', 'Ujian bulanan berhasil dihapus.');
     }
 }

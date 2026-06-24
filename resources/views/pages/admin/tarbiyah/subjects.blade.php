@@ -33,6 +33,9 @@
     </form>
 
     <div class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
+        <div class="border-b border-outline-variant/10 px-5 py-4">
+            <h2 class="font-headline text-lg font-bold text-primary">Mata Pelajaran Semester</h2>
+        </div>
         <div class="overflow-x-auto">
             <table class="w-full text-left text-sm">
                 <thead class="bg-surface-container-low text-xs uppercase text-on-surface-variant">
@@ -78,5 +81,70 @@
             </table>
         </div>
     </div>
+
+    <section class="grid gap-5 lg:grid-cols-3">
+        <form method="POST" action="{{ route('admin.tarbiyah.monthly-exams.store') }}" class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+            @csrf
+            <h2 class="font-headline text-lg font-bold text-primary">Buat Ujian Bulanan</h2>
+            <p class="mb-4 text-xs text-on-surface-variant">Ujian yang dibuat admin akan muncul di form penilaian petugas.</p>
+            <div class="space-y-3">
+                <input name="name" required value="{{ old('name') }}" placeholder="Nama ujian" class="input-field w-full">
+                <input type="date" name="exam_date" required value="{{ old('exam_date', now()->format('Y-m-d')) }}" class="input-field w-full">
+                <button class="btn-primary w-full justify-center"><span class="material-symbols-outlined">add</span> Tambah Ujian</button>
+            </div>
+        </form>
+
+        <div class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm lg:col-span-2">
+            <div class="flex items-center justify-between border-b border-outline-variant/10 px-5 py-4">
+                <div>
+                    <h2 class="font-headline text-lg font-bold text-primary">Daftar Ujian Bulanan</h2>
+                    <p class="text-xs text-on-surface-variant">Mapel ujian bulanan tetap: Nahwu, Shorof, Fiqih.</p>
+                </div>
+                <span class="text-xs font-bold text-on-surface-variant">{{ $monthlyExams->total() }} ujian</span>
+            </div>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left text-sm">
+                    <thead class="bg-surface-container-low text-xs uppercase text-on-surface-variant">
+                        <tr>
+                            <th class="px-5 py-4">Nama Ujian</th>
+                            <th class="px-5 py-4">Waktu Ujian</th>
+                            <th class="px-5 py-4 text-right">Aksi</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/10">
+                        @forelse($monthlyExams as $exam)
+                            <tr>
+                                <td class="px-5 py-4">
+                                    <form id="monthly-exam-{{ $exam->id }}" method="POST" action="{{ route('admin.tarbiyah.monthly-exams.update', $exam) }}">
+                                        @csrf @method('PATCH')
+                                        <input name="name" value="{{ $exam->name }}" required class="input-field w-full">
+                                    </form>
+                                </td>
+                                <td class="px-5 py-4">
+                                    <input form="monthly-exam-{{ $exam->id }}" type="date" name="exam_date" value="{{ $exam->exam_date?->format('Y-m-d') }}" required class="input-field">
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex justify-end gap-2">
+                                        <button form="monthly-exam-{{ $exam->id }}" class="text-primary" title="Simpan"><span class="material-symbols-outlined">save</span></button>
+                                        <form method="POST" action="{{ route('admin.tarbiyah.monthly-exams.destroy', $exam) }}" onsubmit="return confirm('Hapus ujian bulanan ini? Nilai yang terkait juga akan terhapus.')">
+                                            @csrf @method('DELETE')
+                                            <button class="text-error" title="Hapus"><span class="material-symbols-outlined">delete</span></button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="3" class="px-5 py-14 text-center text-on-surface-variant">Belum ada ujian bulanan.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+            @if($monthlyExams->hasPages())
+                <div class="border-t border-outline-variant/10 px-5 py-4">
+                    {{ $monthlyExams->links() }}
+                </div>
+            @endif
+        </div>
+    </section>
 </div>
 @endsection

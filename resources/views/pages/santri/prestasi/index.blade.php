@@ -9,20 +9,7 @@
         <a href="{{ route('santri.home') }}" class="w-10 h-10 rounded-full hover:bg-surface-container-low flex items-center justify-center transition-colors shrink-0">
                     <span class="material-symbols-outlined text-primary">arrow_back</span>
                 </a>
-    <!-- <div class="flex items-center gap-3">
-            
-            <div class="w-10 h-10 bg-white/20 backdrop-blur-md rounded-full flex items-center justify-center ring-4 ring-white/30">
-                    @if(auth()->user()->foto)
-                        <img src="{{ Storage::url(auth()->user()->foto) }}" alt="{{ auth()->user()->name }}" class="w-full h-full object-cover rounded-full">
-                    @else
-                        <span class="material-symbols-outlined text-white text-5xl">account_circle</span>
-                    @endif
-                </div>
-            <div>
-                <span class="block text-xs font-medium text-on-surface-variant opacity-70">Assalamu'alaikum,</span>
-                <h1 class="font-headline text-xl font-bold tracking-tight text-primary">{{ auth()->user()->name ?? 'Santri' }}</h1>
-            </div>
-        </div> -->
+
         <div class="flex items-center gap-4">
             <button class="relative hover:opacity-80 transition-opacity">
                 <span class="material-symbols-outlined text-primary">notifications</span>

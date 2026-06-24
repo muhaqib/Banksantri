@@ -67,19 +67,25 @@
             <input name="title" required value="{{ old('title', $record?->title) }}" class="input-field mt-2" placeholder="Contoh: Pemeriksaan Rutin">
         </label>
 
-        <div class="grid gap-4 md:grid-cols-4">
-            <label class="text-sm font-bold">Berat (kg)
-                <input type="number" name="weight_kg" min="1" max="300" step="0.1" value="{{ old('weight_kg', $record?->weight_kg) }}" class="input-field mt-2">
-            </label>
-            <label class="text-sm font-bold">Tinggi (cm)
-                <input type="number" name="height_cm" min="30" max="250" step="0.1" value="{{ old('height_cm', $record?->height_cm) }}" class="input-field mt-2">
-            </label>
-            <label class="text-sm font-bold">Tekanan
-                <input name="blood_pressure" value="{{ old('blood_pressure', $record?->blood_pressure) }}" class="input-field mt-2" placeholder="120/80">
-            </label>
-            <label class="text-sm font-bold">Suhu (°C)
-                <input type="number" name="temperature_c" min="30" max="45" step="0.1" value="{{ old('temperature_c', $record?->temperature_c) }}" class="input-field mt-2">
-            </label>
+        <div x-show="hasSelectedSantri" x-cloak x-transition class="rounded-2xl bg-surface-container-low p-4">
+            <div class="mb-4">
+                <p class="font-bold text-on-surface">Data Fisik Opsional</p>
+                <p class="text-xs text-on-surface-variant">Boleh dikosongkan. Isi hanya jika petugas ingin menambahkan atau memperbarui data pemeriksaan fisik santri.</p>
+            </div>
+            <div class="grid gap-4 md:grid-cols-4">
+                <label class="text-sm font-bold">Berat (kg)
+                    <input type="number" name="weight_kg" min="1" max="300" step="0.1" x-model="vitals.weight_kg" class="input-field mt-2 bg-surface-container-lowest">
+                </label>
+                <label class="text-sm font-bold">Tinggi (cm)
+                    <input type="number" name="height_cm" min="30" max="250" step="0.1" x-model="vitals.height_cm" class="input-field mt-2 bg-surface-container-lowest">
+                </label>
+                <label class="text-sm font-bold">Tekanan
+                    <input name="blood_pressure" x-model="vitals.blood_pressure" class="input-field mt-2 bg-surface-container-lowest" placeholder="120/80">
+                </label>
+                <label class="text-sm font-bold">Suhu (°C)
+                    <input type="number" name="temperature_c" min="30" max="45" step="0.1" x-model="vitals.temperature_c" class="input-field mt-2 bg-surface-container-lowest">
+                </label>
+            </div>
         </div>
 
         <label class="block text-sm font-bold">Keluhan
@@ -114,13 +120,28 @@ function healthSantriSearch() {
             'nis' => $santri->nis,
             'kamar' => $santri->kamarSantri?->kamar ? ucwords(str_replace('_', ' ', $santri->kamarSantri->kamar)) : 'Tanpa kamar',
             'meta' => ($santri->nis ?? '-') . ' - ' . ($santri->kamarSantri?->kamar ? ucwords(str_replace('_', ' ', $santri->kamarSantri->kamar)) : 'Tanpa kamar'),
+            'latest_health' => [
+                'weight_kg' => $santri->latestHealthRecord?->weight_kg ? rtrim(rtrim($santri->latestHealthRecord->weight_kg, '0'), '.') : '',
+                'height_cm' => $santri->latestHealthRecord?->height_cm ? rtrim(rtrim($santri->latestHealthRecord->height_cm, '0'), '.') : '',
+                'blood_pressure' => $santri->latestHealthRecord?->blood_pressure ?? '',
+                'temperature_c' => $santri->latestHealthRecord?->temperature_c ? rtrim(rtrim($santri->latestHealthRecord->temperature_c, '0'), '.') : '',
+            ],
         ])->values()),
         selectedSantriId: @js((string) old('santri_id', $record?->santri_id ?? '')),
+        vitals: {
+            weight_kg: @js((string) old('weight_kg', $record?->weight_kg ? rtrim(rtrim($record->weight_kg, '0'), '.') : '')),
+            height_cm: @js((string) old('height_cm', $record?->height_cm ? rtrim(rtrim($record->height_cm, '0'), '.') : '')),
+            blood_pressure: @js((string) old('blood_pressure', $record?->blood_pressure ?? '')),
+            temperature_c: @js((string) old('temperature_c', $record?->temperature_c ? rtrim(rtrim($record->temperature_c, '0'), '.') : '')),
+        },
         search: '',
         dropdownOpen: false,
 
         init() {
             this.syncSelectedLabel();
+            if (!this.hasAnyVital()) {
+                this.fillVitalsFromSelected();
+            }
         },
 
         get filteredSantri() {
@@ -130,6 +151,10 @@ function healthSantriSearch() {
             return this.santriList
                 .filter((santri) => this.normalize(`${santri.name} ${santri.nis || ''} ${santri.kamar || ''}`).includes(term))
                 .slice(0, 30);
+        },
+
+        get hasSelectedSantri() {
+            return Boolean(this.selectedSantriId);
         },
 
         normalize(value) {
@@ -148,7 +173,24 @@ function healthSantriSearch() {
         selectSantri(santri) {
             this.selectedSantriId = String(santri.id);
             this.search = this.label(santri);
+            this.fillVitals(santri.latest_health || {});
             this.dropdownOpen = false;
+        },
+
+        fillVitalsFromSelected() {
+            const selected = this.santriList.find((santri) => String(santri.id) === String(this.selectedSantriId));
+            if (selected) this.fillVitals(selected.latest_health || {});
+        },
+
+        fillVitals(latestHealth) {
+            this.vitals.weight_kg = latestHealth.weight_kg || '';
+            this.vitals.height_cm = latestHealth.height_cm || '';
+            this.vitals.blood_pressure = latestHealth.blood_pressure || '';
+            this.vitals.temperature_c = latestHealth.temperature_c || '';
+        },
+
+        hasAnyVital() {
+            return Boolean(this.vitals.weight_kg || this.vitals.height_cm || this.vitals.blood_pressure || this.vitals.temperature_c);
         },
     }
 }

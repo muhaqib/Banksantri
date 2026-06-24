@@ -13,6 +13,7 @@ class PrestasiSantri extends Model
         'santri_id',
         'kitab_id',
         'pembimbing_id',
+        'tarbiyah_monthly_exam_id',
         'nama_kitab',
         'kategori',
         'keterangan',
@@ -52,6 +53,11 @@ class PrestasiSantri extends Model
     public function pembimbing()
     {
         return $this->belongsTo(User::class, 'pembimbing_id');
+    }
+
+    public function tarbiyahMonthlyExam()
+    {
+        return $this->belongsTo(TarbiyahMonthlyExam::class, 'tarbiyah_monthly_exam_id');
     }
 
     /**

@@ -2,7 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Models\PrestasiSantri;
 use App\Models\TarbiyahGrade;
+use App\Models\TarbiyahMonthlyExam;
+use App\Models\TarbiyahMonthlyGrade;
 use App\Models\TarbiyahSubject;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -117,6 +120,105 @@ class TarbiyahManagementTest extends TestCase
         $this->assertSame('2 Ibtida', $santri->fresh()->kelas);
     }
 
+    public function test_admin_creates_monthly_exam_and_petugas_records_monthly_grades_with_auto_points(): void
+    {
+        $admin = User::factory()->create(['role' => 'admin']);
+        $admin->assignRole(Role::findOrCreate('admin'));
+        $admin->givePermissionTo(Permission::findOrCreate('admin.tarbiyah.manage'));
+
+        $this->actingAs($admin)
+            ->post(route('admin.tarbiyah.monthly-exams.store'), [
+                'name' => 'Ujian Bulanan Muharram',
+                'exam_date' => '2026-07-10',
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $exam = TarbiyahMonthlyExam::firstOrFail();
+        $petugas = User::factory()->create(['role' => 'petugas']);
+        $petugas->assignRole(Role::findOrCreate('petugas'));
+        $petugas->givePermissionTo(Permission::findOrCreate('petugas.tarbiyah.manage'));
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'santri_status' => 'aktif',
+            'kelas' => '1 Ibtida',
+        ]);
+
+        $this->actingAs($petugas)
+            ->post(route('petugas.tarbiyah.monthly.store'), [
+                'class_level' => '1 Ibtida',
+                'monthly_exam_id' => $exam->id,
+                'grades' => [
+                    $santri->id => [
+                        'Nahwu' => 100,
+                        'Shorof' => 100,
+                        'Fiqih' => 100,
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        foreach (TarbiyahMonthlyGrade::SUBJECTS as $subject) {
+            $this->assertDatabaseHas('tarbiyah_monthly_grades', [
+                'monthly_exam_id' => $exam->id,
+                'santri_id' => $santri->id,
+                'subject' => $subject,
+                'score' => 100,
+            ]);
+        }
+
+        $this->assertDatabaseHas('prestasi_santris', [
+            'santri_id' => $santri->id,
+            'tarbiyah_monthly_exam_id' => $exam->id,
+            'nama_kitab' => 'Ujian Bulanan: Ujian Bulanan Muharram',
+            'poin' => 10,
+        ]);
+
+        $this->actingAs($petugas)
+            ->post(route('petugas.tarbiyah.monthly.store'), [
+                'class_level' => '1 Ibtida',
+                'monthly_exam_id' => $exam->id,
+                'grades' => [
+                    $santri->id => [
+                        'Nahwu' => 50,
+                        'Shorof' => 50,
+                        'Fiqih' => 50,
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertSame(1, PrestasiSantri::where('santri_id', $santri->id)->where('tarbiyah_monthly_exam_id', $exam->id)->count());
+        $this->assertDatabaseHas('prestasi_santris', [
+            'santri_id' => $santri->id,
+            'tarbiyah_monthly_exam_id' => $exam->id,
+            'poin' => 3,
+        ]);
+
+        $this->actingAs($petugas)
+            ->post(route('petugas.tarbiyah.monthly.store'), [
+                'class_level' => '1 Ibtida',
+                'monthly_exam_id' => $exam->id,
+                'grades' => [
+                    $santri->id => [
+                        'Nahwu' => 20,
+                        'Shorof' => 20,
+                        'Fiqih' => 20,
+                    ],
+                ],
+            ])
+            ->assertRedirect()
+            ->assertSessionHasNoErrors();
+
+        $this->assertDatabaseHas('prestasi_santris', [
+            'santri_id' => $santri->id,
+            'tarbiyah_monthly_exam_id' => $exam->id,
+            'poin' => -3,
+        ]);
+    }
+
     public function test_santri_can_view_tarbiyah_grades(): void
     {
         $santri = User::factory()->create([
@@ -137,10 +239,46 @@ class TarbiyahManagementTest extends TestCase
         ]);
 
         $this->actingAs($santri)
-            ->get(route('santri.tarbiyah.index'))
+            ->get(route('santri.tarbiyah.index', ['mode' => 'semester']))
             ->assertOk()
             ->assertSee('Nilai Tarbiyah')
             ->assertSee('95');
+    }
+
+    public function test_santri_can_view_monthly_tarbiyah_grades(): void
+    {
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'santri_status' => 'aktif',
+            'kelas' => '1 Ibtida',
+        ]);
+        $santri->assignRole(Role::findOrCreate('santri'));
+        $santri->givePermissionTo(Permission::findOrCreate('santri.tarbiyah.view'));
+        $exam = TarbiyahMonthlyExam::create([
+            'name' => 'Ujian Bulanan Safar',
+            'exam_date' => '2026-08-15',
+        ]);
+
+        foreach (['Nahwu' => 80, 'Shorof' => 85, 'Fiqih' => 90] as $subject => $score) {
+            TarbiyahMonthlyGrade::create([
+                'monthly_exam_id' => $exam->id,
+                'santri_id' => $santri->id,
+                'class_level' => '1 Ibtida',
+                'subject' => $subject,
+                'score' => $score,
+            ]);
+        }
+
+        $this->actingAs($santri)
+            ->get(route('santri.tarbiyah.index', [
+                'mode' => 'monthly',
+                'class_level' => '1 Ibtida',
+                'month' => '2026-08',
+            ]))
+            ->assertOk()
+            ->assertSee('Ujian Bulanan Safar')
+            ->assertSee('255')
+            ->assertSee('+5 poin');
     }
 
     private function gradeFile(array $rows): UploadedFile

@@ -104,7 +104,7 @@ class HealthRecordController extends Controller
     {
         return User::query()
             ->activeSantri()
-            ->with('kamarSantri')
+            ->with(['kamarSantri', 'latestHealthRecord'])
             ->orderBy('name')
             ->get();
     }

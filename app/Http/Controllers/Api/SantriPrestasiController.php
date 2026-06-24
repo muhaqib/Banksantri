@@ -16,7 +16,9 @@ class SantriPrestasiController extends Controller
     {
         $santri = $request->user();
 
+        $allPrestasi = PrestasiSantri::where('santri_id', $santri->id)->get();
         $query = PrestasiSantri::where('santri_id', $santri->id)
+            ->whereNull('tarbiyah_monthly_exam_id')
             ->orderBy('created_at', 'desc');
 
         // Filter by status
@@ -27,7 +29,7 @@ class SantriPrestasiController extends Controller
         $prestasiList = $query->get();
 
         $totalPenguranganPoin = SantriViolation::where('santri_id', $santri->id)->sum('pengurangan_point');
-        $totalPoin = max(0, $prestasiList->sum('poin') - $totalPenguranganPoin);
+        $totalPoin = max(0, $allPrestasi->sum('poin') - $totalPenguranganPoin);
 
         return response()->json([
             'data' => $prestasiList->map(fn($prestasi) => $this->formatPrestasi($prestasi)),
