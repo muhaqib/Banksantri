@@ -13,7 +13,6 @@ class DashboardContent extends Model
 
     public const TYPES = [
         'announcement' => 'Pengumuman',
-        'news' => 'Berita Pondok',
         'todo' => 'To Do List',
     ];
 

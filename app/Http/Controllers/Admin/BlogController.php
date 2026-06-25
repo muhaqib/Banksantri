@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
 
 class BlogController extends Controller
@@ -20,7 +21,10 @@ class BlogController extends Controller
 
         return view('pages.admin.blog.index', [
             'blogs' => $blogs,
-            'activeRole' => 'admin',
+            'totalBlogs' => Blog::count(),
+            'publishedBlogs' => Blog::published()->count(),
+            'draftBlogs' => Blog::draft()->count(),
+            ...$this->viewContext(),
         ]);
     }
 
@@ -30,7 +34,7 @@ class BlogController extends Controller
     public function create()
     {
         return view('pages.admin.blog.create', [
-            'activeRole' => 'admin',
+            ...$this->viewContext(),
         ]);
     }
 
@@ -40,39 +44,27 @@ class BlogController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:blogs,slug',
-            'excerpt' => 'required|string',
-            'content' => 'required|string',
-            'thumbnail' => 'nullable|image|max:2048',
-            'category' => 'nullable|string|max:100',
-            'author' => 'nullable|string|max:100',
-            'is_published' => 'nullable|boolean',
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
+            'excerpt' => ['required', 'string', 'max:500'],
+            'content' => ['required', 'string'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480'],
+            'category' => ['nullable', 'string', 'max:100'],
+            'author' => ['nullable', 'string', 'max:100'],
+            'is_published' => ['nullable', 'boolean'],
         ]);
 
-        // Generate slug if not provided
-        if (empty($validated['slug'])) {
-            $validated['slug'] = Str::slug($validated['title']);
-        }
+        $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? $validated['title']);
+        $validated['is_published'] = $request->boolean('is_published');
+        $validated['published_at'] = $validated['is_published'] ? now() : null;
 
-        // Handle thumbnail upload
-        $thumbnailPath = null;
         if ($request->hasFile('thumbnail')) {
-            $thumbnailPath = $request->file('thumbnail')->store('blogs/thumbnails', 'public');
+            $validated['thumbnail'] = $this->storeCompressedThumbnail($request->file('thumbnail'));
         }
 
-        Blog::create([
-            'title' => $validated['title'],
-            'slug' => $validated['slug'],
-            'excerpt' => $validated['excerpt'],
-            'content' => $validated['content'],
-            'thumbnail' => $thumbnailPath,
-            'category' => $validated['category'] ?? null,
-            'author' => $validated['author'] ?? null,
-            'is_published' => $validated['is_published'] ?? false,
-        ]);
+        Blog::create($validated);
 
-        return redirect()->route('admin.blog.index')
+        return redirect()->route($this->routeName('index'))
             ->with('success', 'Blog post berhasil ditambahkan!');
     }
 
@@ -83,7 +75,7 @@ class BlogController extends Controller
     {
         return view('pages.admin.blog.show', [
             'blog' => $blog,
-            'activeRole' => 'admin',
+            ...$this->viewContext(),
         ]);
     }
 
@@ -94,7 +86,7 @@ class BlogController extends Controller
     {
         return view('pages.admin.blog.edit', [
             'blog' => $blog,
-            'activeRole' => 'admin',
+            ...$this->viewContext(),
         ]);
     }
 
@@ -104,43 +96,32 @@ class BlogController extends Controller
     public function update(Request $request, Blog $blog)
     {
         $validated = $request->validate([
-            'title' => 'required|string|max:255',
-            'slug' => 'nullable|string|max:255|unique:blogs,slug,' . $blog->id,
-            'excerpt' => 'required|string',
-            'content' => 'required|string',
-            'thumbnail' => 'nullable|image|max:2048',
-            'category' => 'nullable|string|max:100',
-            'author' => 'nullable|string|max:100',
-            'is_published' => 'nullable|boolean',
+            'title' => ['required', 'string', 'max:255'],
+            'slug' => ['nullable', 'string', 'max:255'],
+            'excerpt' => ['required', 'string', 'max:500'],
+            'content' => ['required', 'string'],
+            'thumbnail' => ['nullable', 'image', 'mimes:jpg,jpeg,png,webp', 'max:20480'],
+            'category' => ['nullable', 'string', 'max:100'],
+            'author' => ['nullable', 'string', 'max:100'],
+            'is_published' => ['nullable', 'boolean'],
         ]);
 
-        // Update slug if title changed and slug not manually set
-        if ($request->isMethod('put') && $blog->title !== $validated['title'] && $blog->slug === Str::slug($blog->title)) {
-            $validated['slug'] = Str::slug($validated['title']);
-        }
+        $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? $validated['title'], $blog->id);
+        $validated['is_published'] = $request->boolean('is_published');
+        $validated['published_at'] = $validated['is_published']
+            ? ($blog->published_at ?? now())
+            : null;
 
-        $data = [
-            'title' => $validated['title'],
-            'slug' => $validated['slug'] ?? $blog->slug,
-            'excerpt' => $validated['excerpt'],
-            'content' => $validated['content'],
-            'category' => $validated['category'] ?? $blog->category,
-            'author' => $validated['author'] ?? $blog->author,
-            'is_published' => $validated['is_published'] ?? $blog->is_published,
-        ];
-
-        // Handle thumbnail upload
         if ($request->hasFile('thumbnail')) {
-            // Delete old thumbnail
-            if ($blog->thumbnail) {
+            if ($blog->thumbnail && ! Str::startsWith($blog->thumbnail, ['http://', 'https://', '/storage/', 'storage/'])) {
                 Storage::disk('public')->delete($blog->thumbnail);
             }
-            $data['thumbnail'] = $request->file('thumbnail')->store('blogs/thumbnails', 'public');
+            $validated['thumbnail'] = $this->storeCompressedThumbnail($request->file('thumbnail'));
         }
 
-        $blog->update($data);
+        $blog->update($validated);
 
-        return redirect()->route('admin.blog.index')
+        return redirect()->route($this->routeName('index'))
             ->with('success', 'Blog post berhasil diupdate!');
     }
 
@@ -150,13 +131,13 @@ class BlogController extends Controller
     public function destroy(Blog $blog)
     {
         // Delete thumbnail if exists
-        if ($blog->thumbnail) {
+        if ($blog->thumbnail && ! Str::startsWith($blog->thumbnail, ['http://', 'https://', '/storage/', 'storage/'])) {
             Storage::disk('public')->delete($blog->thumbnail);
         }
 
         $blog->delete();
 
-        return redirect()->route('admin.blog.index')
+        return redirect()->route($this->routeName('index'))
             ->with('success', 'Blog post berhasil dihapus!');
     }
 
@@ -166,11 +147,114 @@ class BlogController extends Controller
     public function togglePublish(Blog $blog)
     {
         $blog->update([
-            'is_published' => !$blog->is_published,
+            'is_published' => ! $blog->is_published,
+            'published_at' => $blog->is_published ? null : ($blog->published_at ?? now()),
         ]);
 
         $status = $blog->is_published ? 'dipublikasikan' : 'diubah menjadi draft';
-        return redirect()->route('admin.blog.index')
+        return redirect()->route($this->routeName('index'))
             ->with('success', "Blog post berhasil {$status}!");
+    }
+
+    private function viewContext(): array
+    {
+        $role = request()->routeIs('petugas.*') ? 'petugas' : 'admin';
+
+        return [
+            'activeRole' => $role,
+            'routePrefix' => "{$role}.blog",
+        ];
+    }
+
+    private function routeName(string $name): string
+    {
+        return $this->viewContext()['routePrefix'].".{$name}";
+    }
+
+    private function uniqueSlug(string $value, ?int $ignoreId = null): string
+    {
+        $base = Str::slug($value) ?: Str::random(8);
+        $slug = $base;
+        $counter = 2;
+
+        while (Blog::where('slug', $slug)
+            ->when($ignoreId, fn ($query) => $query->whereKeyNot($ignoreId))
+            ->exists()) {
+            $slug = "{$base}-{$counter}";
+            $counter++;
+        }
+
+        return $slug;
+    }
+
+    private function storeCompressedThumbnail(UploadedFile $file): string
+    {
+        if (! extension_loaded('gd') || ! function_exists('imagewebp')) {
+            return $file->store('blogs/thumbnails', 'public');
+        }
+
+        $sourcePath = $file->getRealPath();
+        $imageInfo = @getimagesize($sourcePath);
+
+        if (! $imageInfo) {
+            return $file->store('blogs/thumbnails', 'public');
+        }
+
+        [$width, $height] = $imageInfo;
+        $source = match ($imageInfo['mime'] ?? null) {
+            'image/jpeg' => @imagecreatefromjpeg($sourcePath),
+            'image/png' => @imagecreatefrompng($sourcePath),
+            'image/webp' => function_exists('imagecreatefromwebp') ? @imagecreatefromwebp($sourcePath) : null,
+            default => null,
+        };
+
+        if (! $source) {
+            return $file->store('blogs/thumbnails', 'public');
+        }
+
+        if (($imageInfo['mime'] ?? null) === 'image/jpeg' && function_exists('exif_read_data')) {
+            $source = $this->orientJpeg($source, $sourcePath);
+            $width = imagesx($source);
+            $height = imagesy($source);
+        }
+
+        $maxWidth = 1600;
+        $maxHeight = 900;
+        $ratio = min($maxWidth / $width, $maxHeight / $height, 1);
+        $targetWidth = max(1, (int) round($width * $ratio));
+        $targetHeight = max(1, (int) round($height * $ratio));
+
+        $target = imagecreatetruecolor($targetWidth, $targetHeight);
+        imagealphablending($target, false);
+        imagesavealpha($target, true);
+        imagecopyresampled($target, $source, 0, 0, 0, 0, $targetWidth, $targetHeight, $width, $height);
+
+        $path = 'blogs/thumbnails/'.Str::uuid().'.webp';
+        $fullPath = Storage::disk('public')->path($path);
+
+        if (! is_dir(dirname($fullPath))) {
+            mkdir(dirname($fullPath), 0755, true);
+        }
+
+        $stored = imagewebp($target, $fullPath, 78);
+        imagedestroy($source);
+        imagedestroy($target);
+
+        return $stored ? $path : $file->store('blogs/thumbnails', 'public');
+    }
+
+    private function orientJpeg(\GdImage $image, string $path): \GdImage
+    {
+        $exif = @exif_read_data($path);
+        $orientation = $exif['Orientation'] ?? null;
+
+        $rotated = match ($orientation) {
+            3 => imagerotate($image, 180, 0),
+            6 => imagerotate($image, -90, 0),
+            8 => imagerotate($image, 90, 0),
+            default => $image,
+        };
+
+        return $rotated ?: $image;
     }
 }

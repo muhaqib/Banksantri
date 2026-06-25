@@ -15,6 +15,7 @@ class DashboardContentController extends Controller
     {
         $contents = DashboardContent::query()
             ->with(['creator', 'assignments.user'])
+            ->whereIn('type', array_keys(DashboardContent::TYPES))
             ->when($request->filled('type'), fn ($query) => $query->where('type', $request->type))
             ->latest()
             ->paginate(15)
@@ -72,7 +73,7 @@ class DashboardContentController extends Controller
             'title' => ['required', 'string', 'max:255'],
             'summary' => ['nullable', 'string', 'max:500'],
             'content' => ['required', 'string', 'max:10000'],
-            'thumbnail_url' => ['nullable', 'url:http,https', 'max:2048', 'required_if:type,news'],
+            'thumbnail_url' => ['nullable', 'url:http,https', 'max:2048'],
             'priority' => ['nullable', Rule::in(array_keys(DashboardContent::PRIORITIES))],
             'event_date' => ['nullable', 'date'],
             'due_date' => ['nullable', 'date', 'required_if:type,todo'],
@@ -82,8 +83,8 @@ class DashboardContentController extends Controller
             'assignee_ids.*' => ['integer', Rule::exists('users', 'id')->where('role', 'petugas')],
         ]);
 
-        $validated['priority'] = $request->type === 'news' ? 'normal' : ($validated['priority'] ?? 'normal');
-        $validated['thumbnail_url'] = $request->type === 'news' ? ($validated['thumbnail_url'] ?? null) : null;
+        $validated['priority'] = $validated['priority'] ?? 'normal';
+        $validated['thumbnail_url'] = null;
         $validated['due_date'] = $request->type === 'todo' ? ($validated['due_date'] ?? null) : null;
         $validated['assign_to_all'] = $request->type === 'todo' && $request->assignment_scope === 'all';
 

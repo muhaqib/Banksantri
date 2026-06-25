@@ -5,7 +5,6 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\Blog;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 
 class BlogController extends Controller
 {
@@ -36,7 +35,8 @@ class BlogController extends Controller
                         'title' => $blog->title,
                         'slug' => $blog->slug,
                         'excerpt' => $blog->excerpt,
-                        'thumbnail' => $blog->thumbnail ? Storage::url($blog->thumbnail) : null,
+                        'thumbnail' => $blog->thumbnail_url,
+                        'thumbnail_url' => $blog->thumbnail_url,
                         'category' => $blog->category,
                         'author' => $blog->author,
                         'created_at' => $blog->created_at->toISOString(),
@@ -55,7 +55,8 @@ class BlogController extends Controller
                     'title' => $blog->title,
                     'slug' => $blog->slug,
                     'excerpt' => $blog->excerpt,
-                    'thumbnail' => $blog->thumbnail ? Storage::url($blog->thumbnail) : null,
+                    'thumbnail' => $blog->thumbnail_url,
+                    'thumbnail_url' => $blog->thumbnail_url,
                     'category' => $blog->category,
                     'author' => $blog->author,
                     'created_at' => $blog->created_at->toISOString(),
@@ -87,7 +88,8 @@ class BlogController extends Controller
             'slug' => $blog->slug,
             'excerpt' => $blog->excerpt,
             'content' => $blog->content,
-            'thumbnail' => $blog->thumbnail ? Storage::url($blog->thumbnail) : null,
+            'thumbnail' => $blog->thumbnail_url,
+            'thumbnail_url' => $blog->thumbnail_url,
             'category' => $blog->category,
             'author' => $blog->author,
             'created_at' => $blog->created_at->toISOString(),

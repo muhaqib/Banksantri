@@ -155,39 +155,6 @@
                     ],
                 ],
                 [
-                    'label' => 'Prestasi Santri',
-                    'icon' => 'military_tech',
-                    'active' => ['petugas.prestasi.*', 'petugas.health.*', 'petugas.security.*'],
-                    'children' => [
-                        ['permission' => 'petugas.tarbiyah.manage', 'route' => 'petugas.tarbiyah.index', 'active' => 'petugas.tarbiyah.*', 'label' => 'Nilai Tarbiyah'],
-                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.index', 'active' => 'petugas.prestasi.index', 'label' => 'Semua Prestasi'],
-                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.create', 'active' => 'petugas.prestasi.create', 'label' => 'Input Prestasi'],
-                        ['permission' => 'petugas.health.manage', 'route' => 'petugas.health.index', 'active' => 'petugas.health.*', 'label' => 'Kesehatan Santri'],
-                        ['permission' => 'petugas.security.manage', 'route' => 'petugas.security.index', 'active' => 'petugas.security.*', 'label' => 'Keamanan Santri'],
-                    ],
-                ],
-                [
-                    'label' => 'Kesiswaan',
-                    'icon' => 'fact_check',
-                    'active' => ['petugas.attendance.*', 'petugas.permissions.*'],
-                    'children' => [
-                        ['permission' => 'petugas.attendance.dashboard', 'route' => 'petugas.attendance.dashboard', 'active' => 'petugas.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
-                        ['permission' => 'petugas.attendance.rfid', 'route' => 'petugas.attendance.rfid', 'active' => 'petugas.attendance.rfid', 'label' => 'RFID Presensi'],
-                        ['permission' => 'petugas.attendance.manual', 'route' => 'petugas.attendance.manual', 'active' => 'petugas.attendance.manual', 'label' => 'Presensi Manual'],
-                        ['permission' => 'petugas.attendance.monthly', 'route' => 'petugas.attendance.monthly', 'active' => 'petugas.attendance.monthly', 'label' => 'Rekap Bulanan'],
-                        ['permission' => 'petugas.permissions.manage', 'route' => 'petugas.permissions.index', 'active' => 'petugas.permissions.*', 'label' => 'Perizinan Santri'],
-                    ],
-                ],
-                [
-                    'label' => 'Blog & Artikel',
-                    'icon' => 'article',
-                    'active' => ['admin.blog.*'],
-                    'children' => [
-                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.index', 'active' => 'admin.blog.index', 'label' => 'Semua Blog'],
-                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.create', 'active' => 'admin.blog.create', 'label' => 'Tambah Blog'],
-                    ],
-                ],
-                [
                     'label' => 'Keuangan',
                     'icon' => 'payments',
                     'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
@@ -205,6 +172,56 @@
                     'children' => [
                         ['permission' => 'petugas.laundry.manage', 'route' => 'petugas.laundry.index', 'active' => 'petugas.laundry.index', 'label' => 'Transaksi Laundry'],
                         ['permission' => 'petugas.laundry.history', 'route' => 'petugas.laundry.history', 'active' => 'petugas.laundry.history', 'label' => 'Riwayat Laundry'],
+                    ],
+                ],
+                [
+                    'label' => 'Tarbiyah',
+                    'icon' => 'menu_book',
+                    'active' => ['petugas.tarbiyah.*'],
+                    'children' => [
+                        ['permission' => 'petugas.tarbiyah.manage', 'route' => 'petugas.tarbiyah.dashboard', 'active' => 'petugas.tarbiyah.dashboard', 'label' => 'Dashboard Nilai Iktibar'],
+                        ['permission' => 'petugas.tarbiyah.manage', 'route' => 'petugas.tarbiyah.index', 'active' => 'petugas.tarbiyah.index', 'label' => 'Input Nilai Iktibar'],
+                    ],
+                ],
+                [
+                    'label' => 'Tahfidz',
+                    'icon' => 'military_tech',
+                    'active' => ['petugas.prestasi.*'],
+                    'children' => [
+                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.index', 'active' => 'petugas.prestasi.index', 'label' => 'Dashboard Tahfidz'],
+                        ['permission' => 'petugas.prestasi.manage', 'route' => 'petugas.prestasi.create', 'active' => 'petugas.prestasi.create', 'label' => 'Input Tahfidz'],
+                    ],
+                ],
+                [
+                    'label' => 'Kesiswaan',
+                    'icon' => 'groups',
+                    'active' => ['petugas.health.*', 'petugas.security.*', 'petugas.permissions.*'],
+                    'children' => [
+                        ['permission' => 'petugas.health.manage', 'route' => 'petugas.health.index', 'active' => 'petugas.health.*', 'label' => 'Kesehatan Santri'],
+                        ['permission' => 'petugas.security.manage', 'route' => 'petugas.security.index', 'active' => 'petugas.security.*', 'label' => 'Pelanggaran Santri'],
+                        ['permission' => 'petugas.permissions.manage', 'route' => 'petugas.permissions.index', 'active' => 'petugas.permissions.*', 'label' => 'Perizinan Santri'],
+                    ],
+                ],
+                [
+                    'label' => 'Absen Kamar',
+                    'icon' => 'fact_check',
+                    'active' => ['petugas.attendance.*'],
+                    'children' => [
+                        ['permission' => 'petugas.attendance.dashboard', 'route' => 'petugas.attendance.dashboard', 'active' => 'petugas.attendance.dashboard', 'label' => 'Dashboard Absen'],
+                        ['permission' => 'petugas.attendance.rfid', 'route' => 'petugas.attendance.rfid', 'active' => 'petugas.attendance.rfid', 'label' => 'RFID Presensi'],
+                        ['permission' => 'petugas.attendance.manual', 'route' => 'petugas.attendance.manual', 'active' => 'petugas.attendance.manual', 'label' => 'Presensi Manual'],
+                        ['permission' => 'petugas.attendance.monthly', 'route' => 'petugas.attendance.monthly', 'active' => 'petugas.attendance.monthly', 'label' => 'Rekap Bulanan'],
+                    ],
+                ],
+                [
+                    'label' => 'Blog',
+                    'icon' => 'article',
+                    'active' => ['admin.blog.*', 'petugas.blog.*'],
+                    'children' => [
+                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.index', 'active' => 'admin.blog.index', 'label' => 'Semua Blog'],
+                        ['permission' => 'admin.blog.manage', 'route' => 'admin.blog.create', 'active' => 'admin.blog.create', 'label' => 'Tambah Blog'],
+                        ['permission' => 'petugas.blog.manage', 'route' => 'petugas.blog.index', 'active' => 'petugas.blog.index', 'label' => 'Semua Blog'],
+                        ['permission' => 'petugas.blog.manage', 'route' => 'petugas.blog.create', 'active' => 'petugas.blog.create', 'label' => 'Tambah Blog'],
                     ],
                 ],
             ];

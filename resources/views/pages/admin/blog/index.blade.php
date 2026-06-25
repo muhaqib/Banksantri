@@ -1,7 +1,7 @@
 @extends('layouts.app')
 
 @section('header-title', 'Blog Management')
-@php $activeRole = 'admin'; @endphp
+@php $routePrefix = $routePrefix ?? 'admin.blog'; @endphp
 
 @section('content')
 <div>
@@ -11,7 +11,7 @@
             <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Blog Management</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola artikel dan berita untuk website.</p>
         </div>
-        <a href="{{ route('admin.blog.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+        <a href="{{ route($routePrefix.'.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
             <span class="material-symbols-outlined">add</span>
             <span>Tambah Blog</span>
         </a>
@@ -24,7 +24,7 @@
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">article</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Blog</p>
             </div>
-            <p class="text-3xl font-bold text-on-surface">{{ $blogs->total() }}</p>
+            <p class="text-3xl font-bold text-on-surface">{{ $totalBlogs ?? $blogs->total() }}</p>
         </div>
 
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
@@ -32,15 +32,15 @@
                 <span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
                 <p class="text-xs text-on-surface-variant font-medium">Dipublikasikan</p>
             </div>
-            <p class="text-3xl font-bold text-green-600">{{ $blogs->getCollection()->where('is_published', true)->count() }}</p>
+            <p class="text-3xl font-bold text-green-600">{{ $publishedBlogs ?? $blogs->getCollection()->where('is_published', true)->count() }}</p>
         </div>
 
         <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
-                <span class="material-symbols-outlook text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">draft</span>
+                <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">draft</span>
                 <p class="text-xs text-on-surface-variant font-medium">Draft</p>
             </div>
-            <p class="text-3xl font-bold text-tertiary">{{ $blogs->getCollection()->where('is_published', false)->count() }}</p>
+            <p class="text-3xl font-bold text-tertiary">{{ $draftBlogs ?? $blogs->getCollection()->where('is_published', false)->count() }}</p>
         </div>
     </div>
 
@@ -67,7 +67,7 @@
                         <tr class="hover:bg-surface transition-colors group">
                             <td class="px-6 py-4">
                                 @if($blog->thumbnail)
-                                    <img src="{{ Storage::url($blog->thumbnail) }}" alt="{{ $blog->title }}" class="w-16 h-12 object-cover rounded-lg">
+                                    <img src="{{ $blog->thumbnail_url }}" alt="{{ $blog->title }}" class="w-16 h-12 object-cover rounded-lg">
                                 @else
                                     <div class="w-16 h-12 bg-surface-container rounded-lg flex items-center justify-center">
                                         <span class="material-symbols-outlined text-on-surface-variant/50">image</span>
@@ -106,17 +106,17 @@
                             </td>
                             <td class="px-6 py-4">
                                 <div class="flex items-center justify-center gap-2">
-                                    <a href="{{ route('admin.blog.show', $blog) }}" 
+                                    <a href="{{ route($routePrefix.'.show', $blog) }}" 
                                        class="p-2 rounded-lg hover:bg-surface-container-high transition-colors"
                                        title="Lihat">
                                         <span class="material-symbols-outlined text-base text-on-surface-variant">visibility</span>
                                     </a>
-                                    <a href="{{ route('admin.blog.edit', $blog) }}" 
+                                    <a href="{{ route($routePrefix.'.edit', $blog) }}" 
                                        class="p-2 rounded-lg hover:bg-surface-container-high transition-colors"
                                        title="Edit">
                                         <span class="material-symbols-outlined text-base text-primary">edit</span>
                                     </a>
-                                    <form action="{{ route('admin.blog.toggle-publish', $blog) }}" method="POST" class="inline">
+                                    <form action="{{ route($routePrefix.'.toggle-publish', $blog) }}" method="POST" class="inline">
                                         @csrf
                                         <button type="submit" 
                                                 class="p-2 rounded-lg hover:bg-surface-container-high transition-colors"
@@ -126,7 +126,7 @@
                                             </span>
                                         </button>
                                     </form>
-                                    <form action="{{ route('admin.blog.destroy', $blog) }}" 
+                                    <form action="{{ route($routePrefix.'.destroy', $blog) }}" 
                                           method="POST" 
                                           class="inline"
                                           onsubmit="return confirm('Apakah Anda yakin ingin menghapus blog ini?')">

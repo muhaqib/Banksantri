@@ -236,6 +236,7 @@ Route::middleware('auth')->group(function () {
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
         Route::middleware('permission:petugas.tarbiyah.manage')->group(function () {
+            Route::get('/tarbiyah/dashboard', [PetugasTarbiyahGradeController::class, 'dashboard'])->name('tarbiyah.dashboard');
             Route::get('/tarbiyah', [PetugasTarbiyahGradeController::class, 'index'])->name('tarbiyah.index');
             Route::post('/tarbiyah', [PetugasTarbiyahGradeController::class, 'store'])->name('tarbiyah.store');
             Route::post('/tarbiyah/import', [PetugasTarbiyahGradeController::class, 'import'])->name('tarbiyah.import');
@@ -257,6 +258,12 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:petugas.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
+        });
+
+        Route::middleware('permission:petugas.blog.manage')->group(function () {
+            Route::resource('blog', AdminBlogController::class)->except(['show']);
+            Route::get('blog/{blog}', [AdminBlogController::class, 'show'])->name('blog.show');
+            Route::post('blog/{blog}/toggle-publish', [AdminBlogController::class, 'togglePublish'])->name('blog.toggle-publish');
         });
 
         // Profile Management

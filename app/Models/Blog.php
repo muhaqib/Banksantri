@@ -27,6 +27,10 @@ class Blog extends Model
         'published_at' => 'datetime',
     ];
 
+    protected $appends = [
+        'thumbnail_url',
+    ];
+
     protected static function booted()
     {
         static::creating(function ($blog) {
@@ -61,5 +65,22 @@ class Blog extends Model
     public function scopeDraft($query)
     {
         return $query->where('is_published', false);
+    }
+
+    public function getThumbnailUrlAttribute(): ?string
+    {
+        if (empty($this->thumbnail)) {
+            return null;
+        }
+
+        if (Str::startsWith($this->thumbnail, ['http://', 'https://'])) {
+            return $this->thumbnail;
+        }
+
+        if (Str::startsWith($this->thumbnail, ['/storage/', 'storage/'])) {
+            return asset(ltrim($this->thumbnail, '/'));
+        }
+
+        return asset('storage/'.ltrim($this->thumbnail, '/'));
     }
 }

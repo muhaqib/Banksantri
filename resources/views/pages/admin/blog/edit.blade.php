@@ -1,13 +1,13 @@
 @extends('layouts.app')
 
 @section('header-title', 'Edit Blog')
-@php $activeRole = 'admin'; @endphp
+@php $routePrefix = $routePrefix ?? 'admin.blog'; @endphp
 
 @section('content')
 <div class="max-w-5xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <a href="{{ route('admin.blog.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
+        <a href="{{ route($routePrefix.'.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Blog</span>
         </a>
@@ -16,7 +16,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.blog.update', $blog) }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+    <form action="{{ route($routePrefix.'.update', $blog) }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
         @csrf
         @method('PUT')
 
@@ -29,7 +29,7 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Judul Blog <span class="text-error">*</span></label>
-                    <input type="text" name="title" required value="{{ old('title', $blog->title) }}"
+                    <input type="text" name="title" required value="{{ old('title', $blog->title) }}" id="title-input" maxlength="255"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all"
                            placeholder="Masukkan judul artikel yang menarik">
                     @error('title')
@@ -38,7 +38,7 @@
                 </div>
                 <div class="md:col-span-2">
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Slug (URL Friendly)</label>
-                    <input type="text" name="slug" value="{{ old('slug', $blog->slug) }}"
+                    <input type="text" name="slug" value="{{ old('slug', $blog->slug) }}" id="slug-input" maxlength="255"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all"
                            placeholder="kosongkan untuk auto-generate dari judul">
                     @error('slug')
@@ -47,16 +47,21 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kategori</label>
-                    <input type="text" name="category" value="{{ old('category', $blog->category) }}"
+                    <input type="text" name="category" value="{{ old('category', $blog->category) }}" list="blog-categories" maxlength="100"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all"
-                           placeholder="Contoh: Pendidikan, Kegiatan, Berita">
+                           placeholder="Pilih atau tulis kategori">
+                    <datalist id="blog-categories">
+                        @foreach(['Berita', 'Pengumuman', 'Kegiatan', 'Pendidikan', 'Prestasi'] as $category)
+                            <option value="{{ $category }}">
+                        @endforeach
+                    </datalist>
                     @error('category')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Penulis</label>
-                    <input type="text" name="author" value="{{ old('author', $blog->author) }}"
+                    <input type="text" name="author" value="{{ old('author', $blog->author) }}" maxlength="100"
                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all"
                            placeholder="Nama penulis">
                     @error('author')
@@ -75,14 +80,14 @@
             <div>
                 @if($blog->thumbnail)
                     <div class="mb-4">
-                        <img src="{{ Storage::url($blog->thumbnail) }}" alt="Current Thumbnail" class="max-w-xs h-auto rounded-xl shadow-lg">
+                        <img src="{{ $blog->thumbnail_url }}" alt="Current Thumbnail" class="max-w-xs h-auto rounded-xl shadow-lg">
                         <p class="text-xs text-on-surface-variant mt-2">Thumbnail saat ini. Upload gambar baru untuk mengganti.</p>
                     </div>
                 @endif
                 <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Upload Thumbnail Baru (Opsional)</label>
-                <input type="file" name="thumbnail" accept="image/*" id="thumbnail-input"
+                <input type="file" name="thumbnail" accept="image/jpeg,image/png,image/webp" id="thumbnail-input"
                        class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
-                <p class="text-xs text-on-surface-variant mt-1">Format: JPG, PNG, maksimal 2MB. Rasio yang disarankan: 16:9</p>
+                <p class="text-xs text-on-surface-variant mt-1">Format JPG, PNG, atau WEBP. Maksimal 20MB, otomatis dikompres saat disimpan. Rasio yang disarankan: 16:9.</p>
                 @error('thumbnail')
                     <p class="text-error text-xs mt-1">{{ $message }}</p>
                 @enderror
@@ -101,7 +106,7 @@
             <div class="space-y-4">
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Ringkasan (Excerpt) <span class="text-error">*</span></label>
-                    <textarea name="excerpt" required rows="3"
+                    <textarea name="excerpt" required rows="3" maxlength="500"
                               class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all resize-none"
                               placeholder="Tulis ringkasan singkat artikel (2-3 kalimat)">{{ old('excerpt', $blog->excerpt) }}</textarea>
                     @error('excerpt')
@@ -111,7 +116,7 @@
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Konten Lengkap <span class="text-error">*</span></label>
                     <textarea name="content" required rows="15"
-                              class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all font-mono text-sm"
+                              class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all leading-relaxed"
                               placeholder="Tulis konten artikel lengkap di sini.">{{ old('content', $blog->content) }}</textarea>
                     @error('content')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
@@ -128,6 +133,7 @@
             </h3>
             <div>
                 <label class="flex items-center gap-3 cursor-pointer">
+                    <input type="hidden" name="is_published" value="0">
                     <input type="checkbox" name="is_published" value="1" {{ old('is_published', $blog->is_published) ? 'checked' : '' }}
                            class="w-5 h-5 rounded text-primary focus:ring-primary">
                     <span class="text-sm font-semibold text-on-surface">Publikasikan</span>
@@ -138,7 +144,7 @@
 
         <!-- Submit Button -->
         <div class="flex gap-4 pt-4 border-t border-surface-container">
-            <a href="{{ route('admin.blog.index') }}"
+            <a href="{{ route($routePrefix.'.index') }}"
                class="flex-1 px-6 py-3 bg-surface-container-high text-on-surface rounded-xl font-bold hover:bg-surface-container transition-colors text-center">
                 Batal
             </a>
@@ -163,6 +169,19 @@ document.getElementById('thumbnail-input').addEventListener('change', function(e
         }
         reader.readAsDataURL(file);
     }
+});
+
+const slugInput = document.getElementById('slug-input');
+
+function slugify(value) {
+    return value.toString().toLowerCase().trim()
+        .replace(/[^a-z0-9\s-]/g, '')
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-');
+}
+
+slugInput.addEventListener('input', () => {
+    slugInput.value = slugify(slugInput.value);
 });
 </script>
 @endpush

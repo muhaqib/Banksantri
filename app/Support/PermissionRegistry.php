@@ -53,7 +53,8 @@ class PermissionRegistry
             ],
             'Publikasi' => [
                 'admin.blog.manage' => 'Kelola blog dan artikel',
-                'admin.dashboard-content.manage' => 'Kelola pengumuman, berita pondok, dan to do dashboard',
+                'petugas.blog.manage' => 'Kelola blog dan artikel',
+                'admin.dashboard-content.manage' => 'Kelola pengumuman dan to do dashboard',
                 'admin.wa-schedules.manage' => 'Kelola jadwal WhatsApp berulang',
             ],
             'Akses & Profil' => [
@@ -123,6 +124,7 @@ class PermissionRegistry
             'petugas.attendance.manual',
             'petugas.attendance.monthly',
             'petugas.permissions.manage',
+            'petugas.blog.manage',
             'petugas.profile.manage',
         ];
     }

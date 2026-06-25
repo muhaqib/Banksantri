@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Petugas;
 
 use App\Http\Controllers\Controller;
+use App\Models\Blog;
 use App\Models\DashboardContent;
 use App\Models\DashboardContentAssignment;
 use App\Models\Transaction;
@@ -18,7 +19,7 @@ class DashboardController extends Controller
 
         return view('pages.petugas.dashboard', [
             'announcements' => (clone $base)->where('type', 'announcement')->latest('published_at')->limit(5)->get(),
-            'news' => (clone $base)->where('type', 'news')->latest('published_at')->limit(6)->get(),
+            'news' => Blog::published()->latest('published_at')->limit(6)->get(),
             'todos' => DashboardContentAssignment::query()
                 ->with('dashboardContent')
                 ->where('user_id', auth()->id())

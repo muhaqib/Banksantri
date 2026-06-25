@@ -22,6 +22,86 @@ use Throwable;
 
 class TarbiyahGradeController extends Controller
 {
+    public function dashboard(Request $request)
+    {
+        $classLevel = $request->input('class_level', 'all');
+        $monthlyExams = TarbiyahMonthlyExam::query()
+            ->latest('exam_date')
+            ->latest()
+            ->get();
+        $monthlyExam = $monthlyExams->firstWhere('id', (int) $request->input('monthly_exam_id')) ?? $monthlyExams->first();
+
+        $santriQuery = User::activeSantri();
+        if ($classLevel !== 'all') {
+            $santriQuery->where('kelas', $classLevel);
+        }
+
+        $totalSantri = (clone $santriQuery)->count();
+        $totals = collect();
+
+        if ($monthlyExam) {
+            $totals = TarbiyahMonthlyGrade::query()
+                ->select('santri_id', DB::raw('SUM(score) as total_score'), DB::raw('COUNT(*) as subject_count'))
+                ->where('monthly_exam_id', $monthlyExam->id)
+                ->when($classLevel !== 'all', fn ($query) => $query->where('class_level', $classLevel))
+                ->whereIn('subject', TarbiyahMonthlyGrade::SUBJECTS)
+                ->groupBy('santri_id')
+                ->having('subject_count', '=', count(TarbiyahMonthlyGrade::SUBJECTS))
+                ->pluck('total_score', 'santri_id');
+        }
+
+        $buckets = collect([
+            'perfect' => [
+                'label' => '300',
+                'range' => 'Nilai sempurna',
+                'color' => '#0f766e',
+                'count' => $totals->filter(fn ($total) => (float) $total >= 300)->count(),
+            ],
+            'high' => [
+                'label' => '299 - 180',
+                'range' => 'Tuntas kuat',
+                'color' => '#2563eb',
+                'count' => $totals->filter(fn ($total) => (float) $total < 300 && (float) $total >= 180)->count(),
+            ],
+            'middle' => [
+                'label' => '179 - 90',
+                'range' => 'Perlu penguatan',
+                'color' => '#d97706',
+                'count' => $totals->filter(fn ($total) => (float) $total < 180 && (float) $total >= 90)->count(),
+            ],
+            'low' => [
+                'label' => '89 - 0',
+                'range' => 'Prioritas bimbingan',
+                'color' => '#dc2626',
+                'count' => $totals->filter(fn ($total) => (float) $total < 90)->count(),
+            ],
+        ]);
+
+        $recordedSantri = $totals->count();
+        $unrecordedSantri = max($totalSantri - $recordedSantri, 0);
+        $segments = [];
+        $cursor = 0;
+
+        foreach ($buckets as $bucket) {
+            $degrees = $recordedSantri > 0 ? ($bucket['count'] / $recordedSantri) * 360 : 0;
+            $segments[] = "{$bucket['color']} {$cursor}deg ".($cursor + $degrees).'deg';
+            $cursor += $degrees;
+        }
+
+        return view('pages.petugas.tarbiyah.dashboard', [
+            'activeRole' => 'petugas',
+            'classLevels' => TarbiyahClass::LEVELS,
+            'classLevel' => $classLevel,
+            'monthlyExams' => $monthlyExams,
+            'monthlyExam' => $monthlyExam,
+            'buckets' => $buckets,
+            'totalSantri' => $totalSantri,
+            'recordedSantri' => $recordedSantri,
+            'unrecordedSantri' => $unrecordedSantri,
+            'chartGradient' => $recordedSantri > 0 ? implode(', ', $segments) : '#e5e7eb 0deg 360deg',
+        ]);
+    }
+
     public function index(Request $request)
     {
         $mode = $request->input('mode', 'semester');

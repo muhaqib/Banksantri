@@ -117,23 +117,23 @@
     <section>
         <div class="mb-4">
             <p class="text-xs font-bold uppercase tracking-widest text-primary">Cerita & Kegiatan</p>
-            <h3 class="font-headline text-2xl font-extrabold text-on-surface">Berita Pondok</h3>
+            <h3 class="font-headline text-2xl font-extrabold text-on-surface">Blog Pondok</h3>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
             @forelse($news as $item)
                 <article class="rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
                     <div class="h-40 bg-gradient-to-br from-primary/15 to-tertiary/20 p-5 flex items-start justify-between bg-cover bg-center" @if($item->thumbnail_url) style="background-image: linear-gradient(rgba(0,77,76,.2),rgba(0,77,76,.5)), url('{{ $item->thumbnail_url }}')" @endif>
                         <div class="w-11 h-11 rounded-xl bg-white/80 text-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined">newspaper</span></div>
-                        @if($item->event_date)
-                            <span class="px-3 py-1.5 rounded-full bg-white/80 text-primary text-[10px] font-black">{{ $item->event_date->translatedFormat('d M') }}</span>
+                        @if($item->category)
+                            <span class="px-3 py-1.5 rounded-full bg-white/80 text-primary text-[10px] font-black">{{ $item->category }}</span>
                         @endif
                     </div>
                     <div class="p-5">
                         <h4 class="font-headline font-bold text-lg text-on-surface">{{ $item->title }}</h4>
-                        <p class="mt-2 text-sm text-on-surface-variant leading-relaxed">{{ $item->summary ?: Str::limit($item->content, 150) }}</p>
+                        <p class="mt-2 text-sm text-on-surface-variant leading-relaxed">{{ $item->excerpt ?: Str::limit(strip_tags($item->content), 150) }}</p>
                         <div class="mt-4 flex items-center justify-between gap-3">
                             <p class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ $item->published_at?->translatedFormat('d M Y') }}</p>
-                            <button @click="selectedNews = {{ Js::from(['title' => $item->title, 'content' => $item->content, 'thumbnail_url' => $item->thumbnail_url, 'date' => $item->published_at?->translatedFormat('d F Y'), 'author' => $item->creator->name]) }}; showNews = true" class="text-xs font-bold text-primary hover:underline">Baca lengkap</button>
+                            <button @click="selectedNews = {{ Js::from(['title' => $item->title, 'content' => $item->content, 'thumbnail_url' => $item->thumbnail_url, 'date' => $item->published_at?->translatedFormat('d F Y'), 'author' => $item->author ?: 'Admin']) }}; showNews = true" class="text-xs font-bold text-primary hover:underline">Baca lengkap</button>
                         </div>
                     </div>
                 </article>
@@ -152,14 +152,14 @@
             <article class="w-full max-w-2xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
                 <div class="flex items-start justify-between gap-4">
                     <div>
-                        <p class="text-xs font-bold uppercase tracking-widest text-primary">Berita Pondok</p>
+                        <p class="text-xs font-bold uppercase tracking-widest text-primary">Blog Pondok</p>
                         <h3 class="mt-2 font-headline font-extrabold text-2xl md:text-3xl text-on-surface" x-text="selectedNews.title"></h3>
                     </div>
                     <button @click="showNews = false" class="p-2 rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <p class="mt-3 text-xs text-on-surface-variant"><span x-text="selectedNews.author"></span> · <span x-text="selectedNews.date"></span></p>
                 <template x-if="selectedNews.thumbnail_url"><img :src="selectedNews.thumbnail_url" class="mt-5 w-full max-h-72 object-cover rounded-2xl" alt=""></template>
-                <div class="mt-6 text-sm md:text-base leading-7 text-on-surface-variant whitespace-pre-line" x-text="selectedNews.content"></div>
+                <div class="mt-6 text-sm md:text-base leading-7 text-on-surface-variant whitespace-pre-line" x-html="selectedNews.content"></div>
             </article>
         </div>
     </div>

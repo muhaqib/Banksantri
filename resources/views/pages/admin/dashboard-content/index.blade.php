@@ -4,17 +4,16 @@
 @php $activeRole = 'admin'; @endphp
 
 @section('content')
-<div x-data="{ showCreate: false, showEdit: false, createType: 'announcement', selected: {}, newsThumbnail: '', todoScope: 'all' }" class="space-y-6">
+<div x-data="{ showCreate: false, showEdit: false, createType: 'announcement', selected: {}, todoScope: 'all' }" class="space-y-6">
     <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-container text-white p-6 md:p-8 shadow-xl shadow-primary/15">
         <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary-fixed-dim">Pusat Informasi Petugas</p>
                 <h2 class="mt-2 font-headline text-3xl md:text-4xl font-extrabold">Kelola Konten Dashboard</h2>
-                <p class="mt-2 max-w-2xl text-sm text-primary-fixed/80">Terbitkan pengumuman, berita pondok, dan agenda bersama yang akan dibaca seluruh petugas.</p>
+                <p class="mt-2 max-w-2xl text-sm text-primary-fixed/80">Terbitkan pengumuman dan agenda bersama yang akan dibaca seluruh petugas.</p>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <button @click="createType = 'announcement'; showCreate = true" class="bg-white text-primary px-4 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">campaign</span>Pengumuman</button>
-                <button @click="createType = 'news'; newsThumbnail = ''; showCreate = true" class="bg-white text-primary px-4 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">newspaper</span>Berita</button>
                 <button @click="createType = 'todo'; todoScope = 'all'; showCreate = true" class="bg-white text-primary px-4 py-3 rounded-xl font-bold shadow-lg flex items-center justify-center gap-2"><span class="material-symbols-outlined">checklist</span>To-do</button>
             </div>
         </div>
@@ -31,8 +30,8 @@
     <section class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
         @forelse($contents as $content)
             @php
-                $icon = match($content->type) { 'announcement' => 'campaign', 'news' => 'newspaper', default => 'checklist' };
-                $tone = match($content->type) { 'announcement' => 'bg-primary/10 text-primary', 'news' => 'bg-secondary/10 text-secondary', default => 'bg-tertiary/10 text-tertiary' };
+                $icon = match($content->type) { 'announcement' => 'campaign', default => 'checklist' };
+                $tone = match($content->type) { 'announcement' => 'bg-primary/10 text-primary', default => 'bg-tertiary/10 text-tertiary' };
             @endphp
             <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm border border-outline-variant/10 flex flex-col">
                 <div class="flex items-start justify-between gap-3">
@@ -108,13 +107,12 @@
         <div class="relative min-h-screen flex items-center justify-center p-4">
             <div class="w-full max-w-3xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
                 <div class="flex items-center justify-between mb-6">
-                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Konten Baru</p><h3 class="font-headline font-extrabold text-2xl" x-text="createType === 'announcement' ? 'Tambah Pengumuman' : (createType === 'news' ? 'Tambah Berita Pondok' : 'Tambah To Do List')"></h3></div>
+                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Konten Baru</p><h3 class="font-headline font-extrabold text-2xl" x-text="createType === 'announcement' ? 'Tambah Pengumuman' : 'Tambah To Do List'"></h3></div>
                     <button @click="showCreate = false" class="p-2 rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <form action="{{ route('admin.dashboard-content.store') }}" method="POST">
                     @csrf
                     <template x-if="createType === 'announcement'"><div>@include('pages.admin.dashboard-content.forms.announcement')</div></template>
-                    <template x-if="createType === 'news'"><div>@include('pages.admin.dashboard-content.forms.news')</div></template>
                     <template x-if="createType === 'todo'"><div>@include('pages.admin.dashboard-content.forms.todo')</div></template>
                 </form>
             </div>
@@ -132,7 +130,6 @@
                 <form :action="`/admin/dashboard-content/${selected.id}`" method="POST">
                     @csrf @method('PUT')
                     <template x-if="selected.type === 'announcement'"><div>@include('pages.admin.dashboard-content.forms.announcement', ['editing' => true])</div></template>
-                    <template x-if="selected.type === 'news'"><div>@include('pages.admin.dashboard-content.forms.news', ['editing' => true])</div></template>
                     <template x-if="selected.type === 'todo'"><div>@include('pages.admin.dashboard-content.forms.todo', ['editing' => true])</div></template>
                 </form>
             </div>
