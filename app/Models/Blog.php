@@ -46,7 +46,7 @@ class Blog extends Model
             if ($blog->isDirty('title') && empty($blog->slug)) {
                 $blog->slug = Str::slug($blog->title);
             }
-            if ($blog->is_published && $blog->wasNull('published_at')) {
+            if ($blog->is_published && empty($blog->getOriginal('published_at'))) {
                 $blog->published_at = now();
             }
         });
