@@ -5,8 +5,12 @@ use App\Http\Controllers\Api\GalleryController as ApiGalleryController;
 use App\Http\Controllers\Api\RegistrationController as ApiRegistrationController;
 use App\Http\Controllers\Api\SantriAuthController;
 use App\Http\Controllers\Api\SantriDashboardController;
+use App\Http\Controllers\Api\SantriHealthController;
+use App\Http\Controllers\Api\SantriPermissionController;
 use App\Http\Controllers\Api\SantriPrestasiController;
 use App\Http\Controllers\Api\SantriProfileController;
+use App\Http\Controllers\Api\SantriSecurityController;
+use App\Http\Controllers\Api\SantriTarbiyahController;
 use App\Http\Controllers\Api\SantriTopUpController as ApiSantriTopUpController;
 use App\Http\Controllers\Api\SantriTransactionController;
 use App\Http\Controllers\Api\SliderController as ApiSliderController;
@@ -48,6 +52,9 @@ Route::middleware('auth:sanctum')->prefix('santri')->group(function () {
     Route::get('/transactions', [SantriTransactionController::class, 'index']);
     Route::get('/transactions/chart-data', [SantriTransactionController::class, 'chartData']);
     Route::get('/transactions/{transaction}', [SantriTransactionController::class, 'show']);
+    Route::get('/riwayat', [SantriTransactionController::class, 'index']);
+    Route::get('/riwayat/chart-data', [SantriTransactionController::class, 'chartData']);
+    Route::get('/riwayat/{transaction}', [SantriTransactionController::class, 'show']);
 
     // Top-Up
     Route::get('/topups', [ApiSantriTopUpController::class, 'index']);
@@ -64,4 +71,25 @@ Route::middleware('auth:sanctum')->prefix('santri')->group(function () {
     // Prestasi
     Route::get('/prestasi', [SantriPrestasiController::class, 'index']);
     Route::get('/prestasi/{prestasi}', [SantriPrestasiController::class, 'show']);
+
+    // Perizinan
+    Route::get('/permissions', [SantriPermissionController::class, 'index']);
+    Route::get('/permissions/{permission}', [SantriPermissionController::class, 'show']);
+    Route::get('/perizinan', [SantriPermissionController::class, 'index']);
+    Route::get('/perizinan/{permission}', [SantriPermissionController::class, 'show']);
+
+    // Keamanan
+    Route::get('/security', [SantriSecurityController::class, 'index']);
+    Route::get('/security/{violation}', [SantriSecurityController::class, 'show']);
+    Route::get('/keamanan', [SantriSecurityController::class, 'index']);
+    Route::get('/keamanan/{violation}', [SantriSecurityController::class, 'show']);
+
+    // Tarbiyah
+    Route::get('/tarbiyah', [SantriTarbiyahController::class, 'index']);
+
+    // Kesehatan
+    Route::get('/health', [SantriHealthController::class, 'index']);
+    Route::get('/health/{health}', [SantriHealthController::class, 'show']);
+    Route::get('/kesehatan', [SantriHealthController::class, 'index']);
+    Route::get('/kesehatan/{health}', [SantriHealthController::class, 'show']);
 });
