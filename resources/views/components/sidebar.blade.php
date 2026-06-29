@@ -2,6 +2,18 @@
 @php
     $currentUser = auth()->user();
     $displayRole = $currentUser?->getRoleNames()->first() ?? $currentUser?->role ?? $activeRole;
+    $profileRoute = null;
+
+    if ($currentUser?->can('admin.profile.manage')) {
+        $profileRoute = route('admin.profile');
+    } elseif ($currentUser?->can('petugas.profile.manage')) {
+        $profileRoute = route('petugas.profile');
+    } elseif ($currentUser?->can('santri.profile.manage')) {
+        $profileRoute = route('santri.profile');
+    }
+
+    $profileName = $currentUser?->name ?? 'User';
+    $profileInitials = strtoupper(substr($profileName, 0, 2));
 @endphp
 
 <!DOCTYPE html>
@@ -35,11 +47,55 @@
 </head>
 <body class="bg-surface font-body text-on-surface" x-data="{ sidebarOpen: false }">
     <!-- Mobile Header -->
-    <header class="lg:hidden fixed top-0 left-0 right-0 z-50 bg-surface border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <button @click="sidebarOpen = true" class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
                 <span class="material-symbols-outlined text-on-surface">menu</span>
             </button>
+
+        </div>
+
+        <div x-data="{ open: false }" class="relative">
+            <button type="button"
+                    @click="open = !open"
+                    @keydown.escape.window="open = false"
+                    class="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-bold text-primary ring-1 ring-primary/10 transition-all hover:bg-primary/15 focus:outline-none focus:ring-2 focus:ring-primary/30"
+                    aria-label="Menu profil">
+                @if($currentUser && $currentUser->foto)
+                    <img src="{{ Storage::url($currentUser->foto) }}" alt="{{ $profileName }}" class="h-full w-full object-cover">
+                @else
+                    {{ $profileInitials }}
+                @endif
+            </button>
+
+            <div x-show="open"
+                 x-cloak
+                 @click.outside="open = false"
+                 x-transition:enter="transition ease-out duration-150"
+                 x-transition:enter-start="opacity-0 translate-y-1"
+                 x-transition:enter-end="opacity-100 translate-y-0"
+                 x-transition:leave="transition ease-in duration-100"
+                 x-transition:leave-start="opacity-100 translate-y-0"
+                 x-transition:leave-end="opacity-0 translate-y-1"
+                 class="absolute right-0 mt-3 w-64 overflow-hidden rounded-xl border border-outline-variant/20 bg-surface-container-lowest shadow-xl">
+                <div class="border-b border-outline-variant/10 px-4 py-3">
+                    <p class="truncate text-sm font-bold text-on-surface">{{ $profileName }}</p>
+                    <p class="truncate text-xs text-on-surface-variant">{{ $currentUser?->email }}</p>
+                </div>
+                @if($profileRoute)
+                    <a href="{{ $profileRoute }}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-low">
+                        <span class="material-symbols-outlined text-lg text-primary">manage_accounts</span>
+                        <span>Pengaturan Akun</span>
+                    </a>
+                @endif
+                <form action="{{ route('logout') }}" method="POST">
+                    @csrf
+                    <button type="submit" class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-error transition-colors hover:bg-error/10">
+                        <span class="material-symbols-outlined text-lg">logout</span>
+                        <span>Logout</span>
+                    </button>
+                </form>
+            </div>
         </div>
     </header>
 
@@ -268,70 +324,62 @@
             @endforeach
         </nav>
 
-        <!-- User Profile & Logout -->
-        <div class="border-t border-outline-variant/10 p-3">
-            @php
-    $user = $currentUser;
-    $profileRoute = null;
-    if ($user?->can('admin.profile.manage')) {
-        $profileRoute = route('admin.profile');
-    } elseif ($user?->can('petugas.profile.manage')) {
-        $profileRoute = route('petugas.profile');
-    } elseif ($user?->can('santri.profile.manage')) {
-        $profileRoute = route('santri.profile');
-    }
-@endphp
-
-@if($profileRoute)
-<a href="{{ $profileRoute }}"
-   class="block border-t border-outline-variant/10 p-3 hover:bg-surface-container-low transition-all rounded-xl">
-
-    <div class="flex items-center gap-3">
-        
-        <!-- Foto -->
-        <div class="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center flex-shrink-0 overflow-hidden">
-            @if($user && $user->foto)
-                <img src="{{ Storage::url($user->foto) }}" 
-                     alt="{{ $user->name }}" 
-                     class="w-full h-full object-cover">
-            @else
-                <span class="material-symbols-outlined text-primary">account_circle</span>
-            @endif
-        </div>
-
-        <!-- Nama & Role -->
-        <div class="flex-1 min-w-0">
-            <p class="font-headline font-bold text-sm text-on-surface truncate">
-                {{ $user->name ?? 'User' }}
-            </p>
-            <p class="text-[10px] text-on-surface-variant uppercase tracking-widest">
-                {{ $displayRole }}
-            </p>
-        </div>
-
-        <!-- Icon panah (opsional biar keliatan bisa diklik) -->
-        <span class="material-symbols-outlined text-on-surface-variant text-sm">
-            chevron_right
-        </span>
-
-    </div>
-
-</a>
-@endif
-            
-            <form action="{{ route('logout') }}" method="POST">
-                @csrf
-                <button type="submit" class="w-full text-error hover:bg-error/10 px-4 py-3 flex items-center gap-3 font-body text-sm font-medium rounded-xl transition-all">
-                    <span class="material-symbols-outlined">logout</span>
-                    <span>Logout</span>
-                </button>
-            </form>
-        </div>
     </aside>
 
     <!-- Main Content Canvas -->
     <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen bg-surface">
- 
+        <!-- Desktop Header -->
+        <header class="sticky top-0 z-30 hidden h-20 items-center justify-end border-b border-outline-variant/10 bg-surface/95 px-8 backdrop-blur lg:flex">
+            <div x-data="{ open: false }" class="relative">
+                <button type="button"
+                        @click="open = !open"
+                        @keydown.escape.window="open = false"
+                        class="flex min-w-0 items-center gap-3 rounded-xl px-3 py-2 transition-all hover:bg-surface-container-low focus:outline-none focus:ring-2 focus:ring-primary/20"
+                        aria-label="Menu profil">
+                    <div class="flex h-11 w-11 flex-shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/10 text-sm font-bold text-primary ring-1 ring-primary/10">
+                        @if($currentUser && $currentUser->foto)
+                            <img src="{{ Storage::url($currentUser->foto) }}" alt="{{ $profileName }}" class="h-full w-full object-cover">
+                        @else
+                            {{ $profileInitials }}
+                        @endif
+                    </div>
+                    <div class="hidden min-w-0 text-left sm:block">
+                        <p class="max-w-44 truncate text-sm font-bold text-on-surface">{{ $profileName }}</p>
+                        <p class="text-[10px] uppercase tracking-widest text-on-surface-variant">{{ $displayRole }}</p>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
+                </button>
+
+                <div x-show="open"
+                     x-cloak
+                     @click.outside="open = false"
+                     x-transition:enter="transition ease-out duration-150"
+                     x-transition:enter-start="opacity-0 translate-y-1"
+                     x-transition:enter-end="opacity-100 translate-y-0"
+                     x-transition:leave="transition ease-in duration-100"
+                     x-transition:leave-start="opacity-100 translate-y-0"
+                     x-transition:leave-end="opacity-0 translate-y-1"
+                     class="absolute right-0 mt-3 w-72 overflow-hidden rounded-xl border border-outline-variant/20 bg-surface-container-lowest shadow-xl">
+                    <div class="border-b border-outline-variant/10 px-4 py-3">
+                        <p class="truncate text-sm font-bold text-on-surface">{{ $profileName }}</p>
+                        <p class="truncate text-xs text-on-surface-variant">{{ $currentUser?->email }}</p>
+                    </div>
+                    @if($profileRoute)
+                        <a href="{{ $profileRoute }}" class="flex items-center gap-3 px-4 py-3 text-sm font-semibold text-on-surface transition-colors hover:bg-surface-container-low">
+                            <span class="material-symbols-outlined text-lg text-primary">manage_accounts</span>
+                            <span>Pengaturan Akun</span>
+                        </a>
+                    @endif
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit" class="flex w-full items-center gap-3 px-4 py-3 text-left text-sm font-semibold text-error transition-colors hover:bg-error/10">
+                            <span class="material-symbols-outlined text-lg">logout</span>
+                            <span>Logout</span>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </header>
 
         <!-- Page Content -->
         <div class="p-4 lg:p-8">

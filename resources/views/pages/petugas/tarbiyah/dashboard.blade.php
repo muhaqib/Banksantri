@@ -11,10 +11,6 @@
             <h1 class="font-headline text-3xl font-black">Dashboard Nilai Iktibar</h1>
             <p class="text-sm text-on-surface-variant">Pantau sebaran total nilai ujian bulanan Tarbiyah per santri.</p>
         </div>
-        <a href="{{ route('petugas.tarbiyah.index', ['mode' => 'monthly', 'class_level' => $classLevel === 'all' ? ($classLevels[0] ?? '') : $classLevel, 'monthly_exam_id' => $monthlyExam?->id]) }}" class="btn-primary justify-center">
-            <span class="material-symbols-outlined">edit_note</span>
-            Input Nilai Iktibar
-        </a>
     </div>
 
     <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-4">

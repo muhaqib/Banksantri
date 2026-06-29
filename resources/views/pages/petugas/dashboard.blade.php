@@ -4,7 +4,23 @@
 @php $activeRole = 'petugas'; @endphp
 
 @section('content')
-<div x-data="{ showNews: false, selectedNews: {} }" class="space-y-6">
+<div
+    x-data="{
+        showNews: false,
+        selectedNews: {},
+        openNews(news) {
+            this.selectedNews = news;
+            this.showNews = true;
+            document.body.classList.add('overflow-hidden');
+        },
+        closeNews() {
+            this.showNews = false;
+            document.body.classList.remove('overflow-hidden');
+        }
+    }"
+    @keydown.escape.window="closeNews()"
+    class="space-y-6"
+>
     <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-primary-container text-white p-6 md:p-9 shadow-xl shadow-primary/15">
         <div class="relative z-10 max-w-3xl">
             <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary-fixed-dim">{{ now()->translatedFormat('l, d F Y') }}</p>
@@ -114,31 +130,44 @@
         </aside>
     </div>
 
-    <section>
-        <div class="mb-4">
+    <section class="space-y-5">
+        <div>
             <p class="text-xs font-bold uppercase tracking-widest text-primary">Cerita & Kegiatan</p>
             <h3 class="font-headline text-2xl font-extrabold text-on-surface">Blog Pondok</h3>
         </div>
-        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
-            @forelse($news as $item)
-                <article class="rounded-2xl bg-surface-container-lowest overflow-hidden shadow-sm hover:-translate-y-1 hover:shadow-lg transition-all">
-                    <div class="h-40 bg-gradient-to-br from-primary/15 to-tertiary/20 p-5 flex items-start justify-between bg-cover bg-center" @if($item->thumbnail_url) style="background-image: linear-gradient(rgba(0,77,76,.2),rgba(0,77,76,.5)), url('{{ $item->thumbnail_url }}')" @endif>
-                        <div class="w-11 h-11 rounded-xl bg-white/80 text-primary flex items-center justify-center shadow-sm"><span class="material-symbols-outlined">newspaper</span></div>
+        <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3 xl:gap-6">
+            @forelse($news->take(3) as $item)
+                <article class="flex min-w-0 flex-col overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm transition-all hover:-translate-y-1 hover:shadow-lg">
+                    <div class="flex aspect-[16/9] min-h-36 items-start justify-between bg-linear-to-br from-primary/15 to-tertiary/20 bg-cover bg-center p-4 sm:p-5" @if($item->thumbnail_url) style="background-image: linear-gradient(rgba(0,77,76,.2),rgba(0,77,76,.5)), url('{{ $item->thumbnail_url }}')" @endif>
+                        <div class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-white/85 text-primary shadow-sm sm:h-11 sm:w-11"><span class="material-symbols-outlined">newspaper</span></div>
                         @if($item->category)
-                            <span class="px-3 py-1.5 rounded-full bg-white/80 text-primary text-[10px] font-black">{{ $item->category }}</span>
+                            <span class="max-w-[65%] truncate rounded-full bg-white/85 px-3 py-1.5 text-[10px] font-black text-primary">{{ $item->category }}</span>
                         @endif
                     </div>
-                    <div class="p-5">
-                        <h4 class="font-headline font-bold text-lg text-on-surface">{{ $item->title }}</h4>
-                        <p class="mt-2 text-sm text-on-surface-variant leading-relaxed">{{ $item->excerpt ?: Str::limit(strip_tags($item->content), 150) }}</p>
-                        <div class="mt-4 flex items-center justify-between gap-3">
+                    <div class="flex flex-1 flex-col p-4 sm:p-5">
+                        <h4 class="font-headline text-base font-bold leading-snug text-on-surface sm:text-lg">{{ $item->title }}</h4>
+                        <p class="mt-2 flex-1 text-sm leading-relaxed text-on-surface-variant">{{ Str::limit($item->excerpt ?: strip_tags($item->content), 130) }}</p>
+                        <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                             <p class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ $item->published_at?->translatedFormat('d M Y') }}</p>
-                            <button @click="selectedNews = {{ Js::from(['title' => $item->title, 'content' => $item->content, 'thumbnail_url' => $item->thumbnail_url, 'date' => $item->published_at?->translatedFormat('d F Y'), 'author' => $item->author ?: 'Admin']) }}; showNews = true" class="text-xs font-bold text-primary hover:underline">Baca lengkap</button>
+                            <button
+                                type="button"
+                                @click.prevent="openNews({{ Js::from([
+                                    'title' => $item->title,
+                                    'content' => $item->content ?: $item->excerpt,
+                                    'thumbnail_url' => $item->thumbnail_url,
+                                    'date' => $item->published_at?->translatedFormat('d F Y'),
+                                    'author' => $item->author ?: 'Admin',
+                                ]) }})"
+                                class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary/15"
+                            >
+                                <span>Baca lengkap</span>
+                                <span class="material-symbols-outlined text-sm">arrow_forward</span>
+                            </button>
                         </div>
                     </div>
                 </article>
             @empty
-                <div class="md:col-span-2 xl:col-span-3 rounded-2xl bg-surface-container-lowest p-10 text-center shadow-sm">
+                <div class="w-full rounded-2xl bg-surface-container-lowest p-10 text-center shadow-sm">
                     <span class="material-symbols-outlined text-5xl text-primary/30">newspaper</span>
                     <p class="mt-3 text-sm text-on-surface-variant">Belum ada berita pondok terbaru.</p>
                 </div>
@@ -147,19 +176,19 @@
     </section>
 
     <div x-show="showNews" x-cloak class="fixed inset-0 z-[100] overflow-y-auto">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showNews = false"></div>
-        <div class="relative min-h-screen flex items-center justify-center p-4">
-            <article class="w-full max-w-2xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
+        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="closeNews()"></div>
+        <div class="relative flex min-h-screen items-end justify-center p-3 sm:items-center sm:p-4">
+            <article class="max-h-[92vh] w-full max-w-2xl overflow-y-auto rounded-2xl bg-surface p-5 shadow-2xl sm:rounded-3xl md:p-8" @click.stop>
                 <div class="flex items-start justify-between gap-4">
-                    <div>
+                    <div class="min-w-0">
                         <p class="text-xs font-bold uppercase tracking-widest text-primary">Blog Pondok</p>
-                        <h3 class="mt-2 font-headline font-extrabold text-2xl md:text-3xl text-on-surface" x-text="selectedNews.title"></h3>
+                        <h3 class="mt-2 font-headline text-xl font-extrabold leading-tight text-on-surface md:text-3xl" x-text="selectedNews.title"></h3>
                     </div>
-                    <button @click="showNews = false" class="p-2 rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
+                    <button type="button" @click="closeNews()" class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <p class="mt-3 text-xs text-on-surface-variant"><span x-text="selectedNews.author"></span> · <span x-text="selectedNews.date"></span></p>
-                <template x-if="selectedNews.thumbnail_url"><img :src="selectedNews.thumbnail_url" class="mt-5 w-full max-h-72 object-cover rounded-2xl" alt=""></template>
-                <div class="mt-6 text-sm md:text-base leading-7 text-on-surface-variant whitespace-pre-line" x-html="selectedNews.content"></div>
+                <template x-if="selectedNews.thumbnail_url"><img :src="selectedNews.thumbnail_url" class="mt-5 aspect-video w-full rounded-2xl object-cover" alt=""></template>
+                <div class="mt-6 text-sm leading-7 text-on-surface-variant md:text-base [&_*]:max-w-full [&_img]:rounded-xl [&_img]:my-4 [&_a]:font-bold [&_a]:text-primary" x-html="selectedNews.content || 'Konten blog belum tersedia.'"></div>
             </article>
         </div>
     </div>
