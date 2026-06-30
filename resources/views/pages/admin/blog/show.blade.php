@@ -2,12 +2,16 @@
 
 @section('header-title', 'Detail Blog')
 @php $routePrefix = $routePrefix ?? 'admin.blog'; @endphp
+@php
+    $canManageBlog = $canManageBlog ?? true;
+    $backRoute = $backRoute ?? route($routePrefix.'.index');
+@endphp
 
 @section('content')
 <div class="max-w-5xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <a href="{{ route($routePrefix.'.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
+        <a href="{{ $backRoute }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Blog</span>
         </a>
@@ -23,7 +27,8 @@
                     @endif
                 </p>
             </div>
-            <div class="flex gap-2">
+            @if($canManageBlog)
+                <div class="flex gap-2">
                 <a href="{{ route($routePrefix.'.edit', $blog) }}" 
                    class="bg-primary text-on-primary font-bold py-2 px-4 rounded-xl shadow-lg hover:shadow-primary/30 transition-all flex items-center gap-2">
                     <span class="material-symbols-outlined">edit</span>
@@ -37,7 +42,8 @@
                         <span>{{ $blog->is_published ? 'Unpublish' : 'Publish' }}</span>
                     </button>
                 </form>
-            </div>
+                </div>
+            @endif
         </div>
     </div>
 
@@ -91,14 +97,16 @@
 
             <!-- Actions -->
             <div class="mt-8 pt-6 border-t border-surface-container flex gap-3">
-                <a href="{{ route($routePrefix.'.index') }}"
+                <a href="{{ $backRoute }}"
                    class="px-6 py-3 bg-surface-container-high text-on-surface rounded-xl font-bold hover:bg-surface-container transition-colors">
-                    Kembali ke Daftar
+                    Kembali
                 </a>
-                <a href="{{ route($routePrefix.'.edit', $blog) }}"
-                   class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">
-                    Edit Blog Ini
-                </a>
+                @if($canManageBlog)
+                    <a href="{{ route($routePrefix.'.edit', $blog) }}"
+                       class="px-6 py-3 bg-primary text-on-primary rounded-xl font-bold hover:bg-primary-container transition-colors">
+                        Edit Blog Ini
+                    </a>
+                @endif
             </div>
         </div>
     </div>

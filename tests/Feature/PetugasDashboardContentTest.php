@@ -4,6 +4,7 @@ namespace Tests\Feature;
 
 use App\Models\DashboardContent;
 use App\Models\DashboardContentAssignment;
+use App\Models\Blog;
 use App\Models\User;
 use App\Support\PermissionRegistry;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -67,6 +68,31 @@ class PetugasDashboardContentTest extends TestCase
 
         $this->assertTrue($petugas->fresh()->hasPermissionTo('petugas.dashboard.view'));
         $this->assertFalse($petugas->fresh()->hasPermissionTo('petugas.finance.dashboard'));
+    }
+
+    public function test_petugas_can_read_published_blog_detail_from_dashboard_without_blog_manage_permission(): void
+    {
+        $petugas = User::factory()->create(['role' => 'petugas']);
+        $petugas->assignRole(Role::findOrCreate('petugas'));
+        $petugas->givePermissionTo(Permission::findOrCreate('petugas.dashboard.view'));
+
+        $blog = Blog::create([
+            'title' => 'Kegiatan Santri Pekanan',
+            'slug' => 'kegiatan-santri-pekanan',
+            'excerpt' => 'Ringkasan kegiatan santri.',
+            'content' => 'Konten lengkap kegiatan santri pekanan.',
+            'author' => 'Admin',
+            'is_published' => true,
+            'published_at' => now(),
+        ]);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.blog.read', $blog))
+            ->assertOk()
+            ->assertSee('Kegiatan Santri Pekanan')
+            ->assertSee('Konten lengkap kegiatan santri pekanan.')
+            ->assertDontSee('Edit Blog Ini')
+            ->assertDontSee('Unpublish');
     }
 
     public function test_admin_can_create_dashboard_content_and_drafts_stay_hidden_from_petugas(): void

@@ -73,8 +73,16 @@ class BlogController extends Controller
      */
     public function show(Blog $blog)
     {
+        if (request()->routeIs('petugas.blog.read')) {
+            abort_unless($blog->is_published, 404);
+        }
+
         return view('pages.admin.blog.show', [
             'blog' => $blog,
+            'canManageBlog' => $this->canManageBlog(),
+            'backRoute' => request()->routeIs('petugas.blog.read')
+                ? route('petugas.dashboard')
+                : route($this->routeName('index')),
             ...$this->viewContext(),
         ]);
     }
@@ -169,6 +177,19 @@ class BlogController extends Controller
     private function routeName(string $name): string
     {
         return $this->viewContext()['routePrefix'].".{$name}";
+    }
+
+    private function canManageBlog(): bool
+    {
+        if (request()->routeIs('petugas.blog.read')) {
+            return false;
+        }
+
+        $permission = request()->routeIs('petugas.*')
+            ? 'petugas.blog.manage'
+            : 'admin.blog.manage';
+
+        return request()->user()?->can($permission) ?? false;
     }
 
     private function uniqueSlug(string $value, ?int $ignoreId = null): string

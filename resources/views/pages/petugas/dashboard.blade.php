@@ -149,20 +149,13 @@
                         <p class="mt-2 flex-1 text-sm leading-relaxed text-on-surface-variant">{{ Str::limit($item->excerpt ?: strip_tags($item->content), 130) }}</p>
                         <div class="mt-4 flex flex-wrap items-center justify-between gap-3">
                             <p class="text-[10px] font-bold uppercase tracking-wider text-primary">{{ $item->published_at?->translatedFormat('d M Y') }}</p>
-                            <button
-                                type="button"
-                                @click.prevent="openNews({{ Js::from([
-                                    'title' => $item->title,
-                                    'content' => $item->content ?: $item->excerpt,
-                                    'thumbnail_url' => $item->thumbnail_url,
-                                    'date' => $item->published_at?->translatedFormat('d F Y'),
-                                    'author' => $item->author ?: 'Admin',
-                                ]) }})"
+                            <a
+                                href="{{ route('petugas.blog.read', $item) }}"
                                 class="inline-flex items-center gap-1 rounded-lg bg-primary/10 px-3 py-2 text-xs font-bold text-primary transition-colors hover:bg-primary/15"
                             >
                                 <span>Baca lengkap</span>
                                 <span class="material-symbols-outlined text-sm">arrow_forward</span>
-                            </button>
+                            </a>
                         </div>
                     </div>
                 </article>

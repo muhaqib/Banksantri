@@ -212,6 +212,7 @@ Route::middleware('auth')->group(function () {
     Route::prefix('petugas')->name('petugas.')->middleware('role:petugas')->group(function () {
         Route::get('/dashboard', [PetugasDashboardController::class, 'index'])->middleware('permission:petugas.dashboard.view')->name('dashboard');
         Route::patch('/dashboard/todo/{assignment}/complete', [PetugasDashboardController::class, 'completeTodo'])->middleware('permission:petugas.dashboard.view')->name('dashboard.todo.complete');
+        Route::get('/blog/{blog}/lihat', [AdminBlogController::class, 'show'])->middleware('permission:petugas.dashboard.view')->name('blog.read');
         Route::get('/keuangan/dashboard', [PetugasDashboardController::class, 'finance'])->middleware('permission:petugas.finance.dashboard')->name('finance-dashboard');
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
