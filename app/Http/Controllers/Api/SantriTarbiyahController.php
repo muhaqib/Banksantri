@@ -22,7 +22,7 @@ class SantriTarbiyahController extends Controller
         $classLevel = $request->input('class_level', $santri->kelas);
         $month = $request->input('month', now()->format('Y-m'));
 
-        if (! in_array($classLevel, TarbiyahClass::LEVELS, true)) {
+        if (! in_array($classLevel, TarbiyahClass::levels(), true)) {
             $classLevel = $santri->kelas;
         }
 
@@ -58,7 +58,7 @@ class SantriTarbiyahController extends Controller
                 'class_level' => $classLevel,
                 'month' => $month,
             ],
-            'class_levels' => TarbiyahClass::LEVELS,
+            'class_levels' => TarbiyahClass::levels(),
             'subjects' => $subjects->map(fn (TarbiyahSubject $subject) => $this->formatSubject($subject)),
             'grades' => $grades->map(fn (TarbiyahGrade $grade) => $this->formatGrade($grade)),
             'semester_averages' => $grades

@@ -19,7 +19,7 @@ class TarbiyahController extends Controller
         $classLevel = $request->input('class_level', $santri->kelas);
         $month = $request->input('month', now()->format('Y-m'));
 
-        if (! in_array($classLevel, TarbiyahClass::LEVELS, true)) {
+        if (! in_array($classLevel, TarbiyahClass::levels(), true)) {
             $classLevel = $santri->kelas;
         }
 
@@ -48,7 +48,7 @@ class TarbiyahController extends Controller
 
         return view('pages.santri.tarbiyah.index', [
             'mode' => $mode,
-            'classLevels' => TarbiyahClass::LEVELS,
+            'classLevels' => TarbiyahClass::levels(),
             'classLevel' => $classLevel,
             'month' => $month,
             'subjects' => $subjects,

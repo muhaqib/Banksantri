@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Str;
+use Illuminate\Validation\ValidationException;
 
 class BlogController extends Controller
 {
@@ -55,6 +56,7 @@ class BlogController extends Controller
         ]);
 
         $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? $validated['title']);
+        $validated['content'] = $this->normalizeContent($validated['content']);
         $validated['is_published'] = $request->boolean('is_published');
         $validated['published_at'] = $validated['is_published'] ? now() : null;
 
@@ -115,6 +117,7 @@ class BlogController extends Controller
         ]);
 
         $validated['slug'] = $this->uniqueSlug($validated['slug'] ?? $validated['title'], $blog->id);
+        $validated['content'] = $this->normalizeContent($validated['content']);
         $validated['is_published'] = $request->boolean('is_published');
         $validated['published_at'] = $validated['is_published']
             ? ($blog->published_at ?? now())
@@ -190,6 +193,46 @@ class BlogController extends Controller
             : 'admin.blog.manage';
 
         return request()->user()?->can($permission) ?? false;
+    }
+
+    private function normalizeContent(string $content): string
+    {
+        $content = trim($content);
+        $decoded = json_decode($content, true);
+
+        if (
+            is_array($decoded)
+            && ($decoded['type'] ?? null) === 'blocks'
+            && is_array($decoded['blocks'] ?? null)
+        ) {
+            $blocks = collect($decoded['blocks'])
+                ->map(fn ($block) => [
+                    'type' => in_array($block['type'] ?? 'p', ['h2', 'h3', 'p', 'quote'], true) ? $block['type'] : 'p',
+                    'text' => trim((string) ($block['text'] ?? '')),
+                ])
+                ->filter(fn ($block) => $block['text'] !== '')
+                ->values()
+                ->all();
+
+            if (empty($blocks)) {
+                throw ValidationException::withMessages([
+                    'content' => 'Konten lengkap wajib diisi.',
+                ]);
+            }
+
+            return json_encode([
+                'type' => 'blocks',
+                'blocks' => $blocks,
+            ], JSON_UNESCAPED_UNICODE);
+        }
+
+        if ($content === '') {
+            throw ValidationException::withMessages([
+                'content' => 'Konten lengkap wajib diisi.',
+            ]);
+        }
+
+        return $content;
     }
 
     private function uniqueSlug(string $value, ?int $ignoreId = null): string

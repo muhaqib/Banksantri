@@ -110,9 +110,7 @@
                 </div>
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Konten Lengkap <span class="text-error">*</span></label>
-                    <textarea name="content" required rows="15"
-                              class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all leading-relaxed"
-                              placeholder="Tulis isi artikel lengkap. Pisahkan paragraf dengan baris kosong.">{{ old('content') }}</textarea>
+                    @include('pages.admin.blog.partials.content-editor', ['content' => old('content')])
                     @error('content')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror

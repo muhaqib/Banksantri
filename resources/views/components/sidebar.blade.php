@@ -152,11 +152,13 @@
                 [
                     'label' => 'Data Santri',
                     'icon' => 'school',
-                    'active' => ['admin.santri.*', 'admin.kamar.*'],
+                    'active' => ['admin.santri.*', 'admin.kamar.*', 'petugas.santri.*'],
                     'children' => [
                         ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.index', 'active' => 'admin.santri.index', 'label' => 'Semua Santri'],
                         ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.create', 'active' => 'admin.santri.create', 'label' => 'Tambah Santri'],
                         ['permission' => 'admin.kamar.manage', 'route' => 'admin.kamar.index', 'active' => 'admin.kamar.*', 'label' => 'Data Kamar'],
+                        ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.index', 'active' => 'petugas.santri.index', 'label' => 'Semua Santri'],
+                        ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.create', 'active' => 'petugas.santri.create', 'label' => 'Tambah Santri'],
                     ],
                 ],
                 [
@@ -191,8 +193,10 @@
                 [
                     'label' => 'Tarbiyah',
                     'icon' => 'military_tech',
-                    'active' => ['admin.prestasi.*', 'admin.tarbiyah.*'],
+                    'active' => ['admin.prestasi.*', 'admin.tarbiyah.*', 'admin.classes.*'],
                     'children' => [
+                        ['permission' => 'admin.tarbiyah.manage', 'route' => 'admin.classes.pondok.index', 'active' => 'admin.classes.pondok.*', 'label' => 'Kelas Pondok'],
+                        ['permission' => 'admin.tarbiyah.manage', 'route' => 'admin.classes.formal.index', 'active' => 'admin.classes.formal.*', 'label' => 'Kelas Formal'],
                         ['permission' => 'admin.tarbiyah.manage', 'route' => 'admin.tarbiyah.subjects.index', 'active' => 'admin.tarbiyah.*', 'label' => 'Mapel Tarbiyah'],
                         ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.index', 'active' => 'admin.prestasi.index', 'label' => 'Tahfidz'],
                         ['permission' => 'admin.prestasi.manage', 'route' => 'admin.prestasi.create', 'active' => 'admin.prestasi.create', 'label' => 'Tambah Tahfidz'],

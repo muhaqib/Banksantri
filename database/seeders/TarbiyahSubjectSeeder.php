@@ -26,7 +26,7 @@ class TarbiyahSubjectSeeder extends Seeder
             'العربية',
         ];
 
-        foreach (TarbiyahClass::LEVELS as $classLevel) {
+        foreach (TarbiyahClass::levels() as $classLevel) {
             foreach ($subjects as $index => $subject) {
                 TarbiyahSubject::updateOrCreate(
                     ['class_level' => $classLevel, 'name' => $subject],

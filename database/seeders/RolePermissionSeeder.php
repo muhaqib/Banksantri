@@ -33,6 +33,7 @@ class RolePermissionSeeder extends Seeder
                 } elseif ($user->role === 'petugas') {
                     $user->givePermissionTo([
                         'petugas.dashboard.view',
+                        'petugas.santri.manage',
                         'petugas.prestasi.manage',
                         'petugas.tarbiyah.manage',
                         'petugas.health.manage',

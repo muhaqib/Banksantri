@@ -90,7 +90,7 @@ class TarbiyahGradeController extends Controller
 
         return view('pages.petugas.tarbiyah.dashboard', [
             'activeRole' => 'petugas',
-            'classLevels' => TarbiyahClass::LEVELS,
+            'classLevels' => TarbiyahClass::levels(),
             'classLevel' => $classLevel,
             'monthlyExams' => $monthlyExams,
             'monthlyExam' => $monthlyExam,
@@ -105,7 +105,7 @@ class TarbiyahGradeController extends Controller
     public function index(Request $request)
     {
         $mode = $request->input('mode', 'semester');
-        $classLevel = $request->input('class_level', TarbiyahClass::LEVELS[0]);
+        $classLevel = $request->input('class_level', TarbiyahClass::levels()[0]);
         $semester = (int) $request->input('semester', 1);
         $academicYear = $request->input('academic_year', $this->defaultAcademicYear());
         $monthlyExams = TarbiyahMonthlyExam::query()
@@ -133,7 +133,7 @@ class TarbiyahGradeController extends Controller
         return view('pages.petugas.tarbiyah.index', [
             'activeRole' => 'petugas',
             'mode' => $mode,
-            'classLevels' => TarbiyahClass::LEVELS,
+            'classLevels' => TarbiyahClass::levels(),
             'classLevel' => $classLevel,
             'semester' => $semester,
             'academicYear' => $academicYear,
@@ -220,7 +220,7 @@ class TarbiyahGradeController extends Controller
     public function import(Request $request)
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'semester' => ['required', 'integer', 'in:1,2'],
             'academic_year' => ['required', 'string', 'max:20'],
             'excel_file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240'],
@@ -304,7 +304,7 @@ class TarbiyahGradeController extends Controller
     public function importMonthly(Request $request)
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'monthly_exam_id' => ['required', 'exists:tarbiyah_monthly_exams,id'],
             'excel_file' => ['required', 'file', 'mimes:xlsx,xls', 'max:10240'],
         ]);
@@ -388,7 +388,7 @@ class TarbiyahGradeController extends Controller
     public function template(Request $request): StreamedResponse
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
         ]);
 
         $headers = ['NIS', 'Nama Santri', ...$this->subjects($validated['class_level'])->pluck('name')->all()];
@@ -420,7 +420,7 @@ class TarbiyahGradeController extends Controller
     public function exportMonthly(Request $request): StreamedResponse
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'monthly_exam_id' => ['nullable', 'exists:tarbiyah_monthly_exams,id'],
         ]);
 
@@ -475,7 +475,7 @@ class TarbiyahGradeController extends Controller
     public function promote(Request $request)
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'academic_year' => ['required', 'string', 'max:20'],
         ]);
 
@@ -510,7 +510,7 @@ class TarbiyahGradeController extends Controller
     private function validateGradeRequest(Request $request): array
     {
         return $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'semester' => ['required', 'integer', 'in:1,2'],
             'academic_year' => ['required', 'string', 'max:20'],
             'grades' => ['array'],
@@ -522,7 +522,7 @@ class TarbiyahGradeController extends Controller
     private function validateMonthlyGradeRequest(Request $request): array
     {
         return $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'monthly_exam_id' => ['required', 'exists:tarbiyah_monthly_exams,id'],
             'grades' => ['array'],
             'grades.*' => ['array'],

@@ -21,6 +21,8 @@ class SantriController extends Controller
      */
     public function index(Request $request)
     {
+        $routePrefix = $this->routePrefix($request);
+        $activeRole = $this->activeRole($request);
         $status = in_array($request->query('status'), ['aktif', 'alumni'], true)
             ? $request->query('status')
             : 'aktif';
@@ -44,7 +46,8 @@ class SantriController extends Controller
             'activeCount' => User::activeSantri()->count(),
             'alumniCount' => User::santri()->where('santri_status', 'alumni')->count(),
             'currentStatus' => $status,
-            'activeRole' => 'admin',
+            'activeRole' => $activeRole,
+            'routePrefix' => $routePrefix,
         ]);
     }
 
@@ -86,7 +89,8 @@ class SantriController extends Controller
     public function create()
     {
         return view('pages.admin.santri.create', [
-            'activeRole' => 'admin',
+            'activeRole' => $this->activeRole(request()),
+            'routePrefix' => $this->routePrefix(request()),
         ]);
     }
 
@@ -147,7 +151,7 @@ class SantriController extends Controller
             ]);
         }
 
-        return redirect()->route('admin.santri.index')
+        return redirect()->route($this->routePrefix($request).'.index')
             ->with('success', 'Data santri berhasil ditambahkan!');
     }
 
@@ -162,7 +166,8 @@ class SantriController extends Controller
 
         return view('pages.admin.santri.edit', [
             'santri' => $santri,
-            'activeRole' => 'admin',
+            'activeRole' => $this->activeRole(request()),
+            'routePrefix' => $this->routePrefix(request()),
         ]);
     }
 
@@ -233,7 +238,7 @@ class SantriController extends Controller
             ->where('id', $santri->id)
             ->update($data);
 
-        return redirect()->route('admin.santri.index')
+        return redirect()->route($this->routePrefix($request).'.index')
             ->with('success', 'Data santri berhasil diupdate!');
     }
 
@@ -256,7 +261,7 @@ class SantriController extends Controller
             ->where('id', $santri->id)
             ->delete();
 
-        return redirect()->route('admin.santri.index')
+        return redirect()->route($this->routePrefix(request()).'.index')
             ->with('success', 'Data santri berhasil dihapus!');
     }
 
@@ -386,5 +391,15 @@ class SantriController extends Controller
         imagedestroy($resizedImg);
 
         return $fullPath;
+    }
+
+    private function activeRole(Request $request): string
+    {
+        return $request->routeIs('petugas.*') ? 'petugas' : 'admin';
+    }
+
+    private function routePrefix(Request $request): string
+    {
+        return $this->activeRole($request).'.santri';
     }
 }

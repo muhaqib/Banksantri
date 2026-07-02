@@ -86,6 +86,48 @@ class SantriAlumniManagementTest extends TestCase
             ->assertDontSee($alumni->name);
     }
 
+    public function test_petugas_can_open_santri_crud_pages_with_permission(): void
+    {
+        $petugas = $this->petugasWithSantriPermission();
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'name' => 'Santri Tampil Petugas',
+            'santri_status' => 'aktif',
+        ]);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.santri.index'))
+            ->assertOk()
+            ->assertSee($santri->name)
+            ->assertSee('Tambah / Import');
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.santri.create'))
+            ->assertOk()
+            ->assertSee('Tambah Santri Baru');
+    }
+
+    public function test_petugas_can_create_santri_with_permission(): void
+    {
+        $petugas = $this->petugasWithSantriPermission();
+        Role::findOrCreate('santri');
+
+        $this->actingAs($petugas)
+            ->post(route('petugas.santri.store'), [
+                'name' => 'Santri Baru Petugas',
+                'email' => 'santri-baru-petugas@example.test',
+                'nis' => 'PTG-001',
+                'password' => 'password',
+                'pin' => '123456',
+            ])
+            ->assertRedirect(route('petugas.santri.index'));
+
+        $this->assertDatabaseHas('users', [
+            'role' => 'santri',
+            'nis' => 'PTG-001',
+        ]);
+    }
+
     public function test_admin_can_create_santri_with_room_assignment(): void
     {
         $admin = $this->admin();
@@ -201,5 +243,14 @@ class SantriAlumniManagementTest extends TestCase
         $admin->givePermissionTo(Permission::findOrCreate('admin.santri.manage'));
 
         return $admin;
+    }
+
+    private function petugasWithSantriPermission(): User
+    {
+        $petugas = User::factory()->create(['role' => 'petugas']);
+        $petugas->assignRole(Role::findOrCreate('petugas'));
+        $petugas->givePermissionTo(Permission::findOrCreate('petugas.santri.manage'));
+
+        return $petugas;
     }
 }

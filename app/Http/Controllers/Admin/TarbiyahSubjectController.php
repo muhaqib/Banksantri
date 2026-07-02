@@ -13,11 +13,12 @@ class TarbiyahSubjectController extends Controller
 {
     public function index(Request $request)
     {
-        $classLevel = $request->input('class_level', TarbiyahClass::LEVELS[0]);
+        $classLevels = TarbiyahClass::levels();
+        $classLevel = $request->input('class_level', $classLevels[0]);
 
         return view('pages.admin.tarbiyah.subjects', [
             'activeRole' => 'admin',
-            'classLevels' => TarbiyahClass::LEVELS,
+            'classLevels' => $classLevels,
             'classLevel' => $classLevel,
             'subjects' => TarbiyahSubject::where('class_level', $classLevel)
                 ->orderBy('sort_order')
@@ -34,7 +35,7 @@ class TarbiyahSubjectController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'class_level' => ['required', Rule::in(TarbiyahClass::LEVELS)],
+            'class_level' => ['required', Rule::in(TarbiyahClass::levels())],
             'name' => ['required', 'string', 'max:255'],
             'sort_order' => ['nullable', 'integer', 'min:0', 'max:9999'],
             'is_active' => ['nullable', 'boolean'],

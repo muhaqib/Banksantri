@@ -5,6 +5,23 @@
 @php
     $canManageBlog = $canManageBlog ?? true;
     $backRoute = $backRoute ?? route($routePrefix.'.index');
+    $decodedContent = json_decode($blog->content, true);
+    $contentBlocks = [];
+
+    if (
+        is_array($decodedContent)
+        && ($decodedContent['type'] ?? null) === 'blocks'
+        && is_array($decodedContent['blocks'] ?? null)
+    ) {
+        $contentBlocks = collect($decodedContent['blocks'])
+            ->map(fn ($block) => [
+                'type' => in_array($block['type'] ?? 'p', ['h2', 'h3', 'p', 'quote'], true) ? $block['type'] : 'p',
+                'text' => trim((string) ($block['text'] ?? '')),
+            ])
+            ->filter(fn ($block) => $block['text'] !== '')
+            ->values()
+            ->all();
+    }
 @endphp
 
 @section('content')
@@ -90,8 +107,24 @@
             <!-- Content -->
             <div class="prose prose-lg max-w-none">
                 <h3 class="font-bold text-lg text-primary mb-4">Konten Lengkap</h3>
-                <div class="text-on-surface leading-relaxed">
-                    {!! nl2br(e($blog->content)) !!}
+                <div class="space-y-5 text-on-surface leading-relaxed">
+                    @if(! empty($contentBlocks))
+                        @foreach($contentBlocks as $block)
+                            @if($block['type'] === 'h2')
+                                <h2 class="font-headline text-2xl font-extrabold tracking-tight text-primary">{{ $block['text'] }}</h2>
+                            @elseif($block['type'] === 'h3')
+                                <h3 class="font-headline text-xl font-bold text-primary">{{ $block['text'] }}</h3>
+                            @elseif($block['type'] === 'quote')
+                                <blockquote class="border-l-4 border-primary/40 bg-primary/5 px-5 py-4 italic text-on-surface-variant rounded-r-xl">
+                                    {{ $block['text'] }}
+                                </blockquote>
+                            @else
+                                <p>{{ $block['text'] }}</p>
+                            @endif
+                        @endforeach
+                    @else
+                        {!! nl2br(e($blog->content)) !!}
+                    @endif
                 </div>
             </div>
 

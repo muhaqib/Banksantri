@@ -1,13 +1,16 @@
 @extends('layouts.app')
 
 @section('header-title', 'Tambah Santri Baru')
-@php $activeRole = 'admin'; @endphp
+@php
+    $activeRole = $activeRole ?? 'admin';
+    $routePrefix = $routePrefix ?? $activeRole.'.santri';
+@endphp
 
 @section('content')
 <div class="max-w-4xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <a href="{{ route('admin.santri.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
+        <a href="{{ route($routePrefix.'.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Data Santri</span>
         </a>
@@ -25,13 +28,13 @@
                 <p class="text-sm text-on-surface-variant mt-1">Gunakan file export atau template. Data lama diperbarui berdasarkan ID atau NIS, termasuk status dan kamar santri.</p>
             </div>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.santri.template') }}" class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-on-surface">Template</a>
-                <a href="{{ route('admin.santri.export') }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Semua</a>
-                <a href="{{ route('admin.santri.export', ['status' => 'aktif']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Aktif</a>
-                <a href="{{ route('admin.santri.export', ['status' => 'alumni']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Alumni</a>
+                <a href="{{ route($routePrefix.'.template') }}" class="px-4 py-2 bg-surface-container-high rounded-lg text-sm font-bold text-on-surface">Template</a>
+                <a href="{{ route($routePrefix.'.export') }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Semua</a>
+                <a href="{{ route($routePrefix.'.export', ['status' => 'aktif']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Aktif</a>
+                <a href="{{ route($routePrefix.'.export', ['status' => 'alumni']) }}" class="px-4 py-2 bg-primary/10 rounded-lg text-sm font-bold text-primary">Export Alumni</a>
             </div>
         </div>
-        <form action="{{ route('admin.santri.import') }}" method="POST" enctype="multipart/form-data" class="mt-5 flex flex-col md:flex-row gap-3">
+        <form action="{{ route($routePrefix.'.import') }}" method="POST" enctype="multipart/form-data" class="mt-5 flex flex-col md:flex-row gap-3">
             @csrf
             <input type="file" name="excel_file" required accept=".xlsx,.xls"
                    class="flex-1 bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface">
@@ -52,7 +55,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route('admin.santri.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+    <form action="{{ route($routePrefix.'.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
         @csrf
 
         <!-- Section: Data Pribadi -->
@@ -175,8 +178,15 @@
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas Formal</label>
-                    <input type="text" name="asal_sekolah" value="{{ old('asal_sekolah') }}"
-                           class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                    <select name="asal_sekolah"
+                            class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
+                        <option value="">Pilih kelas formal</option>
+                        @foreach(\App\Models\FormalClass::active()->orderBy('sort_order')->orderBy('name')->get() as $formalClass)
+                            <option value="{{ $formalClass->name }}" @selected(old('asal_sekolah') === $formalClass->name)>
+                                {{ $formalClass->name }}
+                            </option>
+                        @endforeach
+                    </select>
                     @error('asal_sekolah')
                         <p class="text-error text-xs mt-1">{{ $message }}</p>
                     @enderror
@@ -186,7 +196,7 @@
                     <select name="kelas"
                             class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
                         <option value="">Pilih kelas</option>
-                        @foreach(\App\Support\TarbiyahClass::LEVELS as $classLevel)
+                        @foreach(\App\Support\TarbiyahClass::levels() as $classLevel)
                             <option value="{{ $classLevel }}" @selected(old('kelas') === $classLevel)>
                                 {{ $classLevel }}
                             </option>
@@ -247,7 +257,7 @@
 
         <!-- Submit Buttons -->
         <div class="flex items-center justify-end gap-4 pt-6 border-t border-surface-container">
-            <a href="{{ route('admin.santri.index') }}" 
+            <a href="{{ route($routePrefix.'.index') }}" 
                class="px-6 py-3 bg-surface-container-high text-on-surface font-semibold rounded-xl hover:bg-surface-container-highest transition-colors">
                 Batal
             </a>

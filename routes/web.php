@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Admin\AccessController;
+use App\Http\Controllers\Admin\AcademicClassController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
 use App\Http\Controllers\Admin\DashboardContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
@@ -164,6 +165,16 @@ Route::middleware('auth')->group(function () {
             Route::post('kitab', [KitabController::class, 'store'])->name('kitab.store');
         });
         Route::middleware('permission:admin.tarbiyah.manage')->group(function () {
+            Route::get('/classes/pondok', [AcademicClassController::class, 'pondokIndex'])->name('classes.pondok.index');
+            Route::post('/classes/pondok', [AcademicClassController::class, 'storePondok'])->name('classes.pondok.store');
+            Route::patch('/classes/pondok/{pondokClass}', [AcademicClassController::class, 'updatePondok'])->name('classes.pondok.update');
+            Route::delete('/classes/pondok/{pondokClass}', [AcademicClassController::class, 'destroyPondok'])->name('classes.pondok.destroy');
+            Route::get('/classes/formal', [AcademicClassController::class, 'formalIndex'])->name('classes.formal.index');
+            Route::post('/classes/formal', [AcademicClassController::class, 'storeFormal'])->name('classes.formal.store');
+            Route::patch('/classes/formal/{formalClass}', [AcademicClassController::class, 'updateFormal'])->name('classes.formal.update');
+            Route::delete('/classes/formal/{formalClass}', [AcademicClassController::class, 'destroyFormal'])->name('classes.formal.destroy');
+            Route::post('/classes/formal/promote-all', [AcademicClassController::class, 'promoteAllFormal'])->name('classes.formal.promote-all');
+            Route::post('/classes/formal/{formalClass}/promote', [AcademicClassController::class, 'promoteFormal'])->name('classes.formal.promote');
             Route::get('/tarbiyah/subjects', [AdminTarbiyahSubjectController::class, 'index'])->name('tarbiyah.subjects.index');
             Route::post('/tarbiyah/subjects', [AdminTarbiyahSubjectController::class, 'store'])->name('tarbiyah.subjects.store');
             Route::patch('/tarbiyah/subjects/{subject}', [AdminTarbiyahSubjectController::class, 'update'])->name('tarbiyah.subjects.update');
@@ -217,6 +228,16 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
+        Route::middleware('permission:petugas.santri.manage')->group(function () {
+            Route::post('santri/import', [SantriController::class, 'import'])->name('santri.import');
+            Route::get('santri-export', [SantriController::class, 'export'])->name('santri.export');
+            Route::get('santri-template', [SantriController::class, 'template'])->name('santri.template');
+            Route::patch('santri/{santri}/graduate', [SantriController::class, 'graduate'])->name('santri.graduate');
+            Route::patch('santri/{santri}/activate', [SantriController::class, 'activate'])->name('santri.activate');
+            Route::resource('santri', SantriController::class)->except(['show']);
+            Route::get('santri/{santri}/modal-data', [SantriController::class, 'getModalData'])->name('santri.modal-data');
+            Route::get('santri/search', [SantriController::class, 'search'])->name('santri.search');
+        });
         Route::middleware('permission:petugas.laundry.manage')->group(function () {
             Route::get('/laundry', [LaundryController::class, 'index'])->name('laundry.index');
             Route::post('/laundry/scan', [LaundryController::class, 'scan'])->name('laundry.scan');

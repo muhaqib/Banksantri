@@ -67,7 +67,7 @@
         @else
             <div class="login-reveal mb-6 px-4 py-3 bg-primary-fixed/35 border border-primary/10 rounded-xl flex items-start gap-3 text-sm text-on-primary-fixed-variant" style="--delay: 380ms;">
                 <span class="material-symbols-outlined text-primary text-xl">info</span>
-                <p>Santri cukup memasukkan NIS untuk masuk tanpa kata sandi.</p>
+                <p>Masukkan NIS Santri.</p>
             </div>
         @endif
 

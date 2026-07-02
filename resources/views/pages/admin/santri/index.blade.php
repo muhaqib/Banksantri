@@ -2,7 +2,8 @@
 
 @section('header-title', 'Data Santri')
 @php
-    $activeRole = 'admin';
+    $activeRole = $activeRole ?? 'admin';
+    $routePrefix = $routePrefix ?? $activeRole.'.santri';
     $currentStatus = $currentStatus ?? request('status', 'aktif');
 @endphp
 
@@ -15,10 +16,10 @@
             <p class="text-on-surface-variant text-sm mt-1">Kelola data santri dan saldo mereka.</p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route('admin.santri.export', ['status' => $currentStatus]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
+            <a href="{{ route($routePrefix.'.export', ['status' => $currentStatus]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
                 <span class="material-symbols-outlined">download</span><span>Export Excel</span>
             </a>
-            <a href="{{ route('admin.santri.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+            <a href="{{ route($routePrefix.'.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
                 <span class="material-symbols-outlined">add</span>
                 <span>Tambah / Import</span>
             </a>
@@ -57,9 +58,9 @@
         <div class="p-6 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route('admin.santri.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
-                <a href="{{ route('admin.santri.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
-                <form method="GET" action="{{ route('admin.santri.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
+                <a href="{{ route($routePrefix.'.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
+                <a href="{{ route($routePrefix.'.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
+                <form method="GET" action="{{ route($routePrefix.'.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
                     <input type="hidden" name="status" value="{{ $currentStatus }}">
                     <input type="text"
                            name="search"
@@ -71,7 +72,7 @@
                         <span class="material-symbols-outlined text-sm">search</span>
                     </button>
                     @if(request('search'))
-                        <a href="{{ route('admin.santri.index', ['status' => $currentStatus]) }}"
+                        <a href="{{ route($routePrefix.'.index', ['status' => $currentStatus]) }}"
                            class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-sm font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
                             <span class="material-symbols-outlined text-sm">close</span>
                         </a>
@@ -136,17 +137,17 @@
                                         <span class="material-symbols-outlined text-sm">edit</span>
                                     </button>
                                     @if($santri->isAlumni())
-                                        <form action="{{ route('admin.santri.activate', $santri) }}" method="POST" onsubmit="return confirm('Aktifkan kembali santri ini?')">
+                                        <form action="{{ route($routePrefix.'.activate', $santri) }}" method="POST" onsubmit="return confirm('Aktifkan kembali santri ini?')">
                                             @csrf @method('PATCH')
                                             <button class="p-2 text-primary hover:bg-primary/10 rounded-lg" title="Aktifkan kembali"><span class="material-symbols-outlined text-sm">person_check</span></button>
                                         </form>
                                     @else
-                                        <form action="{{ route('admin.santri.graduate', $santri) }}" method="POST" onsubmit="return confirm('Jadikan santri ini alumni? Akun akan menjadi read-only dan kamar aktif dilepas.')">
+                                        <form action="{{ route($routePrefix.'.graduate', $santri) }}" method="POST" onsubmit="return confirm('Jadikan santri ini alumni? Akun akan menjadi read-only dan kamar aktif dilepas.')">
                                             @csrf @method('PATCH')
                                             <button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg" title="Jadikan alumni"><span class="material-symbols-outlined text-sm">school</span></button>
                                         </form>
                                     @endif
-                                    <form action="{{ route('admin.santri.destroy', $santri) }}" method="POST"
+                                    <form action="{{ route($routePrefix.'.destroy', $santri) }}" method="POST"
                                           onsubmit="return confirm('Yakin ingin menghapus data santri ini?')">
                                         @csrf
                                         @method('DELETE')
@@ -179,129 +180,110 @@
 
 <!-- Detail Modal -->
 <div x-show="showDetailModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showDetailModal = false"></div>
-    <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in" @click.stop>
+    <div class="fixed inset-0 z-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showDetailModal = false"></div>
+    <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
+        <div class="bg-surface rounded-2xl shadow-2xl max-w-3xl w-full animate-scale-in max-h-[92vh] overflow-hidden flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
 
-            <div x-show="!loading && selectedSantri" class="space-y-0">
-                <!-- Profile Header with Gradient -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-8 pb-12">
-                    <!-- Abstract Texture Overlay -->
-                    <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
-
-                    <div class="relative z-10">
-                        <div class="flex items-start justify-between mb-6">
-                            <div class="flex items-center gap-5">
-                                <div class="w-24 h-24 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-bold text-3xl overflow-hidden ring-4 ring-white/30">
-                                    <template x-if="selectedSantri.foto_url">
-                                        <img :src="selectedSantri.foto_url" class="w-full h-full object-cover">
-                                    </template>
-                                    <template x-if="!selectedSantri.foto_url">
-                                        <span x-text="selectedSantri.name ? selectedSantri.name.substring(0, 2).toUpperCase() : ''"></span>
-                                    </template>
-                                </div>
-                                <div class="text-white">
-                                    <h3 class="font-headline font-bold text-2xl tracking-tight mb-1" x-text="selectedSantri.name"></h3>
-                                    <p class="text-sm text-white/80 mb-2">NIS: <span x-text="selectedSantri.nis || '-'"></span></p>
-                                    <div class="inline-flex items-center gap-2 bg-white/20 backdrop-blur-md px-4 py-2 rounded-xl">
-                                        <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
-                                        <span class="font-headline font-bold text-lg" x-text="'Rp ' + formatNumber(selectedSantri.saldo)"></span>
-                                    </div>
-                                </div>
+            <div x-show="!loading && selectedSantri" class="flex min-h-0 flex-col">
+                <div class="bg-primary text-on-primary p-6">
+                    <div class="flex items-start justify-between gap-4">
+                        <div class="flex min-w-0 items-center gap-4">
+                            <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center text-2xl font-bold">
+                                <template x-if="selectedSantri.foto_url">
+                                    <img :src="selectedSantri.foto_url" class="h-full w-full object-cover">
+                                </template>
+                                <template x-if="!selectedSantri.foto_url">
+                                    <span x-text="selectedSantri.name ? selectedSantri.name.substring(0, 2).toUpperCase() : ''"></span>
+                                </template>
                             </div>
-                            <button @click="showDetailModal = false" class="p-2 hover:bg-white/10 rounded-xl transition-colors">
-                                <span class="material-symbols-outlined text-white">close</span>
-                            </button>
-                        </div>
-
-                        <!-- Personal Information -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
-                                </div>
-                                <h4 class="font-headline font-bold text-on-surface">Data Pribadi</h4>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Email</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.email || '-'"></p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp || '-'"></p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kamar</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kamar_text || '-'"></p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Tempat, Tanggal Lahir</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="formatBirthPlaceDate(selectedSantri.tempat_lahir, selectedSantri.tanggal_lahir)"></p>
-                                </div>
-                                <div class="col-span-2">
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Alamat</p>
-                                    <p class="font-medium text-on-surface text-sm leading-relaxed" x-text="selectedSantri.alamat || '-'"></p>
+                            <div class="min-w-0">
+                                <h3 class="font-headline text-2xl font-extrabold tracking-tight truncate" x-text="selectedSantri.name"></h3>
+                                <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-white/85">
+                                    <span class="rounded-lg bg-white/15 px-3 py-1">NIS <span x-text="selectedSantri.nis || '-'"></span></span>
+                                    <span class="rounded-lg bg-white/15 px-3 py-1" x-text="selectedSantri.kamar_text || '-'"></span>
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Academic Information -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">school</span>
-                                </div>
-                                <h4 class="font-headline font-bold text-on-surface">Data Akademik</h4>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kelas</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.kelas || '-'"></p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Kelas Formal</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.asal_sekolah || '-'"></p>
-                                </div>
-                            </div>
+                        <button @click="showDetailModal = false" class="rounded-xl p-2 transition-colors hover:bg-white/10">
+                            <span class="material-symbols-outlined">close</span>
+                        </button>
+                    </div>
+                    <div class="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
+                        <div class="rounded-xl bg-white/15 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase text-white/75">Saldo</p>
+                            <p class="font-headline text-lg font-bold" x-text="'Rp ' + formatNumber(selectedSantri.saldo)"></p>
                         </div>
-
-                        <!-- Guardian Information -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
-                            <div class="flex items-center gap-3 mb-4">
-                                <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
-                                    <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">family_home</span>
-                                </div>
-                                <h4 class="font-headline font-bold text-on-surface">Data Wali</h4>
-                            </div>
-
-                            <div class="grid grid-cols-2 gap-x-6 gap-y-4">
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">Nama Wali</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.nama_wali || '-'"></p>
-                                </div>
-                                <div>
-                                    <p class="text-xs text-on-surface-variant mb-1.5 uppercase tracking-wider font-semibold">No HP Wali</p>
-                                    <p class="font-medium text-on-surface text-sm" x-text="selectedSantri.no_hp_wali || '-'"></p>
-                                </div>
-                            </div>
+                        <div class="rounded-xl bg-white/15 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase text-white/75">Kelas</p>
+                            <p class="text-sm font-bold" x-text="selectedSantri.kelas || '-'"></p>
                         </div>
-
-                        <!-- Action Buttons -->
-                        <div class="flex gap-3 pt-2">
-                            <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="flex-1 bg-primary text-on-primary font-bold py-4 px-6 rounded-xl hover:shadow-lg hover:shadow-primary/20 transition-all flex items-center justify-center gap-2">
-                                <span class="material-symbols-outlined text-sm">edit</span>
-                                <span>Edit Data</span>
-                            </button>
-                            <button @click="showDetailModal = false" class="flex-1 bg-surface-container-high text-on-surface font-bold py-4 px-6 rounded-xl hover:bg-surface-container transition-all">
-                                Tutup
-                            </button>
+                        <div class="rounded-xl bg-white/15 px-4 py-3">
+                            <p class="text-xs font-semibold uppercase text-white/75">Status</p>
+                            <p class="text-sm font-bold" x-text="selectedSantri.santri_status === 'alumni' ? 'Alumni' : 'Aktif'"></p>
                         </div>
+                    </div>
+                </div>
+
+                <div class="flex-1 overflow-y-auto p-6">
+                    <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
+                        <section class="rounded-2xl bg-surface-container-lowest p-5">
+                            <h4 class="mb-4 flex items-center gap-2 font-headline font-bold text-primary">
+                                <span class="material-symbols-outlined text-lg">person</span>
+                                Data Pribadi
+                            </h4>
+                            <div class="space-y-4">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">Email</p>
+                                    <p class="break-words text-sm font-medium text-on-surface" x-text="selectedSantri.email || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">Tempat, Tanggal Lahir</p>
+                                    <p class="text-sm font-medium text-on-surface" x-text="formatBirthPlaceDate(selectedSantri.tempat_lahir, selectedSantri.tanggal_lahir)"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">Alamat</p>
+                                    <p class="whitespace-pre-line text-sm font-medium leading-relaxed text-on-surface" x-text="selectedSantri.alamat || '-'"></p>
+                                </div>
+                            </div>
+                        </section>
+
+                        <section class="rounded-2xl bg-surface-container-lowest p-5">
+                            <h4 class="mb-4 flex items-center gap-2 font-headline font-bold text-primary">
+                                <span class="material-symbols-outlined text-lg">school</span>
+                                Akademik & Wali
+                            </h4>
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">Kelas Formal</p>
+                                    <p class="text-sm font-medium text-on-surface" x-text="selectedSantri.asal_sekolah || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">RFID</p>
+                                    <p class="text-sm font-medium text-on-surface" x-text="selectedSantri.rfid_code || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">Nama Wali</p>
+                                    <p class="text-sm font-medium text-on-surface" x-text="selectedSantri.nama_wali || '-'"></p>
+                                </div>
+                                <div>
+                                    <p class="text-xs font-semibold uppercase text-on-surface-variant">No HP Wali</p>
+                                    <p class="text-sm font-medium text-on-surface" x-text="selectedSantri.no_hp_wali || '-'"></p>
+                                </div>
+                            </div>
+                        </section>
+                    </div>
+
+                    <div class="mt-5 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+                        <button @click="showDetailModal = false" class="rounded-xl bg-surface-container-high px-6 py-3 font-bold text-on-surface transition-colors hover:bg-surface-container">
+                            Tutup
+                        </button>
+                        <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                            <span class="material-symbols-outlined text-sm">edit</span>
+                            <span>Edit Data</span>
+                        </button>
                     </div>
                 </div>
             </div>
@@ -311,8 +293,8 @@
 
 <!-- Edit Modal -->
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
-    <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
-    <div class="flex items-center justify-center min-h-screen p-4">
+    <div class="fixed inset-0 z-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
+    <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
         <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
@@ -334,7 +316,7 @@
 
                 <!-- Form Section (Scrollable) -->
                 <div class="flex-1 overflow-y-auto px-6 pb-6 z-50">
-                    <form :id="`edit-santri-form-${selectedSantri.id}`" :action="`/admin/santri/${selectedSantri.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
+                    <form :id="`edit-santri-form-${selectedSantri.id}`" :action="`${santriBasePath}/${selectedSantri.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
                         @csrf
                         @method('PUT')
 
@@ -431,11 +413,11 @@
                             <div class="grid grid-cols-2 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
-                                    <input type="text" name="kelas" x-model="editData.kelas" class="input-field w-full">
+                                    <input type="text" name="kelas" x-model="editData.kelas" list="pondok-class-options" class="input-field w-full">
                                 </div>
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas Formal</label>
-                                    <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" class="input-field w-full">
+                                    <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" list="formal-class-options" class="input-field w-full">
                                 </div>
                             </div>
 
@@ -486,6 +468,17 @@
     </div>
 </div>
 
+<datalist id="pondok-class-options">
+    @foreach(\App\Support\TarbiyahClass::levels() as $classLevel)
+        <option value="{{ $classLevel }}">
+    @endforeach
+</datalist>
+<datalist id="formal-class-options">
+    @foreach(\App\Models\FormalClass::active()->orderBy('sort_order')->orderBy('name')->get() as $formalClass)
+        <option value="{{ $formalClass->name }}">
+    @endforeach
+</datalist>
+
 <style>
 .material-symbols-outlined {
     font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
@@ -495,6 +488,7 @@
 <script>
 function santriApp() {
     return {
+        santriBasePath: @json(url($activeRole.'/santri')),
         showDetailModal: false,
         showEditModal: false,
         loading: false,
@@ -520,7 +514,7 @@ function santriApp() {
             this.loading = true;
             this.showDetailModal = true;
             try {
-                const response = await fetch(`/admin/santri/${id}/modal-data`, {
+                const response = await fetch(`${this.santriBasePath}/${id}/modal-data`, {
                     credentials: 'same-origin'
                 });
                 const data = await response.json();
@@ -543,7 +537,7 @@ function santriApp() {
             this.showDetailModal = false;
             this.editData.foto_preview = null;
             try {
-                const response = await fetch(`/admin/santri/${id}/modal-data`, {
+                const response = await fetch(`${this.santriBasePath}/${id}/modal-data`, {
                     credentials: 'same-origin'
                 });
                 const data = await response.json();
