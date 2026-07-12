@@ -248,6 +248,50 @@ class AttendanceManagementTest extends TestCase
         ]);
     }
 
+    public function test_admin_attendance_dashboard_supports_date_filter_and_shows_active_permissions(): void
+    {
+        $admin = $this->admin();
+        $permittedSantri1 = $this->santri('RFID-P1');
+        $permittedSantri2 = $this->santri('RFID-P2');
+
+        SantriPermission::create([
+            'permission_number' => 'IZN-TEST-D1',
+            'santri_id' => $permittedSantri1->id,
+            'kamar' => 'kamar_1',
+            'start_date' => '2026-07-12',
+            'end_date' => '2026-07-14',
+            'reason' => 'Izin sakit',
+            'created_by' => $admin->id,
+        ]);
+
+        SantriPermission::create([
+            'permission_number' => 'IZN-TEST-D2',
+            'santri_id' => $permittedSantri2->id,
+            'kamar' => 'kamar_1',
+            'start_date' => '2026-07-12',
+            'end_date' => '2026-07-12',
+            'reason' => 'Izin nikahan',
+            'created_by' => $admin->id,
+        ]);
+
+        // Default today view - check with date parameter
+        $this->actingAs($admin)
+            ->get(route('admin.attendance.dashboard', ['date' => '2026-07-12', 'month' => 7, 'year' => 2026]))
+            ->assertOk()
+            ->assertSee('Izin Hari Ini')
+            ->assertSee($permittedSantri1->name)
+            ->assertSee($permittedSantri2->name)
+            ->assertSee('Izin sakit')
+            ->assertSee('Izin nikahan');
+
+        // Filter date to 2026-07-14 - only permittedSantri1 is active
+        $this->actingAs($admin)
+            ->get(route('admin.attendance.dashboard', ['date' => '2026-07-14', 'month' => 7, 'year' => 2026]))
+            ->assertOk()
+            ->assertSee('Izin sakit')
+            ->assertDontSee('Izin nikahan');
+    }
+
     private function admin(): User
     {
         $admin = User::factory()->create(['role' => 'admin']);

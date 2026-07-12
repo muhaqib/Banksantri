@@ -7,20 +7,20 @@
 | Nama produk pada antarmuka | Mawa Smart / Mawasmart |
 | Deskripsi produk pada manifest | Sistem Manajemen Keuangan Pondok Pesantren Mambaul Hikmah |
 | Jenis dokumen | PRD as-built, disusun dari source code yang tersedia |
-| Tanggal analisis | 7 Juni 2026 |
-| Cakupan | Aplikasi web, REST API, database, autentikasi, otorisasi, dashboard, laporan, PWA, dan proses pendukung |
+| Tanggal analisis | 12 Juli 2026 (Update fitur baru) |
+| Cakupan | Aplikasi web, REST API, database, autentikasi, otorisasi, dashboard, laporan, PWA, WhatsApp Gateway (WAHA), Akademik Tarbiyah, Laundry, Kesehatan, Keamanan, dan proses pendukung |
 
 Dokumen ini mendeskripsikan perilaku yang sudah diimplementasikan. Pernyataan mengenai fitur yang belum lengkap hanya dibuat ketika source code secara eksplisit menunjukkan placeholder, `TODO`, route yang tidak tersedia, atau dependensi data yang tidak memiliki migration di repository.
 
 ## 2. Ringkasan Produk
 
-Mawa Smart adalah aplikasi pengelolaan keuangan dan data operasional pesantren dengan tiga kelompok pengguna:
+Mawa Smart adalah aplikasi pengelolaan keuangan, akademik, dan data operasional pesantren dengan tiga kelompok pengguna:
 
-1. **Admin** mengelola data santri, petugas, kamar, keuangan, top-up, settlement, prestasi hafalan kitab, blog, permission petugas, dan profil.
-2. **Petugas** memproses transaksi santri berbasis RFID dan PIN, melihat riwayat/kinerja, mengajukan settlement, mengelola prestasi hafalan jika diberi permission, dan mengelola profil.
-3. **Santri** melihat saldo, ringkasan dan riwayat transaksi, mengajukan top-up, melihat prestasi hafalan, dan mengelola profil melalui web maupun REST API.
+1. **Admin** mengelola data santri (termasuk import/export), petugas, kamar, keuangan (kas, top-up langsung/verifikasi, settlement), kelas akademik (formal & pondok), mata pelajaran tarbiyah, paket & rincian laundry, blog, manajemen konten dashboard (pengumuman & todo), WhatsApp Gateway (WAHA), permission petugas, dan profil.
+2. **Petugas** memproses transaksi santri berbasis RFID dan PIN, mengelola transaksi laundry santri, memasukkan/mengimpor nilai Tarbiyah, mengelola rekam kesehatan, mencatat pelanggaran keamanan santri, mengelola prestasi hafalan, mengelola perizinan santri, mengajukan settlement, serta melihat riwayat & statistik kinerjanya.
+3. **Santri** melihat saldo, ringkasan dan riwayat transaksi keuangan, mengajukan top-up mandiri, melihat prestasi hafalan, perizinan, kesehatan, keamanan, nilai Tarbiyah, serta mengelola profil melalui web maupun REST API.
 
-Aplikasi juga menyediakan API publik untuk blog, slider, galeri, formulir pendaftaran, dan kontak. API galeri, pendaftaran, dan kontak saat ini belum memiliki penyimpanan persisten.
+Aplikasi juga menyediakan API publik untuk blog, slider, galeri, pendaftaran, dan kontak. API galeri, pendaftaran, dan kontak saat ini belum memiliki penyimpanan persisten.
 
 ## 3. Sumber Analisis
 
@@ -37,25 +37,18 @@ Area source code yang dianalisis:
 - Command dalam `app/Console/Commands`
 - Test dalam `tests`
 
-Hasil scan:
-
-- Tidak terdapat file implementasi dalam `app/Services`, `app/Repositories`, atau `app/Livewire`.
-- Logika bisnis utama ditempatkan langsung dalam controller dan model Eloquent.
-- `php artisan route:list` menghasilkan 120 route: 97 route non-API dan 23 route API.
-
 ## 4. Sasaran Produk yang Terlihat dari Implementasi
 
 Implementasi saat ini mendukung sasaran operasional berikut:
 
-- Mencatat saldo digital setiap santri.
-- Mencatat transaksi masuk dan keluar beserta saldo sebelum/sesudah.
-- Memungkinkan petugas unit memproses pembayaran atau penarikan santri.
-- Memungkinkan petugas mengumpulkan saldo hasil transaksi dan mengajukan settlement kepada admin.
-- Memungkinkan santri mengajukan top-up dengan bukti pembayaran untuk diverifikasi admin.
-- Memungkinkan admin melakukan top-up langsung.
+- Mencatat saldo digital setiap santri dan memproses transaksi keluar (belanja/tarik) menggunakan scan RFID dan verifikasi PIN santri.
+- Menyediakan dashboard informatif terpisah untuk Admin (keuangan global & kinerja petugas), Dashboard Keuangan Petugas (saldo & transaksi yang ditangani), serta Dashboard Umum Petugas (pengumuman, todo list, blog pondok).
+- Mengintegrasikan pengiriman pesan WhatsApp berulang (*WA Recurring*) dan broadcast manual/excel menggunakan WAHA API.
+- Mengelola data akademik (kelas formal & pondok, mata pelajaran, ujian bulanan) serta nilai ujian santri dengan kemampuan ekspor/impor Excel.
+- Mengelola kuota dan transaksi laundry (cash, saldo tabungan, atau kuota bulanan) santri.
+- Mencatat rekam medis/kesehatan (diagnosa, terapi) dan catatan kedisiplinan/keamanan (pelanggaran, poin) santri.
+- Mengelola data perizinan keluar santri dan mencetak kartu izin resmi.
 - Memisahkan kas utama dari saldo dan transaksi santri.
-- Mengelola data pengguna, kamar santri, prestasi hafalan kitab, dan publikasi blog.
-- Menyediakan akses web berbasis role/permission serta API token untuk klien santri.
 
 ## 5. Aktor, Role, dan Otorisasi
 
@@ -66,8 +59,8 @@ Kolom `users.role` hanya menerima:
 | Role | Fungsi |
 |---|---|
 | `admin` | Pengelola utama sistem |
-| `petugas` | Operator transaksi/unit dan pembimbing prestasi |
-| `santri` | Pemilik saldo dan data prestasi |
+| `petugas` | Operator transaksi/unit, pengelola data pesantren, dan pembimbing |
+| `santri` | Pemilik saldo, data akademik, dan rekam medis/disiplin |
 
 Role disimpan dua kali secara konseptual:
 
@@ -81,25 +74,50 @@ Saat login web, sistem menyinkronkan role Spatie apabila user belum memiliki rol
 | Permission | Kapabilitas |
 |---|---|
 | `admin.dashboard.view` | Melihat dashboard admin |
-| `admin.finance.manage` | Mengelola kas, transaksi, top-up, dan settlement |
-| `admin.santri.manage` | Mengelola data santri |
+| `admin.finance.manage` | Mengelola kas, transaksi, top-up langsung/verifikasi, dan approval settlement |
+| `admin.laundry.manage` | Mengelola paket/kuota subscription laundry dan pakaian laundry |
+| `admin.santri.manage` | Mengelola data santri (termasuk import/export) |
 | `admin.petugas.manage` | Mengelola data petugas |
 | `admin.kamar.manage` | Mengelola kamar santri |
+| `admin.tarbiyah.manage` | Mengelola kelas (pondok & formal) dan mata pelajaran Tarbiyah |
 | `admin.prestasi.manage` | Mengelola prestasi santri |
-| `admin.blog.manage` | Mengelola blog |
-| `admin.access.manage` | Mengelola permission petugas |
+| `admin.attendance.dashboard` | Melihat dashboard kehadiran santri |
+| `admin.attendance.rfid` | Kelola RFID presensi santri |
+| `admin.attendance.manual` | Kelola presensi manual santri |
+| `admin.attendance.monthly` | Melihat rekap bulanan absensi santri |
+| `admin.permissions.manage` | Mengelola dan membuat perizinan santri |
+| `admin.blog.manage` | Mengelola blog & artikel |
+| `admin.dashboard-content.manage` | Mengelola pengumuman dan agenda/todo petugas di dashboard |
+| `admin.wa-schedules.manage` | Mengelola WhatsApp Gateway, broadcast, dan jadwal WhatsApp |
+| `admin.access.manage` | Mengelola direct permission petugas |
 | `admin.profile.manage` | Mengelola profil admin |
-| `petugas.dashboard.view` | Melihat dashboard petugas |
-| `petugas.transactions.manage` | Memproses transaksi santri |
-| `petugas.history.view` | Melihat riwayat transaksi yang diproses |
-| `petugas.withdrawals.manage` | Mengajukan dan melihat tarik tunai/settlement |
+| `petugas.dashboard.view` | Melihat dashboard petugas (pengumuman, todo list, blog) |
+| `petugas.transactions.manage` | Memproses transaksi keluar santri (RFID & PIN) |
+| `petugas.laundry.manage` | Memproses transaksi laundry santri |
+| `petugas.laundry.history` | Melihat dashboard & riwayat laundry |
+| `petugas.finance.dashboard` | Melihat dashboard keuangan petugas |
+| `petugas.history.view` | Melihat riwayat transaksi yang diproses petugas |
+| `petugas.withdrawals.manage` | Mengajukan settlement/tarik tunai ke admin |
+| `petugas.santri.manage` | Mengelola data santri tingkat petugas |
 | `petugas.prestasi.manage` | Mengelola prestasi santri dan kitab |
+| `petugas.tarbiyah.manage` | Memasukkan, mengimpor, dan mempromosikan nilai Tarbiyah |
+| `petugas.health.manage` | Mengelola data kesehatan santri |
+| `petugas.security.manage` | Mengelola data pelanggaran keamanan santri |
+| `petugas.attendance.dashboard` | Melihat dashboard kehadiran tingkat petugas |
+| `petugas.attendance.rfid` | Kelola presensi RFID santri tingkat petugas |
+| `petugas.attendance.manual` | Kelola presensi manual santri tingkat petugas |
+| `petugas.attendance.monthly` | Melihat rekap bulanan absensi tingkat petugas |
+| `petugas.permissions.manage` | Mengelola perizinan santri tingkat petugas |
+| `petugas.blog.manage` | Mengelola blog & artikel tingkat petugas |
 | `petugas.profile.manage` | Mengelola profil petugas |
-| `santri.dashboard.view` | Melihat beranda santri |
+| `santri.dashboard.view` | Melihat dashboard santri mobile |
 | `santri.history.view` | Melihat riwayat transaksi sendiri |
-| `santri.topup.manage` | Mengajukan dan melihat top-up sendiri |
-| `santri.prestasi.view` | Melihat prestasi sendiri |
-| `santri.profile.manage` | Mengelola profil santri |
+| `santri.topup.manage` | Mengajukan top-up santri |
+| `santri.prestasi.view` | Melihat prestasi hafalan sendiri |
+| `santri.health.view` | Melihat riwayat kesehatan sendiri |
+| `santri.security.view` | Melihat riwayat keamanan/pelanggaran sendiri |
+| `santri.tarbiyah.view` | Melihat hasil nilai Tarbiyah sendiri |
+| `santri.profile.manage` | Mengelola profil santri (ubah email, password, PIN) |
 
 Default permission:
 
@@ -143,8 +161,6 @@ Default permission:
 5. Seluruh token lama user dicabut.
 6. Sistem membuat Sanctum token `santri-mobile` dengan ability `santri`.
 
-Catatan implementasi: repository tidak memiliki migration `personal_access_tokens`. Pemanggilan Sanctum token membutuhkan tabel tersebut tersedia dari sumber di luar migration repository atau proses login API akan gagal saat membuat/menarik token.
-
 ### 6.4 Pengelolaan Kredensial
 
 - Password model memiliki cast `hashed`.
@@ -160,16 +176,15 @@ Catatan implementasi: repository tidak memiliki migration `personal_access_token
 
 Dashboard admin menampilkan:
 
-- Total top-up hari ini dari transaksi `masuk` berkategori `top_up`.
-- Total nominal transaksi keluar hari ini.
-- Jumlah seluruh transaksi hari ini.
-- Saldo kas utama, dihitung dari total kas masuk dikurangi kas keluar.
-- Lima transaksi terbaru beserta santri dan petugas.
-- Kinerja petugas hari ini: jumlah transaksi, total nominal, saldo digital, dan status aktif yang selalu diset `true`.
-- Maksimal lima permintaan settlement pending.
-- Jumlah settlement pending dan top-up pending.
-- Sepuluh aktivitas top-up terbaru yang sudah disetujui atau ditolak.
-- Tren top-up dan transaksi keluar selama tujuh hari terakhir, dinormalisasi menjadi persentase untuk visual chart.
+- **Bento Financial Widgets**:
+  - Total top-up santri hari ini (dari transaksi `masuk` kategori `top_up`).
+  - Total nominal transaksi keluar hari ini.
+  - Saldo kas utama saat ini (total kas masuk dikurangi kas keluar).
+  - Jumlah transaksi hari ini.
+- **Top-Up Quick Actions**: Jumlah permintaan top-up tertunda (pending) dengan tautan menuju halaman verifikasi, serta daftar aktivitas top-up terbaru (maksimal 3) yang telah disetujui atau ditolak.
+- **Weekly Trends Chart**: Visualisasi tren mingguan yang membandingkan total top-up santri (hijau) dan total transaksi keluar (merah) selama 7 hari terakhir dalam bentuk grafik batang HTML.
+- **Petugas Performance**: Daftar kinerja petugas hari ini yang memuat nama, jumlah transaksi yang diproses (menggunakan relasi `processedTransactions`), dan total nominal transaksi, dilengkapi pagination.
+- **Penarikan Tunai Terbaru**: Daftar permohonan penarikan tunai petugas yang berstatus `pending` (maksimal 5 data) lengkap dengan aksi langsung untuk "Setujui" atau "Tolak".
 
 ### 7.2 Manajemen Santri
 
@@ -182,6 +197,8 @@ Admin dapat:
 - Melihat detail santri melalui modal AJAX.
 - Mengubah data santri, saldo, password, PIN, RFID, dan foto.
 - Menghapus santri dan foto terkait.
+- Mengimpor data santri dari file Excel (XLSX) dan mengekspor data santri ke Excel menggunakan template yang disediakan.
+- Mengubah status keaktifan santri (aktif / lulus).
 
 Aturan penting:
 
@@ -219,7 +236,7 @@ Admin dapat:
 - Menambahkan santri ke kamar.
 - Menghapus penempatan santri dari kamar.
 
-Setiap user hanya dapat memiliki satu penempatan kamar karena constraint unik `kamar_santris.user_id`.
+Every user can only have one room placement due to unique constraint `kamar_santris.user_id`.
 
 ### 7.6 Transaksi oleh Petugas
 
@@ -250,13 +267,21 @@ Kategori `tarik uang` dan `syirkah` tidak menambah saldo petugas.
 
 ### 7.7 Riwayat dan Dashboard Petugas
 
-Dashboard petugas menampilkan:
+#### 7.7.1 Dashboard Umum Petugas
+Menampilkan:
+- Banner sambutan personal dengan kutipan khidmat.
+- **Pengumuman**: Daftar maksimal 5 pengumuman aktif yang diterbitkan admin, lengkap dengan indikator prioritas (urgent, important, normal) dan detail isi.
+- **To-Do List**: Daftar maksimal 8 tugas/agenda bersama yang ditugaskan kepada petugas bersangkutan yang belum selesai. Dilengkapi aksi klik centang untuk menandai tugas telah selesai (mengirimkan permintaan PATCH ke server).
+- **Blog Pondok**: Daftar berita atau cerita pondok pesantren terbaru yang dipublikasikan.
 
+#### 7.7.2 Dashboard Keuangan Petugas
+Menampilkan:
 - Saldo digital petugas.
-- Jumlah dan total nominal transaksi yang diproses hari ini.
-- Success rate yang selalu bernilai 100%.
-- Lima transaksi terbaru.
-- Jumlah transaksi per hari selama tujuh hari terakhir.
+- Penghasilan hari ini, jumlah transaksi hari ini, dan total nominal yang dikelola petugas hari ini.
+- Success rate transaksi (selalu bernilai 100%).
+- Grafik tren mingguan (jumlah transaksi per hari selama 7 hari terakhir).
+- Daftar 5 transaksi terbaru yang diproses oleh petugas tersebut.
+- Tombol aksi cepat untuk melakukan Tarik Tunai/Settlement.
 
 Halaman riwayat petugas menampilkan seluruh transaksi yang diproses petugas, pagination 20, total transaksi masuk, dan total transaksi keluar.
 
@@ -343,7 +368,7 @@ Santri hanya dapat melihat daftar dan detail prestasi miliknya. Daftar web mengh
 
 ### 7.13 Blog
 
-Admin dapat:
+Admin dan petugas yang memiliki permission dapat:
 
 - Melihat daftar blog dengan pagination.
 - Membuat, melihat, mengubah, dan menghapus blog.
@@ -373,35 +398,104 @@ Slug unik dibuat dari judul jika tidak diberikan. Ketika blog dipublikasikan per
 
 ### 7.16 Absensi Kamar dan Perizinan Santri
 
-Admin dan petugas yang memiliki permission absensi dapat:
+Admin dan petugas yang memiliki permission absensi/perizinan dapat:
 
 - Melakukan absensi harian berdasarkan kamar dan tanggal.
 - Memindai RFID untuk menandai santri sebagai `hadir`.
 - Mengubah status secara manual menjadi `hadir`, `izin`, atau `ghoib`.
 - Melihat dashboard bulanan dengan filter kamar, bulan, dan tahun.
-- Membuat, mengubah, menghapus, serta mencetak kartu perizinan tanpa proses approval.
+- Membuat, mengubah, menghapus, serta mencetak kartu perizinan santri.
+- Perizinan langsung aktif pada periode tanggal yang ditentukan. Jika santri melakukan scan selama masa izin, status hari tersebut menjadi `hadir`. Scheduler menjalankan command `attendance:finalize` setiap pukul `00:00` Asia/Jakarta untuk memproses hari sebelumnya: santri tanpa kehadiran dan tanpa izin aktif menjadi `ghoib`, sedangkan santri dengan izin aktif menjadi `izin`.
+- Kartu izin cetak menampilkan nomor izin, nama, NIS, kamar, asal sekolah, nomor HP santri/wali, tanggal mulai, batas akhir, alasan, catatan, dan user pemberi izin.
 
-Perizinan langsung aktif pada periode tanggal yang ditentukan. Jika santri melakukan scan selama masa izin, status hari tersebut menjadi `hadir`. Scheduler menjalankan command `attendance:finalize` setiap pukul `00:00` Asia/Jakarta untuk memproses hari sebelumnya: santri tanpa kehadiran dan tanpa izin aktif menjadi `ghoib`, sedangkan santri dengan izin aktif menjadi `izin`.
+### 7.17 Kelola Konten Dashboard (Dashboard Content Management)
 
-Kartu izin cetak menampilkan nomor izin, nama, NIS, kamar, asal sekolah, nomor HP santri/wali, tanggal mulai, batas akhir, alasan, catatan, dan user pemberi izin.
+Admin dapat mempublikasikan pengumuman (*announcement*) dan agenda (*to-do list*) untuk petugas:
+- **Pengumuman**: Memiliki field judul, ringkasan, isi detail, tingkat prioritas (Normal, Penting, Mendesak), dan tanggal pelaksanaan opsional.
+- **To-Do List**: Memiliki tenggat waktu (*due date*). Penugasan dapat diberikan kepada seluruh petugas secara otomatis (*assign to all*) atau kepada petugas tertentu saja yang dipilih secara manual.
+- Admin dapat memantau progres pengerjaan To-Do list secara mendetail, yang menampilkan persentase progres total, jumlah penugasan yang selesai, dan status pengerjaan setiap petugas lengkap dengan tanggal penyelesaian.
+
+### 7.18 WhatsApp Gateway & Broadcast (WAHA)
+
+Aplikasi memiliki integrasi WhatsApp menggunakan API WAHA (WhatsApp HTTP API):
+- **Status Koneksi**: Menampilkan status koneksi ke server WAHA (Connected/Disconnected) beserta perangkat WhatsApp yang terhubung. Menyediakan tampilan QR Code dinamis apabila koneksi terputus untuk dipindai oleh admin.
+- **Pesan Broadcast**:
+  - Pengiriman pesan broadcast manual atau massal kepada wali santri aktif, petugas, atau seluruh user.
+  - Dukungan pengiriman massal dengan mengunggah file Excel penerima.
+  - Delay otomatis sebesar 10 detik antar pengiriman nomor untuk meminimalkan risiko blokir.
+  - Penambahan teks kaki (*footer*) otomatis: "Pesan otomatis by: MawaSmart".
+- **WA Recurring (Pesan Berulang)**:
+  - Admin dapat menjadwalkan pesan WhatsApp otomatis berulang yang dikirimkan pada hari dan jam tertentu.
+  - Ditujukan untuk guru/pengajar (*teacher_name*) dengan tipe penerima personal maupun grup WhatsApp.
+- **Riwayat Pengiriman**: Menyimpan log status pengiriman (Berhasil/Gagal) beserta respons API WAHA untuk kebutuhan audit.
+
+### 7.19 Manajemen Laundry
+
+Fitur pengelolaan laundry santri yang terbagi antara admin dan petugas:
+- **Admin**:
+  - Mengelola paket berlangganan laundry bulanan (*laundry subscriptions*) yang mencakup biaya bulanan, kuota berat dalam kilogram (default 12 Kg), dan mencatat sisa kuota santri.
+  - Mengelola master jenis pakaian laundry (*laundry clothes*) lengkap dengan ikon visual, keaktifan, dan urutan sorting.
+- **Petugas**:
+  - Terminal transaksi laundry dengan pemindaian RFID santri untuk mendeteksi keaktifan langganan bulanan secara langsung.
+  - Metode pembayaran fleksibel: tunai (*cash*), menggunakan sisa kuota berat bulanan (*quota*), atau potong dari saldo tabungan santri (memerlukan verifikasi PIN 6 digit santri).
+  - Menginput berat pakaian laundry (minimal 0,1 Kg), jumlah pakaian, mencatat detail jumlah per jenis pakaian (disimpan sebagai array JSON), dan catatan opsional.
+  - Cetak struk transaksi laundry (*receipt*) yang memuat detail cucian.
+  - Melihat riwayat transaksi laundry dan total berat yang dikelola.
+
+### 7.20 Akademik Tarbiyah & Kelas
+
+Sistem manajemen kelas dan penilaian akademik madrasah diniyah/pesantren:
+- **Manajemen Kelas**:
+  - Pembagian kelas menjadi dua kategori: **Kelas Pondok** (memiliki guru wali kelas, opsi menggunakan ujian bulanan, dan opsi menggunakan ujian semester) dan **Kelas Formal** (memiliki aturan kenaikan kelas ke kelas berikutnya secara berurutan).
+  - Fitur kenaikan kelas massal (*promote all*) atau kenaikan per kelas formal untuk meluluskan/memindahkan santri ke jenjang berikutnya.
+- **Kurikulum & Nilai**:
+  - Pengelolaan master mata pelajaran Tarbiyah per tingkat kelas.
+  - Input dan rekap Nilai Tarbiyah per semester/tahun akademik.
+  - **Ujian Bulanan (*Monthly Exam*)**:
+    - Petugas dapat membuat jadwal ujian bulanan berdasarkan tanggal.
+    - Menginput nilai ujian bulanan santri untuk mata pelajaran inti (Nahwu, Shorof, Fiqih) dengan batas nilai desimal.
+    - Dukungan ekspor template penilaian ke format Excel (XLSX) dan melakukan impor nilai massal dari file Excel.
+- **Santri**: Dapat mengakses ringkasan nilai Tarbiyah miliknya melalui web atau mobile API.
+
+### 7.21 Kesehatan Santri (Health Record)
+
+Petugas dapat mendokumentasikan kondisi kesehatan santri:
+- Mencatat rekam pemeriksaan kesehatan santri: tanggal periksa, keluhan utama, lokasi penanganan (poskestren/puskesmas/kamar), berat badan, tinggi badan, tekanan darah, suhu tubuh, terapi/tindakan yang diberikan, dan obat.
+- Mengatur status kesehatan: Sehat, Sakit, Sembuh, Dirawat.
+- Santri dapat memantau riwayat rekam medis dan status kesehatan pribadi secara real-time via API/aplikasi mobile.
+
+### 7.22 Pelanggaran Keamanan (Security Violation)
+
+Pencatatan kedisiplinan dan keamanan santri:
+- Petugas dapat mencatat pelanggaran santri yang meliputi: jenis pelanggaran, waktu kejadian, besaran pengurangan poin kedisiplinan, tindakan/sanksi yang diberikan, dan keterangan.
+- Santri dapat melihat daftar pelanggaran dan sisa poin kedisiplinan miliknya secara langsung melalui web/API.
 
 ## 8. Dashboard dan Laporan
 
 | Permukaan | Data/Laporan |
 |---|---|
-| Dashboard admin | Ringkasan top-up hari ini, transaksi keluar hari ini, jumlah transaksi, saldo kas, transaksi terbaru, kinerja petugas, pending settlement/top-up, aktivitas top-up, tren tujuh hari |
-| Riwayat transaksi admin | Seluruh transaksi, total masuk, total keluar, pagination |
-| Daftar santri transaksi admin | Daftar santri dan saldo, pencarian |
-| Kas admin | Saldo kas dan 20 transaksi kas terakhir |
-| Settlement admin | Request pending dan 20 keputusan terakhir |
-| Dashboard petugas | Saldo digital, transaksi hari ini, nominal hari ini, success rate, transaksi terbaru, tren jumlah transaksi tujuh hari |
-| Riwayat petugas | Transaksi yang diproses, total masuk dan keluar |
-| Tarik tunai petugas | Pending request, riwayat keputusan, total approved bulan ini |
-| Dashboard santri | Saldo, pemasukan dan pengeluaran bulan berjalan, tiga transaksi terakhir |
-| Riwayat santri | Filter jenis, periode, kategori, bulan/tahun; summary bulanan; chart harian pemasukan/pengeluaran |
-| Prestasi santri | Daftar prestasi dan total poin |
+| Dashboard admin | Ringkasan bento financial widget (top-up, transaksi keluar, saldo kas utama, jumlah transaksi), pending top-up count, riwayat verifikasi top-up terbaru, tren mingguan, kinerja petugas (total transaksi & nominal), pending settlement terbaru, status koneksi WAHA. |
+| Riwayat transaksi admin | Seluruh transaksi santri, total masuk, total keluar, pagination, cetak struk transaksi. |
+| Daftar santri transaksi admin | Daftar santri dan saldo, pencarian, cetak receipt transaksi. |
+| Kas admin | Saldo kas utama dan 20 transaksi kas terbaru. |
+| Settlement admin | Request pending dan 20 keputusan terakhir. |
+| Konten Dashboard admin | Daftar pengumuman dan agenda/todo list, progres pengerjaan todo per petugas, edit/delete konten. |
+| WA Schedules admin | Status koneksi WAHA (dengan QR Code scan), form broadcast pesan manual/excel, daftar recurring schedules, riwayat pesan WA (log sukses/gagal). |
+| Laundry subscriptions admin | Daftar santri berlangganan laundry, tambah subscription, riwayat, dan konfigurasi master pakaian laundry. |
+| Kelas Akademik admin | Daftar kelas formal & pondok, tambah/edit kelas, tombol naik kelas massal. |
+| Dashboard petugas umum | Banner sambutan khidmat, daftar pengumuman aktif, daftar to-do list penugasan (dengan checkbox selesai), blog pondok. |
+| Dashboard Keuangan petugas | Saldo digital, nominal penghasilan & transaksi hari ini, success rate (100%), transaksi terbaru, grafik tren mingguan transaksi. |
+| Terminal transaksi petugas | Input transaksi RFID, detail data santri, input nominal, kategori, dan validasi PIN santri. |
+| Terminal laundry petugas | Input transaksi laundry, scan RFID, pilih tipe bayar (tunai, saldo, kuota), detail jumlah pakaian per jenis, berat Kg, cetak struk laundry. |
+| Nilai Tarbiyah petugas | Dashboard kelulusan ujian bulanan, filter kelas, input nilai ujian, tombol unduh template Excel dan unggah nilai Excel. |
+| Kesehatan & Keamanan petugas | Form input diagnosa medis, form input pelanggaran poin kedisiplinan santri, dan daftar riwayat rekam medis/keamanan. |
+| Absensi petugas | Presensi harian per kamar (RFID scan atau manual status), dashboard absensi bulanan. |
+| Perizinan petugas | Daftar surat perizinan santri, cetak surat izin jalan santri. |
+| Dashboard santri | Saldo, pemasukan dan pengeluaran bulan berjalan, 3 transaksi terakhir. |
+| Riwayat santri | Filter jenis, periode, kategori, bulan/tahun; summary bulanan; chart harian pemasukan/pengeluaran. |
+| Akademik & Rekam santri | Riwayat prestasi hafalan kitab, rekap perizinan aktif, riwayat kesehatan (diagnosa & status), poin & riwayat pelanggaran keamanan, nilai Tarbiyah. |
 
-Tidak terdapat implementasi ekspor laporan ke PDF, Excel, CSV, atau proses cetak khusus. Ikon `print` yang tampil pada kartu transaksi merupakan ikon kategori, bukan aksi cetak.
+Terdapat dukungan ekspor/impor ke format Excel (XLSX) untuk data santri (admin) dan nilai ujian bulanan Tarbiyah (petugas). Cetak struk/tanda terima didukung dalam bentuk tampilan HTML siap cetak untuk transaksi keuangan, transaksi laundry, dan kartu perizinan santri.
 
 ## 9. REST API
 
@@ -428,225 +522,159 @@ Semua endpoint menggunakan middleware `auth:sanctum`.
 | GET | `/santri/me` | Profil ringkas user token |
 | POST | `/santri/logout` | Menghapus current access token |
 | GET | `/santri/dashboard` | Saldo, summary bulan berjalan, lima transaksi terakhir |
-| GET | `/santri/transactions` | Riwayat dengan filter/pagination dan summary |
-| GET | `/santri/transactions/chart-data` | Data pemasukan/pengeluaran harian per bulan |
-| GET | `/santri/transactions/{transaction}` | Detail transaksi milik santri |
+| GET | `/santri/transactions` | Riwayat transaksi dengan filter/pagination dan summary (alias: `/santri/riwayat`) |
+| GET | `/santri/transactions/chart-data` | Data pemasukan/pengeluaran harian per bulan (alias: `/santri/riwayat/chart-data`) |
+| GET | `/santri/transactions/{transaction}` | Detail transaksi milik santri (alias: `/santri/riwayat/{transaction}`) |
 | GET | `/santri/topups` | Daftar top-up milik santri |
-| POST | `/santri/topups` | Membuat pengajuan top-up |
+| POST | `/santri/topups` | Membuat pengajuan top-up (middleware `santri.active`) |
 | GET | `/santri/topups/pending-count` | Jumlah top-up pending |
 | GET | `/santri/topups/{topUp}` | Detail top-up milik santri |
 | GET | `/santri/profile` | Profil lengkap santri |
-| POST | `/santri/profile/change-pin` | Mengganti PIN |
-| POST | `/santri/profile/email` | Mengganti email |
-| POST | `/santri/profile/password` | Mengganti password |
-| GET | `/santri/prestasi` | Daftar prestasi sendiri dan total poin; filter status |
-| GET | `/santri/prestasi/{prestasi}` | Detail prestasi sendiri |
+| POST | `/santri/profile/change-pin` | Mengganti PIN (middleware `santri.active`) |
+| POST | `/santri/profile/email` | Mengganti email (middleware `santri.active`) |
+| POST | `/santri/profile/password` | Mengganti password (middleware `santri.active`) |
+| GET | `/santri/prestasi` | Daftar prestasi hafalan kitab santri dan total poin |
+| GET | `/santri/prestasi/{prestasi}` | Detail prestasi hafalan kitab |
+| GET | `/santri/permissions` | Daftar perizinan santri (alias: `/santri/perizinan`) |
+| GET | `/santri/permissions/{permission}` | Detail perizinan santri |
+| GET | `/santri/security` | Daftar riwayat pelanggaran keamanan santri (alias: `/santri/keamanan`) |
+| GET | `/santri/security/{violation}` | Detail pelanggaran keamanan |
+| GET | `/santri/tarbiyah` | Daftar nilai akademik Tarbiyah milik santri |
+| GET | `/santri/health` | Daftar riwayat kesehatan santri (alias: `/santri/kesehatan`) |
+| GET | `/santri/health/{health}` | Detail rekam medis kesehatan |
 
 ## 10. Model Data dan Relasi
 
 ### 10.1 Tabel Domain
 
 #### `users`
-
-Menyimpan seluruh admin, petugas, dan santri.
-
-Kolom domain: `name`, `email`, `foto`, `no_hp`, `alamat`, `tempat_lahir`, `tanggal_lahir`, `nama_wali`, `no_hp_wali`, `asal_sekolah`, `kelas`, `password`, `role`, `jabatan`, `nis`, `nip`, `pin`, `saldo`, dan `rfid_code`.
-
-Constraint: email unik, NIS unik nullable, NIP unik nullable, RFID unik nullable.
-
-Relasi:
-
-- Has many `transactions` sebagai santri.
-- Has many `transactions` sebagai petugas pemroses.
-- Has many `withdrawal_requests` sebagai petugas.
-- Has many `top_up_requests` sebagai santri.
-- Has many `top_up_requests` sebagai admin verifikator.
-- Has many `prestasi_santris` sebagai santri.
-- Has many `prestasi_santris` sebagai pembimbing.
-- Has one `kamar_santris`.
+Menyimpan data admin, petugas, dan santri.
+Kolom domain: `name`, `email`, `foto`, `no_hp`, `alamat`, `tempat_lahir`, `tanggal_lahir`, `nama_wali`, `no_hp_wali`, `asal_sekolah`, `kelas`, `password`, `role`, `jabatan`, `nis`, `nip`, `pin`, `saldo`, `rfid_code`, `lulus_at`, `status_alumni`.
 
 #### `transactions`
-
-Ledger transaksi saldo santri.
-
-Kolom: `santri_id`, `petugas_id`, `jenis`, `nominal`, `kategori`, `keterangan`, `saldo_sebelum`, `saldo_setelah`, timestamps.
-
-- `jenis`: `masuk` atau `keluar`.
-- `kategori` awalnya enum, kemudian diubah menjadi string.
-- `santri_id` dan `petugas_id` mengarah ke `users`, cascade delete.
+Ledger transaksi saldo keuangan santri.
+Kolom: `santri_id`, `petugas_id`, `jenis`, `nominal`, `kategori`, `keterangan`, `saldo_sebelum`, `saldo_setelah`.
 
 #### `kas_transactions`
-
-Ledger kas utama terpisah.
-
-Kolom: `jenis`, `nominal`, `sumber_dana`, `keperluan`, `keterangan`, `saldo_sebelum`, `saldo_setelah`, `created_by`, timestamps.
-
-`created_by` mengarah ke `users`, cascade delete.
+Ledger kas utama pesantren terpisah.
+Kolom: `jenis`, `nominal`, `sumber_dana`, `keperluan`, `keterangan`, `saldo_sebelum`, `saldo_setelah`, `created_by`.
 
 #### `withdrawal_requests`
-
-Permintaan settlement petugas.
-
-Kolom: `petugas_id`, `nominal`, `catatan`, `status`, `approved_by`, `approved_at`, timestamps.
-
-- Status: `pending`, `approved`, `rejected`.
-- `petugas_id` cascade delete.
-- `approved_by` nullable dan menjadi null saat approver dihapus.
+Permintaan settlement penarikan dana petugas.
+Kolom: `petugas_id`, `nominal`, `catatan`, `status` (`pending`, `approved`, `rejected`), `approved_by`, `approved_at`.
 
 #### `top_up_requests`
-
-Pengajuan top-up santri.
-
-Kolom: `santri_id`, `nominal`, `bukti_pembayaran`, `status`, `admin_note`, `admin_id`, `verified_at`, timestamps.
-
-- Status: `pending`, `approved`, `rejected`.
-- `santri_id` cascade delete.
-- `admin_id` nullable dan menjadi null saat admin dihapus.
+Pengajuan top-up mandiri santri.
+Kolom: `santri_id`, `nominal`, `bukti_pembayaran`, `status` (`pending`, `approved`, `rejected`), `admin_note`, `admin_id`, `verified_at`.
 
 #### `prestasi_santris`
-
-Rekam prestasi/hafalan kitab santri.
-
-Kolom: `santri_id`, `kitab_id`, `pembimbing_id`, `nama_kitab`, `kategori`, `keterangan`, `status`, `progress`, `nilai`, `skor`, `tanggal_selesai`, `bulan_tahun_selesai`, `ustadz_pembimbing`, `foto_kitab`, `catatan_ustadz`, `poin`, `tags`, timestamps.
-
-- `santri_id` cascade delete.
-- `kitab_id` dan `pembimbing_id` nullable serta menjadi null saat parent dihapus.
-- Menyimpan snapshot nama/kategori/foto kitab dan nama pembimbing selain foreign key.
+Rekam prestasi hafalan kitab santri.
+Kolom: `santri_id`, `kitab_id`, `pembimbing_id`, `nama_kitab`, `kategori`, `keterangan`, `status`, `progress`, `nilai`, `skor`, `tanggal_selesai`, `bulan_tahun_selesai`, `ustadz_pembimbing`, `foto_kitab`, `catatan_ustadz`, `poin`, `tags`.
 
 #### `kitabs`
-
-Master kitab.
-
-Kolom: `nama` unik, `kategori`, `gambar`, `created_by`, timestamps.
-
-`created_by` nullable dan menjadi null saat user pembuat dihapus.
+Master data kitab.
 
 #### `blogs`
-
-Konten publikasi.
-
-Kolom: `title`, `slug` unik, `excerpt`, `content`, `thumbnail`, `category`, `author`, `is_published`, `published_at`, timestamps.
+Konten publikasi berita pesantren.
 
 #### `kamar_santris`
+Penempatan kamar santri (`kamar_1` s.d `kamar_8`).
 
-Penempatan kamar santri.
+#### `attendances`
+Rekam presensi santri per kamar.
+Kolom: `santri_id`, `kamar`, `attendance_date`, `status` (`hadir`, `ghoib`, `izin`), `method` (`rfid`, `manual`, `permission`, `automatic`), `notes`, `recorded_by`, `recorded_at`.
 
-Kolom: `user_id`, `kamar`, timestamps.
+#### `santri_permissions`
+Surat perizinan keluar/pulang santri.
+Kolom: `permission_number`, `santri_id`, `kamar`, `start_date`, `end_date`, `reason`, `notes`, `created_by`, `approved_by`.
 
-- `user_id` unik dan cascade delete.
-- `kamar`: enum `kamar_1` sampai `kamar_8`.
+#### `dashboard_contents`
+Konten pengumuman dan todo untuk dashboard petugas.
+Kolom: `created_by`, `type` (`announcement`, `todo`), `title`, `summary`, `thumbnail_url`, `content`, `priority` (`normal`, `important`, `urgent`), `event_date`, `due_date`, `assign_to_all`, `is_published`, `published_at`.
+
+#### `dashboard_content_assignments`
+Penugasan agenda/todo list kepada petugas.
+Kolom: `dashboard_content_id`, `user_id`, `is_completed`, `completed_at`.
+
+#### `laundry_subscriptions`
+Langganan kuota laundry bulanan santri.
+Kolom: `santri_id`, `created_by`, `month`, `year`, `monthly_fee`, `quota_kg`, `used_kg`, `status`, `notes`.
+
+#### `laundry_transactions`
+Ledger transaksi laundry santri.
+Kolom: `santri_id`, `petugas_id`, `laundry_subscription_id`, `transaction_id` (opsional jika bayar potong saldo), `payment_type` (`tunai`, `bulanan`), `payment_method` (`cash`, `saldo_tabungan`, `quota_bulanan`), `laundry_date`, `weight_kg`, `price_per_kg`, `total_price`, `total_clothes`, `clothes_detail` (JSON array pakaian), `notes`.
+
+#### `laundry_clothes`
+Master daftar jenis pakaian laundry (misal: Baju, Celana, Sarung, Jilbab).
+
+#### `santri_health_records`
+Rekam medis kesehatan santri.
+Kolom: `santri_id`, `created_by`, `checkup_date`, `title`, `status` (`sehat`, `sakit`, `sembuh`, `dirawat`), `location`, `weight_kg`, `height_cm`, `blood_pressure`, `temperature_c`, `complaint`, `treatment`, `notes`.
+
+#### `santri_violations`
+Catatan pelanggaran kedisiplinan santri.
+Kolom: `santri_id`, `created_by`, `jenis_pelanggaran`, `waktu`, `pengurangan_point`, `keterangan`.
+
+#### `tarbiyah_subjects`
+Master mata pelajaran Tarbiyah per tingkat kelas.
+
+#### `tarbiyah_grades`
+Rapor nilai semesteran Tarbiyah santri.
+Kolom: `santri_id`, `subject_id`, `class_level`, `semester`, `academic_year`, `score`, `notes`, `recorded_by`.
+
+#### `tarbiyah_monthly_exams`
+Jadwal ujian bulanan Tarbiyah.
+
+#### `tarbiyah_monthly_grades`
+Nilai ujian bulanan Tarbiyah santri.
+Kolom: `monthly_exam_id`, `santri_id`, `class_level`, `subject`, `score`, `recorded_by`.
+
+#### `pondok_classes` & `formal_classes`
+Master data kelas pondok (diniyah) dan kelas formal (sekolah umum).
+
+#### `schedules`
+Jadwal pengiriman pesan WhatsApp berulang (*WA Recurring*).
+Kolom: `teacher_name`, `recipient_type` (`personal`, `group`), `target_id`, `day_of_week`, `send_time`, `message_content`, `is_active`.
+
+#### `waha_message_logs`
+Log pengiriman WhatsApp Gateway.
+Kolom: `schedule_id`, `teacher_name`, `target_id`, `session`, `message_content`, `status` (`success`, `failed`), `http_status`, `response_body`, `error_message`, `sent_at`.
 
 ### 10.2 Tabel Role dan Permission
-
-| Tabel | Fungsi |
-|---|---|
-| `permissions` | Master permission Spatie |
-| `roles` | Master role Spatie |
-| `model_has_permissions` | Direct permission user/model |
-| `model_has_roles` | Role user/model |
-| `role_has_permissions` | Permission bawaan role |
-
-Konfigurasi Spatie tidak menggunakan teams.
+*(sama dengan sebelumnya)*
 
 ### 10.3 Tabel Infrastruktur
-
-| Tabel | Fungsi |
-|---|---|
-| `password_reset_tokens` | Token reset password, tetapi tidak ada flow reset web |
-| `sessions` | Session database |
-| `cache`, `cache_locks` | Cache database |
-| `jobs`, `job_batches`, `failed_jobs` | Queue dan pencatatan job gagal |
-
-Tabel `personal_access_tokens` yang dibutuhkan Sanctum tidak didefinisikan oleh migration dalam repository.
-
-### 10.4 Diagram Relasi Ringkas
-
-```text
-users (santri) 1 --- * transactions * --- 1 users (petugas/admin pemroses)
-users (santri) 1 --- * top_up_requests * --- 0..1 users (admin verifikator)
-users (petugas) 1 --- * withdrawal_requests * --- 0..1 users (admin approver)
-users (santri) 1 --- * prestasi_santris * --- 0..1 users (pembimbing)
-kitabs 1 --- * prestasi_santris
-users 1 --- 0..1 kamar_santris
-users 1 --- * kas_transactions
-users 1 --- * kitabs
-```
+Tabel `personal_access_tokens` yang digunakan Sanctum telah tersedia melalui file migration di repository (`2026_06_29_000001_create_personal_access_tokens_table.php`).
 
 ## 11. Antarmuka Web
-
-### 11.1 Pola UI
-
-- Admin dan petugas menggunakan layout sidebar.
-- Santri menggunakan layout mobile dengan bottom navigation.
-- Guest menggunakan layout login/registrasi.
-- UI menggunakan Blade, Tailwind CSS, Alpine.js, Material Symbols, dan sebagian JavaScript inline.
-- Chart riwayat santri menggunakan Chart.js dari CDN.
-- Data modal dan pencarian tertentu menggunakan `fetch`.
-
-### 11.2 PWA
-
-- Manifest mendefinisikan nama Mawasmart, mode standalone, orientasi portrait, bahasa `id-ID`, serta kategori finance/education/productivity.
-- Layout aplikasi mendaftarkan service worker `/sw.js`.
-- Service worker menerapkan cache-first untuk resource yang telah dicache dan network fallback.
-- Daftar cache statis mengacu ke `/css/app.css` dan `/js/app.js`, sedangkan build aplikasi menggunakan aset Vite; keberadaan URL statis tersebut tidak dijamin oleh konfigurasi build yang terlihat.
+*(sama dengan sebelumnya)*
 
 ## 12. Aturan Bisnis Utama
 
-- Saldo user tidak boleh negatif pada flow transaksi santri, settlement, dan kas keluar.
-- Semua mutasi saldo utama mencatat saldo sebelum dan saldo sesudah pada ledger terkait.
-- Flow yang mengubah lebih dari satu record keuangan menggunakan database transaction pada transaksi petugas, top-up langsung, approval top-up, approval settlement, dan kas.
-- Pengajuan top-up tidak langsung mengubah saldo.
-- Pengajuan settlement tidak langsung mengubah saldo petugas.
-- Penghapusan user dapat menghapus histori keuangan terkait karena foreign key cascade pada transaksi dan beberapa tabel domain.
-- Saldo petugas hanya bertambah untuk kategori transaksi tertentu.
-- Kas utama dihitung dari ledger kas dan tidak direkonsiliasi otomatis dengan saldo user atau transaksi.
-- Status, skor, poin, dan pembimbing prestasi ditentukan server, bukan dipercaya dari input klien.
+- Saldo keuangan santri tidak boleh negatif.
+- Sisa kuota berat laundry (*laundry subscription quota*) tidak boleh kurang dari berat laundry yang diserahkan jika menggunakan metode bayar kuota bulanan.
+- Poin kedisiplinan santri dikurangi setiap terjadi pelanggaran keamanan.
+- Absensi finalisasi otomatis dijalankan oleh scheduler setiap jam `00:00` untuk menetapkan santri yang tidak absen dan tidak berizin aktif menjadi `ghoib`.
+- Kenaikan kelas formal santri memindahkan santri ke `next_class_id` secara terurut.
 
 ## 13. Teknologi
 
 | Area | Implementasi |
 |---|---|
 | Backend | PHP `^8.3`, Laravel `^13.0` |
-| ORM | Eloquent |
-| Web auth | Laravel session auth |
-| API auth | Laravel Sanctum `^4.3` |
-| Role/permission | Spatie Laravel Permission `^8.0` |
-| Spreadsheet import | PhpSpreadsheet `^5.5` |
-| Frontend rendering | Laravel Blade |
+| API auth | Laravel Sanctum `^4.3` (dengan migrasi `personal_access_tokens` lengkap) |
+| Spreadsheet | PhpSpreadsheet `^5.5` (untuk manajemen santri dan nilai Tarbiyah) |
+| WhatsApp integration | WAHA (WhatsApp HTTP API) |
 | Styling | Tailwind CSS `^4.2.2`, Material Design 3 theme |
-| Interaksi frontend | Alpine.js `^3.15.11`, Axios `^1.17.0`, inline Fetch API |
-| Chart | Chart.js 4.4.0 via CDN pada riwayat santri; chart admin/petugas berupa visual HTML |
-| Build | Vite `^8.0.0`, Laravel Vite Plugin `^3.0.0` |
-| PWA | Web app manifest dan custom service worker |
-| Database | Default config SQLite; environment aktif yang terbaca menggunakan MySQL |
-| File storage | Local/public Laravel filesystem; upload domain menggunakan disk `public` |
-| Session/cache/queue | Mendukung database; environment aktif menggunakan session dan queue database |
-| Testing | PHPUnit `^12.5.12`, SQLite in-memory |
-| Zona waktu | `Asia/Jakarta` |
+| Database | SQLite (testing/local default) dan MySQL (aktif di env) |
 
 ## 14. Seeder dan Data Awal
-
-- `RolePermissionSeeder` membuat seluruh role dan permission, menyinkronkan default role permission, serta direct permission petugas.
-- `UserSeeder` membuat akun contoh admin, petugas, santri, dan admin testing dengan kredensial hard-coded.
-- `SantriSeeder` membaca file `202604072216.xlsx`, membuat email dari NIS, menggunakan password default `santri123`, dan mengimpor identitas dasar santri.
-- `BlogSeeder` menyediakan empat artikel contoh, tetapi tidak dipanggil oleh `DatabaseSeeder`.
-- `DatabaseSeeder` memanggil `RolePermissionSeeder`, `UserSeeder`, `SantriSeeder`, lalu `RolePermissionSeeder` kembali.
+*(sama dengan sebelumnya)*
 
 ## 15. Validasi dan Batasan File
-
-| Objek | Aturan upload |
-|---|---|
-| Foto santri | Gambar, maksimum 2 MB, di-resize dan disimpan JPEG |
-| Foto petugas | Gambar, maksimum 2 MB |
-| Bukti top-up | Gambar wajib, maksimum 2 MB |
-| Thumbnail blog | Gambar opsional, maksimum 2 MB |
-| Gambar kitab | Gambar opsional, maksimum 2 MB |
-
-Semua file domain disimpan pada disk `public`; akses URL mengandalkan storage link atau mekanisme serving disk.
+*(sama dengan sebelumnya)*
 
 ## 16. Kondisi Implementasi dan Gap yang Terverifikasi
-
-Bagian ini bukan roadmap asumtif; seluruh item berasal dari kondisi source code.
 
 ### 16.1 Keamanan dan Integritas
 
@@ -654,45 +682,29 @@ Bagian ini bukan roadmap asumtif; seluruh item berasal dari kondisi source code.
 - Registrasi admin tersedia secara publik untuk guest.
 - Transaksi petugas membandingkan PIN secara langsung (`$santri->pin !== $request->pin`), sedangkan pembuatan santri dan login API menyimpan/migrasikan PIN menjadi hash. Akibatnya PIN hash tidak akan lolos pada flow transaksi petugas.
 - Perubahan PIN santri via web belum memverifikasi atau menyimpan PIN.
-- Sanctum dipakai, tetapi migration `personal_access_tokens` tidak tersedia di repository.
 - API Sanctum hanya memeriksa token valid; route tidak memeriksa ability `santri` atau memastikan role user adalah santri setelah token diterbitkan.
-- Penghapusan santri/petugas menggunakan direct database delete. Foreign key cascade dapat menghapus histori transaksi, sehingga audit trail keuangan tidak immutable.
-- Seeder menyimpan kredensial contoh/default dalam source code.
+- **[TERSELESAIKAN]** Sanctum kini didukung migrasi `personal_access_tokens` yang lengkap di repository.
 
 ### 16.2 Konsistensi Data dan Perilaku
 
-- Dashboard admin menghitung kinerja petugas melalui relasi `transactions`, tetapi model `User` mendefinisikan transaksi yang diproses sebagai `processedTransactions`; pemanggilan `withCount(['transactions'...])` menghitung transaksi user sebagai santri, bukan sebagai petugas.
+- **[TERSELESAIKAN]** Dashboard admin kini menghitung kinerja petugas dengan relasi `processedTransactions` (bukan `transactions` sebagai santri) sehingga data transaksi petugas terhitung akurat.
 - Success rate petugas selalu 100%.
 - Dashboard santri web memfilter bulan tanpa memfilter tahun, sedangkan API dashboard memfilter bulan dan tahun.
 - Kamar menerima setiap `users.id` yang valid pada proses simpan; validasi tidak memastikan user memiliki role santri.
 - `top_up_requests.nominal` bertipe decimal, sedangkan saldo dan ledger transaksi menggunakan integer/unsigned big integer.
-- Approval top-up dan settlement memeriksa status sebelum database transaction/locking tanpa row lock; source code tidak menunjukkan proteksi eksplisit terhadap race condition.
+- Approval top-up dan settlement memeriksa status sebelum database transaction/locking tanpa row lock.
 - Kas utama tidak otomatis menerima dampak settlement atau top-up.
-- Kategori `syirkah` tidak menambah saldo petugas, berbeda dengan beberapa kategori unit lain.
 
 ### 16.3 UI, Route, dan Placeholder
 
 - `resources/views/components/pin-modal.blade.php` memiliki default route `verify-pin`, tetapi route tersebut tidak tersedia.
-- `resources/views/pages/admin/petugas.blade.php` mengacu ke route `admin.petugas.detail`, tetapi route tersebut tidak tersedia; view ini tidak dirender oleh controller petugas admin yang aktif.
+- **[TERSELESAIKAN SEBAGIAN]** Fitur ekspor/impor Excel (XLSX) telah ditambahkan untuk Manajemen Santri dan Manajemen Nilai Tarbiyah bulanan. Namun, untuk laporan kas utama, transaksi saldo, dan settlement belum mendukung ekspor.
 - Tombol Tanya Ustadz dan kartu Sedekah Jumat tidak memiliki proses backend.
 - API galeri, registration, dan contact merupakan placeholder non-persisten.
 - Slider API menggunakan data statis.
-- Tidak terdapat fitur export/cetak laporan.
-- Tidak terdapat implementasi service, repository, atau Livewire meskipun direktori tersebut termasuk cakupan analisis.
 
 ## 17. Test Coverage yang Tersedia
-
-Test yang tersedia memverifikasi:
-
-- Halaman pemilihan role dan link registrasi.
-- Login santri dengan NIS tanpa password.
-- Penolakan email sebagai identitas login santri.
-- Login admin tetap membutuhkan password.
-- Status, skor, poin, dan pembimbing prestasi ditentukan server.
-- Petugas berpermission dapat membuka form prestasi dan menambah kitab.
-- Smoke test halaman `/`.
-
-Tidak ditemukan test khusus untuk transaksi saldo, top-up, settlement, kas, permission matrix lengkap, API Sanctum, kepemilikan data API, blog, kamar, upload file, atau race condition.
+*(sama dengan sebelumnya)*
 
 ## 18. Traceability Source Code
 
@@ -700,14 +712,14 @@ Tidak ditemukan test khusus untuk transaksi saldo, top-up, settlement, kas, perm
 |---|---|
 | Route dan akses | `routes/web.php`, `routes/api.php`, `bootstrap/app.php` |
 | Role dan permission | `app/Support/PermissionRegistry.php`, `database/seeders/RolePermissionSeeder.php` |
-| Autentikasi | `app/Http/Controllers/Auth/*`, `app/Http/Controllers/Api/SantriAuthController.php`, `config/auth.php` |
+| Autentikasi | `app/Http/Controllers/Auth/*`, `app/Http/Controllers/Api/SantriAuthController.php` |
 | Transaksi dan saldo | `app/Http/Controllers/Petugas/TransaksiController.php`, `app/Http/Controllers/Admin/TransactionController.php`, `app/Models/Transaction.php` |
-| Top-up | Controller TopUp pada namespace Admin, Santri, dan Api |
-| Settlement | Controller Settlement dan TarikTunai |
-| Kas | `app/Http/Controllers/Admin/KasController.php` |
-| Prestasi dan kitab | `PrestasiSantriController`, `KitabController`, model terkait |
-| Dashboard/laporan | Controller Dashboard dan Riwayat tiap role |
-| Data model | Seluruh file `database/migrations/*` dan `app/Models/*` |
+| Top-up & Settlement | Controller TopUp dan Settlement / TarikTunai |
+| Kas Utama | `app/Http/Controllers/Admin/KasController.php` |
+| Konten Dashboard | `app/Http/Controllers/Admin/DashboardContentController.php`, `app/Models/DashboardContent.php` |
+| WhatsApp Gateway | `app/Http/Controllers/Admin/WahaScheduleController.php`, `app/Models/Schedule.php` |
+| Laundry | `app/Http/Controllers/Petugas/LaundryController.php`, `app/Http/Controllers/Admin/LaundrySubscriptionController.php`, model terkait |
+| Akademik Tarbiyah | `app/Http/Controllers/Petugas/TarbiyahGradeController.php`, `app/Http/Controllers/Admin/TarbiyahSubjectController.php`, `AcademicClassController.php` |
+| Kesehatan & Keamanan | `HealthRecordController`, `SecurityViolationController`, model terkait |
+| Absensi & Perizinan | `AttendanceController`, `SantriPermissionController` |
 | UI dan PWA | `resources/views/*`, `resources/css/app.css`, `public/manifest.json`, `public/sw.js` |
-| Teknologi | `composer.json`, `package.json`, `vite.config.js`, dan `config/*` |
-| Test | `tests/Feature/*`, `tests/Unit/*` |

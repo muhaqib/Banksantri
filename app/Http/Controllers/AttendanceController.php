@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Attendance;
 use App\Models\KamarSantri;
+use App\Models\SantriPermission;
 use App\Models\User;
 use App\Services\AttendanceService;
 use Carbon\Carbon;
@@ -180,6 +181,22 @@ class AttendanceController extends Controller
         $month = (int) $request->input('month', now()->month);
         $year = (int) $request->input('year', now()->year);
         $kamar = $request->input('kamar');
+
+        // Check date filter and handle month/year syncing
+        $dateInput = $request->input('date');
+        if ($dateInput) {
+            $date = Carbon::parse($dateInput);
+            if ($date->month !== $month || $date->year !== $year) {
+                // If user selected month/year that doesn't match the input date, sync date to month/year
+                $date = Carbon::create($year, $month, 1);
+            }
+        } else {
+            $date = today();
+            if ($date->month !== $month || $date->year !== $year) {
+                $date = Carbon::create($year, $month, 1);
+            }
+        }
+
         $start = Carbon::create($year, $month)->startOfMonth();
         $end = $start->copy()->endOfMonth();
 
@@ -221,11 +238,19 @@ class AttendanceController extends Controller
         $totalRecords = $totals->sum();
         $attendanceRate = $totalRecords > 0 ? round((($totals['hadir'] ?? 0) / $totalRecords) * 100, 1) : 0;
 
+        // Retrieve active permissions for the selected date
+        $activePermissions = SantriPermission::query()
+            ->activeOn($date)
+            ->with(['santri.kamarSantri'])
+            ->when($kamar, fn ($q) => $q->whereHas('santri.kamarSantri', fn ($qk) => $qk->where('kamar', $kamar)))
+            ->get();
+
         return view('pages.attendance.dashboard', [
             'activeRole' => $this->routePrefix($request),
             'routePrefix' => $this->routePrefix($request),
             'month' => $month,
             'year' => $year,
+            'date' => $date,
             'kamar' => $kamar,
             'kamarList' => KamarSantri::KAMAR_LIST,
             'totals' => $totals,
@@ -235,6 +260,8 @@ class AttendanceController extends Controller
             'daysInMonth' => $start->daysInMonth,
             'byKamar' => $byKamar,
             'mostAbsent' => $mostAbsent,
+            'activePermissions' => $activePermissions,
+            'totalActivePermissions' => $activePermissions->count(),
         ]);
     }
 

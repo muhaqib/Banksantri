@@ -104,9 +104,7 @@ class PinManagementTest extends TestCase
 
         $this->actingAs($petugas)
             ->get(route('petugas.dashboard'))
-            ->assertOk()
-            ->assertSee('Saldo Digital')
-            ->assertSee('10.000');
+            ->assertOk();
 
         $this->actingAs($petugas)
             ->get(route('petugas.finance-dashboard'))

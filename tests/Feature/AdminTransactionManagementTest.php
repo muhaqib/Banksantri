@@ -54,7 +54,7 @@ class AdminTransactionManagementTest extends TestCase
         $this->actingAs($admin)
             ->get(route('admin.transactions.receipt', $transaction))
             ->assertOk()
-            ->assertSee('Kwitansi Top Up Santri')
+            ->assertSee('Kwitansi Pembayaran Santri')
             ->assertSee('KW-'.str_pad($transaction->id, 6, '0', STR_PAD_LEFT))
             ->assertSee('lima puluh ribu rupiah');
     }
@@ -112,7 +112,7 @@ class AdminTransactionManagementTest extends TestCase
             ->assertOk()
             ->assertSee('Riwayat Eksekusi Saya')
             ->assertSee('Top Up')
-            ->assertSee('Settlement')
+            ->assertSee('Penarikan Tunai')
             ->assertSee('Transaksi Kas')
             ->assertSee('Print Kwitansi')
             ->assertSee(route('admin.transactions.receipt', ['transaction' => $topUp, 'print' => 1]), false)

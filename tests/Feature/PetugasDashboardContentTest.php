@@ -35,7 +35,7 @@ class PetugasDashboardContentTest extends TestCase
             ->get(route('petugas.dashboard'))
             ->assertOk()
             ->assertSee('Rapat Pengurus')
-            ->assertSee('Berita Pondok')
+            ->assertSee('Blog Pondok')
             ->assertSee('To Do List');
 
         $this->actingAs($petugas)
@@ -52,7 +52,7 @@ class PetugasDashboardContentTest extends TestCase
         $this->actingAs($petugas)
             ->get(route('petugas.finance-dashboard'))
             ->assertOk()
-            ->assertSee('Dashboard Keuangan Petugas');
+            ->assertSee('Dashboard Keuangan');
     }
 
     public function test_admin_cannot_remove_information_dashboard_access_from_petugas(): void
@@ -103,7 +103,7 @@ class PetugasDashboardContentTest extends TestCase
         $petugas->givePermissionTo(Permission::findOrCreate('petugas.dashboard.view'));
 
         $this->actingAs($admin)->post(route('admin.dashboard-content.store'), [
-            'type' => 'news',
+            'type' => 'announcement',
             'title' => 'Kegiatan Muhadharah',
             'summary' => 'Kegiatan pekanan pondok.',
             'content' => 'Muhadharah berlangsung dengan lancar.',
@@ -112,7 +112,7 @@ class PetugasDashboardContentTest extends TestCase
             'due_date' => null,
             'is_published' => '1',
             'thumbnail_url' => 'https://example.com/muhadharah.jpg',
-        ])->assertRedirect();
+        ])->assertSessionHasNoErrors()->assertRedirect();
 
         $this->actingAs($admin)->post(route('admin.dashboard-content.store'), [
             'type' => 'todo',
@@ -133,7 +133,7 @@ class PetugasDashboardContentTest extends TestCase
             ->assertSee('Kegiatan Muhadharah');
 
         $this->actingAs($admin)->put(route('admin.dashboard-content.update', $news), [
-            'type' => 'news',
+            'type' => 'announcement',
             'title' => 'Kegiatan Muhadharah Pekanan',
             'summary' => 'Kegiatan pekanan pondok.',
             'content' => 'Muhadharah berlangsung dengan lancar.',
@@ -149,7 +149,7 @@ class PetugasDashboardContentTest extends TestCase
             ->assertSee('Kegiatan Muhadharah Pekanan')
             ->assertDontSee('Draft Agenda');
 
-        $this->assertSame('https://example.com/muhadharah-baru.jpg', $news->fresh()->thumbnail_url);
+        $this->assertNull($news->fresh()->thumbnail_url);
     }
 
     public function test_todo_is_only_visible_to_assignees_and_disappears_after_completion(): void

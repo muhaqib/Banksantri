@@ -121,13 +121,31 @@ class SantriPermissionController extends Controller
         $validated = $request->validate([
             'santri_id' => ['required', Rule::exists('users', 'id')->where(fn ($query) => $query->where('role', 'santri')->where('santri_status', 'aktif'))],
             'start_date' => ['required', 'date'],
-            'end_date' => ['required', 'date', 'after_or_equal:start_date'],
+            'start_time' => ['nullable', 'string'],
+            'end_date' => ['required', 'date'],
+            'end_time' => ['nullable', 'string'],
             'reason' => ['required', 'string', 'max:1000'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'approved_by' => ['nullable', 'string', Rule::in(SantriPermission::APPROVERS)],
         ]);
 
+        $startTime = filled($validated['start_time'] ?? null) ? $validated['start_time'] : '07:00';
+        $endTime = filled($validated['end_time'] ?? null) ? $validated['end_time'] : '21:00';
+
+        $startDateTime = \Carbon\Carbon::parse($validated['start_date'] . ' ' . $startTime);
+        $endDateTime = \Carbon\Carbon::parse($validated['end_date'] . ' ' . $endTime);
+
+        if ($endDateTime->isBefore($startDateTime)) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'end_date' => ['Batas akhir izin harus setelah atau sama dengan waktu tanggal izin.'],
+            ]);
+        }
+
+        $validated['start_date'] = $startDateTime;
+        $validated['end_date'] = $endDateTime;
         $validated['approved_by'] ??= SantriPermission::APPROVERS[0];
+
+        unset($validated['start_time'], $validated['end_time']);
 
         return $validated;
     }

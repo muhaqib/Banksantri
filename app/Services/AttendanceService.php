@@ -84,7 +84,9 @@ class AttendanceService
     private function reconcilePermissionDates(User $santri, Carbon $start, Carbon $end): void
     {
         DB::transaction(function () use ($santri, $start, $end): void {
-            foreach (CarbonPeriod::create($start, $end) as $date) {
+            // Use start of day for period boundaries to ensure all dates are processed correctly
+            $period = CarbonPeriod::create($start->copy()->startOfDay(), $end->copy()->startOfDay());
+            foreach ($period as $date) {
                 $dateString = $date->toDateString();
                 $attendance = Attendance::where('santri_id', $santri->id)
                     ->whereDate('attendance_date', $dateString)
@@ -95,10 +97,11 @@ class AttendanceService
                 }
 
                 $hasPermission = SantriPermission::where('santri_id', $santri->id)->activeOn($dateString)->exists();
+                $dateAtStart = $date->copy()->startOfDay();
 
-                if ($hasPermission && ! $date->isAfter(today())) {
+                if ($hasPermission && ! $dateAtStart->isAfter(today())) {
                     $this->record($santri, $dateString, 'izin', 'permission');
-                } elseif ($date->isBefore(today())) {
+                } elseif ($dateAtStart->isBefore(today())) {
                     $this->record($santri, $dateString, 'ghoib', 'automatic');
                 } else {
                     $attendance?->delete();

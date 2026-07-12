@@ -17,7 +17,8 @@
         </div>
     </div>
 
-    <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-4">
+    <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-5">
+        <input type="date" name="date" value="{{ $date->toDateString() }}" class="input-field">
         <select name="month" class="input-field">
             @foreach(range(1, 12) as $number)
                 <option value="{{ $number }}" @selected($month === $number)>{{ Carbon\Carbon::create(null, $number)->translatedFormat('F') }}</option>
@@ -31,19 +32,95 @@
         <button class="btn-primary"><span class="material-symbols-outlined">filter_alt</span> Terapkan</button>
     </form>
 
-    <div class="grid gap-4 md:grid-cols-4">
-        @foreach([
-            ['Kehadiran', $attendanceRate.'%', 'monitoring', 'text-primary'],
-            ['Hadir', $totals['hadir'] ?? 0, 'check_circle', 'text-green-600'],
-            ['Izin', $totals['izin'] ?? 0, 'badge', 'text-amber-600'],
-            ['Ghoib', $totals['ghoib'] ?? 0, 'cancel', 'text-error'],
-        ] as [$label, $value, $icon, $color])
-            <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
-                <span class="material-symbols-outlined {{ $color }}">{{ $icon }}</span>
-                <p class="mt-4 text-3xl font-black {{ $color }}">{{ $value }}</p>
-                <p class="text-sm font-semibold text-on-surface-variant">{{ $label }}</p>
+    <div class="grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
+        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+            <span class="material-symbols-outlined text-primary">monitoring</span>
+            <p class="mt-4 text-3xl font-black text-primary">{{ $attendanceRate }}%</p>
+            <p class="text-sm font-semibold text-on-surface-variant">Kehadiran (Bulanan)</p>
+        </div>
+
+        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+            <span class="material-symbols-outlined text-green-600">check_circle</span>
+            <p class="mt-4 text-3xl font-black text-green-600">{{ $totals['hadir'] ?? 0 }}</p>
+            <p class="text-sm font-semibold text-on-surface-variant">Hadir (Bulanan)</p>
+        </div>
+
+        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+            <span class="material-symbols-outlined text-error">cancel</span>
+            <p class="mt-4 text-3xl font-black text-error">{{ $totals['ghoib'] ?? 0 }}</p>
+            <p class="text-sm font-semibold text-on-surface-variant">Ghoib (Bulanan)</p>
+        </div>
+
+        <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
+            <span class="material-symbols-outlined text-amber-600">badge</span>
+            <p class="mt-4 text-3xl font-black text-amber-600">{{ $totals['izin'] ?? 0 }}</p>
+            <p class="text-sm font-semibold text-on-surface-variant">Total Izin (Bulanan)</p>
+        </div>
+
+        <!-- Clickable Active Permissions Card -->
+        <div x-data="{ open: false }">
+            <div @click="open = true" class="rounded-xl bg-surface-container-lowest p-5 shadow-sm cursor-pointer border border-transparent hover:border-amber-500/30 hover:bg-amber-50/5 transition-all group h-full flex flex-col justify-between">
+                <div class="flex items-center justify-between">
+                    <span class="material-symbols-outlined text-amber-600" style="font-variation-settings: 'FILL' 1;">badge</span>
+                    <span class="text-[9px] font-black uppercase tracking-wider text-amber-800 bg-amber-100 px-2 py-0.5 rounded-full group-hover:scale-105 transition-transform">Detail</span>
+                </div>
+                <div class="mt-4 text-left">
+                    <p class="text-3xl font-black text-amber-600">{{ $totalActivePermissions }}</p>
+                    <p class="text-xs font-semibold text-on-surface-variant mt-1">Izin Hari Ini ({{ $date->translatedFormat('d M Y') }})</p>
+                </div>
             </div>
-        @endforeach
+
+            <!-- Modal -->
+            <div x-show="open" x-cloak class="fixed inset-0 z-[100] overflow-y-auto" @keydown.escape.window="open = false; document.body.classList.remove('overflow-hidden')" x-init="$watch('open', value => { if (value) document.body.classList.add('overflow-hidden'); else document.body.classList.remove('overflow-hidden'); })">
+                <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="open = false"></div>
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div class="w-full max-w-2xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
+                        <div class="flex items-center justify-between mb-6 border-b border-outline-variant/10 pb-4">
+                            <div>
+                                <p class="text-xs font-bold uppercase tracking-widest text-primary">Daftar Santri Izin</p>
+                                <h3 class="font-headline font-extrabold text-2xl text-on-surface mt-1">Izin Aktif Tanggal {{ $date->translatedFormat('d F Y') }}</h3>
+                            </div>
+                            <button @click="open = false" class="p-2 rounded-xl hover:bg-surface-container">
+                                <span class="material-symbols-outlined">close</span>
+                            </button>
+                        </div>
+                        <div class="space-y-4 max-h-[50vh] overflow-y-auto pr-1 text-left">
+                            @forelse($activePermissions as $permission)
+                                <div class="flex items-start justify-between p-4 bg-surface-container-low rounded-xl border border-outline-variant/10 hover:border-primary/20 transition-colors">
+                                    <div class="space-y-1">
+                                        <p class="font-bold text-on-surface text-base">{{ $permission->santri->name }}</p>
+                                        <p class="text-xs text-on-surface-variant font-medium">
+                                            NIS: {{ $permission->santri->nis ?? '-' }} | Kamar: {{ ucwords(str_replace('_', ' ', $permission->kamar)) }}
+                                        </p>
+                                        @if($permission->reason)
+                                            <p class="text-xs text-on-surface-variant mt-2 leading-relaxed">
+                                                <span class="font-bold">Alasan:</span> {{ $permission->reason }}
+                                            </p>
+                                        @endif
+                                    </div>
+                                    <div class="text-right">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-black bg-amber-100 text-amber-800 whitespace-nowrap">
+                                            {{ $permission->start_date->translatedFormat('d M') }} - {{ $permission->end_date->translatedFormat('d M Y') }}
+                                        </span>
+                                        @if($permission->approved_by)
+                                            <p class="text-[10px] text-on-surface-variant mt-2">
+                                                Pemberi Izin: <span class="font-semibold">{{ $permission->approved_by }}</span>
+                                            </p>
+                                        @endif
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-12">
+                                    <span class="material-symbols-outlined text-5xl text-primary/30">badge</span>
+                                    <p class="mt-3 font-bold text-on-surface">Tidak ada santri yang izin</p>
+                                    <p class="text-xs text-on-surface-variant">Tidak ada data perizinan aktif untuk tanggal ini.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 
     <div class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">

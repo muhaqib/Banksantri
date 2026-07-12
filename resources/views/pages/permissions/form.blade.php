@@ -41,8 +41,20 @@
             @error('santri_id') <p class="text-error text-xs mt-2">{{ $message }}</p> @enderror
         </div>
         <div class="grid gap-4 md:grid-cols-2">
-            <label class="text-sm font-bold">Tanggal Izin<input type="date" name="start_date" required value="{{ old('start_date', $permission?->start_date?->toDateString() ?? today()->toDateString()) }}" class="input-field mt-2"></label>
-            <label class="text-sm font-bold">Batas Akhir Izin<input type="date" name="end_date" required value="{{ old('end_date', $permission?->end_date?->toDateString() ?? today()->toDateString()) }}" class="input-field mt-2"></label>
+            <div>
+                <label class="text-sm font-bold block mb-2">Tanggal Izin</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="date" name="start_date" required value="{{ old('start_date', $permission?->start_date?->toDateString() ?? today()->toDateString()) }}" class="input-field col-span-2">
+                    <input type="time" name="start_time" value="{{ old('start_time', $permission?->start_date?->format('H:i') ?? '') }}" class="input-field">
+                </div>
+            </div>
+            <div>
+                <label class="text-sm font-bold block mb-2">Batas Akhir Izin</label>
+                <div class="grid grid-cols-3 gap-2">
+                    <input type="date" name="end_date" required value="{{ old('end_date', $permission?->end_date?->toDateString() ?? today()->toDateString()) }}" class="input-field col-span-2">
+                    <input type="time" name="end_time" value="{{ old('end_time', $permission?->end_date?->format('H:i') ?? '') }}" class="input-field">
+                </div>
+            </div>
         </div>
         <label class="block text-sm font-bold">Alasan<textarea name="reason" required rows="4" class="input-field mt-2" placeholder="Tuliskan alasan izin secara lengkap">{{ old('reason', $permission?->reason) }}</textarea></label>
         <label class="block text-sm font-bold">Yang Mengizinkan

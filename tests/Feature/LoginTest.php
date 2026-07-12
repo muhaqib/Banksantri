@@ -27,7 +27,7 @@ class LoginTest extends TestCase
     {
         $this->get(route('login.role', 'santri'))
             ->assertOk()
-            ->assertSee('Santri cukup memasukkan NIS')
+            ->assertSee('Masukkan NIS Santri.')
             ->assertDontSee('name="password"', false);
     }
 
