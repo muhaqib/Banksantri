@@ -199,7 +199,7 @@
     </button>
 </div>
 
-<article class="receipt-sheet mx-auto rounded-xl border border-outline-variant/20 bg-white p-8 shadow-sm">
+<article class="receipt-sheet mx-auto rounded-xl border border-outline-variant/20 bg-white p-5 sm:p-6 shadow-sm">
     <header class="receipt-header">
         <img src="{{ $logoSrc }}" alt="Logo Pondok Pesantren Mambaul Hikmah" class="receipt-logo">
         <div>

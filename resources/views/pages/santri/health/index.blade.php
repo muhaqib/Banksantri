@@ -22,9 +22,9 @@
     </header>
 
     <main class="px-5 space-y-9">
-        <section class="rounded-2xl bg-primary p-7 text-on-primary shadow-xl shadow-primary/10">
+        <section class="rounded-xl bg-primary p-7 text-on-primary shadow-xl shadow-primary/10">
             <div class="border-y border-white/15 py-7">
-                <div class="grid grid-cols-2 gap-6">
+                <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-xs font-bold text-primary-fixed/80">Status Kesehatan</p>
                         <h2 class="mt-1 font-headline text-xl font-extrabold">{{ auth()->user()->name }}</h2>
@@ -70,7 +70,7 @@
 
         <section class="rounded-[1.75rem] bg-surface-container-low p-7">
             <div class="flex items-center justify-between gap-3">
-                <h2 class="font-headline text-2xl font-extrabold text-on-surface">Riwayat Medis</h2>
+                <h2 class="font-headline text-xl font-bold text-on-surface">Riwayat Medis</h2>
                 <span class="rounded-full px-3 py-1 text-xs font-bold {{ $status === 'sehat' ? 'bg-green-100 text-green-700' : ($status === 'sakit' || $status === 'dirawat' ? 'bg-red-100 text-red-700' : 'bg-primary-fixed text-primary') }}">{{ $statusLabel }}</span>
             </div>
 

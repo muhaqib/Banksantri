@@ -8,14 +8,14 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Verifikasi Top Up</h2>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Verifikasi Top Up</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola permintaan top up saldo dari santri.</p>
         </div>
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-warning text-sm" style="font-variation-settings: 'FILL' 1;">pending</span>
                 <p class="text-xs text-on-surface-variant font-medium">Menunggu Verifikasi</p>
@@ -23,7 +23,7 @@
             <p class="text-3xl font-bold text-on-surface">{{ $pendingTopUps->total() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Terverifikasi</p>
@@ -31,7 +31,7 @@
             <p class="text-3xl font-bold text-primary">{{ $recentTopUps->where('status', 'approved')->count() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-error text-sm" style="font-variation-settings: 'FILL' 1;">cancel</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Ditolak</p>
@@ -42,7 +42,7 @@
 
     <!-- Pending Top Ups -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm mb-8">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-warning flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm" style="font-variation-settings: 'FILL' 1;">pending</span>
                 <span>Menunggu Verifikasi</span>
@@ -117,7 +117,7 @@
         </div>
 
         @if($pendingTopUps->hasPages())
-            <div class="p-6 border-t border-surface-container">
+            <div class="p-4 sm:p-5 border-t border-surface-container">
                 {{ $pendingTopUps->links() }}
             </div>
         @endif
@@ -125,7 +125,7 @@
 
     <!-- Recent Top Ups -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Riwayat Top Up</h3>
         </div>
         <div class="overflow-x-auto">
@@ -208,7 +208,7 @@
             <div x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
                  x-transition:enter-end="opacity-100 scale-100"
-                 class="bg-surface-container-lowest w-full max-w-2xl rounded-2xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
+                 class="bg-surface-container-lowest w-full max-w-2xl rounded-xl shadow-2xl overflow-hidden max-h-[90vh] flex flex-col"
                  @click.stop>
                 <!-- Header -->
                 <div class="px-8 py-6 flex items-center justify-between bg-surface-container-low/20">
@@ -221,7 +221,7 @@
                 <!-- Body -->
                 <div class="flex-1 overflow-y-auto px-8 py-6">
                     <!-- Info Section -->
-                    <div class="grid grid-cols-2 gap-8 mb-8">
+                    <div class="grid grid-cols-2 gap-5 mb-8">
                         <div>
                             <p class="text-xs uppercase tracking-widest font-bold text-on-surface-variant mb-1">Informasi Santri</p>
                             <p class="text-lg font-headline font-bold text-on-surface" x-text="proofData?.santri_name || '-'"></p>
@@ -229,7 +229,7 @@
                         </div>
                         <div>
                             <p class="text-xs uppercase tracking-widest font-bold text-on-surface-variant mb-1">Nominal Top-Up</p>
-                            <p class="text-2xl font-headline font-black text-primary" x-text="'Rp ' + formatNumber(proofData?.nominal || 0)"></p>
+                            <p class="text-2xl font-headline font-bold text-primary" x-text="'Rp ' + formatNumber(proofData?.nominal || 0)"></p>
                             <p class="text-xs text-on-surface-variant">Metode: Bank Transfer</p>
                         </div>
                     </div>
@@ -285,7 +285,7 @@
     <div x-show="showDetailModal" x-cloak class="fixed inset-0 overflow-y-auto z-50">
         <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showDetailModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in" @click.stop>
+            <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in" @click.stop>
                 <div x-show="loading" class="flex items-center justify-center py-12">
                     <span class="material-symbols-outlined text-primary animate-spin">progress_activity</span>
                 </div>
@@ -340,7 +340,7 @@
     <div x-show="showRejectModal" x-cloak class="fixed inset-0 overflow-y-auto">
         <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showRejectModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
-            <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in" @click.stop>
+            <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in" @click.stop>
                 <div class="text-center mb-6">
                     <div class="w-16 h-16 bg-error-container rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-outlined text-error text-3xl">cancel</span>

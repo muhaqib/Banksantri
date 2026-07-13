@@ -24,7 +24,7 @@ class SantriPermissionController extends Controller
                     ->where('name', 'like', '%'.$request->search.'%')
                     ->orWhere('nis', 'like', '%'.$request->search.'%')))
             ->latest()
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pages.permissions.index', [

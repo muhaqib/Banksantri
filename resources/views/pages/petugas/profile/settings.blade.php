@@ -11,7 +11,7 @@
     </div>
 
     <!-- Tabs -->
-    <div class="bg-surface-container-low rounded-2xl shadow-sm mb-6">
+    <div class="bg-surface-container-low rounded-xl shadow-sm mb-6">
         <div class="border-b border-outline-variant/10 px-6 pt-4">
             <div class="flex gap-4">
                 <button @click="activeTab = 'email'"
@@ -30,7 +30,7 @@
         </div>
 
         <!-- Email Change Form -->
-        <div x-show="activeTab === 'email'" class="p-6">
+        <div x-show="activeTab === 'email'" class="p-4 sm:p-5">
             <form action="{{ route('petugas.profile.email') }}" method="POST">
                 @csrf
                 <div class="space-y-6">
@@ -72,7 +72,7 @@
         </div>
 
         <!-- Password Change Form -->
-        <div x-show="activeTab === 'password'" class="p-6">
+        <div x-show="activeTab === 'password'" class="p-4 sm:p-5">
             <form action="{{ route('petugas.profile.password') }}" method="POST">
                 @csrf
                 <div class="space-y-6">
@@ -151,7 +151,7 @@
     </div>
 
     <!-- Account Info Card -->
-    <div class="bg-surface-container-low rounded-2xl p-6">
+    <div class="bg-surface-container-low rounded-xl p-4 sm:p-5">
         <h3 class="text-lg font-headline font-bold text-on-surface mb-4">Informasi Akun</h3>
         <div class="space-y-4">
             <div class="flex items-center justify-between py-3 border-b border-outline-variant/10">

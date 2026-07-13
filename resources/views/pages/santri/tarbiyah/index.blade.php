@@ -18,16 +18,16 @@
 
     <main class="px-5 space-y-6">
         <section class="grid grid-cols-2 gap-3">
-            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'monthly', 'class_level' => $classLevel, 'month' => $month]) }}" class="rounded-2xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'monthly' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
+            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'monthly', 'class_level' => $classLevel, 'month' => $month]) }}" class="rounded-xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'monthly' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
                 Lihat Nilai Bulanan
             </a>
-            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'semester', 'class_level' => $classLevel]) }}" class="rounded-2xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'semester' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
+            <a href="{{ route('santri.tarbiyah.index', ['mode' => 'semester', 'class_level' => $classLevel]) }}" class="rounded-xl px-4 py-4 text-center text-xs font-extrabold {{ $mode === 'semester' ? 'bg-primary text-on-primary' : 'bg-surface-container-lowest text-on-surface-variant' }}">
                 Lihat Nilai Semester
             </a>
         </section>
 
         @if($mode === 'semester')
-            <form method="GET" class="rounded-2xl bg-surface-container-lowest p-4 shadow-sm">
+            <form method="GET" class="rounded-xl bg-surface-container-lowest p-4 shadow-sm">
                 <input type="hidden" name="mode" value="semester">
                 <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Filter Kelas</label>
                 <select name="class_level" class="input-field w-full" onchange="this.form.submit()">
@@ -37,7 +37,7 @@
                 </select>
             </form>
 
-            <section class="rounded-2xl bg-primary p-6 text-on-primary shadow-xl shadow-primary/10">
+            <section class="rounded-xl bg-primary p-4 sm:p-5 text-on-primary shadow-xl shadow-primary/10">
                 <p class="text-xs font-bold uppercase tracking-widest text-primary-fixed/80">Rata-rata Nilai</p>
                 <div class="mt-5 grid grid-cols-2 gap-4">
                     <div>
@@ -55,7 +55,7 @@
                 <h2 class="font-headline text-lg font-extrabold text-on-surface">Nilai Semester</h2>
                 @forelse($subjects as $subject)
                     @php $subjectGrades = $grades->where('subject_id', $subject->id)->keyBy('semester'); @endphp
-                    <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
+                    <article class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <h3 class="font-headline text-lg font-extrabold text-on-surface">{{ $subject->name }}</h3>
@@ -66,11 +66,11 @@
                         <div class="mt-4 grid grid-cols-2 gap-3">
                             <div class="rounded-xl bg-surface-container-low p-4">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 1</p>
-                                <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[1]) ? rtrim(rtrim($subjectGrades[1]->score, '0'), '.') : '-' }}</p>
+                                <p class="mt-1 text-xl font-bold text-primary">{{ isset($subjectGrades[1]) ? rtrim(rtrim($subjectGrades[1]->score, '0'), '.') : '-' }}</p>
                             </div>
                             <div class="rounded-xl bg-surface-container-low p-4">
                                 <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Semester 2</p>
-                                <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($subjectGrades[2]) ? rtrim(rtrim($subjectGrades[2]->score, '0'), '.') : '-' }}</p>
+                                <p class="mt-1 text-xl font-bold text-primary">{{ isset($subjectGrades[2]) ? rtrim(rtrim($subjectGrades[2]->score, '0'), '.') : '-' }}</p>
                             </div>
                         </div>
                     </article>
@@ -82,7 +82,7 @@
                 @endforelse
             </section>
         @else
-            <form method="GET" class="grid gap-3 rounded-2xl bg-surface-container-lowest p-4 shadow-sm">
+            <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm">
                 <input type="hidden" name="mode" value="monthly">
                 <div>
                     <label class="mb-2 block text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">Filter Kelas</label>
@@ -108,7 +108,7 @@
                         $total = collect($monthlySubjects)->sum(fn ($subject) => (float) ($examGrades[$subject]->score ?? 0));
                         $point = $total >= 300 ? 10 : ($total > 180 ? 5 : ($total >= 90 ? 3 : ($complete ? -3 : 0)));
                     @endphp
-                    <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
+                    <article class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
                         <div class="flex items-start justify-between gap-3">
                             <div>
                                 <h3 class="font-headline text-lg font-extrabold text-on-surface">{{ $exam->name }}</h3>
@@ -122,7 +122,7 @@
                             @foreach($monthlySubjects as $subject)
                                 <div class="rounded-xl bg-surface-container-low p-3">
                                     <p class="text-[10px] font-bold uppercase tracking-widest text-on-surface-variant">{{ $subject }}</p>
-                                    <p class="mt-1 text-2xl font-extrabold text-primary">{{ isset($examGrades[$subject]) ? rtrim(rtrim($examGrades[$subject]->score, '0'), '.') : '-' }}</p>
+                                    <p class="mt-1 text-xl font-bold text-primary">{{ isset($examGrades[$subject]) ? rtrim(rtrim($examGrades[$subject]->score, '0'), '.') : '-' }}</p>
                                 </div>
                             @endforeach
                         </div>

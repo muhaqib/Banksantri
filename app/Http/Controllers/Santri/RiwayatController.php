@@ -58,7 +58,7 @@ class RiwayatController extends Controller
             $query->where('kategori', $request->kategori);
         }
 
-        $transaksiList = $query->paginate(20);
+        $transaksiList = $query->paginate(10);
 
         // Calculate summary for selected month or current month
         $month = $request->filled('month') ? $request->month : now()->month;

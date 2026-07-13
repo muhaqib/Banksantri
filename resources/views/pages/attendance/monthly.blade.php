@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">Kesiswaan</p>
-            <h1 class="font-headline text-3xl font-black">
+            <h1 class="font-headline text-2xl font-bold">
                 {{ $kamar ? ucwords(str_replace('_', ' ', $kamar)) : 'Rekap Bulanan Santri' }}
             </h1>
             <p class="mt-1 text-sm text-on-surface-variant">
@@ -37,7 +37,7 @@
         <button class="btn-primary"><span class="material-symbols-outlined">filter_alt</span> Terapkan</button>
     </form>
 
-    <section class="overflow-hidden rounded-2xl bg-surface-container-lowest shadow-sm">
+    <section class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
         <div class="flex flex-col gap-4 border-b border-outline-variant/10 p-5 lg:flex-row lg:items-center lg:justify-between">
             <div>
                 <h2 class="font-headline text-xl font-black text-primary">Rekap Absensi Bulanan</h2>

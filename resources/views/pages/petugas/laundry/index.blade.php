@@ -7,7 +7,7 @@
 <div x-data="laundryForm()" x-init="init()" class="space-y-6">
     <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Transaksi Laundry</h1>
+            <h1 class="font-headline text-2xl font-bold tracking-tight text-primary">Transaksi Laundry</h1>
             <p class="mt-1 text-sm text-on-surface-variant">Fitur khusus laundry, terpisah dari transaksi keuangan umum.</p>
         </div>
         <a href="{{ route('petugas.laundry.history') }}" class="inline-flex w-fit items-center gap-2 rounded-xl bg-surface-container-high px-5 py-3 text-sm font-bold text-on-surface">
@@ -27,9 +27,9 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
         <section class="space-y-6 xl:col-span-4">
-            <div class="rounded-xl border-l-4 border-primary bg-surface-container-lowest p-6 shadow-sm">
+            <div class="rounded-xl border-l-4 border-primary bg-surface-container-lowest p-4 sm:p-5 shadow-sm">
                 <div class="flex rounded-xl bg-surface-container-high p-1">
                     <button type="button" @click="setPaymentType('tunai')" :class="paymentType === 'tunai' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'" class="flex-1 rounded-lg px-4 py-2 text-sm font-bold transition">Tunai</button>
                     <button type="button" @click="setPaymentType('bulanan')" :class="paymentType === 'bulanan' ? 'bg-primary text-on-primary' : 'text-on-surface-variant'" class="flex-1 rounded-lg px-4 py-2 text-sm font-bold transition">Bulanan</button>
@@ -71,7 +71,7 @@
                 <p x-show="errorMessage" x-text="errorMessage" class="mt-3 text-sm font-semibold text-error"></p>
             </div>
 
-            <div x-show="santriData" x-cloak class="rounded-xl bg-surface-container-lowest p-6 text-center shadow-sm">
+            <div x-show="santriData" x-cloak class="rounded-xl bg-surface-container-lowest p-4 sm:p-5 text-center shadow-sm">
                 <template x-if="santriData?.foto_url">
                     <img :src="santriData.foto_url" :alt="santriData.nama" class="mx-auto h-24 w-24 rounded-full object-cover ring-4 ring-primary-fixed">
                 </template>
@@ -101,7 +101,7 @@
         </section>
 
         <section class="xl:col-span-8">
-            <form x-ref="form" action="{{ route('petugas.laundry.store') }}" method="POST" class="rounded-xl bg-surface-container-lowest p-6 shadow-sm" @submit.prevent="handleSubmit">
+            <form x-ref="form" action="{{ route('petugas.laundry.store') }}" method="POST" class="rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm" @submit.prevent="handleSubmit">
                 @csrf
                 <input type="hidden" name="santri_id" :value="santriData?.id">
                 <input type="hidden" name="payment_type" :value="paymentType">
@@ -183,15 +183,15 @@
                     <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
                         <div class="rounded-xl bg-surface-container-low p-5 text-center">
                             <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Total Baju</p>
-                            <p class="mt-2 font-headline text-3xl font-extrabold text-on-surface"><span x-text="totalClothes"></span> pcs</p>
+                            <p class="mt-2 font-headline text-2xl font-bold text-on-surface"><span x-text="totalClothes"></span> pcs</p>
                         </div>
                         <div class="rounded-xl bg-surface-container-low p-5 text-center">
                             <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Pembayaran</p>
-                            <p class="mt-2 font-headline text-2xl font-extrabold text-primary" x-text="paymentLabel"></p>
+                            <p class="mt-2 font-headline text-xl font-bold text-primary" x-text="paymentLabel"></p>
                         </div>
                         <div x-show="paymentType === 'tunai'" class="rounded-xl bg-primary/5 p-5 text-center">
                             <p class="text-xs font-bold uppercase tracking-widest text-primary">Total Harga</p>
-                            <p class="mt-2 font-headline text-3xl font-extrabold text-primary">Rp <span x-text="formatNumber(totalPrice)"></span></p>
+                            <p class="mt-2 font-headline text-2xl font-bold text-primary">Rp <span x-text="formatNumber(totalPrice)"></span></p>
                         </div>
                     </div>
 
@@ -208,7 +208,7 @@
     </div>
 
     <div x-show="pinModalOpen" x-cloak class="fixed inset-0 z-[80] flex items-center justify-center bg-black/80 p-4">
-        <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+        <div class="w-full max-w-md rounded-xl bg-white p-4 sm:p-5 shadow-2xl">
             <div class="mb-5 flex items-center justify-between">
                 <div>
                     <h3 class="font-headline text-xl font-extrabold text-primary">Verifikasi PIN</h3>

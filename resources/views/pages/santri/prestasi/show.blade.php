@@ -26,7 +26,7 @@
     <main>
         <!-- Hero Section: Featured Kitab Image -->
         <section class="px-5 mt-4">
-            <div class="relative w-full aspect-[4/3] rounded-[2rem] overflow-hidden shadow-2xl">
+            <div class="relative w-full aspect-[4/3] rounded-xl overflow-hidden shadow-2xl">
                 @if($prestasi->foto_kitab)
                     <img src="{{ Storage::url($prestasi->foto_kitab) }}" alt="{{ $prestasi->nama_kitab }}" class="w-full h-full object-cover">
                 @else
@@ -41,7 +41,7 @@
                             Achievement Unlocked
                         </span>
                     @endif
-                    <h2 class="text-white font-headline text-3xl font-extrabold tracking-tight">{{ $prestasi->nama_kitab }}</h2>
+                    <h2 class="text-white font-headline text-2xl font-bold tracking-tight">{{ $prestasi->nama_kitab }}</h2>
                     @if($prestasi->kategori)
                         <p class="text-primary-fixed font-medium">{{ ucfirst($prestasi->kategori) }} Excellence</p>
                     @else
@@ -54,7 +54,7 @@
         <!-- Stats Bento Grid -->
         <section class="px-5 mt-8 grid grid-cols-2 gap-4">
             <!-- Nilai Card -->
-            <div class="bg-surface-container-lowest p-6 rounded-[1.5rem] flex flex-col justify-between h-40">
+            <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl flex flex-col justify-between h-40">
                 <div class="flex justify-between items-start">
                     <div class="p-2 bg-primary/5 rounded-xl">
                         <span class="material-symbols-outlined text-primary">military_tech</span>
@@ -75,7 +75,7 @@
             </div>
 
             <!-- Tanggal Selesai Card -->
-            <div class="bg-surface-container-low p-6 rounded-[1.5rem] flex flex-col justify-between h-40">
+            <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl flex flex-col justify-between h-40">
                 <div class="flex justify-between items-start">
                     <div class="p-2 bg-primary/5 rounded-xl">
                         <span class="material-symbols-outlined text-primary">event_available</span>
@@ -99,8 +99,8 @@
         <!-- Ustadz Section -->
         @if($prestasi->ustadz_pembimbing)
             <section class="px-5 mt-4">
-                <div class="bg-surface-container-lowest p-6 rounded-[1.5rem] flex items-center gap-4">
-                    <div class="w-14 h-14 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center">
+                <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl flex items-center gap-4">
+                    <div class="h-11 w-11 rounded-full overflow-hidden bg-surface-container-high flex items-center justify-center">
                         <span class="material-symbols-outlined text-primary text-3xl">person</span>
                     </div>
                     <div class="flex-1">
@@ -113,7 +113,7 @@
                             </div>
                         @endif
                     </div>
-                    <button class="bg-primary-fixed-dim text-on-primary-fixed-variant p-3 rounded-2xl active:scale-90 transition-all">
+                    <button class="bg-primary-fixed-dim text-on-primary-fixed-variant p-3 rounded-xl active:scale-90 transition-all">
                         <span class="material-symbols-outlined">forum</span>
                     </button>
                 </div>
@@ -123,7 +123,7 @@
         <!-- Keterangan / Feedback Section -->
         @if($prestasi->catatan_ustadz)
             <section class="px-5 mt-4">
-                <div class="bg-primary text-white p-8 rounded-[2rem] relative overflow-hidden">
+                <div class="bg-primary text-white p-5 sm:p-6 rounded-xl relative overflow-hidden">
                     <!-- Decorative background pattern -->
                     <div class="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -mr-16 -mt-16 blur-2xl"></div>
                     <div class="relative z-10">
@@ -149,7 +149,7 @@
         <!-- Additional Info Section -->
         @if($prestasi->keterangan)
             <section class="px-5 mt-4">
-                <div class="bg-surface-container-low p-6 rounded-[1.5rem]">
+                <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl">
                     <div class="flex items-center gap-2 mb-3">
                         <span class="material-symbols-outlined text-primary">info</span>
                         <h3 class="font-headline font-bold text-sm text-on-surface">Keterangan</h3>
@@ -161,7 +161,7 @@
 
         <!-- Poin & Status Info -->
         <section class="px-5 mt-4">
-            <div class="bg-surface-container-lowest p-6 rounded-[1.5rem]">
+            <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl">
                 <div class="grid grid-cols-2 gap-4">
                     <div>
                         <p class="text-[10px] font-bold font-headline text-primary/40 uppercase tracking-widest mb-1">Poin Diperoleh</p>

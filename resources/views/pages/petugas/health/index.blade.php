@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">Rekam Medis Santri</p>
-            <h1 class="font-headline text-3xl font-black">Kesehatan Santri</h1>
+            <h1 class="font-headline text-2xl font-bold">Kesehatan Santri</h1>
             <p class="text-sm text-on-surface-variant">Kelola pemeriksaan, status kesehatan, dan catatan tindakan santri.</p>
         </div>
         <a href="{{ route('petugas.health.create') }}" class="btn-primary">

@@ -107,7 +107,7 @@
     <div x-show="showChangePin" x-cloak class="fixed inset-0 z-100 overflow-y-auto">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40"></div>
         <div class="flex items-center justify-center min-h-screen p-4 relative z-50">
-            <div class="bg-surface rounded-2xl shadow-2xl max-w-md w-full p-6 animate-scale-in">
+            <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in">
                 <div class="text-center mb-6">
                     <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
                         <span class="material-symbols-filled text-primary text-3xl">lock</span>

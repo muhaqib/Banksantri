@@ -252,7 +252,7 @@ class LaundryController extends Controller
         return view('pages.petugas.laundry.history', [
             'activeRole' => 'petugas',
             'date' => $date,
-            'transactions' => (clone $base)->latest()->paginate(15)->withQueryString(),
+            'transactions' => (clone $base)->latest()->paginate(10)->withQueryString(),
             'totalTransactions' => (clone $base)->count(),
             'totalWeight' => (float) (clone $base)->sum('weight_kg'),
             'totalCash' => (int) (clone $base)->where('payment_method', 'cash')->sum('total_price'),

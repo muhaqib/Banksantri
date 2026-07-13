@@ -20,11 +20,11 @@
         <div class="role-logo w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
             <span class="material-symbols-outlined text-white text-5xl role-shield" style="font-variation-settings: 'FILL' 1;">shield</span>
         </div>
-        <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary role-title">Mawa Smart</h1>
+        <h1 class="font-headline text-2xl font-bold tracking-tight text-primary role-title">Mawa Smart</h1>
         <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase role-subtitle">Ponpes Mambaul Hikmah</p>
     </div>
 
-    <h2 class="role-heading text-xl md:text-2xl font-extrabold tracking-tight text-primary">
+    <h2 class="role-heading text-xl md:text-xl font-bold tracking-tight text-primary">
         Pilih Peran Anda
     </h2>
 </div>
@@ -47,7 +47,7 @@
 @endphp
 
 {{-- Role Cards --}}
-<div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-6">
+<div class="grid grid-cols-1 md:grid-cols-3 gap-4 md:gap-4">
 
     @foreach($roleCards as $role => $card)
 
@@ -59,12 +59,12 @@
                   flex md:flex-col
                   items-center md:justify-center
                   gap-4
-                  p-5 md:p-8
+                  p-5 md:p-5 sm:p-6
                   min-h-[95px]
                   md:h-56
                   bg-white
                   border border-gray-200
-                  rounded-3xl
+                  rounded-xl
                   shadow-sm
                   overflow-hidden
                   transition-all duration-300 ease-out
@@ -80,10 +80,10 @@
 
             {{-- Icon --}}
             <div class="role-icon relative z-10
-                        w-14 h-14
+                        h-11 w-11
                         md:w-16 md:h-16
                         flex items-center justify-center
-                        rounded-2xl
+                        rounded-xl
                         bg-primary/10
                         text-primary
                         transition-all duration-300

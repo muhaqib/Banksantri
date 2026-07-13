@@ -7,14 +7,14 @@
 
 <div class="max-w-5xl mx-auto" x-data="prestasiForm()">
     <div class="mb-8">
-        <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">
+        <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">
             {{ $isEdit ? 'Edit Prestasi Hafalan Kitab' : 'Input Prestasi Hafalan Kitab' }}
         </h2>
         <p class="text-on-surface-variant mt-2">Catat pencapaian hafalan santri secara cepat dan akurat untuk memantau progres mereka.</p>
     </div>
 
     <form action="{{ $isEdit ? route($prestasiRoutePrefix . '.prestasi.update', $prestasi) : route($prestasiRoutePrefix . '.prestasi.store') }}"
-          method="POST" class="bg-surface-container-lowest p-6 md:p-9 rounded-2xl shadow-sm space-y-7">
+          method="POST" class="bg-surface-container-lowest p-4 sm:p-5 md:p-9 rounded-xl shadow-sm space-y-7">
         @csrf
         @if($isEdit)
             @method('PUT')
@@ -112,7 +112,7 @@
             </button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
                 <label class="flex items-center gap-2 font-bold text-on-surface mb-3">
                     <span class="material-symbols-outlined text-primary text-lg">calendar_month</span>
@@ -171,9 +171,9 @@
     </form>
 
     <div x-show="kitabModalOpen" x-cloak x-transition.opacity class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-        <div @click.outside="kitabModalOpen = false" class="bg-surface-container-lowest rounded-2xl shadow-2xl max-w-2xl w-full p-6 md:p-8">
+        <div @click.outside="kitabModalOpen = false" class="bg-surface-container-lowest rounded-xl shadow-2xl max-w-2xl w-full p-4 sm:p-5 md:p-5 sm:p-6">
             <div class="flex justify-between items-center mb-7">
-                <h3 class="font-headline font-extrabold text-3xl text-primary">Tambah Kitab</h3>
+                <h3 class="font-headline text-2xl font-bold text-primary">Tambah Kitab</h3>
                 <button type="button" @click="kitabModalOpen = false"><span class="material-symbols-outlined">close</span></button>
             </div>
             <form @submit.prevent="storeKitab" class="space-y-6">

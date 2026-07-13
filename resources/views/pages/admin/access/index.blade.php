@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-2 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <p class="text-sm font-semibold text-primary">Super Admin</p>
-            <h1 class="font-headline text-2xl font-black text-on-surface">Manajemen Akses Petugas</h1>
+            <h1 class="font-headline text-xl font-bold text-on-surface">Manajemen Akses Petugas</h1>
             <p class="text-sm text-on-surface-variant mt-1">Atur izin menu untuk setiap akun petugas secara terpisah.</p>
         </div>
         <a href="{{ route('admin.petugas.index') }}" class="inline-flex items-center gap-2 rounded-xl bg-surface-container-low px-4 py-3 text-sm font-bold text-primary hover:bg-surface-container-high transition-all">

@@ -26,7 +26,7 @@
     </div>
 
     <!-- Members Table -->
-    <div class="bg-surface-container-lowest rounded-2xl border border-outline-variant/10 overflow-hidden">
+    <div class="bg-surface-container-lowest rounded-xl border border-outline-variant/10 overflow-hidden">
         @if($kamarSantris->count() > 0)
         <div class="overflow-x-auto">
             <table class="w-full">
@@ -119,9 +119,9 @@
                  x-transition:leave="transition ease-in duration-200"
                  x-transition:leave-start="opacity-100 scale-100 translate-y-0"
                  x-transition:leave-end="opacity-0 scale-95 translate-y-4"
-                 class="bg-surface-container-lowest rounded-2xl shadow-2xl w-full max-w-lg relative z-10 max-h-[80vh] flex flex-col">
+                 class="bg-surface-container-lowest rounded-xl shadow-2xl w-full max-w-lg relative z-10 max-h-[80vh] flex flex-col">
 
-                <div class="p-6 border-b border-outline-variant/10 flex-shrink-0">
+                <div class="p-4 sm:p-5 border-b border-outline-variant/10 flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <h3 class="text-xl font-headline font-bold text-on-surface">Tambah Anggota ke {{ $kamarLabel }}</h3>
                         <button @click="closeModal()" class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
@@ -130,7 +130,7 @@
                     </div>
                 </div>
 
-                <div class="p-6 overflow-y-auto flex-1">
+                <div class="p-4 sm:p-5 overflow-y-auto flex-1">
                     <p x-show="loading" class="text-center text-on-surface-variant py-8">
                         <span class="material-symbols-outlined animate-spin inline-block text-lg">progress_activity</span>
                         <span class="block mt-2">Memuat data santri...</span>

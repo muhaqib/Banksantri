@@ -5,7 +5,7 @@
 @section('content')
 <div x-data="kasManager()">
     <!-- Kas Summary -->
-    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg p-6 mb-6 text-white">
+    <div class="bg-gradient-to-r from-emerald-500 to-teal-600 rounded-xl shadow-lg p-4 sm:p-5 mb-6 text-white">
         <div class="flex items-center justify-between">
             <div>
                 <p class="text-emerald-100 mb-1">Saldo Kas Utama Saat Ini</p>
@@ -47,7 +47,7 @@
         </div>
 
         <!-- Kas Masuk Form -->
-        <div x-show="activeTab === 'masuk'" class="p-6">
+        <div x-show="activeTab === 'masuk'" class="p-4 sm:p-5">
             <form action="{{ route('admin.kas.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="jenis" value="masuk">
@@ -103,7 +103,7 @@
         </div>
 
         <!-- Kas Keluar Form -->
-        <div x-show="activeTab === 'keluar'" class="p-6">
+        <div x-show="activeTab === 'keluar'" class="p-4 sm:p-5">
             <form action="{{ route('admin.kas.store') }}" method="POST">
                 @csrf
                 <input type="hidden" name="jenis" value="keluar">
@@ -162,7 +162,7 @@
 
     <!-- Transaction History -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-5 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">Riwayat Transaksi Kas</h3>
         </div>
         <div class="overflow-x-auto">

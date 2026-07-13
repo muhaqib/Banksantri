@@ -16,10 +16,10 @@
         </button>
     </div>
 
-    <article class="rounded-2xl bg-white p-8 shadow-sm print:rounded-none print:shadow-none">
+    <article class="rounded-xl bg-white p-5 sm:p-6 shadow-sm print:rounded-none print:shadow-none">
         <header class="border-b border-dashed border-outline-variant pb-6 text-center">
             <p class="text-xs font-black uppercase tracking-[0.35em] text-primary">Mawa Smart</p>
-            <h1 class="mt-2 font-headline text-3xl font-extrabold text-on-surface">Nota Laundry</h1>
+            <h1 class="mt-2 font-headline text-2xl font-bold text-on-surface">Nota Laundry</h1>
             <p class="mt-1 text-sm text-on-surface-variant">#LDY-{{ str_pad((string) $transaction->id, 6, '0', STR_PAD_LEFT) }}</p>
         </header>
 
@@ -48,11 +48,11 @@
             <div class="grid grid-cols-2 gap-3 md:grid-cols-4">
                 <div class="rounded-xl bg-surface-container-low p-4 text-center">
                     <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Berat</p>
-                    <p class="mt-2 font-headline text-2xl font-extrabold text-on-surface">{{ number_format((float) $transaction->weight_kg, 1, ',', '.') }} Kg</p>
+                    <p class="mt-2 font-headline text-xl font-bold text-on-surface">{{ number_format((float) $transaction->weight_kg, 1, ',', '.') }} Kg</p>
                 </div>
                 <div class="rounded-xl bg-surface-container-low p-4 text-center">
                     <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Baju</p>
-                    <p class="mt-2 font-headline text-2xl font-extrabold text-on-surface">{{ $transaction->total_clothes }} pcs</p>
+                    <p class="mt-2 font-headline text-xl font-bold text-on-surface">{{ $transaction->total_clothes }} pcs</p>
                 </div>
                 <div class="rounded-xl bg-surface-container-low p-4 text-center">
                     <p class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Jenis</p>

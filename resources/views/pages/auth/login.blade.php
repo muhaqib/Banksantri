@@ -14,7 +14,7 @@
         <div class="login-logo w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
             <span class="material-symbols-outlined text-white text-5xl login-shield" style="font-variation-settings: 'FILL' 1;">shield</span>
         </div>
-        <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary login-title">Mawa Smart</h1>
+        <h1 class="font-headline text-2xl font-bold tracking-tight text-primary login-title">Mawa Smart</h1>
         <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase login-subtitle">Ponpes Mambaul Hikmah</p>
     </div>
 
@@ -23,12 +23,12 @@
         <input type="hidden" name="role" value="{{ $selectedRole }}">
 
         <div class="login-reveal mb-6 bg-surface-container-low border border-outline-variant/20 rounded-[28px] p-4 flex items-center gap-4 shadow-sm shadow-primary/5 backdrop-blur-sm" style="--delay: 180ms;">
-            <a href="{{ route('login') }}" class="login-back inline-flex h-11 w-11 items-center justify-center rounded-2xl bg-surface-container-high text-primary shadow-sm transition hover:bg-primary/10">
+            <a href="{{ route('login') }}" class="login-back inline-flex h-11 w-11 items-center justify-center rounded-xl bg-surface-container-high text-primary shadow-sm transition hover:bg-primary/10">
                 <span class="material-symbols-outlined text-lg">arrow_back</span>
             </a>
             <div class="min-w-0">
                 <p class="text-xs font-semibold uppercase tracking-[0.2em] text-on-surface-variant mb-1">Login sebagai</p>
-                <p class="font-headline font-black text-xl text-on-surface truncate">{{ $selectedRoleLabel }}</p>
+                <p class="font-headline font-bold text-xl text-on-surface truncate">{{ $selectedRoleLabel }}</p>
             </div>
         </div>
 

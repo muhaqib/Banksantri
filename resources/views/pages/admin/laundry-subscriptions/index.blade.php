@@ -7,13 +7,13 @@
 <div class="space-y-6">
     <header class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
-            <h2 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Pendaftaran Laundry Bulanan</h2>
+            <h2 class="font-headline text-2xl font-bold tracking-tight text-primary">Pendaftaran Laundry Bulanan</h2>
             <p class="mt-1 text-sm text-on-surface-variant">Paket laundry khusus bulanan tanpa mengubah saldo santri.</p>
         </div>
     </header>
 
-    <div class="grid grid-cols-1 gap-6 xl:grid-cols-12">
-        <form action="{{ route('admin.laundry-subscriptions.store') }}" method="POST" class="xl:col-span-5 rounded-xl bg-surface-container-lowest p-6 shadow-sm space-y-5">
+    <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
+        <form action="{{ route('admin.laundry-subscriptions.store') }}" method="POST" class="xl:col-span-5 rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm space-y-5">
             @csrf
             <div>
                 <h3 class="font-headline text-lg font-bold text-primary">Data Pendaftaran</h3>
@@ -67,7 +67,7 @@
         </form>
 
         <section class="xl:col-span-7 rounded-xl bg-surface-container-lowest shadow-sm">
-            <div class="border-b border-surface-container p-6">
+            <div class="border-b border-surface-container p-4 sm:p-5">
                 <form method="GET" action="{{ route('admin.laundry-subscriptions.index') }}" class="flex flex-col gap-3 md:flex-row md:items-end">
                     <label class="text-xs font-bold uppercase tracking-widest text-on-surface-variant">Bulan
                         <select name="month" class="input-field mt-2">
@@ -116,17 +116,17 @@
             </div>
 
             @if($subscriptions->hasPages())
-                <div class="border-t border-surface-container p-6">{{ $subscriptions->links() }}</div>
+                <div class="border-t border-surface-container p-4 sm:p-5">{{ $subscriptions->links() }}</div>
             @endif
         </section>
     </div>
 
     <section class="rounded-xl bg-surface-container-lowest shadow-sm">
-        <div class="border-b border-surface-container p-6">
+        <div class="border-b border-surface-container p-4 sm:p-5">
             <h3 class="font-headline text-lg font-bold text-primary">Master Rincian Baju</h3>
             <p class="mt-1 text-xs text-on-surface-variant">Item aktif akan muncul di form transaksi laundry petugas.</p>
         </div>
-        <div class="grid grid-cols-1 gap-6 p-6 xl:grid-cols-12">
+        <div class="grid grid-cols-1 gap-4 p-4 sm:p-5 xl:grid-cols-12">
             <form action="{{ route('admin.laundry-clothes.store') }}" method="POST" class="space-y-4 xl:col-span-4">
                 @csrf
                 <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Nama Item

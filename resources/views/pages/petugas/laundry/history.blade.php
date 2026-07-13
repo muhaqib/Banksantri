@@ -7,7 +7,7 @@
 <div class="space-y-6">
     <header class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
-            <h1 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Dashboard Riwayat Laundry</h1>
+            <h1 class="font-headline text-2xl font-bold tracking-tight text-primary">Dashboard Riwayat Laundry</h1>
             <p class="mt-1 text-sm text-on-surface-variant">Ringkasan transaksi laundry khusus petugas.</p>
         </div>
         <form method="GET" class="flex items-end gap-2">
@@ -21,24 +21,24 @@
     <div class="flex gap-3 overflow-x-auto pb-1">
         <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
             <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Transaksi</p>
-            <p class="mt-2 font-headline text-2xl md:text-3xl font-extrabold text-primary">{{ number_format($totalTransactions, 0, ',', '.') }}</p>
+            <p class="mt-2 font-headline text-2xl md:text-2xl font-bold text-primary">{{ number_format($totalTransactions, 0, ',', '.') }}</p>
         </div>
         <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
             <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Berat</p>
-            <p class="mt-2 font-headline text-2xl md:text-3xl font-extrabold text-on-surface">{{ number_format($totalWeight, 1, ',', '.') }} Kg</p>
+            <p class="mt-2 font-headline text-2xl md:text-2xl font-bold text-on-surface">{{ number_format($totalWeight, 1, ',', '.') }} Kg</p>
         </div>
         <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
             <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Cash</p>
-            <p class="mt-2 font-headline text-xl md:text-2xl font-extrabold text-primary">Rp {{ number_format($totalCash, 0, ',', '.') }}</p>
+            <p class="mt-2 font-headline text-xl md:text-xl font-bold text-primary">Rp {{ number_format($totalCash, 0, ',', '.') }}</p>
         </div>
         <div class="min-w-[220px] rounded-xl bg-surface-container-lowest p-4 md:p-5 shadow-sm flex-shrink-0">
             <p class="text-[10px] md:text-xs font-bold uppercase tracking-widest text-on-surface-variant">Saldo Tabungan</p>
-            <p class="mt-2 font-headline text-xl md:text-2xl font-extrabold text-primary">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
+            <p class="mt-2 font-headline text-xl md:text-xl font-bold text-primary">Rp {{ number_format($totalSaldo, 0, ',', '.') }}</p>
         </div>
     </div>
 
     <section class="rounded-xl bg-surface-container-lowest shadow-sm">
-        <div class="border-b border-surface-container p-6">
+        <div class="border-b border-surface-container p-4 sm:p-5">
             <h2 class="font-headline text-lg font-bold text-on-surface">Riwayat {{ $date->translatedFormat('d F Y') }}</h2>
         </div>
         <div class="overflow-x-auto">
@@ -84,7 +84,7 @@
             </table>
         </div>
         @if($transactions->hasPages())
-            <div class="border-t border-surface-container p-6">{{ $transactions->links() }}</div>
+            <div class="border-t border-surface-container p-4 sm:p-5">{{ $transactions->links() }}</div>
         @endif
     </section>
 </div>

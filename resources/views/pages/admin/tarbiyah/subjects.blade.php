@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">Master Akademik</p>
-            <h1 class="font-headline text-3xl font-black">Mata Pelajaran Tarbiyah</h1>
+            <h1 class="font-headline text-2xl font-bold">Mata Pelajaran Tarbiyah</h1>
             <p class="text-sm text-on-surface-variant">Atur mata pelajaran berbeda untuk setiap kelas.</p>
         </div>
         <form method="GET" class="flex gap-2">

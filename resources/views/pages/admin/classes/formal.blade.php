@@ -9,7 +9,7 @@
     <div class="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">Master Akademik</p>
-            <h1 class="font-headline text-3xl font-black text-on-surface">Kelas Formal</h1>
+            <h1 class="font-headline text-2xl font-bold text-on-surface">Kelas Formal</h1>
             <p class="text-sm text-on-surface-variant">Kelola urutan kelas formal dan naikkan semua santri otomatis.</p>
         </div>
         <div class="flex flex-wrap gap-2">

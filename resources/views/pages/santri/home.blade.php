@@ -49,11 +49,11 @@
 
         <!-- Main Balance Card -->
         <section>
-            <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-[1.5rem] p-6 shadow-xl shadow-primary/10">
+            <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-xl p-4 sm:p-5 shadow-xl shadow-primary/10">
                 <!-- Abstract Texture Overlay -->
                 <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
                 
-                <div class="relative z-10 space-y-8">
+                <div class="relative z-10 space-y-6">
                     <div class="flex justify-between items-start">
                         <div class="space-y-1">
                             <span class="font-label text-[10px] font-bold uppercase tracking-[0.2em] text-primary-fixed">Saldo Utama</span>
@@ -140,7 +140,7 @@
 
         <!-- Special Quick-Action: Sadaqah -->
         <!-- <section>
-            <div class="bg-tertiary-container/30 rounded-2xl p-4 flex items-center justify-between">
+            <div class="bg-tertiary-container/30 rounded-xl p-4 flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="w-10 h-10 bg-tertiary-container text-on-tertiary-container rounded-full flex items-center justify-center">
                         <span class="material-symbols-outlined">volunteer_activism</span>

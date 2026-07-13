@@ -7,11 +7,11 @@
 <div class="mx-auto max-w-4xl" x-data="healthSantriSearch()" x-init="init()">
     <div class="mb-6">
         <p class="text-sm font-bold text-primary">Rekam Medis</p>
-        <h1 class="font-headline text-3xl font-black">{{ $record ? 'Edit Data Kesehatan' : 'Tambah Data Kesehatan' }}</h1>
+        <h1 class="font-headline text-2xl font-bold">{{ $record ? 'Edit Data Kesehatan' : 'Tambah Data Kesehatan' }}</h1>
         <p class="text-sm text-on-surface-variant">Catat pemeriksaan terakhir, status, lokasi, dan tindakan kesehatan santri.</p>
     </div>
 
-    <form method="POST" action="{{ $record ? route('petugas.health.update', $record) : route('petugas.health.store') }}" class="space-y-5 rounded-2xl bg-surface-container-lowest p-6 shadow-sm">
+    <form method="POST" action="{{ $record ? route('petugas.health.update', $record) : route('petugas.health.store') }}" class="space-y-5 rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm">
         @csrf
         @if($record) @method('PUT') @endif
 
@@ -67,7 +67,7 @@
             <input name="title" required value="{{ old('title', $record?->title) }}" class="input-field mt-2" placeholder="Contoh: Pemeriksaan Rutin">
         </label>
 
-        <div x-show="hasSelectedSantri" x-cloak x-transition class="rounded-2xl bg-surface-container-low p-4">
+        <div x-show="hasSelectedSantri" x-cloak x-transition class="rounded-xl bg-surface-container-low p-4">
             <div class="mb-4">
                 <p class="font-bold text-on-surface">Data Fisik Opsional</p>
                 <p class="text-xs text-on-surface-variant">Boleh dikosongkan. Isi hanya jika petugas ingin menambahkan atau memperbarui data pemeriksaan fisik santri.</p>

@@ -17,13 +17,25 @@
 @endphp
 
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}" class="light">
+<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>@yield('title', 'Mawa Smart')</title>
     
+    <script>
+        // Immediately apply theme to avoid flash of light theme
+        if (localStorage.getItem('darkMode') === 'true' || 
+            (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.documentElement.classList.remove('light');
+        } else {
+            document.documentElement.classList.add('light');
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
     <!-- Google Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700;800&amp;family=Inter:wght@400;500;600&amp;display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet">
@@ -45,7 +57,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-surface font-body text-on-surface" x-data="{ sidebarOpen: false }">
+<body class="bg-surface font-body text-on-surface" x-data="{ sidebarOpen: false, darkMode: false, toggleDarkMode() { this.darkMode = !this.darkMode; localStorage.setItem('darkMode', this.darkMode ? 'true' : 'false'); this.applyTheme(); }, applyTheme() { if (this.darkMode) { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } else { document.documentElement.classList.add('light'); document.documentElement.classList.remove('dark'); } } }" x-init="darkMode = localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches); applyTheme();">
     <!-- Mobile Header -->
     <header class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
@@ -55,7 +67,13 @@
 
         </div>
 
-        <div x-data="{ open: false }" class="relative">
+        <div class="flex items-center gap-2">
+            <!-- Toggle Dark Mode Mobile -->
+            <button @click="toggleDarkMode()" class="p-2 hover:bg-surface-container-low rounded-lg text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" aria-label="Toggle tema">
+                <span class="material-symbols-outlined text-[20px]" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>
+            </button>
+
+            <div x-data="{ open: false }" class="relative">
             <button type="button"
                     @click="open = !open"
                     @keydown.escape.window="open = false"
@@ -97,6 +115,7 @@
                 </form>
             </div>
         </div>
+    </div>
     </header>
 
     <!-- Mobile Sidebar Overlay -->
@@ -112,7 +131,7 @@
 
     <!-- SideNavBar -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-           class="fixed left-0 top-0 bottom-0 w-72 border-r-0 bg-surface flex flex-col h-full z-50 lg:translate-x-0 lg:w-64 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
+           class="fixed left-0 top-0 bottom-0 w-72 border-r border-outline-variant/10 bg-surface-container-lowest flex flex-col h-full z-50 lg:translate-x-0 lg:w-60 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
         
         <!-- Logo Section -->
         <div class="px-6 py-6 border-b border-outline-variant/10">
@@ -286,12 +305,12 @@
                 ],
             ];
         @endphp
-        <nav class="flex-1 px-3 py-4 overflow-y-auto scrollbar-thin">
+        <nav class="flex-1 px-2.5 py-4 overflow-y-auto scrollbar-thin space-y-1">
             @foreach($singleMenus as $item)
                 @can($item['permission'])
                     <a href="{{ route($item['route']) }}"
-                       class="{{ request()->routeIs($item['active']) ? 'bg-primary text-on-primary shadow-lg shadow-primary/20' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center gap-3 font-body text-sm font-medium transition-all">
-                        <span class="material-symbols-outlined">{{ $item['icon'] }}</span>
+                       class="{{ request()->routeIs($item['active']) ? 'bg-primary text-on-primary shadow-sm shadow-primary/5' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-lg px-3.5 py-2.5 flex items-center gap-3 font-body text-sm font-medium transition-all">
+                        <span class="material-symbols-outlined text-[20px]">{{ $item['icon'] }}</span>
                         <span>{{ $item['label'] }}</span>
                     </a>
                 @endcan
@@ -303,21 +322,21 @@
                     $isOpen = request()->routeIs(...$group['active']);
                 @endphp
                 @canany($groupPermissions)
-                    <div x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" class="my-1">
+                    <div x-data="{ open: {{ $isOpen ? 'true' : 'false' }} }" class="my-0.5">
                         <button @click="open = !open"
-                                class="w-full {{ $isOpen ? 'bg-primary text-on-primary' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-xl px-4 py-3 flex items-center justify-between font-body text-sm font-medium transition-all">
+                                class="w-full {{ $isOpen ? 'bg-primary text-on-primary shadow-sm shadow-primary/5' : 'text-on-surface-variant hover:bg-surface-container-low' }} rounded-lg px-3.5 py-2.5 flex items-center justify-between font-body text-sm font-medium transition-all">
                             <div class="flex items-center gap-3">
-                                <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">{{ $group['icon'] }}</span>
+                                <span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">{{ $group['icon'] }}</span>
                                 <span>{{ $group['label'] }}</span>
                             </div>
                             <span class="material-symbols-outlined text-sm transition-transform" :class="open ? 'rotate-180' : ''">expand_more</span>
                         </button>
-                        <div x-show="open" x-collapse class="mt-1 ml-4 space-y-1">
+                        <div x-show="open" x-collapse class="mt-0.5 ml-3.5 space-y-0.5 pl-2 border-l border-outline-variant/10">
                             @foreach($group['children'] as $child)
                                 @can($child['permission'])
                                     <a href="{{ route($child['route']) }}"
-                                       class="{{ request()->routeIs($child['active']) ? 'text-primary font-bold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-4 py-2 text-sm rounded-lg transition-all flex items-center gap-2">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-current"></span>
+                                       class="{{ request()->routeIs($child['active']) ? 'text-primary font-semibold bg-surface-container-low' : 'text-on-surface-variant hover:text-primary' }} block px-3 py-2 text-xs rounded-md transition-all flex items-center gap-2">
+                                        <span class="w-1 h-1 rounded-full bg-current"></span>
                                         <span>{{ $child['label'] }}</span>
                                     </a>
                                 @endcan
@@ -331,9 +350,14 @@
     </aside>
 
     <!-- Main Content Canvas -->
-    <main class="lg:ml-64 pt-16 lg:pt-0 min-h-screen bg-surface">
+    <main class="lg:ml-60 pt-16 lg:pt-0 min-h-screen bg-surface">
         <!-- Desktop Header -->
-        <header class="sticky top-0 z-30 hidden h-20 items-center justify-end border-b border-outline-variant/10 bg-surface/95 px-8 backdrop-blur lg:flex">
+        <header class="sticky top-0 z-30 hidden h-16 items-center justify-end border-b border-outline-variant/10 bg-surface/95 px-8 backdrop-blur lg:flex gap-4">
+            <!-- Toggle Dark Mode Desktop -->
+            <button @click="toggleDarkMode()" class="p-2.5 hover:bg-surface-container-low rounded-lg text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" aria-label="Toggle tema">
+                <span class="material-symbols-outlined text-[20px]" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>
+            </button>
+
             <div x-data="{ open: false }" class="relative">
                 <button type="button"
                         @click="open = !open"
@@ -386,7 +410,7 @@
         </header>
 
         <!-- Page Content -->
-        <div class="p-4 lg:p-8">
+        <div class="p-4 lg:p-5 sm:p-6">
             @if(session('success'))
                 <div x-data="{ show: true }" x-show="show" x-init="setTimeout(() => show = false, 5000)"
                      class="mb-6 p-4 bg-primary-fixed rounded-xl border border-primary/20 text-on-primary-container flex items-center gap-3 animate-slide-in">

@@ -95,7 +95,7 @@ class TransactionController extends Controller
             });
         }
 
-        $santriList = $query->orderBy('name', 'asc')->paginate(20);
+        $santriList = $query->orderBy('name', 'asc')->paginate(10);
 
         return view('pages.admin.transactions.santri-list', [
             'santriList' => $santriList,

@@ -25,7 +25,7 @@ class LaundrySubscriptionController extends Controller
                 ->where('month', $month)
                 ->where('year', $year)
                 ->latest()
-                ->paginate(15)
+                ->paginate(10)
                 ->withQueryString(),
             'santriList' => User::activeSantri()->orderBy('name')->get(['id', 'name', 'nis']),
             'clothes' => LaundryCloth::orderBy('sort_order')->orderBy('label')->get(),

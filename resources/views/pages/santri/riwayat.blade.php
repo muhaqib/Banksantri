@@ -29,7 +29,7 @@
             <!-- Month Filter Dropdown -->
             <div class="relative mb-4">
                 <button @click="showMonthFilter = !showMonthFilter" 
-                        class="w-full flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl">
+                        class="w-full flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary">calendar_month</span>
                         <p class="text-on-surface font-semibold text-sm" x-text="selectedMonthLabel"></p>
@@ -42,7 +42,7 @@
                 <div x-show="showMonthFilter" 
                      x-cloak 
                      @click.away="showMonthFilter = false"
-                     class="absolute z-50 w-full mt-2 bg-surface-container-lowest rounded-2xl shadow-xl p-3">
+                     class="absolute z-50 w-full mt-2 bg-surface-container-lowest rounded-xl shadow-xl p-3">
                     <div class="grid grid-cols-3 gap-2">
                         <template x-for="(month, index) in months" :key="index">
                             <button @click="selectMonth(index + 1)"
@@ -56,7 +56,7 @@
             </div>
 
             <!-- Line Chart -->
-            <div class="bg-surface-container-lowest p-4 rounded-2xl overflow-x-auto">
+            <div class="bg-surface-container-lowest p-4 rounded-xl overflow-x-auto">
                 <h3 class="text-xs font-semibold text-on-surface-variant mb-3 uppercase">Grafik Transaksi Harian</h3>
                 <div class="relative h-64 min-w-[600px]">
                     <canvas id="monthlyChart"></canvas>
@@ -155,9 +155,9 @@
                     <div class="space-y-3">
                         @foreach($transactions as $transaksi)
                             <!-- Transaction Item -->
-                            <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-2xl {{ $transaksi->jenis === 'masuk' ? 'border-l-4 border-primary/20' : '' }}">
+                            <div class="flex items-center justify-between p-4 bg-surface-container-lowest rounded-xl {{ $transaksi->jenis === 'masuk' ? 'border-l-4 border-primary/20' : '' }}">
                                 <div class="flex items-center gap-3">
-                                    <div class="w-12 h-12 rounded-2xl {{ $transaksi->jenis === 'masuk' ? 'bg-primary-fixed' : 'bg-surface-container' }} flex items-center justify-center">
+                                    <div class="w-12 h-12 rounded-xl {{ $transaksi->jenis === 'masuk' ? 'bg-primary-fixed' : 'bg-surface-container' }} flex items-center justify-center">
                                         <span class="material-symbols-outlined {{ $transaksi->jenis === 'masuk' ? 'text-primary' : 'text-on-surface-variant' }}">
                                             @if($transaksi->kategori === 'top_up' || $transaksi->kategori === 'tarik uang')
                                                 account_balance_wallet

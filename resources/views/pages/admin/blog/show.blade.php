@@ -34,7 +34,7 @@
         </a>
         <div class="flex items-center justify-between">
             <div>
-                <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">{{ $blog->title }}</h2>
+                <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">{{ $blog->title }}</h2>
                 <p class="text-on-surface-variant text-sm mt-1">
                     @if($blog->category)
                         <span class="bg-primary/10 text-primary px-3 py-1 rounded-full text-xs font-bold">{{ $blog->category }}</span>
@@ -72,7 +72,7 @@
             </div>
         @endif
         
-        <div class="p-8">
+        <div class="p-5 sm:p-6">
             <!-- Meta Info -->
             <div class="flex items-center gap-4 mb-6 text-sm text-on-surface-variant">
                 <div class="flex items-center gap-1">
@@ -99,7 +99,7 @@
             </div>
 
             <!-- Excerpt -->
-            <div class="bg-surface-container-high p-6 rounded-xl mb-6">
+            <div class="bg-surface-container-high p-4 sm:p-5 rounded-xl mb-6">
                 <h3 class="font-bold text-lg text-primary mb-2">Ringkasan</h3>
                 <p class="text-on-surface">{{ $blog->excerpt }}</p>
             </div>
@@ -111,7 +111,7 @@
                     @if(! empty($contentBlocks))
                         @foreach($contentBlocks as $block)
                             @if($block['type'] === 'h2')
-                                <h2 class="font-headline text-2xl font-extrabold tracking-tight text-primary">{{ $block['text'] }}</h2>
+                                <h2 class="font-headline text-xl font-bold tracking-tight text-primary">{{ $block['text'] }}</h2>
                             @elseif($block['type'] === 'h3')
                                 <h3 class="font-headline text-xl font-bold text-primary">{{ $block['text'] }}</h3>
                             @elseif($block['type'] === 'quote')

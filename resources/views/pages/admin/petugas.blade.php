@@ -6,7 +6,7 @@
 <div x-data="petugasPerformance()">
     <!-- Summary Cards -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm text-gray-500">Total Petugas Aktif</span>
                 <div class="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
@@ -18,7 +18,7 @@
             <p class="text-3xl font-bold text-gray-900">{{ count($petugasList ?? []) }}</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm text-gray-500">Total Transaksi Hari Ini</span>
                 <div class="w-10 h-10 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -30,7 +30,7 @@
             <p class="text-3xl font-bold text-gray-900">{{ $totalTransaksiHariIni ?? 0 }}</p>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center justify-between mb-2">
                 <span class="text-sm text-gray-500">Total Nominal Dikelola</span>
                 <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
@@ -66,7 +66,7 @@
 
     <!-- Petugas Performance Table -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-5 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">Daftar Kinerja Petugas</h3>
         </div>
         <div class="overflow-x-auto">

@@ -6,7 +6,7 @@
 @section('content')
 <div class="space-y-6">
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
-        <div><p class="text-sm font-bold text-primary">Izin Langsung Aktif</p><h1 class="font-headline text-3xl font-black">Perizinan Santri</h1><p class="text-sm text-on-surface-variant">Perizinan otomatis mengubah ketidakhadiran menjadi izin selama periode aktif.</p></div>
+        <div><p class="text-sm font-bold text-primary">Izin Langsung Aktif</p><h1 class="font-headline text-2xl font-bold">Perizinan Santri</h1><p class="text-sm text-on-surface-variant">Perizinan otomatis mengubah ketidakhadiran menjadi izin selama periode aktif.</p></div>
         <a href="{{ route($routePrefix.'.permissions.create') }}" class="btn-primary"><span class="material-symbols-outlined">add</span> Buat Perizinan</a>
     </div>
     <form method="GET" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-4">

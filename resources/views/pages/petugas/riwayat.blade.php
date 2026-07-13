@@ -27,7 +27,7 @@
 
     <!-- Stats Summary -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center gap-2 mb-2">
                 <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
@@ -36,7 +36,7 @@
             </div>
             <p class="text-3xl font-bold text-gray-900">{{ $transaksiList->total() }}</p>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center gap-2 mb-2">
                 <svg class="w-5 h-5 text-red-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 13l-5 5m0 0l-5-5m5 5V6"></path>
@@ -45,7 +45,7 @@
             </div>
             <p class="text-3xl font-bold text-red-600">Rp {{ number_format($totalKeluar ?? 0, 0, ',', '.') }}</p>
         </div>
-        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+        <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 sm:p-5">
             <div class="flex items-center gap-2 mb-2">
                 <svg class="w-5 h-5 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 11l5-5m0 0l5 5m-5-5v12"></path>
@@ -58,7 +58,7 @@
 
     <!-- Transaction List -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-5 border-b border-gray-200">
             <div class="flex items-center justify-between">
                 <h3 class="text-lg font-semibold text-gray-900">Transaksi yang Anda Proses</h3>
                 <span class="text-sm text-gray-500">Menampilkan {{ $transaksiList->firstItem() ?? 0 }} - {{ $transaksiList->lastItem() ?? 0 }} dari {{ $transaksiList->total() }}</span>

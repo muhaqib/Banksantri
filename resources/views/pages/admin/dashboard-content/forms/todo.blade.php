@@ -9,7 +9,7 @@
         <div><label class="form-label">Tenggat Tugas</label><input type="date" name="due_date" required @if($editing) x-model="selected.due_date" @endif class="input-field w-full"></div>
         @include('pages.admin.dashboard-content.forms.status')
     </div>
-    <div class="rounded-2xl bg-surface-container-low p-4">
+    <div class="rounded-xl bg-surface-container-low p-4">
         <label class="form-label">Penerima Tugas</label>
         <div class="flex flex-wrap gap-4 mb-4">
             <label class="flex items-center gap-2 text-sm font-bold"><input type="radio" name="assignment_scope" value="all" @if($editing) x-model="selected.assignment_scope" @else x-model="todoScope" @endif> Semua Petugas</label>

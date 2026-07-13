@@ -13,12 +13,12 @@
     </div>
 
     <!-- Kamar Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         @foreach($kamarData as $kamar)
         <a href="{{ route('admin.kamar.show', $kamar['name']) }}" 
-           class="block bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all group">
+           class="block bg-surface-container-lowest rounded-xl p-4 sm:p-5 border border-outline-variant/10 hover:border-primary/50 hover:shadow-lg hover:shadow-primary/10 transition-all group">
             <div class="flex flex-col items-center text-center">
-                <div class="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
+                <div class="w-16 h-16 bg-primary/10 rounded-xl flex items-center justify-center mb-4 group-hover:bg-primary/20 transition-colors">
                     <span class="material-symbols-outlined text-primary text-3xl">meeting_room</span>
                 </div>
                 <h3 class="font-headline font-bold text-lg text-on-surface mb-2">{{ $kamar['label'] }}</h3>
@@ -32,7 +32,7 @@
     </div>
 
     <!-- Summary Section -->
-    <div class="mt-12 bg-surface-container-lowest rounded-2xl p-6 border border-outline-variant/10">
+    <div class="mt-12 bg-surface-container-lowest rounded-xl p-4 sm:p-5 border border-outline-variant/10">
         <h2 class="font-headline font-bold text-xl text-on-surface mb-4">Ringkasan</h2>
        
         <div class="mt-6 pt-6 border-t border-outline-variant/10">

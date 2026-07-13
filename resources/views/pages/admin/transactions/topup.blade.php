@@ -7,16 +7,16 @@
 <div x-data="topUpForm('{{ $nis ?? '' }}')" x-init="init()">
     <!-- Page Header -->
     <div class="mb-8">
-        <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Top Up Saldo Santri</h2>
+        <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Top Up Saldo Santri</h2>
         <p class="text-on-surface-variant text-sm mt-1">Tambahkan saldo ke rekening santri dengan aman dan terverifikasi.</p>
     </div>
 
     <!-- Top Up Form -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4">
         <!-- Left: Santri Search & Profile -->
         <div class="lg:col-span-5 space-y-6">
             <!-- Search Form -->
-            <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+            <section class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Cari Santri</h2>
 
                 <form @submit.prevent="cariSantri" class="space-y-4">
@@ -75,7 +75,7 @@
             </section>
 
             <!-- Santri Profile Card -->
-            <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" x-show="santriData">
+            <section class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm" x-show="santriData">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Data Santri</h2>
                 
                 <div class="flex flex-col items-center text-center space-y-4">
@@ -106,7 +106,7 @@
                 <div class="mt-8 pt-6 border-t border-surface-container-low">
                     <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Saldo Saat Ini</p>
                     <div class="bg-primary-container/10 p-4 rounded-xl">
-                        <p class="font-headline text-2xl font-extrabold text-primary">Rp <span x-text="formatNumber(santriData?.saldo || 0)"></span></p>
+                        <p class="font-headline text-xl font-bold text-primary">Rp <span x-text="formatNumber(santriData?.saldo || 0)"></span></p>
                     </div>
                 </div>
             </section>
@@ -114,7 +114,7 @@
 
         <!-- Right: Top Up Form -->
         <div class="lg:col-span-7">
-            <section class="bg-surface-container-lowest p-8 rounded-xl shadow-sm" x-show="santriData">
+            <section class="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-sm" x-show="santriData">
                 <div class="flex items-center gap-3 mb-8">
                     <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">add_card</span>
                     <div>

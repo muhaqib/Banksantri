@@ -6,27 +6,27 @@
 @section('content')
 <div>
     <div class="mb-8">
-        <h2 class="font-headline text-3xl font-extrabold tracking-tight text-primary">Riwayat Eksekusi Saya</h2>
+        <h2 class="font-headline text-2xl font-bold tracking-tight text-primary">Riwayat Eksekusi Saya</h2>
         <p class="mt-1 text-sm text-on-surface-variant">Aktivitas transaksi dan penarikan tunai yang Anda proses.</p>
     </div>
 
-    <div class="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-        <div class="rounded-xl bg-gradient-to-br from-primary to-primary-container p-6 shadow-lg shadow-primary/20">
+    <div class="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+        <div class="rounded-xl bg-gradient-to-br from-primary to-primary-container p-4 sm:p-5 shadow-lg shadow-primary/20">
             <p class="text-xs font-medium text-primary-fixed">Total Top Up Dieksekusi</p>
-            <p class="mt-2 text-3xl font-extrabold text-white">Rp {{ number_format($totalTopUp, 0, ',', '.') }}</p>
+            <p class="mt-2 text-2xl font-bold text-white">Rp {{ number_format($totalTopUp, 0, ',', '.') }}</p>
         </div>
-        <div class="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
+        <div class="rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm">
             <p class="text-xs font-medium text-on-surface-variant">Penarikan Tunai Disetujui</p>
             <p class="mt-2 text-3xl font-bold text-error">Rp {{ number_format($totalSettlement, 0, ',', '.') }}</p>
         </div>
-        <div class="rounded-xl bg-surface-container-lowest p-6 shadow-sm">
+        <div class="rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm">
             <p class="text-xs font-medium text-on-surface-variant">Total Aktivitas</p>
             <p class="mt-2 text-3xl font-bold text-on-surface">{{ $activities->total() }}</p>
         </div>
     </div>
 
     <div class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
-        <div class="border-b border-surface-container p-6">
+        <div class="border-b border-surface-container p-4 sm:p-5">
             <h3 class="font-headline text-xl font-bold text-primary">Semua Aktivitas Saya</h3>
         </div>
         <div class="overflow-x-auto">
@@ -89,7 +89,7 @@
         </div>
 
         @if($activities->hasPages())
-            <div class="border-t border-surface-container p-6">
+            <div class="border-t border-surface-container p-4 sm:p-5">
                 {{ $activities->links() }}
             </div>
         @endif

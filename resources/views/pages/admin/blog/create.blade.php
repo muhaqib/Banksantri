@@ -11,12 +11,12 @@
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Blog</span>
         </a>
-        <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Tambah Blog Baru</h2>
+        <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Tambah Blog Baru</h2>
         <p class="text-on-surface-variant text-sm mt-1">Buat artikel atau berita baru untuk website.</p>
     </div>
 
     <!-- Form -->
-    <form action="{{ route($routePrefix.'.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+    <form action="{{ route($routePrefix.'.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-sm space-y-6">
         @csrf
 
         <!-- Section: Informasi Dasar -->

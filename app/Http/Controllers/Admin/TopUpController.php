@@ -20,7 +20,7 @@ class TopUpController extends Controller
         $pendingTopUps = TopUpRequest::with('santri')
             ->where('status', 'pending')
             ->orderBy('created_at', 'desc')
-            ->paginate(15);
+            ->paginate(10);
 
         $recentTopUps = TopUpRequest::with(['santri', 'admin'])
             ->whereIn('status', ['approved', 'rejected'])

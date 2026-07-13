@@ -12,7 +12,7 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Data Santri</h2>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Data Santri</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola data santri dan saldo mereka.</p>
         </div>
         <div class="flex gap-2">
@@ -27,8 +27,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">group</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Santri</p>
@@ -36,7 +36,7 @@
             <p class="text-3xl font-bold text-on-surface">{{ $activeCount }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">account_balance_wallet</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Saldo Santri</p>
@@ -44,7 +44,7 @@
             <p class="text-3xl font-bold text-primary">Rp {{ number_format($santriList->getCollection()->sum('saldo'), 0, ',', '.') }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">add_card</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Alumni</p>
@@ -55,7 +55,7 @@
 
     <!-- Santri List Table -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex flex-wrap gap-2">
                 <a href="{{ route($routePrefix.'.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
@@ -172,7 +172,7 @@
 
         <!-- Pagination -->
         @if($santriList->hasPages())
-            <div class="p-6 border-t border-surface-container">
+            <div class="p-4 sm:p-5 border-t border-surface-container">
                 {{ $santriList->links() }}
             </div>
         @endif
@@ -182,16 +182,16 @@
 <div x-show="showDetailModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 z-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showDetailModal = false"></div>
     <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-2xl shadow-2xl max-w-3xl w-full animate-scale-in max-h-[92vh] overflow-hidden flex flex-col" @click.stop>
+        <div class="bg-surface rounded-xl shadow-2xl max-w-3xl w-full animate-scale-in max-h-[92vh] overflow-hidden flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
 
             <div x-show="!loading && selectedSantri" class="flex min-h-0 flex-col">
-                <div class="bg-primary text-on-primary p-6">
+                <div class="bg-primary text-on-primary p-4 sm:p-5">
                     <div class="flex items-start justify-between gap-4">
                         <div class="flex min-w-0 items-center gap-4">
-                            <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-2xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center text-2xl font-bold">
+                            <div class="h-20 w-20 flex-shrink-0 overflow-hidden rounded-xl bg-white/15 ring-2 ring-white/30 flex items-center justify-center text-2xl font-bold">
                                 <template x-if="selectedSantri.foto_url">
                                     <img :src="selectedSantri.foto_url" class="h-full w-full object-cover">
                                 </template>
@@ -200,7 +200,7 @@
                                 </template>
                             </div>
                             <div class="min-w-0">
-                                <h3 class="font-headline text-2xl font-extrabold tracking-tight truncate" x-text="selectedSantri.name"></h3>
+                                <h3 class="font-headline text-xl font-bold tracking-tight truncate" x-text="selectedSantri.name"></h3>
                                 <div class="mt-2 flex flex-wrap items-center gap-2 text-sm text-white/85">
                                     <span class="rounded-lg bg-white/15 px-3 py-1">NIS <span x-text="selectedSantri.nis || '-'"></span></span>
                                     <span class="rounded-lg bg-white/15 px-3 py-1" x-text="selectedSantri.kamar_text || '-'"></span>
@@ -227,9 +227,9 @@
                     </div>
                 </div>
 
-                <div class="flex-1 overflow-y-auto p-6">
+                <div class="flex-1 overflow-y-auto p-4 sm:p-5">
                     <div class="grid grid-cols-1 gap-4 lg:grid-cols-2">
-                        <section class="rounded-2xl bg-surface-container-lowest p-5">
+                        <section class="rounded-xl bg-surface-container-lowest p-5">
                             <h4 class="mb-4 flex items-center gap-2 font-headline font-bold text-primary">
                                 <span class="material-symbols-outlined text-lg">person</span>
                                 Data Pribadi
@@ -250,7 +250,7 @@
                             </div>
                         </section>
 
-                        <section class="rounded-2xl bg-surface-container-lowest p-5">
+                        <section class="rounded-xl bg-surface-container-lowest p-5">
                             <h4 class="mb-4 flex items-center gap-2 font-headline font-bold text-primary">
                                 <span class="material-symbols-outlined text-lg">school</span>
                                 Akademik & Wali
@@ -295,14 +295,14 @@
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 z-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
     <div class="relative z-10 flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
+        <div class="bg-surface rounded-xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
 
             <div x-show="!loading && selectedSantri" class="flex flex-col h-full">
                 <!-- Header -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-6 pb-4 flex-shrink-0">
+                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-4 sm:p-5 pb-4 flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-headline font-bold text-2xl text-white tracking-tight">Edit Data Santri</h3>
@@ -321,9 +321,9 @@
                         @method('PUT')
 
                         <!-- Photo Upload -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5">
+                        <div class="bg-surface-container-lowest rounded-xl p-5">
                             <div class="flex items-center gap-4">
-                                <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden ring-2 ring-primary/20">
+                                <div class="w-20 h-20 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden ring-2 ring-primary/20">
                                     <template x-if="editData.foto_preview">
                                         <img :src="editData.foto_preview" class="w-full h-full object-cover">
                                     </template>
@@ -342,7 +342,7 @@
                         </div>
 
                         <!-- Personal Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">person</span>
@@ -381,7 +381,7 @@
                         </div>
 
                         <!-- Guardian Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">family_home</span>
@@ -402,7 +402,7 @@
                         </div>
 
                         <!-- Academic Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">school</span>
@@ -428,7 +428,7 @@
                         </div>
 
                         <!-- Account Settings -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">settings</span>

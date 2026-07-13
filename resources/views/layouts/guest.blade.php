@@ -106,7 +106,7 @@
 </head>
 <body class="bg-surface font-body text-on-surface min-h-screen flex flex-col" x-data="{ theme: 'light' }">
 
-    <div class="flex-1 flex items-center justify-center p-4 sm:p-6 py-8 sm:py-6">
+    <div class="flex-1 flex items-center justify-center p-4 sm:p-4 sm:p-5 py-8 sm:py-6">
         @yield('content')
     </div>
 

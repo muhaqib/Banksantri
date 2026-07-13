@@ -18,7 +18,7 @@ class DashboardContentController extends Controller
             ->whereIn('type', array_keys(DashboardContent::TYPES))
             ->when($request->filled('type'), fn ($query) => $query->where('type', $request->type))
             ->latest()
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pages.admin.dashboard-content.index', [

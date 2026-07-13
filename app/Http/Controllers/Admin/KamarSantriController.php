@@ -43,7 +43,7 @@ class KamarSantriController extends Controller
 
         $kamarSantris = KamarSantri::where('kamar', $kamar)
             ->with('user')
-            ->paginate(15);
+            ->paginate(10);
 
         return view('pages.admin.kamar.show', [
             'kamar' => $kamar,

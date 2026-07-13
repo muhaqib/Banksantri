@@ -293,7 +293,7 @@ class AttendanceController extends Controller
             ->when($kamar, fn ($query) => $query
                 ->whereHas('kamarSantri', fn ($roomQuery) => $roomQuery->where('kamar', $kamar)))
             ->orderBy('name')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pages.attendance.monthly', [

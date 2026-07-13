@@ -20,7 +20,7 @@ class PetugasController extends Controller
     {
         $petugasList = User::where('role', 'petugas')
             ->orderBy('name', 'asc')
-            ->paginate(15);
+            ->paginate(10);
 
         return view('pages.admin.petugas.index', [
             'petugasList' => $petugasList,

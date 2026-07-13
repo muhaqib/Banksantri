@@ -20,10 +20,10 @@
 
     <main class="px-5 pt-6">
         <!-- Hero Banner -->
-        <section class="bg-gradient-to-br from-primary to-primary-container rounded-3xl p-6 text-white mb-8 shadow-xl">
+        <section class="bg-gradient-to-br from-primary to-primary-container rounded-xl p-4 sm:p-5 text-white mb-8 shadow-xl">
             <div class="flex justify-between items-start mb-6">
                 <div>
-                    <h2 class="font-headline text-2xl font-extrabold tracking-tight">Prestasi Santri</h2>
+                    <h2 class="font-headline text-xl font-bold tracking-tight">Prestasi Santri</h2>
                     <p class="text-primary-fixed text-sm opacity-80 mt-1">{{ auth()->user()->name ?? 'Santri' }}</p>
                 </div>
                 <div class="bg-white/10 backdrop-blur-md rounded-xl p-2">
@@ -45,9 +45,9 @@
 
             @forelse($prestasiList as $prestasi)
                 <!-- Kitab Item -->
-                <a href="{{ route('santri.prestasi.show', $prestasi) }}" class="block bg-surface-container-lowest rounded-3xl p-4 shadow-sm border border-surface-container flex items-center justify-between gap-4 transition-transform active:scale-[0.98]">
+                <a href="{{ route('santri.prestasi.show', $prestasi) }}" class="block bg-surface-container-lowest rounded-xl p-4 shadow-sm border border-surface-container flex items-center justify-between gap-4 transition-transform active:scale-[0.98]">
                     <div class="flex gap-4">
-                        <div class="w-24 h-24 rounded-2xl overflow-hidden flex-shrink-0 {{ $prestasi->foto_kitab ? '' : 'bg-surface-container-highest flex items-center justify-center' }}">
+                        <div class="w-24 h-24 rounded-xl overflow-hidden flex-shrink-0 {{ $prestasi->foto_kitab ? '' : 'bg-surface-container-highest flex items-center justify-center' }}">
                             @if($prestasi->foto_kitab)
                                 <img src="{{ Storage::url($prestasi->foto_kitab) }}" alt="{{ $prestasi->nama_kitab }}" class="w-full h-full object-cover">
                             @else
@@ -86,7 +86,7 @@
                     <span class="material-symbols-outlined text-outline-variant">chevron_right</span>
                 </a>
             @empty
-                <div class="text-center py-12 bg-surface-container-lowest rounded-3xl">
+                <div class="text-center py-12 bg-surface-container-lowest rounded-xl">
                     <span class="material-symbols-outlined text-6xl text-outline-variant mb-4">military_tech</span>
                     <p class="text-on-surface-variant font-medium">Belum ada prestasi</p>
                     <p class="text-xs text-on-surface-variant opacity-60 mt-1">Prestasi akan muncul setelah ustadz menambahkan</p>

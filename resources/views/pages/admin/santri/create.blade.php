@@ -14,11 +14,11 @@
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Data Santri</span>
         </a>
-        <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Tambah Santri Baru</h2>
+        <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Tambah Santri Baru</h2>
         <p class="text-on-surface-variant text-sm mt-1">Lengkapi data santri dengan benar.</p>
     </div>
 
-    <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm mb-6">
+    <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm mb-6">
         <div class="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
             <div>
                 <h3 class="font-headline font-bold text-lg text-primary flex items-center gap-2">
@@ -55,7 +55,7 @@
     </div>
 
     <!-- Form -->
-    <form action="{{ route($routePrefix.'.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-8 rounded-xl shadow-sm space-y-6">
+    <form action="{{ route($routePrefix.'.store') }}" method="POST" enctype="multipart/form-data" class="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-sm space-y-6">
         @csrf
 
         <!-- Section: Data Pribadi -->

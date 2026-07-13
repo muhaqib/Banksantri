@@ -39,7 +39,7 @@ class SantriController extends Controller
             });
         }
 
-        $santriList = $query->orderBy('name', 'asc')->paginate(15)->withQueryString();
+        $santriList = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
 
         return view('pages.admin.santri.index', [
             'santriList' => $santriList,

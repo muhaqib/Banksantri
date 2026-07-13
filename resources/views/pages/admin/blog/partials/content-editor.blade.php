@@ -66,7 +66,7 @@
                           :placeholder="placeholderFor(block.type)"
                           class="w-full resize-y border-none bg-transparent p-0 text-on-surface transition-all focus:ring-0"
                           :class="{
-                              'font-headline text-2xl font-extrabold leading-tight': block.type === 'h2',
+                              'font-headline text-xl font-bold leading-tight': block.type === 'h2',
                               'font-headline text-xl font-bold leading-tight': block.type === 'h3',
                               'text-base leading-relaxed': block.type === 'p',
                               'border-l-4 border-primary/40 pl-4 italic leading-relaxed text-on-surface-variant': block.type === 'quote'

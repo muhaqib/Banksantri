@@ -8,7 +8,7 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Blog Management</h2>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Blog Management</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola artikel dan berita untuk website.</p>
         </div>
         <a href="{{ route($routePrefix.'.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
@@ -18,8 +18,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">article</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Blog</p>
@@ -27,7 +27,7 @@
             <p class="text-3xl font-bold text-on-surface">{{ $totalBlogs ?? $blogs->total() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-green-600 text-sm" style="font-variation-settings: 'FILL' 1;">check_circle</span>
                 <p class="text-xs text-on-surface-variant font-medium">Dipublikasikan</p>
@@ -35,7 +35,7 @@
             <p class="text-3xl font-bold text-green-600">{{ $publishedBlogs ?? $blogs->getCollection()->where('is_published', true)->count() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-tertiary text-sm" style="font-variation-settings: 'FILL' 1;">draft</span>
                 <p class="text-xs text-on-surface-variant font-medium">Draft</p>
@@ -46,7 +46,7 @@
 
     <!-- Blog Table -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Blog</h3>
         </div>
         <div class="overflow-x-auto">
@@ -156,7 +156,7 @@
 
         <!-- Pagination -->
         @if($blogs->hasPages())
-            <div class="p-6 border-t border-surface-container">
+            <div class="p-4 sm:p-5 border-t border-surface-container">
                 {{ $blogs->links() }}
             </div>
         @endif

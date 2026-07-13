@@ -6,7 +6,7 @@
 @section('content')
 <div x-data="tarikTunai()">
     <!-- Hero Layout: Balance Card -->
-    <div class="relative overflow-hidden rounded-xl p-8 mb-6 bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-xl shadow-primary/20">
+    <div class="relative overflow-hidden rounded-xl p-5 sm:p-6 mb-6 bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-xl shadow-primary/20">
         <div class="flex items-center justify-between mb-6">
             <div>
                 <p class="text-primary-fixed font-medium mb-1">Saldo Digital Tersedia</p>
@@ -29,9 +29,9 @@
     </div>
 
     <!-- Main Grid: Form + Pending -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
         <!-- Request Form -->
-        <div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-8 shadow-sm">
+        <div class="lg:col-span-7 bg-surface-container-lowest rounded-xl p-5 sm:p-6 shadow-sm">
             <div class="flex items-center gap-3 mb-6">
                 <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">download</span>
                 <div>
@@ -112,7 +112,7 @@
 
         <!-- Pending Requests -->
         <div class="lg:col-span-5 bg-surface-container-lowest rounded-xl shadow-sm">
-            <div class="p-6 border-b border-surface-container">
+            <div class="p-4 sm:p-5 border-b border-surface-container">
                 <h3 class="font-headline font-bold text-lg text-primary">Pending Requests</h3>
                 <p class="text-xs text-on-surface-variant">Permintaan anda menunggu persetujuan</p>
             </div>
@@ -145,7 +145,7 @@
 
     <!-- Stats Row -->
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-        <div class="bg-surface-container-low p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">trending_up</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Settled (Month)</p>
@@ -153,7 +153,7 @@
             <p class="text-2xl font-bold text-on-surface">Rp {{ number_format($totalSettled ?? 0, 0, ',', '.') }}</p>
         </div>
         
-        <div class="bg-surface-container-low p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
                 <p class="text-xs text-on-surface-variant font-medium">Pending Requests</p>
@@ -161,7 +161,7 @@
             <p class="text-2xl font-bold text-on-surface">{{ count($pendingRequests ?? []) }}</p>
         </div>
         
-        <div class="bg-surface-container-low p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">schedule</span>
                 <p class="text-xs text-on-surface-variant font-medium">Avg Processing</p>
@@ -172,7 +172,7 @@
 
     <!-- History -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Riwayat Penarikan Tunai</h3>
             <div class="flex gap-2">
                 <button class="px-4 py-2 text-sm font-medium bg-surface-container-high rounded-lg hover:bg-surface-container-highest transition-colors flex items-center gap-2">

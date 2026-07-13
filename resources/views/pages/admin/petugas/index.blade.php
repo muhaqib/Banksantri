@@ -8,7 +8,7 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Data Petugas</h2>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Data Petugas</h2>
             <p class="text-on-surface-variant text-sm mt-1">Kelola data petugas bank pesantren.</p>
         </div>
         <a href="{{ route('admin.petugas.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
@@ -18,8 +18,8 @@
     </div>
 
     <!-- Stats Cards -->
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">group</span>
                 <p class="text-xs text-on-surface-variant font-medium">Total Petugas</p>
@@ -27,7 +27,7 @@
             <p class="text-3xl font-bold text-on-surface">{{ $petugasList->total() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">verified_user</span>
                 <p class="text-xs text-on-surface-variant font-medium">Petugas Aktif</p>
@@ -35,7 +35,7 @@
             <p class="text-3xl font-bold text-primary">{{ $petugasList->total() }}</p>
         </div>
 
-        <div class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
             <div class="flex items-center gap-2 mb-2">
                 <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">work</span>
                 <p class="text-xs text-on-surface-variant font-medium">Jabatan</p>
@@ -46,7 +46,7 @@
 
     <!-- Petugas List Table -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Petugas</h3>
             <div class="flex gap-2">
                 <input type="text" placeholder="Cari petugas..."
@@ -134,7 +134,7 @@
 
         <!-- Pagination -->
         @if($petugasList->hasPages())
-            <div class="p-6 border-t border-surface-container">
+            <div class="p-4 sm:p-5 border-t border-surface-container">
                 {{ $petugasList->links() }}
             </div>
         @endif
@@ -144,21 +144,21 @@
 <div x-show="showDetailModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showDetailModal = false"></div>
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in" @click.stop>
+        <div class="bg-surface rounded-xl shadow-2xl max-w-2xl w-full animate-scale-in" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
 
             <div x-show="!loading && selectedPetugas" class="space-y-0">
                 <!-- Profile Header with Gradient -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-8 pb-12">
+                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-5 sm:p-6 pb-12">
                     <!-- Abstract Texture Overlay -->
                     <div class="absolute inset-0 opacity-10 pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
 
                     <div class="relative z-10">
                         <div class="flex items-start justify-between mb-6">
                             <div class="flex items-center gap-5">
-                                <div class="w-24 h-24 rounded-2xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-bold text-3xl overflow-hidden ring-4 ring-white/30">
+                                <div class="w-24 h-24 rounded-xl bg-white/20 backdrop-blur-md flex items-center justify-center text-white font-bold text-3xl overflow-hidden ring-4 ring-white/30">
                                     <template x-if="selectedPetugas.foto_url">
                                         <img :src="selectedPetugas.foto_url" class="w-full h-full object-cover">
                                     </template>
@@ -181,7 +181,7 @@
                         </div>
 
                         <!-- Personal Information -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 space-y-4 mb-4">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">person</span>
@@ -206,7 +206,7 @@
                         </div>
 
                         <!-- Professional Information -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-6 space-y-4 mb-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 space-y-4 mb-4">
                             <div class="flex items-center gap-3 mb-4">
                                 <div class="w-10 h-10 bg-primary/10 rounded-xl flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">work</span>
@@ -253,14 +253,14 @@
 <div x-show="showEditModal" x-cloak class="fixed inset-0 z-50 overflow-y-auto">
     <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity" @click="showEditModal = false"></div>
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-surface rounded-3xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
+        <div class="bg-surface rounded-xl shadow-2xl max-w-2xl w-full animate-scale-in max-h-[90vh] flex flex-col" @click.stop>
             <div x-show="loading" class="flex items-center justify-center py-24">
                 <span class="material-symbols-outlined text-primary text-5xl animate-spin">progress_activity</span>
             </div>
 
             <div x-show="!loading && selectedPetugas" class="flex flex-col h-full">
                 <!-- Header -->
-                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-6 pb-4 flex-shrink-0">
+                <div class="relative overflow-hidden bg-gradient-to-br from-primary to-primary-container rounded-t-3xl p-4 sm:p-5 pb-4 flex-shrink-0">
                     <div class="flex items-center justify-between">
                         <div>
                             <h3 class="font-headline font-bold text-2xl text-white tracking-tight">Edit Data Petugas</h3>
@@ -279,9 +279,9 @@
                         <input type="hidden" name="_method" value="PUT">
 
                         <!-- Photo Upload -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5">
+                        <div class="bg-surface-container-lowest rounded-xl p-5">
                             <div class="flex items-center gap-4">
-                                <div class="w-20 h-20 rounded-2xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden ring-2 ring-primary/20">
+                                <div class="w-20 h-20 rounded-xl bg-primary/10 flex items-center justify-center text-primary font-bold text-2xl overflow-hidden ring-2 ring-primary/20">
                                     <template x-if="editData.foto_preview">
                                         <img :src="editData.foto_preview" class="w-full h-full object-cover">
                                     </template>
@@ -300,7 +300,7 @@
                         </div>
 
                         <!-- Personal Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">person</span>
@@ -336,7 +336,7 @@
                         </div>
 
                         <!-- Professional Info -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">work</span>
@@ -359,7 +359,7 @@
                         </div>
 
                         <!-- Account Settings -->
-                        <div class="bg-surface-container-lowest rounded-2xl p-5 space-y-4">
+                        <div class="bg-surface-container-lowest rounded-xl p-5 space-y-4">
                             <div class="flex items-center gap-2 mb-2">
                                 <div class="w-8 h-8 bg-primary/10 rounded-lg flex items-center justify-center">
                                     <span class="material-symbols-outlined text-primary text-sm" style="font-variation-settings: 'FILL' 1;">settings</span>

@@ -8,7 +8,7 @@
     <div class="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">Pelanggaran & Poin</p>
-            <h1 class="font-headline text-3xl font-black">Keamanan Santri</h1>
+            <h1 class="font-headline text-2xl font-bold">Keamanan Santri</h1>
             <p class="text-sm text-on-surface-variant">Catat pelanggaran santri dan pengurangan poin prestasi secara otomatis.</p>
         </div>
         <a href="{{ route('petugas.security.create') }}" class="btn-primary">

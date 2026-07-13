@@ -7,11 +7,11 @@
 <div class="mx-auto max-w-3xl" x-data="securitySantriSearch()" x-init="init()">
     <div class="mb-6">
         <p class="text-sm font-bold text-primary">Keamanan Santri</p>
-        <h1 class="font-headline text-3xl font-black">{{ $violation ? 'Edit Pelanggaran Santri' : 'Input Pelanggaran Santri' }}</h1>
+        <h1 class="font-headline text-2xl font-bold">{{ $violation ? 'Edit Pelanggaran Santri' : 'Input Pelanggaran Santri' }}</h1>
         <p class="text-sm text-on-surface-variant">Pengurangan poin akan memengaruhi total poin prestasi santri.</p>
     </div>
 
-    <form method="POST" action="{{ $violation ? route('petugas.security.update', $violation) : route('petugas.security.store') }}" class="space-y-5 rounded-2xl bg-surface-container-lowest p-6 shadow-sm">
+    <form method="POST" action="{{ $violation ? route('petugas.security.update', $violation) : route('petugas.security.store') }}" class="space-y-5 rounded-xl bg-surface-container-lowest p-4 sm:p-5 shadow-sm">
         @csrf
         @if($violation) @method('PUT') @endif
 

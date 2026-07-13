@@ -7,7 +7,7 @@
 <div x-data="transaksiForm()" x-init="init()" @keydown.window="handleKeydown($event)">
     <!-- Page Header -->
     <header class="mb-8">
-        <h1 class="font-headline text-3xl font-extrabold text-primary tracking-tight">Terminal Transaksi</h1>
+        <h1 class="font-headline text-2xl font-bold text-primary tracking-tight">Terminal Transaksi</h1>
         <p class="text-on-surface-variant mt-1">Lakukan verifikasi identitas dan nominal pembayaran dengan aman.</p>
     </header>
 
@@ -32,12 +32,12 @@
     @endif
 
     <!-- Main Content -->
-    <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+    <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         <!-- Column 1: NIS Input & Profile -->
         <div class="space-y-6">
             <!-- RFID Input -->
-            <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm">
+            <section class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Scan Kartu RFID</h2>
 
                 <form @submit.prevent="cariSantri" class="space-y-4">
@@ -75,7 +75,7 @@
             </section>
 
             <!-- Santri Profile -->
-            <section class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" x-show="santriData">
+            <section class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm" x-show="santriData">
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Identitas Santri</h2>
 
                 <div class="flex flex-col items-center text-center space-y-4">
@@ -104,7 +104,7 @@
                 <div class="mt-6 pt-6 border-t border-surface-container-low">
                     <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-2">Saldo Tersedia</p>
                     <div class="bg-primary-container/10 p-4 rounded-xl">
-                        <p class="font-headline text-2xl font-extrabold text-primary">Rp <span x-text="formatNumber(santriData?.saldo || 0)"></span></p>
+                        <p class="font-headline text-xl font-bold text-primary">Rp <span x-text="formatNumber(santriData?.saldo || 0)"></span></p>
                     </div>
                 </div>
             </section>
@@ -112,13 +112,13 @@
 
         <!-- Column 2: Transaction Form -->
         <div class="lg:col-span-2" x-show="santriData">
-            <form action="{{ route('petugas.transaksi.store') }}" method="POST" class="bg-surface-container-lowest p-6 rounded-xl shadow-sm" @submit="saveFormState()">
+            <form action="{{ route('petugas.transaksi.store') }}" method="POST" class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl shadow-sm" @submit="saveFormState()">
                 @csrf
                 <input type="hidden" name="santri_id" :value="santriData?.id">
 
                 <h2 class="font-headline text-sm font-bold text-primary mb-6 uppercase tracking-widest">Detail Transaksi</h2>
 
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <!-- Left: Transaction Details -->
                     <div class="space-y-5">
                         <!-- Nominal -->
@@ -187,7 +187,7 @@
 
                     <!-- Right: PIN Verification -->
                     <div class="space-y-6">
-                        <div class="bg-surface-container-low p-6 rounded-xl">
+                        <div class="bg-surface-container-low p-4 sm:p-5 rounded-xl">
                             <div class="flex items-center justify-between mb-4">
                                 <h3 class="font-headline text-sm font-bold text-primary uppercase tracking-widest">Otorisasi PIN</h3>
                                 

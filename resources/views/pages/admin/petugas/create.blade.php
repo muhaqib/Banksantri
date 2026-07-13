@@ -11,7 +11,7 @@
             <span class="material-symbols-outlined text-sm">arrow_back</span>
             <span>Kembali ke Data Petugas</span>
         </a>
-        <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Tambah Petugas Baru</h2>
+        <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Tambah Petugas Baru</h2>
         <p class="text-on-surface-variant text-sm mt-1">Lengkapi data petugas dengan benar.</p>
     </div>
 

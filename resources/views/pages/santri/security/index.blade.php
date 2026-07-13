@@ -17,13 +17,13 @@
     </header>
 
     <main class="px-5 space-y-6">
-        <section class="rounded-2xl bg-primary p-6 text-on-primary shadow-xl shadow-primary/10">
+        <section class="rounded-xl bg-primary p-4 sm:p-5 text-on-primary shadow-xl shadow-primary/10">
             <div class="flex items-start justify-between gap-4">
                 <div>
                     <p class="text-xs font-bold uppercase tracking-widest text-primary-fixed/80">Poin Prestasi Aktif</p>
                     <p class="mt-2 font-headline text-5xl font-extrabold">{{ number_format($netPoint, 0, ',', '.') }}</p>
                 </div>
-                <div class="w-14 h-14 rounded-2xl bg-white/10 flex items-center justify-center">
+                <div class="h-11 w-11 rounded-xl bg-white/10 flex items-center justify-center">
                     <span class="material-symbols-outlined text-3xl">local_police</span>
                 </div>
             </div>
@@ -46,9 +46,9 @@
             </div>
 
             @forelse($violations as $violation)
-                <article class="rounded-[1.5rem] bg-surface-container-lowest p-5 shadow-sm">
+                <article class="rounded-xl bg-surface-container-lowest p-5 shadow-sm">
                     <div class="flex items-start gap-4">
-                        <div class="w-12 h-12 rounded-2xl bg-red-50 text-red-700 flex items-center justify-center shrink-0">
+                        <div class="w-12 h-12 rounded-xl bg-red-50 text-red-700 flex items-center justify-center shrink-0">
                             <span class="material-symbols-outlined">gpp_bad</span>
                         </div>
                         <div class="min-w-0 flex-1">

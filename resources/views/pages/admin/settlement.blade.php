@@ -6,12 +6,12 @@
 <div x-data="settlementManager()">
     <!-- Pending Requests -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200 mb-6">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-5 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">Permintaan Penarikan Tunai Pending</h3>
         </div>
         <div class="divide-y divide-gray-200">
             @forelse($pendingRequests ?? [] as $request)
-                <div class="p-6 hover:bg-gray-50">
+                <div class="p-4 sm:p-5 hover:bg-gray-50">
                     <div class="flex items-center justify-between mb-4">
                         <div class="flex items-center space-x-4">
                             <div class="w-12 h-12 bg-emerald-100 rounded-full flex items-center justify-center">
@@ -56,7 +56,7 @@
                     </div>
                 </div>
             @empty
-                <div class="p-8 text-center text-gray-500">
+                <div class="p-5 sm:p-6 text-center text-gray-500">
                     <svg class="w-16 h-16 mx-auto text-gray-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
                     </svg>
@@ -68,7 +68,7 @@
 
     <!-- Approved History -->
     <div class="bg-white rounded-xl shadow-sm border border-gray-200">
-        <div class="p-6 border-b border-gray-200">
+        <div class="p-4 sm:p-5 border-b border-gray-200">
             <h3 class="text-lg font-semibold text-gray-900">Riwayat Penarikan Tunai</h3>
         </div>
         <div class="overflow-x-auto">

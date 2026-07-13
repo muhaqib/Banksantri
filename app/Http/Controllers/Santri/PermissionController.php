@@ -28,7 +28,7 @@ class PermissionController extends Controller
             ->whereDate('start_date', '<=', $endOfMonth)
             ->whereDate('end_date', '>=', $startOfMonth)
             ->latest('start_date')
-            ->paginate(8)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pages.santri.permissions.index', [

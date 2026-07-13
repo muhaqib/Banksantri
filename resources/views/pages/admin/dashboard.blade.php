@@ -8,7 +8,7 @@
     <!-- Page Heading -->
     <div class="flex items-end justify-between">
         <div>
-            <h2 class="font-headline font-extrabold text-3xl text-primary tracking-tight">Selamat Berkhidmah</h2>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Selamat Berkhidmah</h2>
             <p class="text-on-surface-variant text-sm mt-1">Berkhidmah dengan Ikhlas, Menjemput berkah tanpa batas.</p>
         </div>
         <div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
@@ -18,9 +18,9 @@
     </div>
 
     <!-- Bento Financial Widgets -->
-    <div class="grid grid-cols-1 md:grid-cols-4 mt-4 gap-6">
+    <div class="grid grid-cols-1 md:grid-cols-4 mt-4 gap-4">
         <!-- Total Top Up Santri Hari Ini -->
-        <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
                 <div class="p-2 bg-green-100 rounded-lg text-green-600">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">add_circle</span>
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Total Transaksi Hari Ini -->
-        <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
                 <div class="p-2 bg-red-100 rounded-lg text-red-600">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">payments</span>
@@ -48,7 +48,7 @@
         </div>
 
         <!-- Saldo Saat Ini -->
-        <div class="bg-gradient-to-br from-primary to-primary-container relative overflow-hidden p-6 rounded-xl flex flex-col justify-between group shadow-xl shadow-primary/20">
+        <div class="bg-gradient-to-br from-primary to-primary-container relative overflow-hidden p-4 sm:p-5 rounded-xl flex flex-col justify-between group shadow-xl shadow-primary/20">
             <div class="absolute inset-0 bg-gradient-to-br from-primary to-primary-container opacity-90"></div>
             <div class="relative z-10 flex justify-between items-start">
                 <div class="p-2 bg-white/20 backdrop-blur-md rounded-lg text-white">
@@ -57,14 +57,14 @@
             </div>
             <div class="relative z-10 mt-4">
                 <p class="text-xs font-medium text-primary-fixed font-medium mb-1">Saldo Saat Ini</p>
-                <h3 class="font-headline font-extrabold text-3xl text-white mt-1">Rp {{ number_format($saldoKasUtama ?? 0, 0, ',', '.') }}</h3>
+                <h3 class="font-headline text-2xl font-bold text-white mt-1">Rp {{ number_format($saldoKasUtama ?? 0, 0, ',', '.') }}</h3>
                 <p class="text-xs mt-2 text-primary-fixed-dim">Dana terverifikasi siap untuk penarikan tunai</p>
             </div>
             <div class="absolute -right-12 -top-12 w-32 h-32 rounded-full bg-primary-fixed opacity-5 blur-3xl"></div>
         </div>
 
         <!-- Jumlah Transaksi -->
-        <div class="bg-surface-container-lowest p-6 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
+        <div class="bg-surface-container-lowest p-4 sm:p-5 rounded-xl flex flex-col justify-between hover:bg-surface-container transition-colors group shadow-sm">
             <div class="flex justify-between items-start">
                 <div class="p-2 bg-secondary-container rounded-lg text-secondary">
                     <span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">sync_alt</span>
@@ -79,13 +79,13 @@
     </div>
 
     <!-- Main Layout Grid -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mt-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mt-6">
         <!-- Left Column: Actions & Trends -->
         <div class="lg:col-span-8 space-y-6">
             <!-- Top Up Verification Quick Actions -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <!-- Permintaan Top Up Tertunda -->
-                <div class="bg-surface-container-lowest rounded-xl p-6 border border-primary/10 hover:border-primary/30 transition-all shadow-sm">
+                <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 border border-primary/10 hover:border-primary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-primary p-2 bg-primary-fixed rounded-full" style="font-variation-settings: 'FILL' 1;">pending_actions</span>
                         <div>
@@ -109,7 +109,7 @@
                 </div>
 
                 <!-- Aktivitas Top Up Terbaru -->
-                <div class="bg-surface-container-lowest rounded-xl p-6 border border-secondary/10 hover:border-secondary/30 transition-all shadow-sm">
+                <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 border border-secondary/10 hover:border-secondary/30 transition-all shadow-sm">
                     <div class="flex items-center gap-3 mb-6">
                         <span class="material-symbols-outlined text-secondary p-2 bg-secondary-container rounded-full" style="font-variation-settings: 'FILL' 1;">history</span>
                         <div>
@@ -145,7 +145,7 @@
             </div>
 
             <!-- Transaction Trends Chart -->
-            <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm">
+            <div class="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-sm">
                 <div class="flex justify-between items-center mb-10">
                     <div>
                         <h3 class="font-headline font-bold text-xl text-primary">Tren Transaksi Mingguan</h3>
@@ -185,7 +185,7 @@
 
             <!-- Petugas Performance Table -->
             <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-                <div class="p-6 border-b border-surface-container flex justify-between items-center">
+                <div class="p-4 sm:p-5 border-b border-surface-container flex justify-between items-center">
                     <h3 class="font-headline font-bold text-xl text-primary">Kinerja Petugas</h3>
                     <a href="{{ route('admin.petugas.index') }}" class="text-xs font-bold text-primary hover:underline">Lihat laporan lengkap</a>
                 </div>
@@ -229,7 +229,7 @@
                 </div>
                 <!-- Pagination -->
                 @if($petugasList->hasPages())
-                    <div class="p-6 border-t border-surface-container">
+                    <div class="p-4 sm:p-5 border-t border-surface-container">
                         {{ $petugasList->links() }}
                     </div>
                 @endif
@@ -239,7 +239,7 @@
         <!-- Right Column: Withdrawal Activity -->
         <div class="lg:col-span-4 space-y-6">
             <div class="bg-surface-container-lowest rounded-xl shadow-sm top-24">
-                <div class="p-6 border-b border-surface-container">
+                <div class="p-4 sm:p-5 border-b border-surface-container">
                     <h3 class="font-headline font-bold text-xl text-primary">Penarikan Tunai Terbaru</h3>
                     <p class="text-xs text-on-surface-variant">Permintaan pencairan dana petugas</p>
                 </div>

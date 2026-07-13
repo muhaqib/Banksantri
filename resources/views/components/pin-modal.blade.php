@@ -14,7 +14,7 @@
 
     <!-- Modal -->
     <div class="flex items-center justify-center min-h-screen p-4">
-        <div class="bg-white rounded-2xl shadow-xl max-w-md w-full p-6 transform transition-all">
+        <div class="bg-white rounded-xl shadow-xl max-w-md w-full p-4 sm:p-5 transform transition-all">
             <!-- Header -->
             <div class="text-center mb-6">
                 <h3 class="text-xl font-bold text-gray-900">{{ $title }}</h3>

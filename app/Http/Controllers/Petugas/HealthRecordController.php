@@ -23,7 +23,7 @@ class HealthRecordController extends Controller
                     ->where('name', 'like', '%'.$request->search.'%')
                     ->orWhere('nis', 'like', '%'.$request->search.'%')))
             ->latest('checkup_date')
-            ->paginate(15)
+            ->paginate(10)
             ->withQueryString();
 
         return view('pages.petugas.health.index', [

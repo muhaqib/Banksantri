@@ -25,7 +25,7 @@
     <div class="flex flex-col gap-2 md:flex-row md:items-end md:justify-between">
         <div>
             <p class="text-sm font-bold text-primary">WA Mawasmart</p>
-            <h1 class="font-headline text-3xl font-black">WhatsApp Broadcast & Recurring</h1>
+            <h1 class="font-headline text-2xl font-bold">WhatsApp Broadcast & Recurring</h1>
             <p class="text-sm text-on-surface-variant">Kirim pesan manual, jadwalkan pesan berulang, dan pantau riwayat pengiriman.</p>
         </div>
     </div>

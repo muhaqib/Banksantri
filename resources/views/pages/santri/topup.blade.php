@@ -21,7 +21,7 @@
         Tujuan Transfer
     </h2>
 
-    <div class="bg-surface-container-lowest rounded-3xl p-6 shadow-[0_4px_24px_-8px_rgba(0,77,76,0.08)] relative overflow-hidden">
+    <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 shadow-[0_4px_24px_-8px_rgba(0,77,76,0.08)] relative overflow-hidden">
 
         <!-- Decorative -->
         <div class="absolute top-0 right-0 w-32 h-32 bg-primary/5 rounded-full -mr-16 -mt-16"></div>
@@ -61,7 +61,7 @@
                     <p class="text-[10px] uppercase tracking-widest font-bold text-outline">
                         Nomor Rekening
                     </p>
-                    <p class="font-headline font-extrabold text-2xl tracking-wider text-primary"
+                    <p class="font-headline text-xl font-bold tracking-wider text-primary"
                        x-text="rekening">
                     </p>
                 </div>
@@ -161,7 +161,7 @@
                 <!-- Payment Proof Upload -->
                 <div>
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Upload Bukti Pembayaran <span class="text-error">*</span></label>
-                    <div class="border-2 border-dashed border-outline-variant/30 rounded-xl p-6 text-center hover:border-primary/50 transition-colors cursor-pointer"
+                    <div class="border-2 border-dashed border-outline-variant/30 rounded-xl p-4 sm:p-5 text-center hover:border-primary/50 transition-colors cursor-pointer"
                          @click="$refs.buktiInput.click()">
                         <template x-if="previewImage">
                             <div class="space-y-3">

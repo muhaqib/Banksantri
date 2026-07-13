@@ -5,7 +5,7 @@
 
 @section('content')
 <div x-data="{ showCreate: false, showEdit: false, createType: 'announcement', selected: {}, todoScope: 'all' }" class="space-y-6">
-    <section class="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary to-primary-container text-white p-6 md:p-8 shadow-xl shadow-primary/15">
+    <section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary to-primary-container text-white p-4 sm:p-5 md:p-5 sm:p-6 shadow-xl shadow-primary/15">
         <div class="relative z-10 flex flex-col md:flex-row md:items-end justify-between gap-5">
             <div>
                 <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary-fixed-dim">Pusat Informasi Petugas</p>
@@ -33,7 +33,7 @@
                 $icon = match($content->type) { 'announcement' => 'campaign', default => 'checklist' };
                 $tone = match($content->type) { 'announcement' => 'bg-primary/10 text-primary', default => 'bg-tertiary/10 text-tertiary' };
             @endphp
-            <article class="rounded-2xl bg-surface-container-lowest p-5 shadow-sm border border-outline-variant/10 flex flex-col">
+            <article class="rounded-xl bg-surface-container-lowest p-5 shadow-sm border border-outline-variant/10 flex flex-col">
                 <div class="flex items-start justify-between gap-3">
                     <div class="w-11 h-11 rounded-xl {{ $tone }} flex items-center justify-center"><span class="material-symbols-outlined">{{ $icon }}</span></div>
                     <div class="flex gap-2">
@@ -90,7 +90,7 @@
                 </div>
             </article>
         @empty
-            <div class="md:col-span-2 xl:col-span-3 rounded-2xl bg-surface-container-lowest p-12 text-center shadow-sm">
+            <div class="md:col-span-2 xl:col-span-3 rounded-xl bg-surface-container-lowest p-12 text-center shadow-sm">
                 <span class="material-symbols-outlined text-6xl text-primary/30">dynamic_feed</span>
                 <h3 class="mt-3 font-headline font-bold text-xl">Belum ada konten dashboard</h3>
                 <p class="text-sm text-on-surface-variant">Tambahkan informasi pertama untuk petugas.</p>
@@ -105,9 +105,9 @@
     <div x-show="showCreate" x-cloak class="fixed inset-0 z-[100] overflow-y-auto">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showCreate = false"></div>
         <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="w-full max-w-3xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
+            <div class="w-full max-w-3xl rounded-xl bg-surface p-4 sm:p-5 md:p-5 sm:p-6 shadow-2xl" @click.stop>
                 <div class="flex items-center justify-between mb-6">
-                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Konten Baru</p><h3 class="font-headline font-extrabold text-2xl" x-text="createType === 'announcement' ? 'Tambah Pengumuman' : 'Tambah To Do List'"></h3></div>
+                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Konten Baru</p><h3 class="font-headline text-xl font-bold" x-text="createType === 'announcement' ? 'Tambah Pengumuman' : 'Tambah To Do List'"></h3></div>
                     <button @click="showCreate = false" class="p-2 rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <form action="{{ route('admin.dashboard-content.store') }}" method="POST">
@@ -122,9 +122,9 @@
     <div x-show="showEdit" x-cloak class="fixed inset-0 z-[100] overflow-y-auto">
         <div class="fixed inset-0 bg-black/50 backdrop-blur-sm" @click="showEdit = false"></div>
         <div class="relative min-h-screen flex items-center justify-center p-4">
-            <div class="w-full max-w-3xl rounded-3xl bg-surface p-6 md:p-8 shadow-2xl" @click.stop>
+            <div class="w-full max-w-3xl rounded-xl bg-surface p-4 sm:p-5 md:p-5 sm:p-6 shadow-2xl" @click.stop>
                 <div class="flex items-center justify-between mb-6">
-                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Edit Konten</p><h3 class="font-headline font-extrabold text-2xl" x-text="selected.title"></h3></div>
+                    <div><p class="text-xs font-bold uppercase tracking-widest text-primary">Edit Konten</p><h3 class="font-headline text-xl font-bold" x-text="selected.title"></h3></div>
                     <button @click="showEdit = false" class="p-2 rounded-xl hover:bg-surface-container"><span class="material-symbols-outlined">close</span></button>
                 </div>
                 <form :action="`/admin/dashboard-content/${selected.id}`" method="POST">

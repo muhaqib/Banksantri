@@ -15,7 +15,7 @@ class RiwayatController extends Controller
         $transaksiList = Transaction::with('santri')
             ->where('petugas_id', $petugas->id)
             ->orderBy('created_at', 'desc')
-            ->paginate(20);
+            ->paginate(10);
 
         $totalKeluar = Transaction::where('petugas_id', $petugas->id)
             ->where('jenis', 'keluar')

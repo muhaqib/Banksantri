@@ -22,7 +22,7 @@
     </header>
 
     <main class="px-5 space-y-5">
-        <form x-show="showFilter" x-cloak method="GET" action="{{ route('santri.permissions.index') }}" class="bg-surface-container-lowest rounded-2xl p-4 shadow-sm">
+        <form x-show="showFilter" x-cloak method="GET" action="{{ route('santri.permissions.index') }}" class="bg-surface-container-lowest rounded-xl p-4 shadow-sm">
             <label class="block text-xs font-bold uppercase tracking-widest text-on-surface-variant">Filter Bulan</label>
             <div class="mt-3 flex gap-2">
                 <input type="month" name="month_picker" value="{{ $monthPicker }}" class="input-field flex-1">
@@ -36,9 +36,9 @@
             <div class="flex items-center justify-between gap-4">
                 <div>
                     <p class="text-[10px] font-bold uppercase tracking-widest text-primary">Total Izin</p>
-                    <p class="mt-1 font-headline text-3xl font-extrabold text-on-surface">{{ $permissions->total() }}</p>
+                    <p class="mt-1 font-headline text-2xl font-bold text-on-surface">{{ $permissions->total() }}</p>
                 </div>
-                <div class="w-14 h-14 rounded-2xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm">
+                <div class="h-11 w-11 rounded-xl bg-surface-container-lowest flex items-center justify-center text-primary shadow-sm">
                     <span class="material-symbols-outlined text-3xl">handshake</span>
                 </div>
             </div>
@@ -60,7 +60,7 @@
                 @endphp
 
                 <div class="bg-surface-container-lowest rounded-[1.75rem] p-5 shadow-sm flex items-center gap-4">
-                    <div class="w-16 h-16 rounded-2xl bg-surface-container-high flex items-center justify-center text-primary shrink-0">
+                    <div class="w-16 h-16 rounded-xl bg-surface-container-high flex items-center justify-center text-primary shrink-0">
                         <span class="material-symbols-outlined text-3xl">event_available</span>
                     </div>
                     <div class="min-w-0 flex-1">

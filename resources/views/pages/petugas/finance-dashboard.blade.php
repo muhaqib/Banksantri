@@ -6,13 +6,13 @@
 @section('content')
 <div x-data="petugasDashboard()">
     <div class="mb-6">
-        <h2 class="font-headline font-extrabold text-3xl text-on-surface">Dashboard Keuangan</h2>
+        <h2 class="font-headline text-2xl font-bold text-on-surface">Dashboard Keuangan</h2>
         <p class="text-sm text-on-surface-variant mt-1">Ringkasan saldo dan aktivitas transaksi.</p>
     </div>
     <!-- Hero Layout: Bento Grid Style -->
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 mb-6">
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-4 mb-6">
         <!-- Digital Balance Card (Primary Anchor) -->
-        <div class="lg:col-span-7 relative overflow-hidden rounded-xl p-8 flex flex-col justify-between min-h-[260px] bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-xl shadow-primary/20">
+        <div class="lg:col-span-7 relative overflow-hidden rounded-xl p-5 sm:p-6 flex flex-col justify-between min-h-[260px] bg-gradient-to-br from-primary to-primary-container text-on-primary shadow-xl shadow-primary/20">
             <div class="relative z-10">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-3">
@@ -48,7 +48,7 @@
 
         <!-- Stats & Quick Actions -->
         <div class="lg:col-span-5 grid grid-cols-2 gap-4">
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+            <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 shadow-sm">
                 <div class="flex items-center gap-2 mb-2">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">trending_up</span>
                     <p class="text-xs text-on-surface-variant font-medium">Penghasilan Hari Ini</p>
@@ -56,7 +56,7 @@
                 <p class="text-2xl font-bold text-on-surface">Rp {{ number_format($penghasilanHariIni ?? 0, 0, ',', '.') }}</p>
             </div>
             
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm">
+            <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 shadow-sm">
                 <div class="flex items-center gap-2 mb-2">
                     <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">payments</span>
                     <p class="text-xs text-on-surface-variant font-medium">Transaksi Hari Ini</p>
@@ -64,7 +64,7 @@
                 <p class="text-2xl font-bold text-on-surface">{{ $transaksiHariIni ?? 0 }}</p>
             </div>
             
-            <div class="bg-surface-container-lowest rounded-xl p-6 shadow-sm col-span-2">
+            <div class="bg-surface-container-lowest rounded-xl p-4 sm:p-5 shadow-sm col-span-2">
                 <div class="flex items-center justify-between mb-4">
                     <div class="flex items-center gap-2">
                         <span class="material-symbols-outlined text-primary" style="font-variation-settings: 'FILL' 1;">analytics</span>
@@ -75,7 +75,7 @@
             </div>
             
             <!-- Tarik Tunai Quick Action -->
-            <a href="{{ route('petugas.tarik-tunai') }}" class="bg-tertiary-container/20 rounded-xl p-6 flex flex-col justify-center group cursor-pointer hover:bg-tertiary-container/30 transition-colors col-span-2">
+            <a href="{{ route('petugas.tarik-tunai') }}" class="bg-tertiary-container/20 rounded-xl p-4 sm:p-5 flex flex-col justify-center group cursor-pointer hover:bg-tertiary-container/30 transition-colors col-span-2">
                 <div class="flex items-center justify-between">
                     <div>
                         <p class="text-xs text-on-tertiary-container font-bold mb-1">Tarik Tunai</p>
@@ -88,7 +88,7 @@
     </div>
 
     <!-- Transaction Chart -->
-    <div class="bg-surface-container-lowest p-8 rounded-xl shadow-sm mb-6">
+    <div class="bg-surface-container-lowest p-5 sm:p-6 rounded-xl shadow-sm mb-6">
         <div class="flex justify-between items-center mb-10">
             <div>
                 <h3 class="font-headline font-bold text-xl text-primary">Weekly Transaction Trends</h3>
@@ -117,7 +117,7 @@
 
     <!-- Recent Transactions -->
     <div class="bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm">
-        <div class="p-6 border-b border-surface-container flex items-center justify-between">
+        <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Riwayat Transaksi</h3>
             <a href="{{ route('petugas.riwayat') }}" class="text-xs font-bold text-primary hover:underline">View All</a>
         </div>
@@ -146,7 +146,7 @@
                     </div>
                 </div>
             @empty
-                <div class="p-8 text-center">
+                <div class="p-5 sm:p-6 text-center">
                     <span class="material-symbols-outlined text-4xl text-outline mb-2">receipt_long</span>
                     <p class="text-sm text-on-surface-variant">Belum ada transaksi hari ini</p>
                 </div>
