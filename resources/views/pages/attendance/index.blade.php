@@ -181,95 +181,146 @@
     @endunless
 
     @if($isManualMode)
-    <form method="GET" action="{{ route($routePrefix.'.attendance.manual') }}" class="grid gap-3 rounded-xl bg-surface-container-lowest p-4 shadow-sm md:grid-cols-[220px_minmax(0,1fr)_auto]">
-        <label class="text-xs font-bold text-on-surface-variant">Tanggal
-            <input type="date" name="date" value="{{ $date->toDateString() }}" class="input-field mt-1">
-        </label>
-        <label class="text-xs font-bold text-on-surface-variant">Cari Santri
-            <input type="search" name="search" value="{{ request('search') }}" placeholder="Nama atau NIS" class="input-field mt-1">
-        </label>
-        <button class="btn-primary self-end"><span class="material-symbols-outlined">filter_alt</span> Terapkan</button>
+    <form method="GET" action="{{ route($routePrefix.'.attendance.manual') }}" class="flex flex-col gap-4 rounded-2xl bg-surface-container-lowest p-5 shadow-sm border border-outline-variant/10">
+        <div class="grid gap-3 md:grid-cols-[220px_1fr_auto]">
+            <label class="text-xs font-bold text-on-surface-variant flex flex-col gap-1.5">
+                Tanggal
+                <input type="date" name="date" value="{{ $date->toDateString() }}" class="input-field">
+            </label>
+            <label class="text-xs font-bold text-on-surface-variant flex flex-col gap-1.5">
+                Cari Santri
+                <input type="search" name="search" value="{{ request('search') }}" placeholder="Nama atau NIS" class="input-field">
+            </label>
+            <button class="btn-primary self-end h-[46px]"><span class="material-symbols-outlined">filter_alt</span> Terapkan</button>
+        </div>
+        
+        <div class="border-t border-outline-variant/10 pt-4 flex flex-col sm:flex-row sm:items-center gap-3">
+            <span class="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 shrink-0 select-none">
+                <span class="material-symbols-outlined text-base">meeting_room</span> Filter Kamar:
+            </span>
+            <div class="flex flex-wrap items-center gap-1.5 overflow-x-auto whitespace-nowrap py-1">
+                <!-- All Rooms Option -->
+                <label class="relative flex items-center cursor-pointer select-none">
+                    <input type="radio" name="kamar" value="" onchange="this.form.submit()" @checked(!request('kamar')) class="peer sr-only">
+                    <div class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary hover:bg-surface-container-high active:scale-[0.97]">
+                        Semua Kamar
+                    </div>
+                </label>
+
+                @foreach(range(1, 8) as $roomNum)
+                    @php
+                        $roomVal = 'kamar_'.$roomNum;
+                    @endphp
+                    <label class="relative flex items-center cursor-pointer select-none">
+                        <input type="radio" name="kamar" value="{{ $roomVal }}" onchange="this.form.submit()" @checked(request('kamar') === $roomVal) class="peer sr-only">
+                        <div class="px-3.5 py-1.5 rounded-lg text-xs font-black uppercase tracking-wider transition-all bg-surface-container-low text-on-surface-variant peer-checked:bg-primary peer-checked:text-on-primary hover:bg-surface-container-high active:scale-[0.97]">
+                            Kamar {{ $roomNum }}
+                        </div>
+                    </label>
+                @endforeach
+            </div>
+        </div>
     </form>
 
-    <form method="POST" action="{{ route($routePrefix.'.attendance.bulk-update') }}" class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm">
-        @csrf
-        @method('PUT')
-        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
-        <div class="flex flex-col gap-4 border-b border-outline-variant/10 p-5 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-                <h2 class="font-headline text-lg font-black text-primary">Daftar Absensi Santri</h2>
-                <p class="mt-1 text-sm text-on-surface-variant">{{ $date->translatedFormat('d F Y') }}</p>
+    <!-- Main Content Table -->
+    <div class="w-full">
+        <form method="POST" action="{{ route($routePrefix.'.attendance.bulk-update') }}" class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/10">
+            @csrf
+            @method('PUT')
+            <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+            <div class="flex flex-col gap-4 border-b border-outline-variant/10 p-5 sm:flex-row sm:items-center sm:justify-between">
+                <div>
+                    <h2 class="font-headline text-lg font-black text-primary">Daftar Absensi Santri</h2>
+                    <p class="mt-1 text-sm text-on-surface-variant">
+                        {{ $date->translatedFormat('d F Y') }} 
+                        @if(request('kamar'))
+                             · {{ ucwords(str_replace('_', ' ', request('kamar'))) }}
+                        @endif
+                    </p>
+                </div>
+                @if($santriList->isNotEmpty())
+                    <button class="btn-primary justify-center">
+                        <span class="material-symbols-outlined">save</span>
+                        Simpan Semua Perubahan
+                    </button>
+                @endif
             </div>
-            @if($santriList->isNotEmpty())
-                <button class="btn-primary justify-center">
-                    <span class="material-symbols-outlined">save</span>
-                    Simpan Semua Perubahan
-                </button>
-            @endif
-        </div>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-surface-container-low text-xs uppercase tracking-wider text-on-surface-variant">
-                    <tr>
-                        <th class="px-5 py-4">Santri</th>
-                        <th class="px-5 py-4">Kamar</th>
-                        <th class="px-5 py-4">Status</th>
-                        <th class="px-5 py-4">Metode / Izin</th>
-                        <th class="px-5 py-4">Ubah Status</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-outline-variant/10">
-                    @forelse($santriList as $santri)
-                        @php
-                            $attendance = $santri->attendances->first();
-                            $activePermission = $santri->santriPermissions->first();
-                            $status = $attendance?->status ?? ($activePermission ? 'izin' : ($date->isBefore(today()) ? 'ghoib' : 'belum'));
-                            $statusStyle = match($status) {
-                                'hadir' => 'bg-green-50 text-green-700',
-                                'izin' => 'bg-amber-50 text-amber-700',
-                                'ghoib' => 'bg-red-50 text-red-700',
-                                default => 'bg-surface-container text-on-surface-variant',
-                            };
-                        @endphp
-                        <tr id="santri-{{ $santri->id }}" class="hover:bg-surface-container-low/40">
-                            <td class="px-5 py-4">
-                                <p class="font-bold text-on-surface">{{ $santri->name }}</p>
-                                <p class="text-xs text-on-surface-variant">NIS {{ $santri->nis ?? '-' }} · RFID {{ filled($santri->rfid_code) ? 'Terdaftar' : 'Belum ada' }}</p>
-                            </td>
-                            <td class="px-5 py-4 text-sm font-semibold text-on-surface-variant">{{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}</td>
-                            <td class="px-5 py-4">
-                                <span class="inline-flex rounded-full px-3 py-1 text-xs font-black uppercase {{ $statusStyle }}">{{ $status }}</span>
-                            </td>
-                            <td class="px-5 py-4 text-sm text-on-surface-variant">
-                                @if($activePermission)
-                                    Izin s.d. {{ $activePermission->end_date->format('d/m/Y') }}<br>
-                                    <span class="text-xs">{{ $activePermission->reason }}</span>
-                                @else
-                                    {{ ucfirst($attendance?->method ?? 'Belum dicatat') }}
-                                @endif
-                            </td>
-                            <td class="px-5 py-4">
-                                <div class="flex min-w-[310px] gap-2">
-                                    <input type="hidden" name="attendances[{{ $santri->id }}][santri_id]" value="{{ $santri->id }}">
-                                    <select name="attendances[{{ $santri->id }}][status]" class="input-field py-2 text-sm">
-                                        @if($status === 'belum')
-                                            <option value="" selected>Belum dicatat</option>
-                                        @endif
-                                        @foreach(['hadir' => 'Hadir', 'izin' => 'Izin', 'ghoib' => 'Ghoib'] as $value => $label)
-                                            <option value="{{ $value }}" @selected($status === $value)>{{ $label }}</option>
-                                        @endforeach
-                                    </select>
-                                    <input name="attendances[{{ $santri->id }}][notes]" value="{{ $attendance?->notes }}" placeholder="Catatan" class="input-field py-2 text-sm">
-                                </div>
-                            </td>
+            <div class="overflow-x-auto">
+                <table class="w-full text-left">
+                    <thead class="bg-surface-container-low text-xs uppercase tracking-wider text-on-surface-variant">
+                        <tr>
+                            <th class="px-5 py-4">Santri</th>
+                            <th class="px-5 py-4">Kamar</th>
+                            <th class="px-5 py-4">Status</th>
+                            <th class="px-5 py-4">Metode / Izin</th>
+                            <th class="px-5 py-4">Ubah Status</th>
                         </tr>
-                    @empty
-                        <tr><td colspan="5" class="px-5 py-14 text-center text-on-surface-variant">Tidak ada santri yang sesuai.</td></tr>
-                    @endforelse
-                </tbody>
-            </table>
-        </div>
-    </form>
+                    </thead>
+                    <tbody class="divide-y divide-outline-variant/10">
+                        @forelse($santriList as $santri)
+                            @php
+                                $attendance = $santri->attendances->first();
+                                $activePermission = $santri->santriPermissions->first();
+                                $status = $attendance?->status ?? ($activePermission ? 'izin' : ($date->isBefore(today()) ? 'ghoib' : 'belum'));
+                                $statusStyle = match($status) {
+                                    'hadir' => 'bg-green-50 text-green-700',
+                                    'izin' => 'bg-amber-50 text-amber-700',
+                                    'ghoib' => 'bg-red-50 text-red-700',
+                                    default => 'bg-surface-container text-on-surface-variant',
+                                };
+                            @endphp
+                            <tr id="santri-{{ $santri->id }}" class="hover:bg-surface-container-low/40">
+                                <td class="px-5 py-4">
+                                    <p class="font-bold text-on-surface">{{ $santri->name }}</p>
+                                    <p class="text-xs text-on-surface-variant">NIS {{ $santri->nis ?? '-' }} · RFID {{ filled($santri->rfid_code) ? 'Terdaftar' : 'Belum ada' }}</p>
+                                </td>
+                                <td class="px-5 py-4 text-sm font-semibold text-on-surface-variant">{{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}</td>
+                                <td class="px-5 py-4">
+                                    <span class="inline-flex rounded-full px-3 py-1 text-xs font-black uppercase {{ $statusStyle }}">{{ $status }}</span>
+                                </td>
+                                <td class="px-5 py-4 text-sm text-on-surface-variant">
+                                    @if($activePermission)
+                                        Izin s.d. {{ $activePermission->end_date->format('d/m/Y') }}<br>
+                                        <span class="text-xs">{{ $activePermission->reason }}</span>
+                                    @else
+                                        {{ ucfirst($attendance?->method ?? 'Belum dicatat') }}
+                                    @endif
+                                </td>
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-3 min-w-[450px]">
+                                        <input type="hidden" name="attendances[{{ $santri->id }}][santri_id]" value="{{ $santri->id }}">
+                                        
+                                        <!-- Radio Status Group -->
+                                        <div class="flex items-center gap-1.5 bg-surface-container-high/40 p-1.5 rounded-2xl border border-outline-variant/10">
+                                            @foreach(['hadir' => ['Hadir', 'bg-green-50/60 text-green-700/90 peer-checked:bg-green-600 peer-checked:text-white', 'check_circle'], 
+                                                      'izin' => ['Izin', 'bg-amber-50/60 text-amber-700/90 peer-checked:bg-amber-500 peer-checked:text-white', 'badge'], 
+                                                      'ghoib' => ['Ghoib', 'bg-red-50/60 text-red-700/90 peer-checked:bg-error peer-checked:text-white', 'cancel']] as $value => [$label, $styleClasses, $icon])
+                                                <label class="relative flex items-center cursor-pointer select-none">
+                                                    <input type="radio" 
+                                                           name="attendances[{{ $santri->id }}][status]" 
+                                                           value="{{ $value }}" 
+                                                           @checked($status === $value)
+                                                           class="peer sr-only">
+                                                    <div class="flex items-center gap-1.5 px-3 py-1.5 rounded-xl text-xs font-black uppercase tracking-wider transition-all {{ $styleClasses }} hover:opacity-90 active:scale-[0.97]">
+                                                        <span class="material-symbols-outlined text-[16px]" style="font-size: 16px;">{{ $icon }}</span>
+                                                        <span>{{ $label }}</span>
+                                                    </div>
+                                                </label>
+                                            @endforeach
+                                        </div>
+
+                                        <input name="attendances[{{ $santri->id }}][notes]" value="{{ $attendance?->notes }}" placeholder="Catatan" class="input-field py-2 text-sm flex-1">
+                                    </div>
+                                </td>
+                            </tr>
+                        @empty
+                            <tr><td colspan="5" class="px-5 py-14 text-center text-on-surface-variant">Tidak ada santri yang sesuai.</td></tr>
+                        @endforelse
+                    </tbody>
+                </table>
+            </div>
+        </form>
+    </div>
     @endif
 </div>
 @endsection

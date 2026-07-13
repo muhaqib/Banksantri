@@ -33,6 +33,7 @@ class AttendanceController extends Controller
         $date = Carbon::parse($request->input('date', today()->toDateString()));
         $attendanceWindow = $this->attendanceWindow($date);
 
+        $kamar = $request->input('kamar');
         $santriList = User::query()
             ->activeSantri()
             ->with([
@@ -44,6 +45,8 @@ class AttendanceController extends Controller
                 ->where(fn ($searchQuery) => $searchQuery
                     ->where('name', 'like', '%'.$request->search.'%')
                     ->orWhere('nis', 'like', '%'.$request->search.'%')))
+            ->when($kamar, fn ($query) => $query
+                ->whereHas('kamarSantri', fn ($q) => $q->where('kamar', $kamar)))
             ->orderBy('name')
             ->get();
 
@@ -70,6 +73,7 @@ class AttendanceController extends Controller
             'activeRole' => $this->routePrefix($request),
             'routePrefix' => $this->routePrefix($request),
             'date' => $date,
+            'kamar' => $kamar,
             'santriList' => $santriList,
             'recentAttendances' => $recentAttendances,
             'summary' => $summary,
