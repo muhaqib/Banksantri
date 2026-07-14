@@ -40,6 +40,11 @@ class RedirectForbiddenToDashboard
             return false;
         }
 
+        // Avoid redirect loops if the request is already for a dashboard route
+        if ($request->routeIs('dashboard') || $request->routeIs('admin.dashboard') || $request->routeIs('petugas.dashboard') || $request->routeIs('santri.home')) {
+            return false;
+        }
+
         if ($exception instanceof AccessDeniedHttpException || $exception instanceof UnauthorizedException) {
             return true;
         }

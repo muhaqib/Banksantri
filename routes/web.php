@@ -52,12 +52,21 @@ use Illuminate\Support\Facades\Route;
 if (! function_exists('redirectToAuthenticatedDashboard')) {
     function redirectToAuthenticatedDashboard()
     {
-        return match (auth()->user()?->role) {
-            'admin' => redirect()->route('admin.dashboard'),
-            'petugas' => redirect()->route('petugas.dashboard'),
-            'santri' => redirect()->route('santri.home'),
-            default => redirect()->route('login'),
-        };
+        $role = auth()->user()?->role;
+        if (in_array($role, ['admin', 'petugas', 'santri'])) {
+            return match ($role) {
+                'admin' => redirect()->route('admin.dashboard'),
+                'petugas' => redirect()->route('petugas.dashboard'),
+                'santri' => redirect()->route('santri.home'),
+            };
+        }
+
+        // If user has an invalid role, log them out and redirect to login with an error
+        auth()->logout();
+        request()->session()->invalidate();
+        request()->session()->regenerateToken();
+
+        return redirect()->route('login')->with('error', 'Peran pengguna tidak valid. Akun Anda telah dikeluarkan.');
     }
 }
 
