@@ -133,6 +133,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/settlement', [SettlementController::class, 'index'])->middleware('permission:admin.finance.manage')->name('settlement');
         Route::patch('/settlement/{id}/approve', [SettlementController::class, 'approve'])->middleware('permission:admin.finance.manage')->name('settlement.approve');
         Route::patch('/settlement/{id}/reject', [SettlementController::class, 'reject'])->middleware('permission:admin.finance.manage')->name('settlement.reject');
+        Route::post('/settlement/direct-withdraw', [SettlementController::class, 'directWithdraw'])->middleware('permission:admin.finance.manage')->name('settlement.direct');
         Route::middleware('permission:admin.laundry.manage')->group(function () {
             Route::get('/laundry-subscriptions', [LaundrySubscriptionController::class, 'index'])->name('laundry-subscriptions.index');
             Route::post('/laundry-subscriptions', [LaundrySubscriptionController::class, 'store'])->name('laundry-subscriptions.store');

@@ -53,15 +53,16 @@
             </div>
         </div>
         
-        <div class="overflow-x-auto">
+        <!-- Desktop Table View -->
+        <div class="hidden md:block overflow-x-auto">
             <table class="w-full border-separate border-spacing-0 text-left">
                 <thead>
-                    <tr class="bg-surface-container-low text-xs font-black uppercase text-on-surface">
-                        <th class="px-5 py-4">Nama Santri</th>
-                        <th class="px-5 py-4 text-center w-[120px]">Hadir</th>
-                        <th class="px-5 py-4 text-center w-[120px]">Izin</th>
-                        <th class="px-5 py-4 text-center w-[120px]">Ghoib</th>
-                        <th class="px-5 py-4 text-center w-[150px]">Aksi</th>
+                    <tr class="bg-surface-container-low/50 text-[10px] uppercase tracking-wider text-on-surface-variant">
+                        <th class="px-4 py-3">Nama Santri</th>
+                        <th class="px-4 py-3 text-center w-[80px]">Hadir</th>
+                        <th class="px-4 py-3 text-center w-[80px]">Izin</th>
+                        <th class="px-4 py-3 text-center w-[80px]">Ghoib</th>
+                        <th class="px-4 py-3 text-center w-[120px]">Aksi</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-outline-variant/10">
@@ -70,52 +71,88 @@
                             $statusCounts = $santri->attendances->countBy('status');
                         @endphp
                         <tr class="bg-surface-container-lowest hover:bg-surface-container-low/40">
-                            <td class="px-5 py-4">
-                                <div class="flex min-w-0 items-center gap-4">
-                                    <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                                        <span class="material-symbols-outlined">account_circle</span>
-                                    </div>
-                                    <div class="min-w-0">
-                                        <p class="truncate font-bold text-on-surface">{{ $santri->name }}</p>
-                                        <div class="mt-1 flex flex-wrap items-center gap-2 text-[11px] font-semibold text-on-surface-variant">
-                                            <span>NIS {{ $santri->nis ?? '-' }}</span>
-                                            <span class="h-1 w-1 rounded-full bg-outline-variant"></span>
-                                            <span>{{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}</span>
-                                        </div>
-                                    </div>
-                                </div>
+                            <td class="px-4 py-2.5">
+                                <p class="text-sm font-semibold text-on-surface">{{ $santri->name }}</p>
+                                <p class="text-[10px] text-on-surface-variant mt-0.5">
+                                    NIS {{ $santri->nis ?? '-' }} · {{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}
+                                </p>
                             </td>
-                            <td class="px-5 py-4 text-center">
-                                <span class="inline-flex items-center justify-center rounded-full bg-green-50 px-3 py-1 text-xs font-bold text-green-700 border border-green-200/30">
-                                    {{ $statusCounts->get('hadir', 0) }} Hari
+                            <td class="px-4 py-2.5 text-center">
+                                <span class="inline-flex items-center justify-center rounded-md bg-green-50 text-green-700 border border-green-200/20 px-2.5 py-0.5 text-xs font-bold shadow-sm">
+                                    {{ $statusCounts->get('hadir', 0) }}
                                 </span>
                             </td>
-                            <td class="px-5 py-4 text-center">
-                                <span class="inline-flex items-center justify-center rounded-full bg-amber-50 px-3 py-1 text-xs font-bold text-amber-700 border border-amber-200/30">
-                                    {{ $statusCounts->get('izin', 0) }} Hari
+                            <td class="px-4 py-2.5 text-center">
+                                <span class="inline-flex items-center justify-center rounded-md bg-amber-50 text-amber-700 border border-amber-200/20 px-2.5 py-0.5 text-xs font-bold shadow-sm">
+                                    {{ $statusCounts->get('izin', 0) }}
                                 </span>
                             </td>
-                            <td class="px-5 py-4 text-center">
-                                <span class="inline-flex items-center justify-center rounded-full bg-red-50 px-3 py-1 text-xs font-bold text-red-700 border border-red-200/30">
-                                    {{ $statusCounts->get('ghoib', 0) }} Hari
+                            <td class="px-4 py-2.5 text-center">
+                                <span class="inline-flex items-center justify-center rounded-md bg-red-50 text-red-700 border border-red-200/20 px-2.5 py-0.5 text-xs font-bold shadow-sm">
+                                    {{ $statusCounts->get('ghoib', 0) }}
                                 </span>
                             </td>
-                            <td class="px-5 py-4 text-center">
-                                <button type="button" @click="openDetail({{ $santri->id }}, {{ $month }}, {{ $year }})" class="btn-secondary py-1.5 px-3 text-xs inline-flex items-center gap-1.5 justify-center shadow-sm cursor-pointer">
-                                    <span class="material-symbols-outlined text-sm">calendar_month</span>
+                            <td class="px-4 py-2.5 text-center">
+                                <button type="button" @click="openDetail({{ $santri->id }}, {{ $month }}, {{ $year }})" class="btn-secondary py-1 px-2.5 text-[10px] inline-flex items-center gap-1 justify-center shadow-sm cursor-pointer h-[30px]">
+                                    <span class="material-symbols-outlined text-[14px]">calendar_month</span>
                                     Detail
                                 </button>
                             </td>
                         </tr>
                     @empty
                         <tr>
-                            <td colspan="5" class="px-5 py-14 text-center text-on-surface-variant">
+                            <td colspan="5" class="px-4 py-10 text-center text-xs text-on-surface-variant">
                                 Tidak ada santri yang sesuai dengan filter.
                             </td>
                         </tr>
                     @endforelse
                 </tbody>
             </table>
+        </div>
+
+        <!-- Mobile Card View -->
+        <div class="block md:hidden divide-y divide-outline-variant/10">
+            @forelse($monthlySantri as $santri)
+                @php
+                    $statusCounts = $santri->attendances->countBy('status');
+                @endphp
+                <div class="p-4 space-y-3 bg-surface-container-lowest">
+                    <div class="flex items-center gap-3">
+                        <div class="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                            <span class="material-symbols-outlined text-lg">account_circle</span>
+                        </div>
+                        <div class="min-w-0 flex-1">
+                            <h4 class="font-bold text-sm text-on-surface truncate">{{ $santri->name }}</h4>
+                            <p class="text-[11px] text-on-surface-variant font-semibold">
+                                NIS {{ $santri->nis ?? '-' }} | {{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center justify-between gap-2 pt-1">
+                        <div class="flex items-center gap-1.5 text-[10px] font-bold">
+                            <span class="bg-green-50 text-green-700 border border-green-200/20 px-2.5 py-0.5 rounded shadow-sm">
+                                H: {{ $statusCounts->get('hadir', 0) }}
+                            </span>
+                            <span class="bg-amber-50 text-amber-700 border border-amber-200/20 px-2.5 py-0.5 rounded shadow-sm">
+                                I: {{ $statusCounts->get('izin', 0) }}
+                            </span>
+                            <span class="bg-red-50 text-red-700 border border-red-200/20 px-2.5 py-0.5 rounded shadow-sm">
+                                G: {{ $statusCounts->get('ghoib', 0) }}
+                            </span>
+                        </div>
+                        
+                        <button type="button" @click="openDetail({{ $santri->id }}, {{ $month }}, {{ $year }})" class="btn-secondary py-1 px-2.5 text-[10px] inline-flex items-center gap-1 justify-center shadow-sm cursor-pointer">
+                            <span class="material-symbols-outlined text-xs">calendar_month</span>
+                            Detail
+                        </button>
+                    </div>
+                </div>
+            @empty
+                <div class="px-5 py-14 text-center text-on-surface-variant text-sm bg-surface-container-lowest">
+                    Tidak ada santri yang sesuai dengan filter.
+                </div>
+            @endforelse
         </div>
 
         @if($monthlySantri->hasPages())

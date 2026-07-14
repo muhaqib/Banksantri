@@ -6,12 +6,12 @@
 @section('content')
 <div>
     <!-- Page Heading -->
-    <div class="flex items-end justify-between">
+    <div class="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
         <div>
             <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Selamat Berkhidmah</h2>
             <p class="text-on-surface-variant text-sm mt-1">Berkhidmah dengan Ikhlas, Menjemput berkah tanpa batas.</p>
         </div>
-        <div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2">
+        <div class="bg-surface-container-low px-4 py-2 rounded-xl flex items-center gap-2 self-start sm:self-auto shadow-sm">
             <span class="material-symbols-outlined text-sm text-primary">calendar_today</span>
             <span class="text-xs font-semibold text-primary">{{ now()->translatedFormat('d F Y') }}</span>
         </div>

@@ -119,9 +119,54 @@ class AdminTransactionManagementTest extends TestCase
             ->assertDontSee('Santri Rahasia')
             ->assertDontSee('Aktivitas admin lain')
             ->assertDontSee('99.000');
-    }
+     }
 
-    private function admin(): User
+     public function test_admin_can_perform_direct_petugas_withdrawal(): void
+     {
+         $admin = $this->admin();
+         $petugas = User::factory()->create([
+             'role' => 'petugas',
+             'saldo' => 100000
+         ]);
+
+         $response = $this->actingAs($admin)->post(route('admin.settlement.direct'), [
+             'petugas_id' => $petugas->id,
+             'nominal' => 40000,
+             'catatan' => 'Penarikan paksa oleh admin'
+         ]);
+
+         $response->assertRedirect(route('admin.settlement'));
+         $response->assertSessionHas('success', 'Penarikan langsung berhasil dilakukan.');
+         $this->assertSame(60000, (int) $petugas->fresh()->saldo);
+
+         $request = WithdrawalRequest::firstOrFail();
+         $this->assertSame('approved', $request->status);
+         $this->assertSame(40000, (int) $request->nominal);
+         $this->assertSame($admin->id, $request->approved_by);
+         $this->assertSame('Penarikan paksa oleh admin', $request->catatan);
+     }
+
+     public function test_direct_petugas_withdrawal_validates_insufficient_balance(): void
+     {
+         $admin = $this->admin();
+         $petugas = User::factory()->create([
+             'role' => 'petugas',
+             'saldo' => 20000
+         ]);
+
+         $response = $this->actingAs($admin)->post(route('admin.settlement.direct'), [
+             'petugas_id' => $petugas->id,
+             'nominal' => 40000,
+             'catatan' => 'Mencoba tarik berlebih'
+         ]);
+
+         $response->assertRedirect(route('admin.settlement'));
+         $response->assertSessionHas('error', 'Saldo petugas tidak mencukupi untuk melakukan penarikan.');
+         $this->assertSame(20000, (int) $petugas->fresh()->saldo);
+         $this->assertSame(0, WithdrawalRequest::count());
+     }
+
+     private function admin(): User
     {
         $admin = User::factory()->create(['role' => 'admin']);
         $admin->assignRole(Role::findOrCreate('admin'));

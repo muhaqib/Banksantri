@@ -24,8 +24,7 @@
     <section class="relative overflow-hidden rounded-xl bg-gradient-to-br from-primary via-primary to-primary-container text-white p-4 sm:p-5 md:p-9 shadow-xl shadow-primary/15">
         <div class="relative z-10 max-w-3xl">
             <p class="text-xs font-bold uppercase tracking-[0.24em] text-primary-fixed-dim">{{ now()->translatedFormat('l, d F Y') }}</p>
-            <h2 class="mt-3 font-headline text-lg md:text-2xl font-bold tracking-tight">Selamat berkhidmah,
-                <div> {{ auth()->user()->name }}.</h2> </div>
+            <h2 class="mt-3 font-headline text-lg md:text-2xl font-bold tracking-tight">Selamat berkhidmah, {{ auth()->user()->name }}.</h2>
             <p class="mt-3 text-sm md:text-base text-primary-fixed/80 leading-relaxed">"Berkhidmah dengan Ikhlas, Menjemput berkah tanpa batas."</p>
         </div>
         <div class="absolute -right-20 -top-24 w-72 h-72 rounded-full bg-white/10 blur-2xl"></div>

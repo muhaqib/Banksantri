@@ -245,7 +245,8 @@
                     </button>
                 @endif
             </div>
-            <div class="overflow-x-auto">
+            <!-- Desktop Table View -->
+            <div class="hidden md:block overflow-x-auto">
                 <table class="w-full text-left">
                     <thead class="bg-surface-container-low/50 text-[10px] uppercase tracking-wider text-on-surface-variant">
                         <tr>
@@ -318,6 +319,67 @@
                         @endforelse
                     </tbody>
                 </table>
+            </div>
+
+            <!-- Mobile View (Card List) -->
+            <div class="block md:hidden divide-y divide-outline-variant/10">
+                @forelse($santriList as $santri)
+                    @php
+                        $attendance = $santri->attendances->first();
+                        $activePermission = $santri->santriPermissions->first();
+                        $status = $attendance?->status ?? ($activePermission ? 'izin' : ($date->isBefore(today()) ? 'ghoib' : 'belum'));
+                        $statusStyle = match($status) {
+                            'hadir' => 'bg-green-50 text-green-700 border-green-200/50',
+                            'izin' => 'bg-amber-50 text-amber-700 border-amber-200/50',
+                            'ghoib' => 'bg-red-50 text-red-700 border-red-200/50',
+                            default => 'bg-surface-container text-on-surface-variant border-outline-variant/20',
+                        };
+                    @endphp
+                    <div class="p-4 space-y-3 bg-surface-container-lowest">
+                        <div class="flex items-start justify-between gap-3">
+                            <div>
+                                <h4 class="font-bold text-sm text-on-surface">{{ $santri->name }}</h4>
+                                <p class="text-[10px] text-on-surface-variant mt-0.5">
+                                    NIS {{ $santri->nis ?? '-' }} · {{ ucwords(str_replace('_', ' ', $santri->kamarSantri?->kamar ?? '-')) }}
+                                </p>
+                            </div>
+                            <span class="inline-flex rounded-md border px-2 py-0.5 text-[8px] font-bold uppercase {{ $statusStyle }}">{{ $status }}</span>
+                        </div>
+
+                        @if($activePermission)
+                            <div class="bg-amber-50/20 text-amber-800 border border-amber-200/30 p-2 rounded-lg text-[10px] font-medium leading-relaxed">
+                                <span class="font-bold">Izin s.d. {{ $activePermission->end_date->format('d/m/Y') }}</span>: {{ $activePermission->reason }}
+                            </div>
+                        @endif
+
+                        <div class="space-y-2">
+                            <input type="hidden" name="attendances[{{ $santri->id }}][santri_id]" value="{{ $santri->id }}">
+                            
+                            <!-- Radio Status Group (Mobile full width) -->
+                            <div class="flex items-center gap-1 bg-surface-container-low p-1 rounded-lg border border-outline-variant/10">
+                                @foreach(['hadir' => ['Hadir', 'bg-green-50/40 text-green-700/80 peer-checked:bg-green-600 peer-checked:text-white', 'check_circle'], 
+                                          'izin' => ['Izin', 'bg-amber-50/40 text-amber-700/80 peer-checked:bg-amber-500 peer-checked:text-white', 'badge'], 
+                                          'ghoib' => ['Ghoib', 'bg-red-50/40 text-red-700/80 peer-checked:bg-error peer-checked:text-white', 'cancel']] as $value => [$label, $styleClasses, $icon])
+                                    <label class="relative flex-1 flex items-center justify-center cursor-pointer select-none">
+                                        <input type="radio" 
+                                               name="attendances[{{ $santri->id }}][status]" 
+                                               value="{{ $value }}" 
+                                               @checked($status === $value)
+                                               class="peer sr-only">
+                                        <div class="w-full flex items-center justify-center gap-1 py-2 rounded-md text-[10px] font-black uppercase transition-all {{ $styleClasses }} hover:opacity-90 active:scale-[0.97]">
+                                            <span class="material-symbols-outlined text-[12px]" style="font-size: 12px;">{{ $icon }}</span>
+                                            <span>{{ $label }}</span>
+                                        </div>
+                                    </label>
+                                @endforeach
+                            </div>
+
+                            <input name="attendances[{{ $santri->id }}][notes]" value="{{ $attendance?->notes }}" placeholder="Catatan khusus absensi santri..." class="input-field w-full py-1.5 px-3 text-xs h-[36px]">
+                        </div>
+                    </div>
+                @empty
+                    <div class="p-10 text-center text-xs text-on-surface-variant bg-surface-container-lowest">Tidak ada santri yang sesuai.</div>
+                @endforelse
             </div>
         </form>
     </div>
