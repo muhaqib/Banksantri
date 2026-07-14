@@ -12,7 +12,7 @@ class SantriApiAuthTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function test_santri_can_login_with_nis_and_pin_and_receive_token(): void
+    public function test_santri_can_login_with_nis_and_receive_token(): void
     {
         $santri = User::factory()->create([
             'name' => 'Santri Test',
@@ -20,13 +20,11 @@ class SantriApiAuthTest extends TestCase
             'role' => 'santri',
             'santri_status' => 'aktif',
             'nis' => '250005',
-            'pin' => Hash::make('123456'),
             'saldo' => 25000,
         ]);
 
         $response = $this->postJson('/api/santri/login', [
             'nis' => '250005',
-            'pin' => '123456',
         ]);
 
         $response
@@ -50,19 +48,12 @@ class SantriApiAuthTest extends TestCase
         $this->assertTrue($token->can('santri'));
     }
 
-    public function test_santri_login_rejects_invalid_pin(): void
+    public function test_santri_login_rejects_invalid_nis(): void
     {
-        User::factory()->create([
-            'role' => 'santri',
-            'nis' => '250005',
-            'pin' => Hash::make('123456'),
-        ]);
-
         $this->postJson('/api/santri/login', [
-            'nis' => '250005',
-            'pin' => '000000',
+            'nis' => '999999',
         ])
             ->assertUnprocessable()
-            ->assertJsonPath('message', 'NIS atau PIN salah.');
+            ->assertJsonPath('message', 'NIS tidak ditemukan.');
     }
 }

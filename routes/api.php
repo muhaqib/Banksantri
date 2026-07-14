@@ -4,6 +4,7 @@ use App\Http\Controllers\Api\BlogController as ApiBlogController;
 use App\Http\Controllers\Api\GalleryController as ApiGalleryController;
 use App\Http\Controllers\Api\RegistrationController as ApiRegistrationController;
 use App\Http\Controllers\Api\SantriAuthController;
+use App\Http\Controllers\Api\SantriAttendanceController;
 use App\Http\Controllers\Api\SantriDashboardController;
 use App\Http\Controllers\Api\SantriHealthController;
 use App\Http\Controllers\Api\SantriPermissionController;
@@ -86,6 +87,9 @@ Route::middleware('auth:sanctum')->prefix('santri')->group(function () {
 
     // Tarbiyah
     Route::get('/tarbiyah', [SantriTarbiyahController::class, 'index']);
+
+    // Absensi
+    Route::get('/attendance', [SantriAttendanceController::class, 'index']);
 
     // Kesehatan
     Route::get('/health', [SantriHealthController::class, 'index']);

@@ -10,13 +10,12 @@ use Illuminate\Validation\ValidationException;
 class SantriAuthController extends Controller
 {
     /**
-     * Login santri with NIS and PIN.
+     * Login santri with NIS.
      */
     public function login(Request $request)
     {
         $validated = $request->validate([
             'nis' => 'required|string',
-            'pin' => 'required|string|size:6',
         ]);
 
         $user = User::where('role', 'santri')
@@ -25,13 +24,7 @@ class SantriAuthController extends Controller
 
         if (! $user) {
             throw ValidationException::withMessages([
-                'nis' => ['NIS atau PIN salah.'],
-            ]);
-        }
-
-        if (! $user->verifyPin($validated['pin'])) {
-            throw ValidationException::withMessages([
-                'nis' => ['NIS atau PIN salah.'],
+                'nis' => ['NIS tidak ditemukan.'],
             ]);
         }
 
