@@ -18,13 +18,19 @@
     </div>
 
     <form method="GET" class="grid gap-2.5 rounded-xl bg-surface-container-lowest p-3 shadow-sm border border-outline-variant/10 md:grid-cols-5">
-        <input type="date" name="date" value="{{ $date->toDateString() }}" class="input-field py-2.5">
+        <input type="date" name="date" value="{{ $date->toDateString() }}" min="2026-07-01" class="input-field py-2.5">
         <select name="month" class="input-field py-2.5">
             @foreach(range(1, 12) as $number)
-                <option value="{{ $number }}" @selected($month === $number)>{{ Carbon\Carbon::create(null, $number)->translatedFormat('F') }}</option>
+                @if($year > 2026 || $number >= 7)
+                    <option value="{{ $number }}" @selected($month === $number)>{{ Carbon\Carbon::create(null, $number)->translatedFormat('F') }}</option>
+                @endif
             @endforeach
         </select>
-        <input type="number" name="year" value="{{ $year }}" min="2020" max="2100" class="input-field py-2.5">
+        <select name="year" class="input-field py-2.5">
+            @foreach(range(2026, max(2026, now()->year) + 1) as $y)
+                <option value="{{ $y }}" @selected($year == $y)>{{ $y }}</option>
+            @endforeach
+        </select>
         <select name="kamar" class="input-field py-2.5">
             <option value="">Semua Kamar</option>
             @foreach($kamarList as $room)<option value="{{ $room }}" @selected($kamar === $room)>{{ ucwords(str_replace('_', ' ', $room)) }}</option>@endforeach
@@ -55,25 +61,109 @@
             </div>
         </div>
 
-        <div class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px]">
-            <div class="flex items-center justify-between">
-                <span class="material-symbols-outlined text-error text-lg">cancel</span>
-                <span class="text-[9px] font-bold text-error uppercase tracking-wider">Ghoib</span>
+        <!-- Ghoib Card and Modal -->
+        <div x-data="{ open: false }">
+            <div @click="open = true" class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px] cursor-pointer hover:border-red-500/30 hover:bg-red-50/5 transition-all group h-full">
+                <div class="flex items-center justify-between">
+                    <span class="material-symbols-outlined text-error text-lg">cancel</span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-red-800 bg-red-50 border border-red-200/50 px-2 py-0.5 rounded-md group-hover:scale-105 transition-all">Detail</span>
+                </div>
+                <div>
+                    <p class="text-xl font-extrabold text-error">{{ $totals['ghoib'] ?? 0 }}</p>
+                    <p class="text-[10px] font-medium text-on-surface-variant mt-0.5">Ghoib (Bulanan)</p>
+                </div>
             </div>
-            <div>
-                <p class="text-xl font-extrabold text-error">{{ $totals['ghoib'] ?? 0 }}</p>
-                <p class="text-[10px] font-medium text-on-surface-variant">Ghoib (Bulanan)</p>
+
+            <!-- Modal Ghoib -->
+            <div x-show="open" x-cloak class="fixed inset-0 z-[100] overflow-y-auto" @keydown.escape.window="open = false; document.body.classList.remove('overflow-hidden')" x-init="$watch('open', value => { if (value) document.body.classList.add('overflow-hidden'); else document.body.classList.remove('overflow-hidden'); })">
+                <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="open = false"></div>
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div class="w-full max-w-xl rounded-xl bg-surface p-5 md:p-4 sm:p-5 shadow-2xl border border-outline-variant/10" @click.stop>
+                        <div class="flex items-center justify-between mb-5 border-b border-outline-variant/10 pb-3">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-error">Daftar Santri Ghoib</p>
+                                <h3 class="font-headline font-bold text-lg text-on-surface mt-0.5">Ghoib Bulan {{ $monthName }}</h3>
+                            </div>
+                            <button @click="open = false" class="p-1.5 rounded-lg hover:bg-surface-container cursor-pointer">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                        <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-1 text-left">
+                            @forelse($monthlyGhoib as $detail)
+                                <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/10 hover:border-error/20 transition-colors">
+                                    <div>
+                                        <p class="font-semibold text-on-surface text-sm">{{ $detail->santri->name }}</p>
+                                        <p class="text-[10px] text-on-surface-variant font-medium mt-0.5">
+                                            NIS: {{ $detail->santri->nis ?? '-' }} | Kamar: {{ ucwords(str_replace('_', ' ', $detail->kamar)) }}
+                                        </p>
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-red-50 text-red-700 border border-red-200/50">
+                                        {{ $detail->count }} Hari
+                                    </span>
+                                </div>
+                            @empty
+                                <div class="text-center py-10">
+                                    <span class="material-symbols-outlined text-4xl text-error/30">cancel</span>
+                                    <p class="mt-2 text-xs font-semibold text-on-surface">Tidak ada santri yang ghoib</p>
+                                    <p class="text-[10px] text-on-surface-variant">Seluruh santri aktif tercatat hadir atau izin pada bulan ini.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px]">
-            <div class="flex items-center justify-between">
-                <span class="material-symbols-outlined text-amber-600 text-lg">badge</span>
-                <span class="text-[9px] font-bold text-amber-700 uppercase tracking-wider">Izin</span>
+        <!-- Izin Bulanan Card and Modal -->
+        <div x-data="{ open: false }">
+            <div @click="open = true" class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px] cursor-pointer hover:border-amber-500/30 hover:bg-amber-50/5 transition-all group h-full">
+                <div class="flex items-center justify-between">
+                    <span class="material-symbols-outlined text-amber-600 text-lg">badge</span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200/50 px-2 py-0.5 rounded-md group-hover:scale-105 transition-all">Detail</span>
+                </div>
+                <div>
+                    <p class="text-xl font-extrabold text-amber-600">{{ $totals['izin'] ?? 0 }}</p>
+                    <p class="text-[10px] font-medium text-on-surface-variant mt-0.5">Total Izin (Bulanan)</p>
+                </div>
             </div>
-            <div>
-                <p class="text-xl font-extrabold text-amber-600">{{ $totals['izin'] ?? 0 }}</p>
-                <p class="text-[10px] font-medium text-on-surface-variant">Total Izin (Bulanan)</p>
+
+            <!-- Modal Izin -->
+            <div x-show="open" x-cloak class="fixed inset-0 z-[100] overflow-y-auto" @keydown.escape.window="open = false; document.body.classList.remove('overflow-hidden')" x-init="$watch('open', value => { if (value) document.body.classList.add('overflow-hidden'); else document.body.classList.remove('overflow-hidden'); })">
+                <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="open = false"></div>
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div class="w-full max-w-xl rounded-xl bg-surface p-5 md:p-4 sm:p-5 shadow-2xl border border-outline-variant/10" @click.stop>
+                        <div class="flex items-center justify-between mb-5 border-b border-outline-variant/10 pb-3">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Daftar Santri Izin</p>
+                                <h3 class="font-headline font-bold text-lg text-on-surface mt-0.5">Izin Bulan {{ $monthName }}</h3>
+                            </div>
+                            <button @click="open = false" class="p-1.5 rounded-lg hover:bg-surface-container cursor-pointer">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                        <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-1 text-left">
+                            @forelse($monthlyIzin as $detail)
+                                <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/10 hover:border-amber/20 transition-colors">
+                                    <div>
+                                        <p class="font-semibold text-on-surface text-sm">{{ $detail->santri->name }}</p>
+                                        <p class="text-[10px] text-on-surface-variant font-medium mt-0.5">
+                                            NIS: {{ $detail->santri->nis ?? '-' }} | Kamar: {{ ucwords(str_replace('_', ' ', $detail->kamar)) }}
+                                        </p>
+                                    </div>
+                                    <span class="px-2.5 py-0.5 rounded-md text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200/50">
+                                        {{ $detail->count }} Hari
+                                    </span>
+                                </div>
+                            @empty
+                                <div class="text-center py-10">
+                                    <span class="material-symbols-outlined text-4xl text-amber/30">badge</span>
+                                    <p class="mt-2 text-xs font-semibold text-on-surface">Tidak ada santri yang izin</p>
+                                    <p class="text-[10px] text-on-surface-variant">Tidak ada data perizinan tercatat pada bulan ini.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

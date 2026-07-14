@@ -292,6 +292,158 @@ class AttendanceManagementTest extends TestCase
             ->assertDontSee('Izin nikahan');
     }
 
+    public function test_santri_can_view_own_attendance_calendar_and_statistics(): void
+    {
+        $santri = $this->santri();
+        $santri->assignRole(Role::findOrCreate('santri'));
+        $santri->givePermissionTo(Permission::findOrCreate('santri.dashboard.view'));
+
+        $year = now()->year;
+        $month = now()->month;
+
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-05', $year, $month),
+            'status' => 'hadir',
+            'method' => 'rfid',
+            'notes' => 'Tepat waktu',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-06', $year, $month),
+            'status' => 'izin',
+            'method' => 'manual',
+            'notes' => 'Sakit demam',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-07', $year, $month),
+            'status' => 'ghoib',
+            'method' => 'automatic',
+            'notes' => 'Tanpa keterangan',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        $this->actingAs($santri)
+            ->get(route('santri.attendance.index', ['month' => $month, 'year' => $year]))
+            ->assertOk()
+            ->assertSee('Kehadiran Santri')
+            ->assertSee('Laporan Absensi Bulanan Anda')
+            ->assertSee('Tepat waktu')
+            ->assertSee('Sakit demam')
+            ->assertSee('Tanpa keterangan')
+            ->assertSee('Hadir')
+            ->assertSee('Izin')
+            ->assertSee('Ghoib');
+    }
+
+    public function test_admin_can_view_monthly_recap_and_detailed_calendar(): void
+    {
+        $admin = $this->admin();
+        $santri = $this->santri();
+
+        $year = now()->year;
+        $month = now()->month;
+
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-05', $year, $month),
+            'status' => 'hadir',
+            'method' => 'rfid',
+            'notes' => 'Hadir dengan baik',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        // Access the monthly page
+        $this->actingAs($admin)
+            ->get(route('admin.attendance.monthly', ['month' => $month, 'year' => $year]))
+            ->assertOk()
+            ->assertSee($santri->name)
+            ->assertSee('Detail');
+
+        // Access the detail page
+        $response = $this->actingAs($admin)
+            ->getJson(route('admin.attendance.detail', ['santri' => $santri->id, 'month' => $month, 'year' => $year]))
+            ->assertOk();
+
+        $response->assertJsonPath('santri.name', $santri->name);
+        $response->assertJsonFragment([
+            'status' => 'hadir',
+            'notes' => 'Hadir dengan baik',
+        ]);
+    }
+
+    public function test_admin_can_view_monthly_ghoib_and_izin_details_on_dashboard(): void
+    {
+        $admin = $this->admin();
+        $santri = $this->santri();
+
+        $year = now()->year;
+        $month = now()->month;
+
+        // Seed ghoib and izin records
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-05', $year, $month),
+            'status' => 'ghoib',
+            'method' => 'automatic',
+            'notes' => 'Meninggalkan pondok',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        Attendance::create([
+            'santri_id' => $santri->id,
+            'attendance_date' => sprintf('%04d-%02d-06', $year, $month),
+            'status' => 'izin',
+            'method' => 'permission',
+            'notes' => 'Izin sakit',
+            'kamar' => 'kamar_1',
+            'recorded_at' => now(),
+        ]);
+
+        $this->actingAs($admin)
+            ->get(route('admin.attendance.dashboard', ['month' => $month, 'year' => $year]))
+            ->assertOk()
+            ->assertSee('Daftar Santri Ghoib')
+            ->assertSee($santri->name)
+            ->assertSee('1 Hari')
+            ->assertSee('Daftar Santri Izin');
+    }
+
+    public function test_attendance_normalization_prevents_pre_july_2026_queries(): void
+    {
+        $admin = $this->admin();
+        $santri = $this->santri();
+        $santri->assignRole(Role::findOrCreate('santri'));
+        $santri->givePermissionTo(Permission::findOrCreate('santri.dashboard.view'));
+
+        // Query with month 5 (May) and year 2026
+        $response = $this->actingAs($admin)
+            ->get(route('admin.attendance.monthly', ['month' => 5, 'year' => 2026]))
+            ->assertOk();
+
+        // The view variables should be normalized to month 7
+        $response->assertViewHas('month', 7);
+        $response->assertViewHas('year', 2026);
+
+        // For Santri Index view as well
+        $responseSantri = $this->actingAs($santri)
+            ->get(route('santri.attendance.index', ['month' => 5, 'year' => 2026]))
+            ->assertOk();
+
+        $responseSantri->assertViewHas('month', 7);
+        $responseSantri->assertViewHas('year', 2026);
+    }
+
     private function admin(): User
     {
         $admin = User::factory()->create(['role' => 'admin']);

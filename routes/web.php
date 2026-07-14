@@ -30,6 +30,7 @@ use App\Http\Controllers\Petugas\SecurityViolationController as PetugasSecurityV
 use App\Http\Controllers\Petugas\TarbiyahGradeController as PetugasTarbiyahGradeController;
 use App\Http\Controllers\Petugas\TarikTunaiController;
 use App\Http\Controllers\Petugas\TransaksiController;
+use App\Http\Controllers\Santri\AttendanceController as SantriAttendanceController;
 use App\Http\Controllers\Santri\DashboardController as SantriDashboardController;
 use App\Http\Controllers\Santri\HealthController as SantriHealthController;
 use App\Http\Controllers\Santri\PermissionController as SantriPermissionHistoryController;
@@ -192,6 +193,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:admin.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:admin.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:admin.attendance.monthly')->name('attendance.monthly');
+        Route::get('/attendance/{santri}/detail', [AttendanceController::class, 'detail'])->middleware('permission:admin.attendance.monthly')->name('attendance.detail');
         Route::middleware('permission:admin.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
@@ -277,6 +279,7 @@ Route::middleware('auth')->group(function () {
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:petugas.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:petugas.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:petugas.attendance.monthly')->name('attendance.monthly');
+        Route::get('/attendance/{santri}/detail', [AttendanceController::class, 'detail'])->middleware('permission:petugas.attendance.monthly')->name('attendance.detail');
         Route::middleware('permission:petugas.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
@@ -297,6 +300,7 @@ Route::middleware('auth')->group(function () {
     // Santri Routes
     Route::prefix('santri')->name('santri.')->middleware('role:santri')->group(function () {
         Route::get('/home', [SantriDashboardController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('home');
+        Route::get('/attendance', [SantriAttendanceController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('attendance.index');
         Route::get('/riwayat', [SantriRiwayatController::class, 'index'])->middleware('permission:santri.history.view')->name('riwayat');
         Route::get('/permissions', [SantriPermissionHistoryController::class, 'index'])->middleware('permission:santri.dashboard.view')->name('permissions.index');
         Route::get('/health', [SantriHealthController::class, 'index'])->middleware('permission:santri.health.view')->name('health.index');
