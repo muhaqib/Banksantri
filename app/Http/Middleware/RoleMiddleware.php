@@ -22,14 +22,21 @@ class RoleMiddleware
 
         // Check if user has the required role
         if ($request->user()->role !== $role) {
-            // Redirect to appropriate dashboard based on user's actual role
-            if ($request->user()->role === 'admin') {
-                return redirect()->route('admin.dashboard');
-            } elseif ($request->user()->role === 'petugas') {
-                return redirect()->route('petugas.dashboard');
-            } else {
-                return redirect()->route('santri.home');
+            $userRole = $request->user()->role;
+            if (in_array($userRole, ['admin', 'petugas', 'santri'])) {
+                return match ($userRole) {
+                    'admin' => redirect()->route('admin.dashboard'),
+                    'petugas' => redirect()->route('petugas.dashboard'),
+                    'santri' => redirect()->route('santri.home'),
+                };
             }
+
+            // If user has an invalid role, log them out and redirect to login with an error
+            auth()->logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
+
+            return redirect()->route('login')->with('error', 'Peran pengguna tidak valid. Akun Anda telah dikeluarkan.');
         }
 
         return $next($request);

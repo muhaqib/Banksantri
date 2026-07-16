@@ -28,10 +28,7 @@ class SantriAuthController extends Controller
             ]);
         }
 
-        // Revoke existing tokens to prevent accumulation
-        $user->tokens()->delete();
-
-        // Create Sanctum token
+        // Create Sanctum token (tokens are not deleted upon login to support multi-device/concurrent logins)
         $token = $user->createToken('santri-mobile', ['santri'])->plainTextToken;
 
         return response()->json([
