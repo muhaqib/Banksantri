@@ -20,6 +20,7 @@ class SantriPermission extends Model
         'kamar',
         'start_date',
         'end_date',
+        'returned_at',
         'reason',
         'notes',
         'approved_by',
@@ -29,6 +30,7 @@ class SantriPermission extends Model
     protected $casts = [
         'start_date' => 'datetime',
         'end_date' => 'datetime',
+        'returned_at' => 'datetime',
     ];
 
     public function santri()
@@ -44,11 +46,19 @@ class SantriPermission extends Model
     public function scopeActiveOn($query, $date)
     {
         return $query->whereDate('start_date', '<=', $date)
-            ->whereDate('end_date', '>=', $date);
+            ->where(function ($q) use ($date) {
+                $q->whereNull('returned_at')
+                  ->whereDate('end_date', '>=', $date)
+                  ->orWhere(function ($q2) use ($date) {
+                      $q2->whereNotNull('returned_at')
+                         ->whereDate('returned_at', '>=', $date);
+                  });
+            });
     }
 
     public function getIsActiveAttribute(): bool
     {
-        return today()->betweenIncluded($this->start_date, $this->end_date);
+        $end = $this->returned_at ?? $this->end_date;
+        return today()->betweenIncluded($this->start_date, $end);
     }
 }

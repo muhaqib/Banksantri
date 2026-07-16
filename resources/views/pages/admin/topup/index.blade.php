@@ -203,7 +203,7 @@
          x-transition:leave-start="opacity-100"
          x-transition:leave-end="opacity-0"
          class="fixed inset-0 z-50 overflow-y-auto">
-        <div class="fixed inset-1 bg-on-surface/40 transition-opacity" @click="showProofModal = false"></div>
+        <div class="fixed inset-0 bg-on-surface/40 transition-opacity" @click="showProofModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div x-transition:enter="transition ease-out duration-300"
                  x-transition:enter-start="opacity-0 scale-95"
@@ -283,7 +283,7 @@
 
     <!-- Detail Modal -->
     <div x-show="showDetailModal" x-cloak class="fixed inset-0 overflow-y-auto z-50">
-        <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showDetailModal = false"></div>
+        <div class="fixed inset-0 bg-black/50 transition-opacity" @click="showDetailModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in" @click.stop>
                 <div x-show="loading" class="flex items-center justify-center py-12">
@@ -337,8 +337,8 @@
     </div>
 
     <!-- Reject Modal -->
-    <div x-show="showRejectModal" x-cloak class="fixed inset-0 overflow-y-auto">
-        <div class="fixed inset-1 bg-black/50 transition-opacity" @click="showRejectModal = false"></div>
+    <div x-show="showRejectModal" x-cloak class="fixed inset-0 overflow-y-auto z-50">
+        <div class="fixed inset-0 bg-black/50 transition-opacity" @click="showRejectModal = false"></div>
         <div class="flex items-center justify-center min-h-screen p-4">
             <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in" @click.stop>
                 <div class="text-center mb-6">
@@ -463,6 +463,7 @@ function topUpAdmin() {
             this.rejectNote = '';
             this.showRejectModal = true;
             this.showDetailModal = false;
+            this.showProofModal = false;
         },
 
         async confirmReject() {

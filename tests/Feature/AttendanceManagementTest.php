@@ -142,6 +142,47 @@ class AttendanceManagementTest extends TestCase
             ->assertSee('Pulang karena keperluan keluarga.');
     }
 
+    public function test_santri_arrived_marks_returned_at_and_resyncs_attendance(): void
+    {
+        $admin = $this->admin();
+        $santri = $this->santri();
+
+        // Create a permission for today and tomorrow
+        $permission = SantriPermission::create([
+            'permission_number' => 'IZN-TEST-123',
+            'santri_id' => $santri->id,
+            'kamar' => $santri->kamarSantri->kamar,
+            'start_date' => today()->startOfDay(),
+            'end_date' => today()->addDay()->endOfDay(),
+            'reason' => 'Pulang kampung',
+            'created_by' => $admin->id,
+        ]);
+
+        // Sync initial attendance
+        app(\App\Services\AttendanceService::class)->syncPermission($permission);
+
+        // Assert attendance for today exists
+        $this->assertTrue(
+            Attendance::where('santri_id', $santri->id)
+                ->whereDate('attendance_date', today())
+                ->where('status', 'izin')
+                ->exists()
+        );
+
+        // Post to arrived route
+        $response = $this->actingAs($admin)->post(route('admin.permissions.arrived', $permission));
+        $response->assertRedirect();
+
+        // Assert permission has returned_at
+        $permission->refresh();
+        $this->assertNotNull($permission->returned_at);
+
+        // Assert permission index no longer displays it
+        $this->actingAs($admin)->get(route('admin.permissions.index'))
+            ->assertOk()
+            ->assertDontSee($permission->permission_number);
+    }
+
     public function test_midnight_finalization_marks_permission_or_ghoib(): void
     {
         $admin = $this->admin();

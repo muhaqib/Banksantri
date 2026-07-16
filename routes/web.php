@@ -207,6 +207,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:admin.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
+            Route::post('/permissions/{permission}/arrived', [SantriPermissionController::class, 'arrived'])->name('permissions.arrived');
         });
 
         // Blog Management
@@ -293,6 +294,7 @@ Route::middleware('auth')->group(function () {
         Route::middleware('permission:petugas.permissions.manage')->group(function () {
             Route::resource('permissions', SantriPermissionController::class)->except(['show']);
             Route::get('/permissions/{permission}/print', [SantriPermissionController::class, 'print'])->name('permissions.print');
+            Route::post('/permissions/{permission}/arrived', [SantriPermissionController::class, 'arrived'])->name('permissions.arrived');
         });
 
         Route::middleware('permission:petugas.blog.manage')->group(function () {

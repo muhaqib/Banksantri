@@ -14,6 +14,7 @@ class SantriPermissionController extends Controller
     public function index(Request $request)
     {
         $permissions = SantriPermission::query()
+            ->whereNull('returned_at')
             ->with(['santri.kamarSantri', 'creator'])
             ->when($request->filled('kamar'), fn ($query) => $query->where('kamar', $request->kamar))
             ->when($request->filled('month'), fn ($query) => $query
@@ -106,6 +107,22 @@ class SantriPermissionController extends Controller
         $attendanceService->removePermission($snapshot);
 
         return back()->with('success', 'Perizinan berhasil dihapus dan absensi terkait dihitung ulang.');
+    }
+
+    public function arrived(Request $request, SantriPermission $permission, AttendanceService $attendanceService)
+    {
+        $permission->load('santri.kamarSantri');
+        abort_unless($permission->santri?->isActiveSantri(), 422, 'Status kedatangan alumni tidak dapat diubah.');
+        abort_unless($permission->returned_at === null, 422, 'Santri sudah dilaporkan datang.');
+
+        $originalEndDate = $permission->end_date;
+        $permission->update([
+            'returned_at' => now(),
+        ]);
+
+        $attendanceService->syncPermission($permission, null, $originalEndDate);
+
+        return back()->with('success', 'Status kedatangan santri berhasil diperbarui.');
     }
 
     public function print(Request $request, SantriPermission $permission)

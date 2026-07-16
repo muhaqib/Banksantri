@@ -50,14 +50,73 @@
             </div>
         </div>
 
-        <div class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px]">
-            <div class="flex items-center justify-between">
-                <span class="material-symbols-outlined text-green-600 text-lg">check_circle</span>
-                <span class="text-[9px] font-bold text-green-700 uppercase tracking-wider">Hadir</span>
+        <!-- Overdue Card and Modal (replaces Hadir Bulanan) -->
+        <div x-data="{ open: false }">
+            <div @click="open = true" class="rounded-xl bg-surface-container-lowest p-4 border border-outline-variant/10 shadow-sm flex flex-col justify-between min-h-[110px] cursor-pointer hover:border-amber-500/30 hover:bg-amber-50/5 transition-all group h-full">
+                <div class="flex items-center justify-between">
+                    <span class="material-symbols-outlined text-amber-600 text-lg">warning</span>
+                    <span class="text-[9px] font-bold uppercase tracking-wider text-amber-800 bg-amber-50 border border-amber-200/50 px-2 py-0.5 rounded-md group-hover:scale-105 transition-all">Detail</span>
+                </div>
+                <div>
+                    <p class="text-xl font-extrabold text-amber-600">{{ $totalOverduePermissions }}</p>
+                    <p class="text-[10px] font-medium text-on-surface-variant mt-0.5">Melebihi Batas Izin</p>
+                </div>
             </div>
-            <div>
-                <p class="text-xl font-extrabold text-green-600">{{ $totals['hadir'] ?? 0 }}</p>
-                <p class="text-[10px] font-medium text-on-surface-variant">Hadir (Bulanan)</p>
+
+            <!-- Modal Overdue -->
+            <div x-show="open" x-cloak class="fixed inset-0 z-[100] overflow-y-auto" @keydown.escape.window="open = false; document.body.classList.remove('overflow-hidden')" x-init="$watch('open', value => { if (value) document.body.classList.add('overflow-hidden'); else document.body.classList.remove('overflow-hidden'); })">
+                <div class="fixed inset-0 bg-black/40 backdrop-blur-sm" @click="open = false"></div>
+                <div class="relative min-h-screen flex items-center justify-center p-4">
+                    <div class="w-full max-w-xl rounded-xl bg-surface p-5 md:p-4 sm:p-5 shadow-2xl border border-outline-variant/10" @click.stop>
+                        <div class="flex items-center justify-between mb-5 border-b border-outline-variant/10 pb-3">
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-amber-700">Terlambat Kembali</p>
+                                <h3 class="font-headline font-bold text-lg text-on-surface mt-0.5">Belum Datang Melebihi Batas Izin</h3>
+                            </div>
+                            <button @click="open = false" class="p-1.5 rounded-lg hover:bg-surface-container cursor-pointer">
+                                <span class="material-symbols-outlined text-lg">close</span>
+                            </button>
+                        </div>
+                        <div class="space-y-3 max-h-[50vh] overflow-y-auto pr-1 text-left">
+                            @forelse($overduePermissions as $permission)
+                                <div class="flex items-center justify-between p-3 bg-surface-container-low rounded-xl border border-outline-variant/10 hover:border-amber/20 transition-colors">
+                                    <div>
+                                        <p class="font-semibold text-on-surface text-sm">{{ $permission->santri->name }}</p>
+                                        <p class="text-[10px] text-on-surface-variant font-medium mt-0.5">
+                                            NIS: {{ $permission->santri->nis ?? '-' }} | Kamar: {{ ucwords(str_replace('_', ' ', $permission->kamar)) }}
+                                        </p>
+                                        <p class="text-[10px] text-error font-medium mt-1">
+                                            Batas Akhir: {{ $permission->end_date->format('d/m/Y H:i') }} (Terlambat: {{ $permission->end_date->diffForHumans() }})
+                                        </p>
+                                    </div>
+                                    <div>
+                                        @if($permission->santri->no_hp_wali)
+                                            @php
+                                                $phone = preg_replace('/[^0-9]/', '', $permission->santri->no_hp_wali);
+                                                if (str_starts_with($phone, '0')) {
+                                                    $phone = '62' . substr($phone, 1);
+                                                }
+                                                $message = "Assalamualaikum Wr. Wb. Kami dari pengurus pondok ingin menginformasikan bahwa santri *" . $permission->santri->name . "* telah melebihi batas waktu izin kembali (Batas akhir: " . $permission->end_date->format('d/m/Y H:i') . "). Mohon agar yang bersangkutan segera kembali ke pondok. Terima kasih.";
+                                            @endphp
+                                            <a href="https://api.whatsapp.com/send/?phone={{ $phone }}&text={{ urlencode($message) }}" target="_blank" class="flex items-center gap-1.5 px-3 py-1.5 text-xs font-bold rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors shadow-sm" title="Hubungi Wali lewat WhatsApp">
+                                                <span class="material-symbols-outlined text-sm">chat</span>
+                                                Hubungi Wali
+                                            </a>
+                                        @else
+                                            <span class="text-[10px] text-on-surface-variant italic">No. Wali kosong</span>
+                                        @endif
+                                    </div>
+                                </div>
+                            @empty
+                                <div class="text-center py-10">
+                                    <span class="material-symbols-outlined text-4xl text-amber/30">warning</span>
+                                    <p class="mt-2 text-xs font-semibold text-on-surface">Tidak ada santri terlambat</p>
+                                    <p class="text-[10px] text-on-surface-variant">Semua santri yang izin telah kembali tepat waktu.</p>
+                                </div>
+                            @endforelse
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 

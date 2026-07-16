@@ -255,6 +255,14 @@ class AttendanceController extends Controller
             ->when($kamar, fn ($q) => $q->whereHas('santri.kamarSantri', fn ($qk) => $qk->where('kamar', $kamar)))
             ->get();
 
+        // Retrieve overdue permissions (end_date < now and returned_at is null)
+        $overduePermissions = SantriPermission::query()
+            ->whereNull('returned_at')
+            ->where('end_date', '<', now())
+            ->with(['santri.kamarSantri'])
+            ->when($kamar, fn ($q) => $q->whereHas('santri.kamarSantri', fn ($qk) => $qk->where('kamar', $kamar)))
+            ->get();
+
         $monthlyGhoib = Attendance::query()
             ->whereBetween('attendance_date', [$start, $end])
             ->where('status', 'ghoib')
@@ -292,6 +300,8 @@ class AttendanceController extends Controller
             'mostAbsent' => $mostAbsent,
             'activePermissions' => $activePermissions,
             'totalActivePermissions' => $activePermissions->count(),
+            'overduePermissions' => $overduePermissions,
+            'totalOverduePermissions' => $overduePermissions->count(),
             'monthlyGhoib' => $monthlyGhoib,
             'monthlyIzin' => $monthlyIzin,
             'monthName' => $start->translatedFormat('F Y'),

@@ -27,7 +27,21 @@
                             <td class="px-5 py-4"><p class="font-bold">{{ $permission->start_date->format('d/m/Y') }} - {{ $permission->end_date->format('d/m/Y') }}</p><span class="inline-flex rounded-full px-2 py-1 text-xs font-bold {{ $permission->is_active ? 'bg-green-50 text-green-700' : ($permission->end_date->isPast() ? 'bg-surface-container text-on-surface-variant' : 'bg-blue-50 text-blue-700') }}">{{ $permission->is_active ? 'Aktif' : ($permission->end_date->isPast() ? 'Selesai' : 'Akan Datang') }}</span></td>
                             <td class="max-w-xs px-5 py-4">{{ $permission->reason }}</td>
                             <td class="px-5 py-4">{{ $permission->creator?->name ?? '-' }}</td>
-                            <td class="px-5 py-4"><div class="flex gap-2"><a href="{{ route($routePrefix.'.permissions.print', $permission) }}" class="text-primary" title="Cetak"><span class="material-symbols-outlined">print</span></a><a href="{{ route($routePrefix.'.permissions.edit', $permission) }}" class="text-amber-600" title="Edit"><span class="material-symbols-outlined">edit</span></a><form method="POST" action="{{ route($routePrefix.'.permissions.destroy', $permission) }}" onsubmit="return confirm('Hapus izin dan hitung ulang absensi terkait?')">@csrf @method('DELETE')<button class="text-error"><span class="material-symbols-outlined">delete</span></button></form></div></td>
+                            <td class="px-5 py-4">
+                                <div class="flex gap-2">
+                                    @if($permission->returned_at === null)
+                                        <form method="POST" action="{{ route($routePrefix.'.permissions.arrived', $permission) }}" onsubmit="return confirm('Apakah Anda yakin santri ini sudah datang kembali?')">
+                                            @csrf
+                                            <button class="text-green-600 hover:text-green-800" title="Santri Datang">
+                                                <span class="material-symbols-outlined">check_circle</span>
+                                            </button>
+                                        </form>
+                                    @endif
+                                    <a href="{{ route($routePrefix.'.permissions.print', $permission) }}" class="text-primary" title="Cetak"><span class="material-symbols-outlined">print</span></a>
+                                    <a href="{{ route($routePrefix.'.permissions.edit', $permission) }}" class="text-amber-600" title="Edit"><span class="material-symbols-outlined">edit</span></a>
+                                    <form method="POST" action="{{ route($routePrefix.'.permissions.destroy', $permission) }}" onsubmit="return confirm('Hapus izin dan hitung ulang absensi terkait?')">@csrf @method('DELETE')<button class="text-error"><span class="material-symbols-outlined">delete</span></button></form>
+                                </div>
+                            </td>
                         </tr>
                     @empty
                         <tr><td colspan="5" class="px-5 py-14 text-center text-on-surface-variant">Belum ada data perizinan.</td></tr>
