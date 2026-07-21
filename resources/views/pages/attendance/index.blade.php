@@ -37,7 +37,7 @@
 
     /* Fullscreen Mode Overrides */
     body.is-fullscreen header.sticky,
-    body.is-fullscreen aside,
+    body.is-fullscreen aside.fixed,
     body.is-fullscreen header.lg\:hidden {
         display: none !important;
     }
@@ -55,7 +55,7 @@
         padding: 1rem !important;
     }
 
-    /* Ultra-Minimalist Progress Per Kamar in Fullscreen */
+    /* Minimalist Progress Per Kamar (1-8) on Fullscreen */
     body.is-fullscreen .kamar-progress-section {
         padding: 0.5rem 0.75rem !important;
         border-radius: 0.75rem !important;
@@ -63,6 +63,7 @@
     }
     body.is-fullscreen .kamar-progress-header {
         padding-bottom: 0.25rem !important;
+        margin-bottom: 0.25rem !important;
     }
     body.is-fullscreen .kamar-progress-header h2 {
         font-size: 0.75rem !important;
@@ -185,8 +186,12 @@
                 <div class="space-y-4">
                     @forelse($recentAttendances as $attendance)
                         <div class="flex items-center gap-3.5 {{ $loop->first ? 'animate-slide-in' : '' }}" id="recent-{{ $attendance->santri_id }}">
-                            <div class="relative flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-secondary-container font-headline text-sm font-bold text-secondary">
-                                {{ str($attendance->santri?->name ?? '?')->substr(0, 1)->upper() }}
+                            <div class="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary-container font-headline text-sm font-bold text-secondary">
+                                @if($attendance->santri?->foto)
+                                    <img src="{{ Storage::url($attendance->santri->foto) }}" alt="{{ $attendance->santri->name }}" class="h-full w-full object-cover">
+                                @else
+                                    {{ str($attendance->santri?->name ?? '?')->substr(0, 1)->upper() }}
+                                @endif
                                 <div class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary">
                                     <span class="material-symbols-outlined text-[8px] text-on-primary">check</span>
                                 </div>
@@ -226,8 +231,8 @@
         </aside>
     </div>
 
-    <!-- Real-time Progress Per Kamar (1 - 8) - Minimalist -->
-    <div class="rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-3.5 sm:p-4 shadow-sm space-y-3 kamar-progress-section">
+    <!-- Progress Presensi Per Kamar (1 - 8) - Static Display (Non-Clickable) -->
+    <div class="rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-3.5 sm:p-4 shadow-sm space-y-3 kamar-progress-section select-none">
         <!-- Section Header -->
         <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-outline-variant/10 text-xs kamar-progress-header">
             <div class="flex items-center gap-2">
@@ -247,7 +252,7 @@
             </div>
         </div>
 
-        <!-- 8 Rooms Minimalist Grid -->
+        <!-- 8 Rooms Static Cards Grid (Non-Clickable div) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 kamar-progress-grid">
             @php
                 $roomsProgress = $kamarProgress ?? collect(\App\Models\KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($santriList, $date) {
@@ -274,17 +279,13 @@
             @foreach($roomsProgress as $item)
                 @php
                     $pct = $item['percentage'];
-                    $isFiltered = request('kamar') === $item['key'];
                     $textColor = $pct >= 100 ? 'text-emerald-600' : ($pct >= 50 ? 'text-primary' : ($pct > 0 ? 'text-amber-600' : 'text-on-surface-variant'));
                 @endphp
 
-                <a href="{{ route($routePrefix.'.attendance.'.($isManualMode ? 'manual' : 'rfid'), ['kamar' => $item['key'], 'date' => $date->toDateString()]) }}"
-                   title="Kamar {{ $item['number'] }}: {{ $item['hadir'] }}/{{ $item['total'] }} Hadir ({{ $pct }}%)"
-                   class="group flex flex-col justify-between rounded-lg border p-2 text-left transition-all duration-150 {{ $isFiltered ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-surface border-outline-variant/15 hover:border-primary/40 hover:bg-surface-container-lowest' }} kamar-card">
-                    
+                <div class="flex flex-col justify-between rounded-lg border border-outline-variant/15 p-2 text-left bg-surface shadow-2xs kamar-card">
                     <!-- Top Info: Kamar & Percent -->
                     <div class="flex items-center justify-between gap-1 mb-1">
-                        <span class="text-[11px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                        <span class="text-[11px] font-bold text-on-surface truncate">
                             <span class="hidden sm:inline">Kamar </span>K{{ $item['number'] }}
                         </span>
                         <span class="text-[10px] font-extrabold {{ $textColor }}">
@@ -296,13 +297,13 @@
                     <div class="h-1.5 w-full overflow-hidden rounded-full bg-surface-container flex gap-0.5 my-1">
                         @if($item['total'] > 0)
                             @if($item['hadir'] > 0)
-                                <div class="h-full bg-emerald-500" style="width: {{ ($item['hadir'] / $item['total']) * 100 }}%"></div>
+                                <div class="h-full bg-emerald-500" style="width: {{ ($item['hadir'] / $item['total']) * 100 }}%" title="Hadir: {{ $item['hadir'] }}"></div>
                             @endif
                             @if($item['izin'] > 0)
-                                <div class="h-full bg-amber-500" style="width: {{ ($item['izin'] / $item['total']) * 100 }}%"></div>
+                                <div class="h-full bg-amber-500" style="width: {{ ($item['izin'] / $item['total']) * 100 }}%" title="Izin: {{ $item['izin'] }}"></div>
                             @endif
                             @if($item['ghoib'] > 0)
-                                <div class="h-full bg-rose-500" style="width: {{ ($item['ghoib'] / $item['total']) * 100 }}%"></div>
+                                <div class="h-full bg-rose-500" style="width: {{ ($item['ghoib'] / $item['total']) * 100 }}%" title="Ghoib: {{ $item['ghoib'] }}"></div>
                             @endif
                         @else
                             <div class="h-full w-full bg-surface-container"></div>
@@ -319,7 +320,7 @@
                             </span>
                         @endif
                     </div>
-                </a>
+                </div>
             @endforeach
         </div>
     </div>
