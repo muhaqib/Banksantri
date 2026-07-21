@@ -85,7 +85,7 @@
                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kamar</label>
                     <select name="kamar"
                             class="w-full bg-surface-container-high border-none rounded-xl py-3 px-4 text-on-surface focus:bg-surface-container-highest focus:ring-0 transition-all">
-                        <option value="">Pilih kamar santri</option>
+                        <option value="">Tanpa Kamar</option>
                         @foreach(\App\Models\KamarSantri::KAMAR_LIST as $kamar)
                             <option value="{{ $kamar }}" @selected(old('kamar') === $kamar)>
                                 {{ ucfirst(str_replace('_', ' ', $kamar)) }}

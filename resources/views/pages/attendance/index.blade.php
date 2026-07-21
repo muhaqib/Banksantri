@@ -89,23 +89,13 @@
 @endphp
 <div class="space-y-6" x-data="attendancePage()">
     <!-- Floating Exit Fullscreen Button -->
-    <div x-show="isFullscreen" 
-         x-cloak 
-         class="fixed top-4 right-4 z-[999]">
-        <button type="button" 
-                @click="toggleFullscreen()"
-                class="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold text-on-primary shadow-xl ring-4 ring-primary/20 hover:bg-primary-container transition-all active:scale-95">
-            <span class="material-symbols-outlined text-base">fullscreen_exit</span>
-            <span>Keluar Layar Penuh</span>
-        </button>
-    </div>
 
     <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-xs font-semibold text-primary uppercase tracking-wider">Kesiswaan</p>
             <h1 class="font-headline text-2xl font-bold text-primary">{{ $isManualMode ? 'Presensi Manual Santri' : 'RFID Presensi Santri' }}</h1>
             <p class="mt-1 text-xs text-on-surface-variant">
-                {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini tanpa memilih kamar.' }}
+                {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini.' }}
             </p>
         </div>
 
@@ -145,12 +135,11 @@
 
             <div class="relative z-10 mt-8 w-full max-w-md text-center">
                 <h2 class="font-headline text-xl font-bold text-on-surface">Tap RFID Reader</h2>
-                <p class="mx-auto mt-1 max-w-xs text-xs text-on-surface-variant">Setiap kartu RFID santri yang berhasil terbaca akan langsung dianggap hadir pada tanggal terpilih.</p>
                 <div class="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $canScanAttendance ? 'bg-primary-fixed/40 text-primary' : 'bg-surface-container-high text-on-surface-variant' }}">
                     <span class="material-symbols-outlined text-sm">{{ $canScanAttendance ? 'wifi_tethering' : 'schedule' }}</span>
                     {{ $canScanAttendance ? 'Siap Baca' : 'Belum Siap Baca' }}
                 </div>
-                <p class="mt-2 text-[10px] font-medium text-on-surface-variant">Absensi RFID dibuka pukul 21:00-23:59 WIB. Santri yang belum tap akan otomatis menjadi ghoib saat pergantian hari.</p>
+                <p class="mt-2 text-[10px] font-medium text-on-surface-variant">Absensi RFID dimulai pada 21:00-23:59 WIB.</p>
                 <form @submit.prevent="scan" class="mt-5 flex gap-2 rounded-xl bg-surface-container-low p-1.5 border border-outline-variant/10 shadow-sm">
                     <input x-ref="rfid" x-model="rfid" :disabled="!canScan" autofocus autocomplete="off" placeholder="Tempelkan kartu RFID..." class="min-w-0 flex-1 rounded-lg border-none bg-transparent px-3 py-2 text-sm text-on-surface outline-none disabled:cursor-not-allowed disabled:text-on-surface-variant">
                     <button :disabled="loading || !canScan" class="flex h-10 w-12 shrink-0 items-center justify-center rounded-lg bg-primary text-on-primary transition disabled:opacity-50 hover:bg-primary-container">
@@ -286,7 +275,7 @@
                     <!-- Top Info: Kamar & Percent -->
                     <div class="flex items-center justify-between gap-1 mb-1">
                         <span class="text-[11px] font-bold text-on-surface truncate">
-                            <span class="hidden sm:inline">Kamar </span>K{{ $item['number'] }}
+                            <span class="hidden sm:inline">Kamar </span>{{ $item['number'] }}
                         </span>
                         <span class="text-[10px] font-extrabold {{ $textColor }}">
                             {{ $pct }}%

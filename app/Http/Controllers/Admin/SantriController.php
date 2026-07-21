@@ -274,6 +274,7 @@ class SantriController extends Controller
             'no_hp_wali' => 'nullable|string|max:20',
             'asal_sekolah' => 'nullable|string|max:255',
             'kelas' => 'nullable|string|max:50',
+            'kamar' => 'nullable|string',
         ]);
 
         // Build data array for update
@@ -316,6 +317,19 @@ class SantriController extends Controller
             ->where('id', $santri->id)
             ->update($data);
 
+        // Update or remove kamar assignment
+        if ($request->has('kamar')) {
+            $selectedKamar = $request->input('kamar');
+            if (blank($selectedKamar)) {
+                KamarSantri::where('user_id', $santri->id)->delete();
+            } elseif (in_array($selectedKamar, KamarSantri::KAMAR_LIST, true)) {
+                KamarSantri::updateOrCreate(
+                    ['user_id' => $santri->id],
+                    ['kamar' => $selectedKamar]
+                );
+            }
+        }
+
         return redirect()->route($this->routePrefix($request).'.index')
             ->with('success', 'Data santri berhasil diupdate!');
     }
@@ -357,9 +371,10 @@ class SantriController extends Controller
         return response()->json([
             'santri' => $santri,
             'foto_url' => $santri->foto ? Storage::url($santri->foto) : null,
+            'kamar' => $santri->kamarSantri?->kamar ?? '',
             'kamar_text' => $santri->kamarSantri?->kamar
                 ? ucfirst(str_replace('_', ' ', $santri->kamarSantri->kamar))
-                : '-',
+                : 'Tanpa Kamar',
         ]);
     }
 

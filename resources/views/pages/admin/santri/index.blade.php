@@ -422,7 +422,7 @@
                                 <h4 class="font-headline font-bold text-on-surface">Data Akademik</h4>
                             </div>
 
-                            <div class="grid grid-cols-2 gap-4">
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas</label>
                                     <input type="text" name="kelas" x-model="editData.kelas" list="pondok-class-options" class="input-field w-full">
@@ -430,6 +430,17 @@
                                 <div>
                                     <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kelas Formal</label>
                                     <input type="text" name="asal_sekolah" x-model="editData.asal_sekolah" list="formal-class-options" class="input-field w-full">
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Kamar</label>
+                                    <select name="kamar" x-model="editData.kamar" class="input-field w-full">
+                                        <option value="">Tanpa Kamar</option>
+                                        @foreach(\App\Models\KamarSantri::KAMAR_LIST as $kamarOption)
+                                            <option value="{{ $kamarOption }}">
+                                                {{ ucfirst(str_replace('_', ' ', $kamarOption)) }}
+                                            </option>
+                                        @endforeach
+                                    </select>
                                 </div>
                             </div>
 
@@ -517,6 +528,7 @@ function santriApp() {
             no_hp_wali: '',
             asal_sekolah: '',
             kelas: '',
+            kamar: '',
             alamat: '',
             saldo: 0
         },
@@ -568,6 +580,7 @@ function santriApp() {
                 this.editData.no_hp_wali = data.santri.no_hp_wali || '';
                 this.editData.asal_sekolah = data.santri.asal_sekolah || '';
                 this.editData.kelas = data.santri.kelas || '';
+                this.editData.kamar = data.kamar || (data.santri.kamar_santri ? data.santri.kamar_santri.kamar : '');
                 this.editData.alamat = data.santri.alamat || '';
                 this.editData.saldo = data.santri.saldo || 0;
             } catch (error) {
