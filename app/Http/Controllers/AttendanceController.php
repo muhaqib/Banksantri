@@ -69,6 +69,37 @@ class AttendanceController extends Controller
             ->limit(5)
             ->get();
 
+        $allSantriForProgress = User::query()
+            ->activeSantri()
+            ->with([
+                'kamarSantri',
+                'attendances' => fn ($query) => $query->whereDate('attendance_date', $date),
+                'santriPermissions' => fn ($query) => $query->activeOn($date),
+            ])
+            ->get();
+
+        $kamarProgress = collect(KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($allSantriForProgress, $date) {
+            $santriInKamar = $allSantriForProgress->filter(fn ($s) => $s->kamarSantri?->kamar === $kamarKey);
+            $total = $santriInKamar->count();
+            $hadir = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'hadir')->count();
+            $izin = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'izin')->count();
+            $ghoib = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'ghoib')->count();
+            $belum = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'belum')->count();
+            $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
+
+            return [
+                'key' => $kamarKey,
+                'number' => $index + 1,
+                'label' => 'Kamar ' . ($index + 1),
+                'total' => $total,
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'ghoib' => $ghoib,
+                'belum' => $belum,
+                'percentage' => $percentage,
+            ];
+        });
+
         return view('pages.attendance.index', [
             'activeRole' => $this->routePrefix($request),
             'routePrefix' => $this->routePrefix($request),
@@ -77,6 +108,7 @@ class AttendanceController extends Controller
             'santriList' => $santriList,
             'recentAttendances' => $recentAttendances,
             'summary' => $summary,
+            'kamarProgress' => $kamarProgress,
             'mode' => $mode,
             'attendanceWindow' => $attendanceWindow,
         ]);

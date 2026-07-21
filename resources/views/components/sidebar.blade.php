@@ -59,12 +59,15 @@
 </head>
 <body class="bg-surface font-body text-on-surface" x-data="{ sidebarOpen: false, darkMode: false, toggleDarkMode() { this.darkMode = !this.darkMode; localStorage.setItem('darkMode', this.darkMode ? 'true' : 'false'); this.applyTheme(); }, applyTheme() { if (this.darkMode) { document.documentElement.classList.add('dark'); document.documentElement.classList.remove('light'); } else { document.documentElement.classList.add('light'); document.documentElement.classList.remove('dark'); } } }" x-init="darkMode = localStorage.getItem('darkMode') === 'true' || (!('darkMode' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches); applyTheme();">
     <!-- Mobile Header -->
-    <header class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-surface/95 backdrop-blur border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
+    <header class="lg:hidden fixed top-0 left-0 right-0 z-40 bg-surface border-b border-outline-variant/10 px-4 py-3 flex items-center justify-between">
         <div class="flex items-center gap-3">
             <button @click="sidebarOpen = true" class="p-2 hover:bg-surface-container-low rounded-lg transition-colors">
                 <span class="material-symbols-outlined text-on-surface">menu</span>
             </button>
-
+            <div class="flex items-center gap-2">
+                <img src="{{ asset('mawablack.png') }}" alt="Mawa Smart" class="h-8 w-auto object-contain dark:hidden">
+                <img src="{{ asset('mawagold.png') }}" alt="Mawa Smart" class="h-8 w-auto object-contain hidden dark:block">
+            </div>
         </div>
 
         <div class="flex items-center gap-2">
@@ -134,14 +137,15 @@
            class="fixed left-0 top-0 bottom-0 w-72 border-r border-outline-variant/10 bg-surface-container-lowest flex flex-col h-full z-50 lg:translate-x-0 lg:w-60 transition-transform duration-300 ease-in-out shadow-2xl lg:shadow-none">
         
         <!-- Logo Section -->
-        <div class="px-6 py-6 border-b border-outline-variant/10">
+        <div class="px-6 py-5 border-b border-outline-variant/10">
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
-                    <div class="w-10 h-10 bg-primary-container rounded-xl flex items-center justify-center">
-                        <span class="material-symbols-filled text-white">mh</span>
+                    <div class="flex items-center justify-center shrink-0">
+                        <img src="{{ asset('mawablack.png') }}" alt="Mawa Smart" class="h-10 w-auto object-contain dark:hidden">
+                        <img src="{{ asset('mawagold.png') }}" alt="Mawa Smart" class="h-10 w-auto object-contain hidden dark:block">
                     </div>
                     <div>
-                        <h1 class="text-lg font-black text-primary font-headline tracking-tight leading-none">Mawa Smart</h1>
+                        <h1 class="text-base font-black text-primary font-headline tracking-tight leading-none">Mawa Smart</h1>
                         <p class="text-xs tracking-wide text-on-surface-variant">
                             @if($displayRole === 'admin')
                                 Super Admin
@@ -176,7 +180,8 @@
                         ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.index', 'active' => 'admin.santri.index', 'label' => 'Semua Santri'],
                         ['permission' => 'admin.santri.manage', 'route' => 'admin.santri.create', 'active' => 'admin.santri.create', 'label' => 'Tambah Santri'],
                         ['permission' => 'admin.kamar.manage', 'route' => 'admin.kamar.index', 'active' => 'admin.kamar.*', 'label' => 'Data Kamar'],
-                        ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.index', 'active' => 'petugas.santri.index', 'label' => 'Semua Santri'],
+                        ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.index', 'active' => 'petugas.santri.index', 'label' => 'Data Santri (Melihat Data)'],
+                        ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.master', 'active' => 'petugas.santri.master', 'label' => 'Master Santri (CRUD)'],
                         ['permission' => 'petugas.santri.manage', 'route' => 'petugas.santri.create', 'active' => 'petugas.santri.create', 'label' => 'Tambah Santri'],
                     ],
                 ],
@@ -352,7 +357,7 @@
     <!-- Main Content Canvas -->
     <main class="lg:ml-60 pt-16 lg:pt-0 min-h-screen bg-surface">
         <!-- Desktop Header -->
-        <header class="sticky top-0 z-30 hidden h-16 items-center justify-end border-b border-outline-variant/10 bg-surface/95 px-8 backdrop-blur lg:flex gap-4">
+        <header class="sticky top-0 z-30 hidden h-16 items-center justify-end border-b border-outline-variant/10 bg-surface px-8 lg:flex gap-4">
             <!-- Toggle Dark Mode Desktop -->
             <button @click="toggleDarkMode()" class="p-2.5 hover:bg-surface-container-low rounded-lg text-on-surface-variant hover:text-on-surface transition-colors flex items-center justify-center" aria-label="Toggle tema">
                 <span class="material-symbols-outlined text-[20px]" x-text="darkMode ? 'light_mode' : 'dark_mode'"></span>

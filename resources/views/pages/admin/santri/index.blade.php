@@ -5,6 +5,8 @@
     $activeRole = $activeRole ?? 'admin';
     $routePrefix = $routePrefix ?? $activeRole.'.santri';
     $currentStatus = $currentStatus ?? request('status', 'aktif');
+    $isMaster = $isMaster ?? false;
+    $canManage = ($activeRole !== 'petugas' || $isMaster);
 @endphp
 
 @section('content')
@@ -12,17 +14,23 @@
     <!-- Page Header -->
     <div class="mb-8 flex items-center justify-between">
         <div>
-            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Data Santri</h2>
-            <p class="text-on-surface-variant text-sm mt-1">Kelola data santri dan saldo mereka.</p>
+            <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">
+                {{ $isMaster ? 'Master Santri (CRUD)' : 'Data Santri' }}
+            </h2>
+            <p class="text-on-surface-variant text-sm mt-1">
+                {{ $canManage ? 'Kelola data santri, alumni, dan saldo mereka.' : 'Lihat data santri dan detail informasi.' }}
+            </p>
         </div>
         <div class="flex gap-2">
             <a href="{{ route($routePrefix.'.export', ['status' => $currentStatus]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
                 <span class="material-symbols-outlined">download</span><span>Export Excel</span>
             </a>
-            <a href="{{ route($routePrefix.'.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
-                <span class="material-symbols-outlined">add</span>
-                <span>Tambah / Import</span>
-            </a>
+            @if($canManage)
+                <a href="{{ route($routePrefix.'.create') }}" class="bg-primary text-on-primary font-bold py-3 px-6 rounded-xl shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all flex items-center gap-2">
+                    <span class="material-symbols-outlined">add</span>
+                    <span>Tambah / Import</span>
+                </a>
+            @endif
         </div>
     </div>
 
@@ -132,29 +140,31 @@
                                        class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Detail">
                                         <span class="material-symbols-outlined text-sm">visibility</span>
                                     </button>
-                                    <button @click="openEditModal({{ $santri->id }})"
-                                       class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
-                                        <span class="material-symbols-outlined text-sm">edit</span>
-                                    </button>
-                                    @if($santri->isAlumni())
-                                        <form action="{{ route($routePrefix.'.activate', $santri) }}" method="POST" onsubmit="return confirm('Aktifkan kembali santri ini?')">
-                                            @csrf @method('PATCH')
-                                            <button class="p-2 text-primary hover:bg-primary/10 rounded-lg" title="Aktifkan kembali"><span class="material-symbols-outlined text-sm">person_check</span></button>
-                                        </form>
-                                    @else
-                                        <form action="{{ route($routePrefix.'.graduate', $santri) }}" method="POST" onsubmit="return confirm('Jadikan santri ini alumni? Akun akan menjadi read-only dan kamar aktif dilepas.')">
-                                            @csrf @method('PATCH')
-                                            <button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg" title="Jadikan alumni"><span class="material-symbols-outlined text-sm">school</span></button>
+                                    @if($canManage)
+                                        <button @click="openEditModal({{ $santri->id }})"
+                                           class="p-2 text-primary hover:bg-primary/10 rounded-lg transition-colors" title="Edit">
+                                            <span class="material-symbols-outlined text-sm">edit</span>
+                                        </button>
+                                        @if($santri->isAlumni())
+                                            <form action="{{ route($routePrefix.'.activate', $santri) }}" method="POST" onsubmit="return confirm('Aktifkan kembali santri ini?')">
+                                                @csrf @method('PATCH')
+                                                <button class="p-2 text-primary hover:bg-primary/10 rounded-lg" title="Aktifkan kembali"><span class="material-symbols-outlined text-sm">person_check</span></button>
+                                            </form>
+                                        @else
+                                            <form action="{{ route($routePrefix.'.graduate', $santri) }}" method="POST" onsubmit="return confirm('Jadikan santri ini alumni? Akun akan menjadi read-only dan kamar aktif dilepas.')">
+                                                @csrf @method('PATCH')
+                                                <button class="p-2 text-on-surface-variant hover:bg-surface-container rounded-lg" title="Jadikan alumni"><span class="material-symbols-outlined text-sm">school</span></button>
+                                            </form>
+                                        @endif
+                                        <form action="{{ route($routePrefix.'.destroy', $santri) }}" method="POST"
+                                              onsubmit="return confirm('Yakin ingin menghapus data santri ini?')">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Hapus">
+                                                <span class="material-symbols-outlined text-sm">delete</span>
+                                            </button>
                                         </form>
                                     @endif
-                                    <form action="{{ route($routePrefix.'.destroy', $santri) }}" method="POST"
-                                          onsubmit="return confirm('Yakin ingin menghapus data santri ini?')">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="p-2 text-error hover:bg-error/10 rounded-lg transition-colors" title="Hapus">
-                                            <span class="material-symbols-outlined text-sm">delete</span>
-                                        </button>
-                                    </form>
                                 </div>
                             </td>
                         </tr>
@@ -280,10 +290,12 @@
                         <button @click="showDetailModal = false" class="rounded-xl bg-surface-container-high px-6 py-3 font-bold text-on-surface transition-colors hover:bg-surface-container">
                             Tutup
                         </button>
-                        <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
-                            <span class="material-symbols-outlined text-sm">edit</span>
-                            <span>Edit Data</span>
-                        </button>
+                        @if($canManage)
+                            <button @click="showDetailModal = false; openEditModal(selectedSantri.id)" class="rounded-xl bg-primary px-6 py-3 font-bold text-on-primary shadow-lg shadow-primary/20 transition-all flex items-center justify-center gap-2">
+                                <span class="material-symbols-outlined text-sm">edit</span>
+                                <span>Edit Data</span>
+                            </button>
+                        @endif
                     </div>
                 </div>
             </div>

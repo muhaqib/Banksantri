@@ -23,6 +23,48 @@ class SantriController extends Controller
     {
         $routePrefix = $this->routePrefix($request);
         $activeRole = $this->activeRole($request);
+
+        if ($activeRole === 'petugas' && $request->routeIs('petugas.santri.index')) {
+            $status = in_array($request->query('status'), ['aktif', 'alumni', 'semua'], true)
+                ? $request->query('status')
+                : 'aktif';
+
+            $query = User::where('role', 'santri')->with('kamarSantri');
+
+            if ($status !== 'semua') {
+                $query->where('santri_status', $status);
+            }
+
+            if ($request->filled('search')) {
+                $search = $request->search;
+                $query->where(function ($q) use ($search) {
+                    $q->where('name', 'like', '%'.$search.'%')
+                        ->orWhere('nis', 'like', '%'.$search.'%');
+                });
+            }
+
+            if ($request->filled('kamar')) {
+                $kamar = $request->kamar;
+                $query->whereHas('kamarSantri', function ($q) use ($kamar) {
+                    $q->where('kamar', $kamar);
+                });
+            }
+
+            $santriList = $query->orderBy('name', 'asc')->paginate(12)->withQueryString();
+
+            return view('pages.petugas.santri.index', [
+                'santriList' => $santriList,
+                'activeCount' => User::activeSantri()->count(),
+                'alumniCount' => User::santri()->where('santri_status', 'alumni')->count(),
+                'totalSaldo' => User::santri()->sum('saldo'),
+                'rfidCount' => User::santri()->whereNotNull('rfid_code')->where('rfid_code', '!=', '')->count(),
+                'currentStatus' => $status,
+                'activeRole' => $activeRole,
+                'routePrefix' => $routePrefix,
+                'kamarList' => KamarSantri::KAMAR_LIST,
+            ]);
+        }
+
         $status = in_array($request->query('status'), ['aktif', 'alumni'], true)
             ? $request->query('status')
             : 'aktif';
@@ -30,7 +72,6 @@ class SantriController extends Controller
         $query = User::where('role', 'santri')->with('kamarSantri');
         $query->where('santri_status', $status);
 
-        // Search by name or NIS if provided
         if ($request->filled('search')) {
             $search = $request->search;
             $query->where(function ($q) use ($search) {
@@ -48,6 +89,42 @@ class SantriController extends Controller
             'currentStatus' => $status,
             'activeRole' => $activeRole,
             'routePrefix' => $routePrefix,
+            'isMaster' => false,
+        ]);
+    }
+
+    /**
+     * Master Santri CRUD view for Petugas & Admin.
+     */
+    public function master(Request $request)
+    {
+        $routePrefix = $this->routePrefix($request);
+        $activeRole = $this->activeRole($request);
+        $status = in_array($request->query('status'), ['aktif', 'alumni'], true)
+            ? $request->query('status')
+            : 'aktif';
+
+        $query = User::where('role', 'santri')->with('kamarSantri');
+        $query->where('santri_status', $status);
+
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', '%'.$search.'%')
+                    ->orWhere('nis', 'like', '%'.$search.'%');
+            });
+        }
+
+        $santriList = $query->orderBy('name', 'asc')->paginate(10)->withQueryString();
+
+        return view('pages.admin.santri.index', [
+            'santriList' => $santriList,
+            'activeCount' => User::activeSantri()->count(),
+            'alumniCount' => User::santri()->where('santri_status', 'alumni')->count(),
+            'currentStatus' => $status,
+            'activeRole' => $activeRole,
+            'routePrefix' => $routePrefix,
+            'isMaster' => true,
         ]);
     }
 
@@ -99,6 +176,7 @@ class SantriController extends Controller
      */
     public function store(Request $request)
     {
+
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',

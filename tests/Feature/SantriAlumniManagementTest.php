@@ -86,7 +86,7 @@ class SantriAlumniManagementTest extends TestCase
             ->assertDontSee($alumni->name);
     }
 
-    public function test_petugas_can_open_santri_crud_pages_with_permission(): void
+    public function test_petugas_can_open_read_only_data_santri_view(): void
     {
         $petugas = $this->petugasWithSantriPermission();
         $santri = User::factory()->create([
@@ -99,24 +99,39 @@ class SantriAlumniManagementTest extends TestCase
             ->get(route('petugas.santri.index'))
             ->assertOk()
             ->assertSee($santri->name)
+            ->assertSee('Lihat Data');
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.santri.modal-data', $santri))
+            ->assertOk()
+            ->assertJsonPath('santri.id', $santri->id);
+    }
+
+    public function test_petugas_can_access_master_santri_crud_and_create_santri(): void
+    {
+        $petugas = $this->petugasWithSantriPermission();
+        Role::findOrCreate('santri');
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'name' => 'Santri Master Petugas',
+        ]);
+
+        $this->actingAs($petugas)
+            ->get(route('petugas.santri.master'))
+            ->assertOk()
+            ->assertSee('Master Santri (CRUD)')
             ->assertSee('Tambah / Import');
 
         $this->actingAs($petugas)
             ->get(route('petugas.santri.create'))
             ->assertOk()
             ->assertSee('Tambah Santri Baru');
-    }
-
-    public function test_petugas_can_create_santri_with_permission(): void
-    {
-        $petugas = $this->petugasWithSantriPermission();
-        Role::findOrCreate('santri');
 
         $this->actingAs($petugas)
             ->post(route('petugas.santri.store'), [
-                'name' => 'Santri Baru Petugas',
-                'email' => 'santri-baru-petugas@example.test',
-                'nis' => 'PTG-001',
+                'name' => 'Santri Baru Petugas Master',
+                'email' => 'santri-baru-petugas-master@example.test',
+                'nis' => 'PTGM-001',
                 'password' => 'password',
                 'pin' => '123456',
             ])
@@ -124,7 +139,7 @@ class SantriAlumniManagementTest extends TestCase
 
         $this->assertDatabaseHas('users', [
             'role' => 'santri',
-            'nis' => 'PTG-001',
+            'nis' => 'PTGM-001',
         ]);
     }
 

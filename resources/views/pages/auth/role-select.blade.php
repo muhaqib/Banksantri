@@ -17,8 +17,9 @@
 
 
     <div class="text-center mb-8">
-        <div class="role-logo w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10">
-            <span class="material-symbols-outlined text-white text-5xl role-shield" style="font-variation-settings: 'FILL' 1;">shield</span>
+        <div class="role-logo w-20 h-20 bg-gradient-to-br from-primary to-primary-container rounded-xl flex items-center justify-center mx-auto mb-6 shadow-xl shadow-primary/10 p-2">
+            <img src="{{ asset('mawawhite.png') }}" alt="Mawa Smart" class="h-full w-auto object-contain dark:hidden">
+            <img src="{{ asset('mawagold.png') }}" alt="Mawa Smart" class="h-full w-auto object-contain hidden dark:block">
         </div>
         <h1 class="font-headline text-2xl font-bold tracking-tight text-primary role-title">Mawa Smart</h1>
         <p class="font-headline text-sm font-semibold tracking-[0.2em] text-outline mt-1 uppercase role-subtitle">Ponpes Mambaul Hikmah</p>

@@ -34,6 +34,50 @@
             top: 90%;
         }
     }
+
+    /* Fullscreen Mode Overrides */
+    body.is-fullscreen header.sticky,
+    body.is-fullscreen aside,
+    body.is-fullscreen header.lg\:hidden {
+        display: none !important;
+    }
+
+    body.is-fullscreen main {
+        margin-left: 0 !important;
+        padding-top: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-height: 100vh !important;
+        background-color: var(--color-surface, #f8fafc);
+    }
+
+    body.is-fullscreen main > div {
+        padding: 1rem !important;
+    }
+
+    /* Ultra-Minimalist Progress Per Kamar in Fullscreen */
+    body.is-fullscreen .kamar-progress-section {
+        padding: 0.5rem 0.75rem !important;
+        border-radius: 0.75rem !important;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+    }
+    body.is-fullscreen .kamar-progress-header {
+        padding-bottom: 0.25rem !important;
+    }
+    body.is-fullscreen .kamar-progress-header h2 {
+        font-size: 0.75rem !important;
+    }
+    body.is-fullscreen .kamar-progress-grid {
+        grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+        gap: 0.375rem !important;
+    }
+    body.is-fullscreen .kamar-card {
+        padding: 0.35rem 0.5rem !important;
+        border-radius: 0.5rem !important;
+    }
+    body.is-fullscreen .kamar-card-detail {
+        display: none !important;
+    }
 </style>
 @endpush
 
@@ -43,13 +87,36 @@
     $canScanAttendance = $attendanceWindow['can_scan'] ?? false;
 @endphp
 <div class="space-y-6" x-data="attendancePage()">
-    <header class="flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+    <!-- Floating Exit Fullscreen Button -->
+    <div x-show="isFullscreen" 
+         x-cloak 
+         class="fixed top-4 right-4 z-[999]">
+        <button type="button" 
+                @click="toggleFullscreen()"
+                class="flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-xs font-bold text-on-primary shadow-xl ring-4 ring-primary/20 hover:bg-primary-container transition-all active:scale-95">
+            <span class="material-symbols-outlined text-base">fullscreen_exit</span>
+            <span>Keluar Layar Penuh</span>
+        </button>
+    </div>
+
+    <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
         <div>
             <p class="text-xs font-semibold text-primary uppercase tracking-wider">Kesiswaan</p>
             <h1 class="font-headline text-2xl font-bold text-primary">{{ $isManualMode ? 'Presensi Manual Santri' : 'RFID Presensi Santri' }}</h1>
             <p class="mt-1 text-xs text-on-surface-variant">
                 {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini tanpa memilih kamar.' }}
             </p>
+        </div>
+
+        <div class="flex items-center gap-2">
+            <!-- Fullscreen Toggle Button -->
+            <button type="button" 
+                    @click="toggleFullscreen()" 
+                    class="inline-flex items-center gap-2 rounded-xl border border-outline-variant/20 bg-surface-container-lowest px-4 py-2.5 text-xs font-bold text-on-surface shadow-sm transition-all hover:bg-primary/10 hover:border-primary/30 hover:text-primary active:scale-95">
+                <span class="material-symbols-outlined text-lg text-primary" x-text="isFullscreen ? 'fullscreen_exit' : 'fullscreen'"></span>
+                <span x-text="isFullscreen ? 'Keluar Layar Penuh' : 'Layar Penuh'"></span>
+                <kbd x-show="!isFullscreen" class="hidden sm:inline-block rounded bg-surface-container-high px-1.5 py-0.5 text-[10px] font-semibold text-on-surface-variant">ESC</kbd>
+            </button>
         </div>
     </header>
 
@@ -159,24 +226,102 @@
         </aside>
     </div>
 
-    <div class="grid grid-cols-2 gap-4 xl:grid-cols-5">
-        @foreach([
-            ['Kartu Terdaftar', $summary['total'], 'contactless', 'text-primary', 'bg-primary-container/10 border-primary/10'],
-            ['Hadir', $summary['hadir'], 'event_available', 'text-green-600', 'bg-green-50/50 border-green-500/10'],
-            ['Izin', $summary['izin'], 'badge', 'text-amber-600', 'bg-amber-50/50 border-amber-500/10'],
-            ['Ghoib', $summary['ghoib'], 'cancel', 'text-error', 'bg-red-50/50 border-error/10'],
-            ['Belum Tap', $summary['belum'], 'schedule', 'text-on-surface-variant', 'bg-surface-container-low/50 border-outline-variant/10'],
-        ] as [$label, $value, $icon, $color, $background])
-            <div class="{{ $background }} flex items-center gap-3.5 rounded-xl border p-4 shadow-sm">
-                <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-surface-container-lowest {{ $color }}">
-                    <span class="material-symbols-outlined text-xl">{{ $icon }}</span>
-                </div>
-                <div>
-                    <p class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">{{ $label }}</p>
-                    <p class="text-base font-extrabold {{ $color }}">{{ $value }}</p>
-                </div>
+    <!-- Real-time Progress Per Kamar (1 - 8) - Minimalist -->
+    <div class="rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-3.5 sm:p-4 shadow-sm space-y-3 kamar-progress-section">
+        <!-- Section Header -->
+        <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-outline-variant/10 text-xs kamar-progress-header">
+            <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-base text-primary">meeting_room</span>
+                <h2 class="font-headline font-bold text-on-surface">Progress Presensi Per Kamar</h2>
             </div>
-        @endforeach
+
+            <!-- Compact Global Stats -->
+            <div class="flex items-center gap-2 font-medium text-[11px]">
+                <span class="text-emerald-600">Hadir: <strong>{{ $summary['hadir'] }}</strong></span>
+                <span class="text-outline-variant/40">•</span>
+                <span class="text-amber-600">Izin: <strong>{{ $summary['izin'] }}</strong></span>
+                <span class="text-outline-variant/40">•</span>
+                <span class="text-rose-600">Ghoib: <strong>{{ $summary['ghoib'] }}</strong></span>
+                <span class="text-outline-variant/40">•</span>
+                <span class="text-on-surface-variant">Belum: <strong>{{ $summary['belum'] }}</strong></span>
+            </div>
+        </div>
+
+        <!-- 8 Rooms Minimalist Grid -->
+        <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 kamar-progress-grid">
+            @php
+                $roomsProgress = $kamarProgress ?? collect(\App\Models\KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($santriList, $date) {
+                    $santriInKamar = $santriList->filter(fn ($s) => ($s->kamarSantri?->kamar ?? '') === $kamarKey);
+                    $total = $santriInKamar->count();
+                    $hadir = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status) === 'hadir')->count();
+                    $izin = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status ?? ($s->santriPermissions->isNotEmpty() ? 'izin' : null)) === 'izin')->count();
+                    $ghoib = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status ?? ($date->isBefore(today()) && $s->santriPermissions->isEmpty() ? 'ghoib' : null)) === 'ghoib')->count();
+                    $belum = max(0, $total - ($hadir + $izin + $ghoib));
+                    $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
+                    return [
+                        'key' => $kamarKey,
+                        'number' => $index + 1,
+                        'total' => $total,
+                        'hadir' => $hadir,
+                        'izin' => $izin,
+                        'ghoib' => $ghoib,
+                        'belum' => $belum,
+                        'percentage' => $percentage,
+                    ];
+                });
+            @endphp
+
+            @foreach($roomsProgress as $item)
+                @php
+                    $pct = $item['percentage'];
+                    $isFiltered = request('kamar') === $item['key'];
+                    $textColor = $pct >= 100 ? 'text-emerald-600' : ($pct >= 50 ? 'text-primary' : ($pct > 0 ? 'text-amber-600' : 'text-on-surface-variant'));
+                @endphp
+
+                <a href="{{ route($routePrefix.'.attendance.'.($isManualMode ? 'manual' : 'rfid'), ['kamar' => $item['key'], 'date' => $date->toDateString()]) }}"
+                   title="Kamar {{ $item['number'] }}: {{ $item['hadir'] }}/{{ $item['total'] }} Hadir ({{ $pct }}%)"
+                   class="group flex flex-col justify-between rounded-lg border p-2 text-left transition-all duration-150 {{ $isFiltered ? 'bg-primary/10 border-primary ring-1 ring-primary' : 'bg-surface border-outline-variant/15 hover:border-primary/40 hover:bg-surface-container-lowest' }} kamar-card">
+                    
+                    <!-- Top Info: Kamar & Percent -->
+                    <div class="flex items-center justify-between gap-1 mb-1">
+                        <span class="text-[11px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
+                            <span class="hidden sm:inline">Kamar </span>K{{ $item['number'] }}
+                        </span>
+                        <span class="text-[10px] font-extrabold {{ $textColor }}">
+                            {{ $pct }}%
+                        </span>
+                    </div>
+
+                    <!-- Micro Progress Bar -->
+                    <div class="h-1.5 w-full overflow-hidden rounded-full bg-surface-container flex gap-0.5 my-1">
+                        @if($item['total'] > 0)
+                            @if($item['hadir'] > 0)
+                                <div class="h-full bg-emerald-500" style="width: {{ ($item['hadir'] / $item['total']) * 100 }}%"></div>
+                            @endif
+                            @if($item['izin'] > 0)
+                                <div class="h-full bg-amber-500" style="width: {{ ($item['izin'] / $item['total']) * 100 }}%"></div>
+                            @endif
+                            @if($item['ghoib'] > 0)
+                                <div class="h-full bg-rose-500" style="width: {{ ($item['ghoib'] / $item['total']) * 100 }}%"></div>
+                            @endif
+                        @else
+                            <div class="h-full w-full bg-surface-container"></div>
+                        @endif
+                    </div>
+
+                    <!-- Bottom Count: Hadir/Total -->
+                    <div class="flex items-center justify-between text-[10px] text-on-surface-variant font-medium mt-0.5">
+                        <span>{{ $item['hadir'] }}/{{ $item['total'] }} <span class="kamar-card-detail">Santri</span></span>
+                        @if($item['izin'] > 0 || $item['ghoib'] > 0)
+                            <span class="text-[9px] font-bold text-amber-600 kamar-card-detail">
+                                @if($item['izin'] > 0)+{{ $item['izin'] }}I @endif
+                                @if($item['ghoib'] > 0)+{{ $item['ghoib'] }}G @endif
+                            </span>
+                        @endif
+                    </div>
+                </a>
+            @endforeach
+        </div>
     </div>
     @endunless
 
@@ -396,6 +541,48 @@ function attendancePage() {
         message: '',
         success: false,
         canScan: @js($canScanAttendance),
+        isFullscreen: false,
+        init() {
+            const syncFullscreenState = () => {
+                const fs = !!(document.fullscreenElement || document.webkitFullscreenElement);
+                this.isFullscreen = fs || document.body.classList.contains('is-fullscreen');
+                if (!this.isFullscreen) {
+                    document.body.classList.remove('is-fullscreen');
+                }
+            };
+            document.addEventListener('fullscreenchange', syncFullscreenState);
+            document.addEventListener('webkitfullscreenchange', syncFullscreenState);
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape' && this.isFullscreen) {
+                    this.exitFullscreen();
+                }
+            });
+        },
+        toggleFullscreen() {
+            if (!this.isFullscreen) {
+                this.enterFullscreen();
+            } else {
+                this.exitFullscreen();
+            }
+        },
+        enterFullscreen() {
+            document.body.classList.add('is-fullscreen');
+            this.isFullscreen = true;
+            if (document.documentElement.requestFullscreen) {
+                document.documentElement.requestFullscreen().catch(() => {});
+            } else if (document.documentElement.webkitRequestFullscreen) {
+                document.documentElement.webkitRequestFullscreen();
+            }
+        },
+        exitFullscreen() {
+            document.body.classList.remove('is-fullscreen');
+            this.isFullscreen = false;
+            if (document.fullscreenElement && document.exitFullscreen) {
+                document.exitFullscreen().catch(() => {});
+            } else if (document.webkitFullscreenElement && document.webkitExitFullscreen) {
+                document.webkitExitFullscreen();
+            }
+        },
         async scan() {
             if (!this.canScan) {
                 this.success = false;
@@ -421,7 +608,7 @@ function attendancePage() {
             } finally {
                 this.rfid = '';
                 this.loading = false;
-                if (this.canScan) this.$refs.rfid.focus();
+                if (this.canScan) this.$refs.rfid?.focus();
             }
         }
     }

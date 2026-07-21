@@ -242,6 +242,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
         Route::middleware('permission:petugas.santri.manage')->group(function () {
+            Route::get('santri/master', [SantriController::class, 'master'])->name('santri.master');
             Route::post('santri/import', [SantriController::class, 'import'])->name('santri.import');
             Route::get('santri-export', [SantriController::class, 'export'])->name('santri.export');
             Route::get('santri-template', [SantriController::class, 'template'])->name('santri.template');

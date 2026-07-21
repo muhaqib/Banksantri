@@ -7,7 +7,7 @@
 | Nama produk pada antarmuka | Mawa Smart / Mawasmart |
 | Deskripsi produk pada manifest | Sistem Manajemen Keuangan Pondok Pesantren Mambaul Hikmah |
 | Jenis dokumen | PRD as-built, disusun dari source code yang tersedia |
-| Tanggal analisis | 12 Juli 2026 (Update fitur baru) |
+| Tanggal analisis | 20 Juli 2026 (Update fitur baru, Keamanan, & UI Dark Mode) |
 | Cakupan | Aplikasi web, REST API, database, autentikasi, otorisasi, dashboard, laporan, PWA, WhatsApp Gateway (WAHA), Akademik Tarbiyah, Laundry, Kesehatan, Keamanan, dan proses pendukung |
 
 Dokumen ini mendeskripsikan perilaku yang sudah diimplementasikan. Pernyataan mengenai fitur yang belum lengkap hanya dibuat ketika source code secara eksplisit menunjukkan placeholder, `TODO`, route yang tidak tersedia, atau dependensi data yang tidak memiliki migration di repository.
@@ -98,7 +98,7 @@ Saat login web, sistem menyinkronkan role Spatie apabila user belum memiliki rol
 | `petugas.finance.dashboard` | Melihat dashboard keuangan petugas |
 | `petugas.history.view` | Melihat riwayat transaksi yang diproses petugas |
 | `petugas.withdrawals.manage` | Mengajukan settlement/tarik tunai ke admin |
-| `petugas.santri.manage` | Mengelola data santri tingkat petugas |
+| `petugas.santri.manage` | Mengelola & melihat data santri tingkat petugas (Data Santri Lihat Data, Master Santri CRUD, Tambah Santri) |
 | `petugas.prestasi.manage` | Mengelola prestasi santri dan kitab |
 | `petugas.tarbiyah.manage` | Memasukkan, mengimpor, dan mempromosikan nilai Tarbiyah |
 | `petugas.health.manage` | Mengelola data kesehatan santri |
@@ -199,6 +199,12 @@ Admin dapat:
 - Menghapus santri dan foto terkait.
 - Mengimpor data santri dari file Excel (XLSX) dan mengekspor data santri ke Excel menggunakan template yang disediakan.
 - Mengubah status keaktifan santri (aktif / lulus).
+
+Petugas yang memiliki permission `petugas.santri.manage` dapat mengelola santri melalui 3 opsi menu dropdown pada sidebar:
+
+1. **Data Santri (Melihat Data)** (`petugas.santri.index`): Halaman khusus eksplorasi santri yang dikemas secara minimalis dan rapi. Menampilkan foto thumbnail (yang dapat diklik untuk membuka **Modal Pratinjau Foto Besar**), NIS, Kelas, Kamar, dan Status keaktifan tanpa menampilkan informasi saldo tabungan. Dilengkapi pencarian cepat (Nama/NIS) serta filter per kamar dan status.
+2. **Master Santri (CRUD)** (`petugas.santri.master`): Halaman manajemen santri berfitur lengkap yang memungkinkan petugas melakukan Aksi Tambah, Edit Data, Hapus Data, serta Mengubah Status Keaktifan (Aktifkan / Jadikan Alumni).
+3. **Tambah Santri** (`petugas.santri.create`): Form registrasi santri baru serta fasilitas impor data santri dari file Excel (XLSX).
 
 Aturan penting:
 
@@ -665,7 +671,7 @@ Tabel `personal_access_tokens` yang digunakan Sanctum telah tersedia melalui fil
 | API auth | Laravel Sanctum `^4.3` (dengan migrasi `personal_access_tokens` lengkap) |
 | Spreadsheet | PhpSpreadsheet `^5.5` (untuk manajemen santri dan nilai Tarbiyah) |
 | WhatsApp integration | WAHA (WhatsApp HTTP API) |
-| Styling | Tailwind CSS `^4.2.2`, Material Design 3 theme |
+| Styling | Tailwind CSS `^4.2.2`, Material Design 3 theme (dukungan penuh Light & Dark Mode via `localStorage` dan CSS variables) |
 | Database | SQLite (testing/local default) dan MySQL (aktif di env) |
 
 ## 14. Seeder dan Data Awal
@@ -680,9 +686,10 @@ Tabel `personal_access_tokens` yang digunakan Sanctum telah tersedia melalui fil
 
 - Login web santri hanya memerlukan NIS tanpa password atau PIN.
 - Registrasi admin tersedia secara publik untuk guest.
-- Transaksi petugas membandingkan PIN secara langsung (`$santri->pin !== $request->pin`), sedangkan pembuatan santri dan login API menyimpan/migrasikan PIN menjadi hash. Akibatnya PIN hash tidak akan lolos pada flow transaksi petugas.
+- **[TERSELESAIKAN]** Verifikasi PIN santri pada transaksi petugas kini menggunakan metode `verifyPin()` yang mendukung validasi bcrypt hash secara aman serta mengomparasikan dan mengotomatiskan migrasi PIN plaintext lama menjadi hash saat pertama kali digunakan.
 - Perubahan PIN santri via web belum memverifikasi atau menyimpan PIN.
 - API Sanctum hanya memeriksa token valid; route tidak memeriksa ability `santri` atau memastikan role user adalah santri setelah token diterbitkan.
+- **[TERSELESAIKAN]** Transaksi keuangan petugas menggunakan database transaction (`DB::transaction`) dengan `lockForUpdate()` pada model `User` (santri & petugas) untuk menjamin atomic concurrency dan mencegah race condition.
 - **[TERSELESAIKAN]** Sanctum kini didukung migrasi `personal_access_tokens` yang lengkap di repository.
 
 ### 16.2 Konsistensi Data dan Perilaku
