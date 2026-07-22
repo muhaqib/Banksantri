@@ -87,7 +87,11 @@
     $isManualMode = ($mode ?? 'rfid') === 'manual';
     $canScanAttendance = $attendanceWindow['can_scan'] ?? false;
 @endphp
-<div class="space-y-6" x-data="attendancePage()">
+<div class="space-y-6" x-data="attendancePage({
+    summary: @js($summary),
+    kamarProgress: @js($kamarProgress),
+    recentAttendances: @js($recentAttendancesFormatted ?? [])
+})">
     <!-- Floating Exit Fullscreen Button -->
 
     <header class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
@@ -95,7 +99,7 @@
             <p class="text-xs font-semibold text-primary uppercase tracking-wider">Kesiswaan</p>
             <h1 class="font-headline text-2xl font-bold text-primary">{{ $isManualMode ? 'Presensi Manual Santri' : 'RFID Presensi Santri' }}</h1>
             <p class="mt-1 text-xs text-on-surface-variant">
-                {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini.' }}
+                {{ $isManualMode ? 'Ubah status hadir, izin, atau ghoib santri secara manual berdasarkan tanggal.' : 'Tempelkan kartu RFID santri untuk mencatat kehadiran hari ini tanpa memilih kamar.' }}
             </p>
         </div>
 
@@ -173,35 +177,35 @@
                     <span class="rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-[10px] font-bold text-tertiary">LIVE</span>
                 </div>
                 <div class="space-y-4">
-                    @forelse($recentAttendances as $attendance)
-                        <div class="flex items-center gap-3.5 {{ $loop->first ? 'animate-slide-in' : '' }}" id="recent-{{ $attendance->santri_id }}">
+                    <template x-for="(attendance, index) in recentAttendances" :key="attendance.santri_id + '-' + (attendance.id || index)">
+                        <div class="flex items-center gap-3.5 animate-slide-in">
                             <div class="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary-container font-headline text-sm font-bold text-secondary">
-                                @if($attendance->santri?->foto)
-                                    <img src="{{ Storage::url($attendance->santri->foto) }}" alt="{{ $attendance->santri->name }}" class="h-full w-full object-cover">
-                                @else
-                                    {{ str($attendance->santri?->name ?? '?')->substr(0, 1)->upper() }}
-                                @endif
+                                <template x-if="attendance.foto_url">
+                                    <img :src="attendance.foto_url" :alt="attendance.name" class="h-full w-full object-cover">
+                                </template>
+                                <template x-if="!attendance.foto_url">
+                                    <span x-text="attendance.initial"></span>
+                                </template>
                                 <div class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary">
                                     <span class="material-symbols-outlined text-[8px] text-on-primary">check</span>
                                 </div>
                             </div>
                             <div class="min-w-0 flex-1">
                                 <div class="flex items-start justify-between gap-3">
-                                    <h3 class="truncate text-sm font-semibold leading-tight text-on-surface">{{ $attendance->santri?->name ?? 'Santri' }}</h3>
-                                    <span class="shrink-0 rounded-full bg-primary-fixed/20 px-1.5 py-0.5 text-[9px] font-medium text-primary">{{ $attendance->recorded_at?->diffForHumans() }}</span>
+                                    <h3 class="truncate text-sm font-semibold leading-tight text-on-surface" x-text="attendance.name"></h3>
+                                    <span class="shrink-0 rounded-full bg-primary-fixed/20 px-1.5 py-0.5 text-[9px] font-medium text-primary" x-text="attendance.recorded_at_human"></span>
                                 </div>
                                 <div class="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-on-surface-variant">
-                                    <span>NIS: {{ $attendance->santri?->nis ?? '-' }}</span>
+                                    <span>NIS: <span x-text="attendance.nis"></span></span>
                                     <span class="h-0.5 w-0.5 rounded-full bg-outline-variant"></span>
-                                    <span class="font-medium text-secondary">{{ ucwords(str_replace('_', ' ', $attendance->kamar)) }}</span>
+                                    <span class="font-medium text-secondary" x-text="attendance.kamar"></span>
                                 </div>
                             </div>
                         </div>
-                    @empty
-                        <div class="rounded-xl bg-surface-container-low border border-outline-variant/10 p-5 text-center text-xs font-semibold text-on-surface-variant">
-                            Belum ada kartu yang tap pada tanggal ini.
-                        </div>
-                    @endforelse
+                    </template>
+                    <div x-show="recentAttendances.length === 0" class="rounded-xl bg-surface-container-low border border-outline-variant/10 p-5 text-center text-xs font-semibold text-on-surface-variant">
+                        Belum ada kartu yang tap pada tanggal ini.
+                    </div>
                 </div>
                 <div class="mt-8 border-t border-outline-variant/10 pt-6">
                     <div class="flex items-center justify-between text-on-surface-variant">
@@ -209,11 +213,10 @@
                             <span class="material-symbols-outlined text-lg">group</span>
                             <span class="text-xs font-medium">Total Kehadiran Hari Ini:</span>
                         </div>
-                        <span class="text-sm font-extrabold text-primary">{{ $summary['hadir'] }} / {{ max($summary['total'], $summary['hadir']) }}</span>
+                        <span class="text-sm font-extrabold text-primary" x-text="(summary.hadir || 0) + ' / ' + Math.max(summary.total || 0, summary.hadir || 0)"></span>
                     </div>
-                    @php $attendancePercent = max($summary['total'], $summary['hadir']) > 0 ? min(100, round(($summary['hadir'] / max($summary['total'], $summary['hadir'])) * 100)) : 0; @endphp
                     <div class="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-container">
-                        <div class="h-full rounded-full bg-primary" style="width: {{ $attendancePercent }}%"></div>
+                        <div class="h-full rounded-full bg-primary transition-all duration-300" :style="'width: ' + attendancePercent + '%'"></div>
                     </div>
                 </div>
             </div>
@@ -231,86 +234,63 @@
 
             <!-- Compact Global Stats -->
             <div class="flex items-center gap-2 font-medium text-[11px]">
-                <span class="text-emerald-600">Hadir: <strong>{{ $summary['hadir'] }}</strong></span>
+                <span class="text-emerald-600">Hadir: <strong x-text="summary.hadir || 0"></strong></span>
                 <span class="text-outline-variant/40">•</span>
-                <span class="text-amber-600">Izin: <strong>{{ $summary['izin'] }}</strong></span>
+                <span class="text-amber-600">Izin: <strong x-text="summary.izin || 0"></strong></span>
                 <span class="text-outline-variant/40">•</span>
-                <span class="text-rose-600">Ghoib: <strong>{{ $summary['ghoib'] }}</strong></span>
+                <span class="text-rose-600">Ghoib: <strong x-text="summary.ghoib || 0"></strong></span>
                 <span class="text-outline-variant/40">•</span>
-                <span class="text-on-surface-variant">Belum: <strong>{{ $summary['belum'] }}</strong></span>
+                <span class="text-on-surface-variant">Belum: <strong x-text="summary.belum || 0"></strong></span>
             </div>
         </div>
 
         <!-- 8 Rooms Static Cards Grid (Non-Clickable div) -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 kamar-progress-grid">
-            @php
-                $roomsProgress = $kamarProgress ?? collect(\App\Models\KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($santriList, $date) {
-                    $santriInKamar = $santriList->filter(fn ($s) => ($s->kamarSantri?->kamar ?? '') === $kamarKey);
-                    $total = $santriInKamar->count();
-                    $hadir = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status) === 'hadir')->count();
-                    $izin = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status ?? ($s->santriPermissions->isNotEmpty() ? 'izin' : null)) === 'izin')->count();
-                    $ghoib = $santriInKamar->filter(fn ($s) => ($s->attendances->first()?->status ?? ($date->isBefore(today()) && $s->santriPermissions->isEmpty() ? 'ghoib' : null)) === 'ghoib')->count();
-                    $belum = max(0, $total - ($hadir + $izin + $ghoib));
-                    $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
-                    return [
-                        'key' => $kamarKey,
-                        'number' => $index + 1,
-                        'total' => $total,
-                        'hadir' => $hadir,
-                        'izin' => $izin,
-                        'ghoib' => $ghoib,
-                        'belum' => $belum,
-                        'percentage' => $percentage,
-                    ];
-                });
-            @endphp
-
-            @foreach($roomsProgress as $item)
-                @php
-                    $pct = $item['percentage'];
-                    $textColor = $pct >= 100 ? 'text-emerald-600' : ($pct >= 50 ? 'text-primary' : ($pct > 0 ? 'text-amber-600' : 'text-on-surface-variant'));
-                @endphp
-
+            <template x-for="item in kamarProgress" :key="item.key">
                 <div class="flex flex-col justify-between rounded-lg border border-outline-variant/15 p-2 text-left bg-surface shadow-2xs kamar-card">
                     <!-- Top Info: Kamar & Percent -->
                     <div class="flex items-center justify-between gap-1 mb-1">
                         <span class="text-[11px] font-bold text-on-surface truncate">
-                            <span class="hidden sm:inline">Kamar </span>{{ $item['number'] }}
+                            <span class="hidden sm:inline">Kamar </span><span x-text="item.number"></span>
                         </span>
-                        <span class="text-[10px] font-extrabold {{ $textColor }}">
-                            {{ $pct }}%
+                        <span class="text-[10px] font-extrabold" 
+                              :class="item.percentage >= 100 ? 'text-emerald-600' : (item.percentage >= 50 ? 'text-primary' : (item.percentage > 0 ? 'text-amber-600' : 'text-on-surface-variant'))" 
+                              x-text="item.percentage + '%'">
                         </span>
                     </div>
 
                     <!-- Micro Progress Bar -->
                     <div class="h-1.5 w-full overflow-hidden rounded-full bg-surface-container flex gap-0.5 my-1">
-                        @if($item['total'] > 0)
-                            @if($item['hadir'] > 0)
-                                <div class="h-full bg-emerald-500" style="width: {{ ($item['hadir'] / $item['total']) * 100 }}%" title="Hadir: {{ $item['hadir'] }}"></div>
-                            @endif
-                            @if($item['izin'] > 0)
-                                <div class="h-full bg-amber-500" style="width: {{ ($item['izin'] / $item['total']) * 100 }}%" title="Izin: {{ $item['izin'] }}"></div>
-                            @endif
-                            @if($item['ghoib'] > 0)
-                                <div class="h-full bg-rose-500" style="width: {{ ($item['ghoib'] / $item['total']) * 100 }}%" title="Ghoib: {{ $item['ghoib'] }}"></div>
-                            @endif
-                        @else
+                        <template x-if="item.total > 0">
+                            <div class="w-full flex h-full gap-0.5">
+                                <template x-if="item.hadir > 0">
+                                    <div class="h-full bg-emerald-500 transition-all duration-300" :style="'width: ' + ((item.hadir / item.total) * 100) + '%'" :title="'Hadir: ' + item.hadir"></div>
+                                </template>
+                                <template x-if="item.izin > 0">
+                                    <div class="h-full bg-amber-500 transition-all duration-300" :style="'width: ' + ((item.izin / item.total) * 100) + '%'" :title="'Izin: ' + item.izin"></div>
+                                </template>
+                                <template x-if="item.ghoib > 0">
+                                    <div class="h-full bg-rose-500 transition-all duration-300" :style="'width: ' + ((item.ghoib / item.total) * 100) + '%'" :title="'Ghoib: ' + item.ghoib"></div>
+                                </template>
+                            </div>
+                        </template>
+                        <template x-if="item.total === 0">
                             <div class="h-full w-full bg-surface-container"></div>
-                        @endif
+                        </template>
                     </div>
 
                     <!-- Bottom Count: Hadir/Total -->
                     <div class="flex items-center justify-between text-[10px] text-on-surface-variant font-medium mt-0.5">
-                        <span>{{ $item['hadir'] }}/{{ $item['total'] }} <span class="kamar-card-detail">Santri</span></span>
-                        @if($item['izin'] > 0 || $item['ghoib'] > 0)
+                        <span><span x-text="item.hadir"></span>/<span x-text="item.total"></span> <span class="kamar-card-detail">Santri</span></span>
+                        <template x-if="item.izin > 0 || item.ghoib > 0">
                             <span class="text-[9px] font-bold text-amber-600 kamar-card-detail">
-                                @if($item['izin'] > 0)+{{ $item['izin'] }}I @endif
-                                @if($item['ghoib'] > 0)+{{ $item['ghoib'] }}G @endif
+                                <span x-show="item.izin > 0" x-text="'+' + item.izin + 'I '"></span>
+                                <span x-show="item.ghoib > 0" x-text="'+' + item.ghoib + 'G'"></span>
                             </span>
-                        @endif
+                        </template>
                     </div>
                 </div>
-            @endforeach
+            </template>
         </div>
     </div>
     @endunless
@@ -524,7 +504,7 @@
 
 @push('scripts')
 <script>
-function attendancePage() {
+function attendancePage(initialData = {}) {
     return {
         rfid: '',
         loading: false,
@@ -532,6 +512,13 @@ function attendancePage() {
         success: false,
         canScan: @js($canScanAttendance),
         isFullscreen: false,
+        summary: initialData.summary || { total: 0, hadir: 0, izin: 0, ghoib: 0, belum: 0 },
+        kamarProgress: initialData.kamarProgress || [],
+        recentAttendances: initialData.recentAttendances || [],
+        get attendancePercent() {
+            const maxVal = Math.max(this.summary.total || 0, this.summary.hadir || 0);
+            return maxVal > 0 ? Math.min(100, Math.round((this.summary.hadir / maxVal) * 100)) : 0;
+        },
         init() {
             const syncFullscreenState = () => {
                 const fs = !!(document.fullscreenElement || document.webkitFullscreenElement);
@@ -591,7 +578,11 @@ function attendancePage() {
                 const data = await response.json();
                 this.success = response.ok;
                 this.message = data.message || 'RFID berhasil diproses.';
-                if (response.ok) setTimeout(() => window.location.reload(), 650);
+                if (response.ok) {
+                    if (data.summary) this.summary = data.summary;
+                    if (data.recentAttendances) this.recentAttendances = data.recentAttendances;
+                    if (data.kamarProgress) this.kamarProgress = data.kamarProgress;
+                }
             } catch (error) {
                 this.success = false;
                 this.message = 'Gagal memproses RFID.';

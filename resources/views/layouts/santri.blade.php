@@ -34,7 +34,7 @@
     
     @stack('styles')
 </head>
-<body class="bg-surface font-body text-on-surface antialiased max-w-md mx-auto min-h-screen relative">
+<body class="bg-surface font-body text-on-surface antialiased max-w-md md:max-w-2xl lg:max-w-4xl mx-auto min-h-screen relative">
     @yield('content')
     @stack('scripts')
 

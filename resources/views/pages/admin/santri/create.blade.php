@@ -4,15 +4,16 @@
 @php
     $activeRole = $activeRole ?? 'admin';
     $routePrefix = $routePrefix ?? $activeRole.'.santri';
+    $backRoute = $activeRole === 'petugas' ? 'petugas.santri.master' : $routePrefix.'.index';
 @endphp
 
 @section('content')
 <div class="max-w-4xl mx-auto">
     <!-- Page Header -->
     <div class="mb-8">
-        <a href="{{ route($routePrefix.'.index') }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
+        <a href="{{ route($backRoute) }}" class="text-primary hover:underline flex items-center gap-1 mb-4">
             <span class="material-symbols-outlined text-sm">arrow_back</span>
-            <span>Kembali ke Data Santri</span>
+            <span>Kembali ke {{ $activeRole === 'petugas' ? 'Master Santri' : 'Data Santri' }}</span>
         </a>
         <h2 class="font-headline text-2xl font-bold text-primary tracking-tight">Tambah Santri Baru</h2>
         <p class="text-on-surface-variant text-sm mt-1">Lengkapi data santri dengan benar.</p>
@@ -257,7 +258,7 @@
 
         <!-- Submit Buttons -->
         <div class="flex items-center justify-end gap-4 pt-6 border-t border-surface-container">
-            <a href="{{ route($routePrefix.'.index') }}" 
+            <a href="{{ route($backRoute) }}" 
                class="px-6 py-3 bg-surface-container-high text-on-surface font-semibold rounded-xl hover:bg-surface-container-highest transition-colors">
                 Batal
             </a>

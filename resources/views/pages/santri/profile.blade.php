@@ -66,26 +66,29 @@
         </div>
         <!-- Actions -->
         <div class="card">
-            <h3 class="font-headline font-bold text-primary mb-4 flex items-center px-10 gap-2">
+            <h3 class="font-headline font-bold text-primary mb-4 flex items-center gap-2">
                 <span class="material-symbols-outlined text-sm">settings</span>
                 <span>Lainnya</span>
             </h3>
             <div class="space-y-2">
+                <a href="https://api.whatsapp.com/send/?phone=6281393750612" target="_blank" rel="noopener noreferrer" class="w-full flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors">
+                    <div class="flex items-center gap-3">
+                        <div class="w-10 h-10 bg-emerald-500/10 rounded-full flex items-center justify-center">
+                            <span class="material-symbols-outlined text-emerald-600">chat</span>
+                        </div>
+                        <div>
+                            <span class="font-medium text-on-surface block">Tanya Admin</span>
+                            <span class="text-xs text-on-surface-variant">Hubungi via WhatsApp </span>
+                        </div>
+                    </div>
+                    <span class="material-symbols-outlined text-on-surface-variant">open_in_new</span>
+                </a>
                 <a href="#" class="w-full flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors">
                     <div class="flex items-center gap-3">
                         <div class="w-10 h-10 bg-secondary/10 rounded-full flex items-center justify-center">
                             <span class="material-symbols-outlined text-secondary">help</span>
                         </div>
                         <span class="font-medium text-on-surface">Bantuan</span>
-                    </div>
-                    <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
-                </a>
-                <a href="#" class="w-full flex items-center justify-between p-4 bg-surface-container-low rounded-xl hover:bg-surface-container transition-colors">
-                    <div class="flex items-center gap-3">
-                        <div class="w-10 h-10 bg-tertiary/10 rounded-full flex items-center justify-center">
-                            <span class="material-symbols-outlined text-tertiary">info</span>
-                        </div>
-                        <span class="font-medium text-on-surface">Tentang</span>
                     </div>
                     <span class="material-symbols-outlined text-on-surface-variant">chevron_right</span>
                 </a>
@@ -102,80 +105,13 @@
         </form>
     </div>
 
-    <!-- Change PIN Modal -->
-    @unless(auth()->user()->isAlumni())
-    <div x-show="showChangePin" x-cloak class="fixed inset-0 z-100 overflow-y-auto">
-        <div class="fixed inset-0 bg-black/50 backdrop-blur-sm transition-opacity z-40"></div>
-        <div class="flex items-center justify-center min-h-screen p-4 relative z-50">
-            <div class="bg-surface rounded-xl shadow-2xl max-w-md w-full p-4 sm:p-5 animate-scale-in">
-                <div class="text-center mb-6">
-                    <div class="w-16 h-16 bg-primary-fixed rounded-full flex items-center justify-center mx-auto mb-4">
-                        <span class="material-symbols-filled text-primary text-3xl">lock</span>
-                    </div>
-                    <h3 class="font-headline font-bold text-xl text-on-surface">Ganti PIN</h3>
-                    <p class="text-sm text-on-surface-variant mt-1">Masukkan PIN baru Anda</p>
-                </div>
-
-                <form action="{{ route('santri.change-pin') }}" method="POST">
-                    @csrf
-                    <div class="space-y-4 mb-6">
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">PIN Lama</label>
-                            <input type="password"
-                                   name="old_pin"
-                                   required
-                                   maxlength="6"
-                                   pattern="[0-9]{6}"
-                                   class="input-field text-center text-2xl font-bold tracking-widest"
-                                   placeholder="••••••">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">PIN Baru</label>
-                            <input type="password"
-                                   name="new_pin"
-                                   required
-                                   maxlength="6"
-                                   pattern="[0-9]{6}"
-                                   class="input-field text-center text-2xl font-bold tracking-widest"
-                                   placeholder="••••••">
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-on-surface-variant mb-2 uppercase">Konfirmasi PIN Baru</label>
-                            <input type="password"
-                                   name="new_pin_confirmation"
-                                   required
-                                   maxlength="6"
-                                   pattern="[0-9]{6}"
-                                   class="input-field text-center text-2xl font-bold tracking-widest"
-                                   placeholder="••••••">
-                        </div>
-                    </div>
-
-                    <div class="flex gap-3">
-                        <button type="button"
-                                @click="showChangePin = false"
-                                class="flex-1 px-4 py-3 btn-secondary">
-                            Batal
-                        </button>
-                        <button type="submit" class="flex-1 px-4 py-3 btn-primary">
-                            Simpan
-                        </button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-    @endunless
-
     <!-- Bottom Navigation -->
     <x-santri.bottom-nav />
 </div>
 
 <script>
 function profileSantri() {
-    return {
-        showChangePin: false
-    }
+    return {}
 }
 </script>
 

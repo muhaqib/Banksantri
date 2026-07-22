@@ -50,55 +50,7 @@ class AttendanceController extends Controller
             ->orderBy('name')
             ->get();
 
-        $totalWithRfid = $santriList->filter(fn ($santri) => filled($santri->rfid_code))->count();
-        $summary = [
-            'total' => $totalWithRfid,
-            'hadir' => $santriList->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'hadir')->count(),
-            'izin' => $santriList->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'izin')->count(),
-            'ghoib' => $santriList->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'ghoib')->count(),
-            'belum' => $santriList
-                ->filter(fn ($santri) => filled($santri->rfid_code))
-                ->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'belum')
-                ->count(),
-        ];
-        $recentAttendances = Attendance::query()
-            ->whereDate('attendance_date', $date)
-            ->where('status', 'hadir')
-            ->with('santri.kamarSantri')
-            ->latest('recorded_at')
-            ->limit(5)
-            ->get();
-
-        $allSantriForProgress = User::query()
-            ->activeSantri()
-            ->with([
-                'kamarSantri',
-                'attendances' => fn ($query) => $query->whereDate('attendance_date', $date),
-                'santriPermissions' => fn ($query) => $query->activeOn($date),
-            ])
-            ->get();
-
-        $kamarProgress = collect(KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($allSantriForProgress, $date) {
-            $santriInKamar = $allSantriForProgress->filter(fn ($s) => $s->kamarSantri?->kamar === $kamarKey);
-            $total = $santriInKamar->count();
-            $hadir = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'hadir')->count();
-            $izin = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'izin')->count();
-            $ghoib = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'ghoib')->count();
-            $belum = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'belum')->count();
-            $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
-
-            return [
-                'key' => $kamarKey,
-                'number' => $index + 1,
-                'label' => 'Kamar ' . ($index + 1),
-                'total' => $total,
-                'hadir' => $hadir,
-                'izin' => $izin,
-                'ghoib' => $ghoib,
-                'belum' => $belum,
-                'percentage' => $percentage,
-            ];
-        });
+        $stats = $this->getAttendanceStats($date);
 
         return view('pages.attendance.index', [
             'activeRole' => $this->routePrefix($request),
@@ -106,9 +58,10 @@ class AttendanceController extends Controller
             'date' => $date,
             'kamar' => $kamar,
             'santriList' => $santriList,
-            'recentAttendances' => $recentAttendances,
-            'summary' => $summary,
-            'kamarProgress' => $kamarProgress,
+            'recentAttendances' => $stats['recentAttendances'],
+            'recentAttendancesFormatted' => $stats['recentAttendancesFormatted'],
+            'summary' => $stats['summary'],
+            'kamarProgress' => $stats['kamarProgress'],
             'mode' => $mode,
             'attendanceWindow' => $attendanceWindow,
         ]);
@@ -141,11 +94,90 @@ class AttendanceController extends Controller
 
         $attendance = $attendanceService->record($santri, $date, 'hadir', 'rfid', $request->user());
 
+        $stats = $this->getAttendanceStats($date);
+
         return response()->json([
             'message' => $santri->name.' berhasil ditandai hadir.',
             'attendance' => $attendance,
             'santri' => ['id' => $santri->id, 'name' => $santri->name, 'nis' => $santri->nis],
+            'summary' => $stats['summary'],
+            'recentAttendances' => $stats['recentAttendancesFormatted'],
+            'kamarProgress' => $stats['kamarProgress'],
         ]);
+    }
+
+    private function getAttendanceStats(Carbon $date): array
+    {
+        $allSantri = User::query()
+            ->activeSantri()
+            ->with([
+                'kamarSantri',
+                'attendances' => fn ($query) => $query->whereDate('attendance_date', $date),
+                'santriPermissions' => fn ($query) => $query->activeOn($date),
+            ])
+            ->get();
+
+        $totalWithRfid = $allSantri->filter(fn ($santri) => filled($santri->rfid_code))->count();
+        $summary = [
+            'total' => $totalWithRfid,
+            'hadir' => $allSantri->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'hadir')->count(),
+            'izin' => $allSantri->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'izin')->count(),
+            'ghoib' => $allSantri->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'ghoib')->count(),
+            'belum' => $allSantri
+                ->filter(fn ($santri) => filled($santri->rfid_code))
+                ->filter(fn ($santri) => $this->displayStatus($santri, $date) === 'belum')
+                ->count(),
+        ];
+
+        $recentAttendances = Attendance::query()
+            ->whereDate('attendance_date', $date)
+            ->where('status', 'hadir')
+            ->with('santri.kamarSantri')
+            ->latest('recorded_at')
+            ->limit(5)
+            ->get();
+
+        $recentAttendancesFormatted = $recentAttendances->map(function ($a) {
+            return [
+                'id' => $a->id,
+                'santri_id' => $a->santri_id,
+                'name' => $a->santri?->name ?? 'Santri',
+                'nis' => $a->santri?->nis ?? '-',
+                'kamar' => ucwords(str_replace('_', ' ', $a->santri?->kamarSantri?->kamar ?? $a->kamar ?? '-')),
+                'foto_url' => $a->santri?->foto ? \Illuminate\Support\Facades\Storage::url($a->santri->foto) : null,
+                'initial' => strtoupper(substr($a->santri?->name ?? '?', 0, 1)),
+                'recorded_at_human' => $a->recorded_at?->diffForHumans() ?? 'Baru saja',
+            ];
+        })->values();
+
+        $kamarProgress = collect(KamarSantri::KAMAR_LIST)->map(function ($kamarKey, $index) use ($allSantri, $date) {
+            $santriInKamar = $allSantri->filter(fn ($s) => $s->kamarSantri?->kamar === $kamarKey);
+            $total = $santriInKamar->count();
+            $hadir = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'hadir')->count();
+            $izin = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'izin')->count();
+            $ghoib = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'ghoib')->count();
+            $belum = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'belum')->count();
+            $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
+
+            return [
+                'key' => $kamarKey,
+                'number' => $index + 1,
+                'label' => 'Kamar ' . ($index + 1),
+                'total' => $total,
+                'hadir' => $hadir,
+                'izin' => $izin,
+                'ghoib' => $ghoib,
+                'belum' => $belum,
+                'percentage' => $percentage,
+            ];
+        })->values();
+
+        return [
+            'summary' => $summary,
+            'recentAttendances' => $recentAttendances,
+            'recentAttendancesFormatted' => $recentAttendancesFormatted,
+            'kamarProgress' => $kamarProgress,
+        ];
     }
 
     public function update(Request $request, User $santri, AttendanceService $attendanceService)

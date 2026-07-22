@@ -7,6 +7,7 @@
     $currentStatus = $currentStatus ?? request('status', 'aktif');
     $isMaster = $isMaster ?? false;
     $canManage = ($activeRole !== 'petugas' || $isMaster);
+    $currentRouteName = Route::currentRouteName() ?? ($isMaster ? $routePrefix.'.master' : $routePrefix.'.index');
 @endphp
 
 @section('content')
@@ -22,7 +23,7 @@
             </p>
         </div>
         <div class="flex gap-2">
-            <a href="{{ route($routePrefix.'.export', ['status' => $currentStatus]) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
+            <a href="{{ route($routePrefix.'.export', array_merge(request()->only('search'), ['status' => $currentStatus])) }}" class="bg-primary/10 text-primary font-bold py-3 px-4 rounded-xl flex items-center gap-2">
                 <span class="material-symbols-outlined">download</span><span>Export Excel</span>
             </a>
             @if($canManage)
@@ -66,9 +67,9 @@
         <div class="p-4 sm:p-5 border-b border-surface-container flex items-center justify-between">
             <h3 class="font-headline font-bold text-xl text-primary">Daftar Santri</h3>
             <div class="flex flex-wrap gap-2">
-                <a href="{{ route($routePrefix.'.index', ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
-                <a href="{{ route($routePrefix.'.index', ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
-                <form method="GET" action="{{ route($routePrefix.'.index') }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
+                <a href="{{ route($currentRouteName, ['status' => 'aktif']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'aktif' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Aktif</a>
+                <a href="{{ route($currentRouteName, ['status' => 'alumni']) }}" class="px-3 py-2 rounded-lg text-sm font-bold {{ $currentStatus === 'alumni' ? 'bg-primary text-on-primary' : 'bg-surface-container-high text-on-surface' }}">Alumni</a>
+                <form method="GET" action="{{ route($currentRouteName) }}" class="flex gap-2" x-data="{ hasSearch: {{ request('search') ? 'true' : 'false' }} }" x-init="if(hasSearch) { setTimeout(() => $el.querySelector('input[name=\"search\"]').focus(), 100); }" @keydown.enter.prevent="$event.target.closest('form').submit()">
                     <input type="hidden" name="status" value="{{ $currentStatus }}">
                     <input type="text"
                            name="search"
@@ -80,7 +81,7 @@
                         <span class="material-symbols-outlined text-sm">search</span>
                     </button>
                     @if(request('search'))
-                        <a href="{{ route($routePrefix.'.index', ['status' => $currentStatus]) }}"
+                        <a href="{{ route($currentRouteName, ['status' => $currentStatus]) }}"
                            class="bg-surface-container-high text-on-surface-variant px-4 py-2 rounded-lg text-sm font-semibold hover:bg-surface-container transition-colors flex items-center gap-1">
                             <span class="material-symbols-outlined text-sm">close</span>
                         </a>
