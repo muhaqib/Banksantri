@@ -332,6 +332,9 @@
                     <form :id="`edit-santri-form-${selectedSantri.id}`" :action="`${santriBasePath}/${selectedSantri.id}`" method="POST" enctype="multipart/form-data" class="space-y-4 pt-4">
                         @csrf
                         @method('PUT')
+                        @if($isMaster)
+                            <input type="hidden" name="from_master" value="1">
+                        @endif
 
                         <!-- Photo Upload -->
                         <div class="bg-surface-container-lowest rounded-xl p-5">

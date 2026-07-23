@@ -330,7 +330,11 @@ class SantriController extends Controller
             }
         }
 
-        return redirect()->route($this->routePrefix($request).'.index')
+        $redirectRoute = $request->boolean('from_master')
+            ? $this->routePrefix($request).'.master'
+            : $this->routePrefix($request).'.index';
+
+        return redirect()->route($redirectRoute)
             ->with('success', 'Data santri berhasil diupdate!');
     }
 
