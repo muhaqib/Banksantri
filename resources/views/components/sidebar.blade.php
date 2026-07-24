@@ -65,8 +65,7 @@
                 <span class="material-symbols-outlined text-on-surface">menu</span>
             </button>
             <div class="flex items-center gap-2">
-                <img src="{{ asset('mawablack.png') }}" alt="Mawa Smart" class="h-8 w-auto object-contain dark:hidden">
-                <img src="{{ asset('mawagold.png') }}" alt="Mawa Smart" class="h-8 w-auto object-contain hidden dark:block">
+                <img src="{{ asset('images/logo.png') }}" alt="Mawa Smart" class="h-8 w-auto object-contain">
             </div>
         </div>
 
@@ -141,8 +140,7 @@
             <div class="flex items-center justify-between">
                 <div class="flex items-center gap-3">
                     <div class="flex items-center justify-center shrink-0">
-                        <img src="{{ asset('mawablack.png') }}" alt="Mawa Smart" class="h-10 w-auto object-contain dark:hidden">
-                        <img src="{{ asset('mawagold.png') }}" alt="Mawa Smart" class="h-10 w-auto object-contain hidden dark:block">
+                        <img src="{{ asset('images/logo.png') }}" alt="Mawa Smart" class="h-10 w-auto object-contain">
                     </div>
                     <div>
                         <h1 class="text-base font-black text-primary font-headline tracking-tight leading-none">Mawa Smart</h1>
