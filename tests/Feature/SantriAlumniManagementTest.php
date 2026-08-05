@@ -201,8 +201,8 @@ class SantriAlumniManagementTest extends TestCase
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->fromArray(SantriExcelService::HEADERS, null, 'A1');
         $sheet->fromArray([[
-            $santri->id, 'EXCEL-001', 'Nama Alumni Excel', $santri->email, null, null, null, null,
-            null, null, null, null, 'Lulus', 'kamar_2', 25000, 'alumni', now()->toDateString(), null, null,
+            $santri->id, 'EXCEL-001', 'Nama Alumni Excel', null, $santri->email, null, null, null,
+            null, null, null, null, null, 'Lulus', 'kamar_2', 25000, 'alumni', now()->toDateString(), null, null,
         ]], null, 'A2');
 
         $path = tempnam(sys_get_temp_dir(), 'santri-import-').'.xlsx';
@@ -249,6 +249,47 @@ class SantriAlumniManagementTest extends TestCase
         $this->assertSame('aktif', $data['EXPORT-AKTIF'][$header['status']]);
         $this->assertSame('kamar_5', $data['EXPORT-ALUMNI'][$header['kamar']]);
         $this->assertSame('alumni', $data['EXPORT-ALUMNI'][$header['status']]);
+    }
+
+    public function test_excel_export_and_import_with_foto(): void
+    {
+        \Illuminate\Support\Facades\Storage::fake('public');
+        $imgContent = base64_decode('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==');
+        \Illuminate\Support\Facades\Storage::disk('public')->put('fotos/santri/test.jpg', $imgContent);
+
+        $santri = User::factory()->create([
+            'role' => 'santri',
+            'nis' => 'FOTO-001',
+            'foto' => 'fotos/santri/test.jpg',
+            'santri_status' => 'aktif',
+        ]);
+
+        ob_start();
+        app(SantriExcelService::class)->export()->sendContent();
+        $content = ob_get_clean();
+        $exportPath = tempnam(sys_get_temp_dir(), 'santri-export-foto-').'.xlsx';
+        file_put_contents($exportPath, $content);
+
+        $spreadsheet = IOFactory::load($exportPath);
+        $sheet = $spreadsheet->getActiveSheet();
+        $rows = $sheet->toArray();
+        $header = array_flip($rows[0]);
+
+        $this->assertArrayHasKey('foto', $header);
+        $this->assertSame('fotos/santri/test.jpg', $rows[1][$header['foto']]);
+        $this->assertGreaterThan(0, count($sheet->getDrawingCollection()));
+
+        // Test Import updating santri photo
+        $santri->foto = null;
+        $santri->save();
+
+        $result = app(SantriExcelService::class)->import(
+            new UploadedFile($exportPath, 'santri.xlsx', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet', null, true)
+        );
+
+        $santri->refresh();
+        $this->assertSame(1, $result['updated'], json_encode($result));
+        $this->assertNotEmpty($santri->foto);
     }
 
     private function admin(): User

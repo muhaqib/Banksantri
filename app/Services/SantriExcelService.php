@@ -7,12 +7,15 @@ use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
 use PhpOffice\PhpSpreadsheet\IOFactory;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
+use PhpOffice\PhpSpreadsheet\Worksheet\Drawing;
+use PhpOffice\PhpSpreadsheet\Worksheet\MemoryDrawing;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use Spatie\Permission\Models\Role;
 use Symfony\Component\HttpFoundation\StreamedResponse;
@@ -24,6 +27,7 @@ class SantriExcelService
         'id',
         'nis',
         'nama_lengkap',
+        'foto',
         'email',
         'no_hp',
         'rfid_code',
@@ -49,10 +53,13 @@ class SantriExcelService
             $query->where('santri_status', $status);
         }
 
-        $rows = $query->get()->map(fn (User $santri) => [
+        $santriList = $query->get();
+
+        $rows = $santriList->map(fn (User $santri) => [
             $santri->id,
             $santri->nis,
             $santri->name,
+            $santri->foto,
             $santri->email,
             $santri->no_hp,
             $santri->rfid_code,
@@ -73,7 +80,7 @@ class SantriExcelService
 
         $suffix = $status ?: 'semua';
 
-        return $this->download($rows, "data-santri-{$suffix}-".now()->format('Ymd-His').'.xlsx');
+        return $this->download($rows, "data-santri-{$suffix}-".now()->format('Ymd-His').'.xlsx', $santriList);
     }
 
     public function template(): StreamedResponse
@@ -82,6 +89,7 @@ class SantriExcelService
             null,
             'NIS-001',
             'Ahmad Fulan',
+            'fotos/santri/example.jpg',
             'ahmad@example.com',
             '081234567890',
             'RFID-001',
@@ -105,7 +113,8 @@ class SantriExcelService
 
     public function import(UploadedFile $file): array
     {
-        $sheet = IOFactory::load($file->getRealPath())->getActiveSheet();
+        $spreadsheet = IOFactory::load($file->getRealPath());
+        $sheet = $spreadsheet->getActiveSheet();
         $headers = array_map(
             fn ($value) => strtolower(trim((string) $value)),
             $sheet->rangeToArray('A1:'.$sheet->getHighestColumn().'1')[0]
@@ -116,6 +125,51 @@ class SantriExcelService
             return ['created' => 0, 'updated' => 0, 'failed' => 1, 'errors' => ['Header wajib tidak ditemukan: '.implode(', ', $missing)]];
         }
 
+        $drawingsByRow = [];
+        foreach ($sheet->getDrawingCollection() as $drawing) {
+            $coordinates = $drawing->getCoordinates();
+            if (preg_match('/[A-Za-z]+(\d+)/', $coordinates, $matches)) {
+                $rowNum = (int) $matches[1];
+                $imageContent = null;
+                $extension = 'jpg';
+
+                if ($drawing instanceof Drawing) {
+                    $drawingPath = $drawing->getPath();
+                    if ($drawingPath && file_exists($drawingPath)) {
+                        $imageContent = file_get_contents($drawingPath);
+                        $ext = pathinfo($drawingPath, PATHINFO_EXTENSION);
+                        if ($ext) {
+                            $extension = strtolower($ext);
+                        }
+                    }
+                } elseif ($drawing instanceof MemoryDrawing) {
+                    ob_start();
+                    switch ($drawing->getRenderingFunction()) {
+                        case MemoryDrawing::RENDERING_PNG:
+                            imagepng($drawing->getResource());
+                            $extension = 'png';
+                            break;
+                        case MemoryDrawing::RENDERING_GIF:
+                            imagegif($drawing->getResource());
+                            $extension = 'gif';
+                            break;
+                        case MemoryDrawing::RENDERING_JPEG:
+                        default:
+                            imagejpeg($drawing->getResource());
+                            $extension = 'jpg';
+                            break;
+                    }
+                    $imageContent = ob_get_clean();
+                }
+
+                if ($imageContent) {
+                    $filename = 'fotos/santri/import_'.time().'_'.uniqid().'.'.$extension;
+                    Storage::disk('public')->put($filename, $imageContent);
+                    $drawingsByRow[$rowNum] = $filename;
+                }
+            }
+        }
+
         $created = 0;
         $updated = 0;
         $errors = [];
@@ -124,17 +178,45 @@ class SantriExcelService
             $values = $sheet->rangeToArray('A'.$rowNumber.':'.$sheet->getHighestColumn().$rowNumber)[0];
             $row = array_combine($headers, array_pad($values, count($headers), null));
 
-            if (! collect($row)->filter(fn ($value) => filled($value))->count()) {
+            if (! collect($row)->filter(fn ($value) => filled($value))->count() && ! isset($drawingsByRow[$rowNumber])) {
                 continue;
             }
 
             try {
-                DB::transaction(function () use ($row, &$created, &$updated): void {
+                DB::transaction(function () use ($row, $rowNumber, $drawingsByRow, &$created, &$updated): void {
                     $santri = $this->findSantri($row);
                     $data = $this->validateRow($row, $santri);
                     $isNew = ! $santri;
 
                     $santri ??= new User;
+
+                    $fotoPath = $drawingsByRow[$rowNumber] ?? null;
+                    if (! $fotoPath && filled($data['foto'] ?? null)) {
+                        $fotoVal = trim((string) $data['foto']);
+                        if (filter_var($fotoVal, FILTER_VALIDATE_URL)) {
+                            try {
+                                $contents = @file_get_contents($fotoVal);
+                                if ($contents !== false) {
+                                    $ext = pathinfo(parse_url($fotoVal, PHP_URL_PATH), PATHINFO_EXTENSION) ?: 'jpg';
+                                    $filename = 'fotos/santri/import_'.time().'_'.uniqid().'.'.$ext;
+                                    Storage::disk('public')->put($filename, $contents);
+                                    $fotoPath = $filename;
+                                }
+                            } catch (Throwable $e) {
+                                // ignore URL download failure
+                            }
+                        } elseif (Storage::disk('public')->exists($fotoVal)) {
+                            $fotoPath = $fotoVal;
+                        }
+                    }
+
+                    if ($fotoPath) {
+                        if ($santri->foto && $santri->foto !== $fotoPath && Storage::disk('public')->exists($santri->foto)) {
+                            Storage::disk('public')->delete($santri->foto);
+                        }
+                        $santri->foto = $fotoPath;
+                    }
+
                     $santri->fill([
                         'name' => $data['nama_lengkap'],
                         'nis' => $data['nis'],
@@ -193,6 +275,7 @@ class SantriExcelService
         return Validator::make($row, [
             'nis' => ['required', 'string', 'max:20', Rule::unique('users', 'nis')->ignore($santri?->id)],
             'nama_lengkap' => ['required', 'string', 'max:255'],
+            'foto' => ['nullable', 'string'],
             'email' => ['required', 'email', 'max:255', Rule::unique('users', 'email')->ignore($santri?->id)],
             'no_hp' => ['nullable', 'string', 'max:30'],
             'rfid_code' => ['nullable', 'string', 'max:100', Rule::unique('users', 'rfid_code')->ignore($santri?->id)],
@@ -240,13 +323,39 @@ class SantriExcelService
         }
     }
 
-    private function download(array $rows, string $filename): StreamedResponse
+    private function download(array $rows, string $filename, $santriModels = null): StreamedResponse
     {
         $spreadsheet = new Spreadsheet;
         $sheet = $spreadsheet->getActiveSheet();
         $sheet->fromArray(self::HEADERS, null, 'A1');
         if ($rows) {
             $sheet->fromArray($rows, null, 'A2');
+        }
+
+        if ($santriModels) {
+            foreach ($santriModels as $index => $santri) {
+                $rowNumber = $index + 2;
+                if ($santri->foto && Storage::disk('public')->exists($santri->foto)) {
+                    $imagePath = Storage::disk('public')->path($santri->foto);
+                    if (file_exists($imagePath)) {
+                        try {
+                            $drawing = new Drawing();
+                            $drawing->setName('Foto '.$santri->name);
+                            $drawing->setDescription('Foto Santri');
+                            $drawing->setPath($imagePath);
+                            $drawing->setCoordinates('D'.$rowNumber);
+                            $drawing->setHeight(40);
+                            $drawing->setOffsetX(4);
+                            $drawing->setOffsetY(4);
+                            $drawing->setWorksheet($sheet);
+
+                            $sheet->getRowDimension($rowNumber)->setRowHeight(36);
+                        } catch (Throwable $e) {
+                            // ignore drawing error
+                        }
+                    }
+                }
+            }
         }
 
         $lastColumn = $sheet->getHighestColumn();
@@ -257,7 +366,12 @@ class SantriExcelService
         $sheet->freezePane('A2');
         $sheet->setAutoFilter("A1:{$lastColumn}1");
         foreach (range('A', $lastColumn) as $column) {
-            $sheet->getColumnDimension($column)->setAutoSize(true);
+            if ($column === 'D') {
+                $sheet->getColumnDimension($column)->setAutoSize(false);
+                $sheet->getColumnDimension($column)->setWidth(18);
+            } else {
+                $sheet->getColumnDimension($column)->setAutoSize(true);
+            }
         }
 
         return response()->streamDownload(function () use ($spreadsheet): void {
@@ -266,3 +380,4 @@ class SantriExcelService
         }, $filename, ['Content-Type' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet']);
     }
 }
+
