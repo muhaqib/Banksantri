@@ -112,21 +112,7 @@
 
 </div>
 
-{{-- Register --}}
-<div class="role-reveal text-center mt-8 md:mt-12" style="--delay: 620ms;">
-
-    <a href="{{ route('register') }}"
-       class="role-register inline-flex items-center gap-2 text-primary font-medium hover:opacity-80 transition">
-
-        <span class="material-symbols-outlined text-lg">
-            person_add
-        </span>
-
-        Pendaftaran Santri Baru
-
-    </a>
-
-</div>
+{{-- [DISABLED] Fitur registrasi admin dinonaktifkan --}}
 
 </div>
 @endsection

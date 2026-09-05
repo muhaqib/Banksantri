@@ -84,16 +84,7 @@
         </button>
     </form>
 
-    @if($selectedRole === 'admin')
-        <div class="login-reveal mt-6 text-center" style="--delay: 580ms;">
-            <p class="text-sm text-on-surface-variant">
-                Belum punya akun admin?
-                <a href="{{ route('register') }}" class="text-primary font-semibold hover:text-primary-container transition-colors">
-                    Daftar Sekarang
-                </a>
-            </p>
-        </div>
-    @endif
+    {{-- [DISABLED] Fitur registrasi admin dinonaktifkan --}}
 </div>
 
 <style>

@@ -85,8 +85,9 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [LoginController::class, 'showRoleSelection'])->name('login');
     Route::get('/login/{role}', [LoginController::class, 'showLoginForm'])->name('login.role');
     Route::post('/login', [LoginController::class, 'login']);
-    Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
-    Route::post('/register', [RegisterController::class, 'register']);
+    // [DISABLED] Fitur registrasi admin dinonaktifkan
+    // Route::get('/register', [RegisterController::class, 'showRegistrationForm'])->name('register');
+    // Route::post('/register', [RegisterController::class, 'register']);
 });
 
 // Authenticated routes
