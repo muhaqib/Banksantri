@@ -159,24 +159,35 @@ class AttendanceController extends Controller
             $belum = $santriInKamar->filter(fn ($s) => $this->displayStatus($s, $date) === 'belum')->count();
             $percentage = $total > 0 ? round(($hadir / $total) * 100) : 0;
 
+            // Detail santri per kamar untuk modal
+            $santriDetails = $santriInKamar->sortBy('name')->map(fn ($s) => [
+                'id'       => $s->id,
+                'name'     => $s->name,
+                'nis'      => $s->nis ?? '-',
+                'kelas'    => $s->kelas ?? '-',
+                'foto_url' => $s->foto ? \Illuminate\Support\Facades\Storage::url($s->foto) : null,
+                'status'   => $this->displayStatus($s, $date),
+            ])->values();
+
             return [
-                'key' => $kamarKey,
-                'number' => $index + 1,
-                'label' => 'Kamar ' . ($index + 1),
-                'total' => $total,
-                'hadir' => $hadir,
-                'izin' => $izin,
-                'ghoib' => $ghoib,
-                'belum' => $belum,
-                'percentage' => $percentage,
+                'key'           => $kamarKey,
+                'number'        => $index + 1,
+                'label'         => 'Kamar ' . ($index + 1),
+                'total'         => $total,
+                'hadir'         => $hadir,
+                'izin'          => $izin,
+                'ghoib'         => $ghoib,
+                'belum'         => $belum,
+                'percentage'    => $percentage,
+                'santriDetails' => $santriDetails,
             ];
         })->values();
 
         return [
-            'summary' => $summary,
-            'recentAttendances' => $recentAttendances,
-            'recentAttendancesFormatted' => $recentAttendancesFormatted,
-            'kamarProgress' => $kamarProgress,
+            'summary'                   => $summary,
+            'recentAttendances'         => $recentAttendances,
+            'recentAttendancesFormatted'=> $recentAttendancesFormatted,
+            'kamarProgress'             => $kamarProgress,
         ];
     }
 
@@ -198,6 +209,10 @@ class AttendanceController extends Controller
             $request->user(),
             $validated['notes'] ?? null
         );
+
+        if ($request->expectsJson()) {
+            return response()->json(['message' => 'Status absensi '.$santri->name.' berhasil diperbarui.', 'status' => 'hadir']);
+        }
 
         return back()->with('success', 'Status absensi '.$santri->name.' berhasil diperbarui.');
     }
@@ -521,6 +536,64 @@ class AttendanceController extends Controller
             'nextMonth' => $nextMonth,
             'nextYear' => $nextYear,
         ]);
+    }
+
+    public function bulkHadir(Request $request, AttendanceService $attendanceService)
+    {
+        return $this->bulkSetStatus($request, $attendanceService, 'hadir');
+    }
+
+    public function bulkIzin(Request $request, AttendanceService $attendanceService)
+    {
+        return $this->bulkSetStatus($request, $attendanceService, 'izin');
+    }
+
+    public function bulkGhoib(Request $request, AttendanceService $attendanceService)
+    {
+        return $this->bulkSetStatus($request, $attendanceService, 'ghoib');
+    }
+
+    private function bulkSetStatus(Request $request, AttendanceService $attendanceService, string $status)
+    {
+        $validated = $request->validate([
+            'date'  => ['required', 'date'],
+            'kamar' => ['nullable', 'string'],
+        ]);
+
+        $date  = Carbon::parse($validated['date']);
+        $kamar = $validated['kamar'] ?? null;
+
+        // Ambil santri yang belum punya attendance record pada tanggal tersebut
+        $santriList = User::query()
+            ->activeSantri()
+            ->with([
+                'kamarSantri',
+                'attendances' => fn ($q) => $q->whereDate('attendance_date', $date),
+            ])
+            ->when($kamar, fn ($q) => $q
+                ->whereHas('kamarSantri', fn ($qk) => $qk->where('kamar', $kamar)))
+            ->get()
+            ->filter(fn ($santri) => $santri->attendances->isEmpty()); // hanya yang belum ada status
+
+        $count = 0;
+        foreach ($santriList as $santri) {
+            $attendanceService->record(
+                $santri->load('kamarSantri'),
+                $date,
+                $status,
+                'manual',
+                $request->user()
+            );
+            $count++;
+        }
+
+        $label = match($status) {
+            'hadir' => 'hadir',
+            'izin'  => 'izin',
+            'ghoib' => 'ghoib',
+        };
+
+        return back()->with('success', "{$count} santri berhasil ditandai {$label}.");
     }
 
     private function displayStatus(User $santri, Carbon $date): string

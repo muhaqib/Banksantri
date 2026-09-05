@@ -4,6 +4,7 @@
 @section('header-title', ($mode ?? 'rfid') === 'manual' ? 'Presensi Manual' : 'RFID Presensi')
 
 @push('styles')
+<link href="https://fonts.googleapis.com/css2?family=Amiri&display=swap" rel="stylesheet">
 <style>
     .scan-ring {
         animation: pulse-ring 2s cubic-bezier(0.455, 0.03, 0.515, 0.955) infinite;
@@ -79,6 +80,14 @@
     body.is-fullscreen .kamar-card-detail {
         display: none !important;
     }
+
+    @keyframes fadeInScale {
+        from { opacity: 0; transform: scale(0.95); }
+        to { opacity: 1; transform: scale(1); }
+    }
+    .result-appear {
+        animation: fadeInScale 0.4s ease-out;
+    }
 </style>
 @endpush
 
@@ -116,120 +125,172 @@
     </header>
 
     @unless($isManualMode)
-    <div class="grid grid-cols-1 gap-4 xl:grid-cols-12">
-        <section class="relative flex min-h-[460px] flex-col items-center justify-center overflow-hidden rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-4 sm:p-5 sm:p-5 sm:p-6 xl:col-span-7">
-            <div class="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent"></div>
-            <div class="relative flex h-56 w-56 items-center justify-center">
-                <div class="scan-ring absolute h-full w-full rounded-full border-2 border-primary/10"></div>
-                <div class="scan-ring absolute h-4/5 w-4/5 rounded-full border border-primary/20" style="animation-delay: .5s"></div>
-                <div class="relative z-10 flex h-28 w-44 rotate-[-4deg] flex-col justify-between rounded-xl bg-gradient-to-br from-primary to-primary-container p-4 shadow-xl transition-transform duration-500 hover:rotate-0">
-                    <div class="flex items-start justify-between">
-                        <span class="material-symbols-outlined material-symbols-filled text-3xl text-on-primary/30">contactless</span>
-                        <div class="flex h-8 w-8 items-center justify-center rounded-full bg-white/10">
-                            <span class="material-symbols-outlined text-xs text-on-primary">lock</span>
-                        </div>
-                    </div>
-                    <div class="space-y-1">
-                        <div class="h-1.5 w-12 rounded-full bg-white/20"></div>
-                        <div class="h-2.5 w-24 rounded-full bg-white/40"></div>
-                    </div>
-                    <div class="scan-line absolute inset-x-0 h-0.5 bg-primary-fixed opacity-70 shadow-[0_0_10px_#a2f0ee]"></div>
-                </div>
-            </div>
+    {{-- RFID Scan: Two-panel layout mirroring kedatangan design --}}
+    <div class="rounded-xl overflow-hidden border border-outline-variant/10 shadow-sm grid grid-cols-1 lg:grid-cols-[400px_1fr]">
 
-            <div class="relative z-10 mt-8 w-full max-w-md text-center">
-                <h2 class="font-headline text-xl font-bold text-on-surface">Tap RFID Reader</h2>
-                <div class="mx-auto mt-3 inline-flex items-center gap-1.5 rounded-full px-3 py-1.5 text-[10px] font-bold uppercase tracking-wider {{ $canScanAttendance ? 'bg-primary-fixed/40 text-primary' : 'bg-surface-container-high text-on-surface-variant' }}">
-                    <span class="material-symbols-outlined text-sm">{{ $canScanAttendance ? 'wifi_tethering' : 'schedule' }}</span>
-                    {{ $canScanAttendance ? 'Siap Baca' : 'Belum Siap Baca' }}
-                </div>
-                <p class="mt-2 text-[10px] font-medium text-on-surface-variant">Absensi RFID dimulai pada 21:00-23:59 WIB.</p>
-                <form @submit.prevent="scan" class="mt-5 flex gap-2 rounded-xl bg-surface-container-low p-1.5 border border-outline-variant/10 shadow-sm">
-                    <input x-ref="rfid" x-model="rfid" :disabled="!canScan" autofocus autocomplete="off" placeholder="Tempelkan kartu RFID..." class="min-w-0 flex-1 rounded-lg border-none bg-transparent px-3 py-2 text-sm text-on-surface outline-none disabled:cursor-not-allowed disabled:text-on-surface-variant">
-                    <button :disabled="loading || !canScan" class="flex h-10 w-12 shrink-0 items-center justify-center rounded-lg bg-primary text-on-primary transition disabled:opacity-50 hover:bg-primary-container">
-                        <span class="material-symbols-outlined text-lg" :class="loading && 'animate-spin'" x-text="loading ? 'progress_activity' : 'sensors'"></span>
-                    </button>
-                </form>
-                <p x-show="message" x-cloak x-text="message" :class="success ? 'bg-primary-fixed/40 text-primary' : 'bg-error-container text-on-error-container'" class="mt-3 rounded-lg px-3 py-2.5 text-xs font-semibold"></p>
-                <div class="mt-6 flex items-center justify-center gap-5">
-                    <div class="flex flex-col items-center">
-                        <div class="mb-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-low border border-outline-variant/10 {{ $canScanAttendance ? 'text-primary' : 'text-on-surface-variant' }}">
-                            <span class="material-symbols-outlined text-lg">wifi_tethering</span>
-                        </div>
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">{{ $canScanAttendance ? 'Siap Baca' : 'Mulai 21:00' }}</span>
-                    </div>
-                    <div class="h-6 w-px bg-outline-variant/30"></div>
-                    <div class="flex flex-col items-center">
-                        <div class="mb-1.5 flex h-10 w-10 items-center justify-center rounded-full bg-surface-container-low border border-outline-variant/10 text-on-surface-variant">
-                            <span class="material-symbols-outlined text-lg">sync</span>
-                        </div>
-                        <span class="text-[9px] font-bold uppercase tracking-wider text-on-surface-variant">Real-time Sync</span>
-                    </div>
-                </div>
-            </div>
-        </section>
-        
+        <!-- LEFT: Photo, Status, RFID Input -->
+        <div class="flex flex-col items-center justify-center gap-5 bg-surface-container-lowest border-r border-outline-variant/10 px-8 py-10">
 
-        <aside class="xl:col-span-5">
-            <div class="h-full rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-5 shadow-sm sm:p-4 sm:p-5">
-                <div class="mb-6 flex items-center justify-between">
-                    <h2 class="font-headline text-lg font-bold text-on-surface">5 Nama Terakhir</h2>
-                    <span class="rounded-full bg-tertiary-container/20 px-2.5 py-0.5 text-[10px] font-bold text-tertiary">LIVE</span>
-                </div>
-                <div class="space-y-4">
-                    <template x-for="(attendance, index) in recentAttendances" :key="attendance.santri_id + '-' + (attendance.id || index)">
-                        <div class="flex items-center gap-3.5 animate-slide-in">
-                            <div class="relative flex h-11 w-11 shrink-0 items-center justify-center overflow-hidden rounded-xl bg-secondary-container font-headline text-sm font-bold text-secondary">
-                                <template x-if="attendance.foto_url">
-                                    <img :src="attendance.foto_url" :alt="attendance.name" class="h-full w-full object-cover">
-                                </template>
-                                <template x-if="!attendance.foto_url">
-                                    <span x-text="attendance.initial"></span>
-                                </template>
-                                <div class="absolute -bottom-0.5 -right-0.5 flex h-4 w-4 items-center justify-center rounded-full border-2 border-surface-container-lowest bg-primary">
-                                    <span class="material-symbols-outlined text-[8px] text-on-primary">check</span>
-                                </div>
-                            </div>
-                            <div class="min-w-0 flex-1">
-                                <div class="flex items-start justify-between gap-3">
-                                    <h3 class="truncate text-sm font-semibold leading-tight text-on-surface" x-text="attendance.name"></h3>
-                                    <span class="shrink-0 rounded-full bg-primary-fixed/20 px-1.5 py-0.5 text-[9px] font-medium text-primary" x-text="attendance.recorded_at_human"></span>
-                                </div>
-                                <div class="mt-0.5 flex flex-wrap items-center gap-1.5 text-xs text-on-surface-variant">
-                                    <span>NIS: <span x-text="attendance.nis"></span></span>
-                                    <span class="h-0.5 w-0.5 rounded-full bg-outline-variant"></span>
-                                    <span class="font-medium text-secondary" x-text="attendance.kamar"></span>
-                                </div>
+            <!-- Idle state -->
+            <template x-if="!showResult">
+                <div class="flex flex-col items-center text-center gap-4 w-full max-w-xs">
+                    <h2 class="font-headline text-xl font-extrabold text-on-surface">RFID Presensi Santri</h2>
+
+                    <div class="relative flex h-48 w-48 items-center justify-center rounded-2xl bg-surface-container shadow-inner border border-outline-variant/10 overflow-hidden">
+                        <div class="relative flex h-32 w-32 items-center justify-center rounded-full" style="background-color: #c6f6d5;">
+                            <div class="scan-ring absolute inset-0 rounded-full" style="background-color: #38a169;"></div>
+                            <div class="relative flex h-20 w-20 items-center justify-center rounded-full shadow-lg overflow-hidden" style="background-color: #2f855a;">
+                                <span class="material-symbols-outlined text-4xl text-white">rfid</span>
+                                <div class="scan-line absolute inset-x-0 h-0.5 opacity-70" style="background-color: #9ae6b4; box-shadow: 0 0 10px #9ae6b4;"></div>
                             </div>
                         </div>
-                    </template>
-                    <div x-show="recentAttendances.length === 0" class="rounded-xl bg-surface-container-low border border-outline-variant/10 p-5 text-center text-xs font-semibold text-on-surface-variant">
-                        Belum ada kartu yang tap pada tanggal ini.
                     </div>
+
+                    <div class="w-full rounded-2xl bg-surface-container border border-outline-variant/10 py-4 px-6 text-center">
+                        <p class="text-xs font-semibold text-on-surface-variant uppercase tracking-wider mb-1">Status</p>
+                        <p class="text-lg font-bold text-on-surface">Menunggu Scan...</p>
+                        @if(!$canScanAttendance)
+                        <p class="mt-1 text-[10px] text-amber-600 font-semibold">Mulai 21:00 - 23:59 WIB</p>
+                        @endif
+                    </div>
+
+                    <form @submit.prevent="scan" class="flex w-full gap-2 rounded-2xl bg-surface-container p-1.5 border border-outline-variant/10 shadow-sm">
+                        <input x-ref="rfid" x-model="rfid" :disabled="!canScan || loading"
+                            autofocus autocomplete="off"
+                            placeholder="RFID : ..........."
+                            class="min-w-0 flex-1 rounded-xl border-none bg-transparent px-4 py-3 text-base font-bold text-center text-on-surface outline-none focus:ring-0 disabled:opacity-50 disabled:cursor-not-allowed">
+                        <button type="submit" :disabled="loading || !rfid || !canScan"
+                            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition disabled:opacity-50"
+                            style="background-color: #2f855a;">
+                            <span class="material-symbols-outlined text-xl" :class="loading && 'animate-spin'"
+                                x-text="loading ? 'progress_activity' : 'sensors'"></span>
+                        </button>
+                    </form>
+
+                    <p x-show="message" x-cloak x-text="message"
+                        :class="success ? 'text-green-600' : 'text-red-600'"
+                        class="text-xs font-semibold text-center"></p>
                 </div>
-                <div class="mt-8 border-t border-outline-variant/10 pt-6">
-                    <div class="flex items-center justify-between text-on-surface-variant">
-                        <div class="flex items-center gap-2">
-                            <span class="material-symbols-outlined text-lg">group</span>
-                            <span class="text-xs font-medium">Total Kehadiran Hari Ini:</span>
+            </template>
+
+            <!-- Result state -->
+            <template x-if="showResult">
+                <div class="flex flex-col items-center text-center gap-4 w-full max-w-xs result-appear">
+                    <h2 class="font-headline text-xl font-extrabold text-on-surface">RFID Presensi Santri</h2>
+
+                    <div class="relative h-48 w-48 rounded-2xl overflow-hidden border-4 shadow-xl"
+                        :style="resultData.status === 'hadir' ? 'border-color: #2f855a;' : 'border-color: #e53e3e;'">
+                        <img :src="resultData.foto_url || '/images/default-avatar.png'"
+                            :alt="resultData.name" class="h-full w-full object-cover">
+                    </div>
+
+                    <div class="w-full rounded-2xl py-4 px-6 text-center"
+                        :class="resultData.status === 'hadir'
+                            ? 'bg-green-50 border-2 border-green-300'
+                            : 'bg-red-50 border-2 border-red-300'">
+                        <p class="text-xs font-bold uppercase tracking-wider mb-1"
+                            :class="resultData.status === 'hadir' ? 'text-green-600' : 'text-red-500'"
+                            x-text="resultData.status === 'hadir' ? 'Berhasil' : 'Peringatan'"></p>
+                        <p class="text-2xl font-black"
+                            :class="resultData.status === 'hadir' ? 'text-green-700' : 'text-red-700'"
+                            x-text="'Status : ' + (resultData.status === 'hadir' ? 'Hadir' : 'Terlambat')"></p>
+                        <div class="mt-2 flex items-center justify-center gap-1.5 text-sm font-semibold"
+                            :class="resultData.status === 'hadir' ? 'text-green-600' : 'text-red-600'">
+                            <span class="material-symbols-outlined text-base"
+                                x-text="resultData.status === 'hadir' ? 'check_circle' : 'warning'"></span>
+                            <span x-text="resultData.status === 'hadir' ? 'Silakan masuk.' : 'Mohon lapor ke asrama.'"></span>
                         </div>
-                        <span class="text-sm font-extrabold text-primary" x-text="(summary.hadir || 0) + ' / ' + Math.max(summary.total || 0, summary.hadir || 0)"></span>
                     </div>
-                    <div class="mt-2.5 h-1.5 w-full overflow-hidden rounded-full bg-surface-container">
-                        <div class="h-full rounded-full bg-primary transition-all duration-300" :style="'width: ' + attendancePercent + '%'"></div>
+
+                    <form @submit.prevent="scan" class="flex w-full gap-2 rounded-2xl bg-surface-container p-1.5 border border-outline-variant/10 shadow-sm">
+                        <input x-ref="rfidResult" x-model="rfid" :disabled="!canScan || loading"
+                            autofocus autocomplete="off"
+                            placeholder="RFID : ..........."
+                            class="min-w-0 flex-1 rounded-xl border-none bg-transparent px-4 py-3 text-base font-bold text-center text-on-surface outline-none focus:ring-0 disabled:opacity-50">
+                        <button type="submit" :disabled="loading || !rfid || !canScan"
+                            class="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl text-white transition disabled:opacity-50"
+                            style="background-color: #2f855a;">
+                            <span class="material-symbols-outlined text-xl" :class="loading && 'animate-spin'"
+                                x-text="loading ? 'progress_activity' : 'sensors'"></span>
+                        </button>
+                    </form>
+
+                    <p class="text-xs text-on-surface-variant">
+                        Kembali dalam <span x-text="countdown" class="font-bold text-primary"></span> dtk
+                        &bull;
+                        <button type="button" @click="resetResult()" class="font-semibold text-primary hover:underline">Reset</button>
+                    </p>
+                </div>
+            </template>
+        </div>
+
+        <!-- RIGHT: Greeting & Santri Info -->
+        <div class="flex flex-col items-start justify-center px-10 py-10 lg:px-12 lg:py-12" style="background-color: #f9fafb;">
+
+            <!-- Idle -->
+            <template x-if="!showResult">
+                <div class="w-full">
+                    <p class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: #2f855a;">Selamat Datang</p>
+                    <h2 class="text-5xl md:text-6xl font-medium leading-tight text-right mb-6" style="color: #1a202c; font-family: 'Amiri', serif;">
+                        أَهْلاً وَسَهْلاً وَمَرْحَبًا
+                    </h2>
+                    <div class="space-y-3">
+                        <div class="h-2 w-3/4 rounded-full bg-gray-200 animate-pulse"></div>
+                        <div class="h-2 w-1/2 rounded-full bg-gray-200 animate-pulse"></div>
+                    </div>
+                    <div class="mt-6 grid grid-cols-2 gap-4">
+                        <div class="h-14 rounded-2xl bg-gray-200 animate-pulse"></div>
+                        <div class="h-14 rounded-2xl bg-gray-200 animate-pulse"></div>
                     </div>
                 </div>
-            </div>
-        </aside>
+            </template>
+
+            <!-- Result -->
+            <template x-if="showResult">
+                <div class="w-full result-appear">
+                    <p class="text-[10px] font-bold uppercase tracking-widest mb-2" style="color: #2f855a;">Selamat Datang</p>
+                    <h2 class="text-5xl md:text-6xl font-medium leading-tight text-right mb-6" style="color: #1a202c; font-family: 'Amiri', serif;">
+                        أَهْلاً وَسَهْلاً وَمَرْحَبًا
+                    </h2>
+
+                    <h3 class="text-3xl md:text-4xl font-extrabold leading-tight mb-1" style="color: #1a202c;" x-text="resultData.name"></h3>
+                    <p class="text-xl font-semibold mb-6" style="color: #2f855a;" x-text="resultData.asal"></p>
+
+                    <div class="mb-6 h-1 w-2/3 rounded-full" style="background-color: #2f855a;"></div>
+
+                    <div class="grid grid-cols-2 gap-4">
+                        <div class="flex items-center gap-3 rounded-2xl bg-white border border-gray-200 p-4 shadow-sm">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl text-white" style="background-color: #2f855a;">
+                                <span class="material-symbols-outlined">meeting_room</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Kamar</p>
+                                <p class="text-lg font-extrabold text-gray-900" x-text="resultData.kamar"></p>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-3 rounded-2xl bg-white border border-gray-200 p-4 shadow-sm">
+                            <div class="flex h-10 w-10 items-center justify-center rounded-xl text-white" style="background-color: #2f855a;">
+                                <span class="material-symbols-outlined">school</span>
+                            </div>
+                            <div>
+                                <p class="text-[10px] font-bold uppercase tracking-wider text-gray-500">Jenjang</p>
+                                <p class="text-lg font-extrabold text-gray-900" x-text="resultData.kelas"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+        </div>
     </div>
 
-    <!-- Progress Presensi Per Kamar (1 - 8) - Static Display (Non-Clickable) -->
+    <!-- Progress Presensi Per Kamar (1 - 8) - Clickable untuk detail -->
     <div class="rounded-xl bg-surface-container-lowest border border-outline-variant/10 p-3.5 sm:p-4 shadow-sm space-y-3 kamar-progress-section select-none">
         <!-- Section Header -->
         <div class="flex items-center justify-between gap-2 pb-2.5 border-b border-outline-variant/10 text-xs kamar-progress-header">
             <div class="flex items-center gap-2">
                 <span class="material-symbols-outlined text-base text-primary">meeting_room</span>
                 <h2 class="font-headline font-bold text-on-surface">Progress Presensi Per Kamar</h2>
+                <span class="hidden sm:inline text-[10px] text-on-surface-variant font-normal">(Klik kamar untuk detail)</span>
             </div>
 
             <!-- Compact Global Stats -->
@@ -244,13 +305,15 @@
             </div>
         </div>
 
-        <!-- 8 Rooms Static Cards Grid (Non-Clickable div) -->
+        <!-- 8 Rooms Clickable Cards Grid -->
         <div class="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-8 gap-2 kamar-progress-grid">
             <template x-for="item in kamarProgress" :key="item.key">
-                <div class="flex flex-col justify-between rounded-lg border border-outline-variant/15 p-2 text-left bg-surface shadow-2xs kamar-card">
+                <button type="button"
+                    @click="openKamarModal(item)"
+                    class="flex flex-col justify-between rounded-lg border border-outline-variant/15 p-2 text-left bg-surface shadow-2xs kamar-card transition-all hover:border-primary/40 hover:shadow-md hover:bg-surface-container-low active:scale-[0.97] cursor-pointer group">
                     <!-- Top Info: Kamar & Percent -->
                     <div class="flex items-center justify-between gap-1 mb-1">
-                        <span class="text-[11px] font-bold text-on-surface truncate">
+                        <span class="text-[11px] font-bold text-on-surface truncate group-hover:text-primary transition-colors">
                             <span class="hidden sm:inline">Kamar </span><span x-text="item.number"></span>
                         </span>
                         <span class="text-[10px] font-extrabold" 
@@ -279,18 +342,169 @@
                         </template>
                     </div>
 
-                    <!-- Bottom Count: Hadir/Total -->
+                    <!-- Bottom Count: Hadir/Total + hint -->
                     <div class="flex items-center justify-between text-[10px] text-on-surface-variant font-medium mt-0.5">
                         <span><span x-text="item.hadir"></span>/<span x-text="item.total"></span> <span class="kamar-card-detail">Santri</span></span>
-                        <template x-if="item.izin > 0 || item.ghoib > 0">
-                            <span class="text-[9px] font-bold text-amber-600 kamar-card-detail">
-                                <span x-show="item.izin > 0" x-text="'+' + item.izin + 'I '"></span>
-                                <span x-show="item.ghoib > 0" x-text="'+' + item.ghoib + 'G'"></span>
-                            </span>
-                        </template>
+                        <span class="material-symbols-outlined text-[11px] opacity-0 group-hover:opacity-60 transition-opacity kamar-card-detail" style="font-size:11px">open_in_full</span>
+                    </div>
+                </button>
+            </template>
+        </div>
+    </div>
+
+    <!-- ===== Modal Detail Kamar ===== -->
+    <div x-show="kamarModal.open" x-cloak
+         class="fixed inset-0 z-50 flex"
+         @keydown.escape.window="closeKamarModal()">
+        <!-- Backdrop -->
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm"
+             @click="closeKamarModal()"
+             x-transition:enter="transition ease-out duration-200"
+             x-transition:enter-start="opacity-0"
+             x-transition:enter-end="opacity-100"
+             x-transition:leave="transition ease-in duration-150"
+             x-transition:leave-start="opacity-100"
+             x-transition:leave-end="opacity-0">
+        </div>
+
+        <!-- Panel -->
+        <div class="relative ml-auto flex h-full w-full max-w-md flex-col bg-surface shadow-2xl"
+             x-transition:enter="transition ease-out duration-250"
+             x-transition:enter-start="opacity-0 translate-x-full"
+             x-transition:enter-end="opacity-100 translate-x-0"
+             x-transition:leave="transition ease-in duration-200"
+             x-transition:leave-start="opacity-100 translate-x-0"
+             x-transition:leave-end="opacity-0 translate-x-full">
+
+            <!-- Panel Header -->
+            <div class="flex items-center justify-between gap-3 border-b border-outline-variant/10 px-5 py-4 bg-surface-container-lowest">
+                <div class="flex items-center gap-3">
+                    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10">
+                        <span class="material-symbols-outlined text-primary" style="font-size:20px">meeting_room</span>
+                    </div>
+                    <div>
+                        <h3 class="font-headline text-base font-bold text-on-surface" x-text="'Detail ' + (kamarModal.kamar?.label ?? '')"></h3>
+                        <p class="text-[11px] text-on-surface-variant">
+                            <span class="text-emerald-600 font-semibold" x-text="(kamarModal.kamar?.hadir ?? 0) + ' Hadir'"></span>
+                            <span class="mx-1 opacity-40">·</span>
+                            <span class="text-amber-600 font-semibold" x-text="(kamarModal.kamar?.izin ?? 0) + ' Izin'"></span>
+                            <span class="mx-1 opacity-40">·</span>
+                            <span class="text-rose-600 font-semibold" x-text="(kamarModal.kamar?.ghoib ?? 0) + ' Ghoib'"></span>
+                            <span class="mx-1 opacity-40">·</span>
+                            <span class="text-on-surface-variant font-semibold" x-text="(kamarModal.kamar?.belum ?? 0) + ' Belum'"></span>
+                        </p>
                     </div>
                 </div>
-            </template>
+                <button type="button" @click="closeKamarModal()"
+                    class="flex h-8 w-8 items-center justify-center rounded-lg text-on-surface-variant hover:bg-surface-container hover:text-on-surface transition-all">
+                    <span class="material-symbols-outlined" style="font-size:20px">close</span>
+                </button>
+            </div>
+
+            <!-- Tanggal & Progress Bar -->
+            <div class="px-5 py-3 bg-surface-container-lowest border-b border-outline-variant/10">
+                <div class="flex items-center justify-between text-xs mb-1.5">
+                    <span class="text-on-surface-variant">{{ $date->translatedFormat('d F Y') }}</span>
+                    <span class="font-bold text-primary" x-text="(kamarModal.kamar?.percentage ?? 0) + '% hadir'"></span>
+                </div>
+                <div class="h-2 w-full overflow-hidden rounded-full bg-surface-container flex gap-0.5">
+                    <template x-if="(kamarModal.kamar?.hadir ?? 0) > 0">
+                        <div class="h-full bg-emerald-500 transition-all duration-500 rounded-full"
+                             :style="'width:' + ((kamarModal.kamar.hadir / kamarModal.kamar.total) * 100) + '%'"></div>
+                    </template>
+                    <template x-if="(kamarModal.kamar?.izin ?? 0) > 0">
+                        <div class="h-full bg-amber-500 transition-all duration-500 rounded-full"
+                             :style="'width:' + ((kamarModal.kamar.izin / kamarModal.kamar.total) * 100) + '%'"></div>
+                    </template>
+                    <template x-if="(kamarModal.kamar?.ghoib ?? 0) > 0">
+                        <div class="h-full bg-rose-500 transition-all duration-500 rounded-full"
+                             :style="'width:' + ((kamarModal.kamar.ghoib / kamarModal.kamar.total) * 100) + '%'"></div>
+                    </template>
+                </div>
+            </div>
+
+            <!-- Santri List -->
+            <div class="flex-1 overflow-y-auto divide-y divide-outline-variant/10">
+                <template x-if="!kamarModal.kamar?.santriDetails?.length">
+                    <div class="flex flex-col items-center justify-center py-16 text-center">
+                        <span class="material-symbols-outlined text-4xl text-on-surface-variant/30 mb-2">person_off</span>
+                        <p class="text-sm text-on-surface-variant">Belum ada santri di kamar ini.</p>
+                    </div>
+                </template>
+
+                <template x-for="santri in (kamarModal.kamar?.santriDetails ?? [])" :key="santri.id">
+                    <div class="flex items-center gap-3 px-5 py-3 hover:bg-surface-container-low/50 transition-colors">
+                        <!-- Foto/Avatar -->
+                        <div class="relative shrink-0">
+                            <template x-if="santri.foto_url">
+                                <img :src="santri.foto_url" :alt="santri.name"
+                                     class="h-10 w-10 rounded-full object-cover border-2"
+                                     :class="{
+                                         'border-emerald-400': santri.status === 'hadir',
+                                         'border-amber-400': santri.status === 'izin',
+                                         'border-rose-400': santri.status === 'ghoib',
+                                         'border-outline-variant/30': santri.status === 'belum'
+                                     }">
+                            </template>
+                            <template x-if="!santri.foto_url">
+                                <div class="h-10 w-10 rounded-full border-2 flex items-center justify-center text-sm font-bold text-white"
+                                     :class="{
+                                         'bg-emerald-500 border-emerald-400': santri.status === 'hadir',
+                                         'bg-amber-500 border-amber-400': santri.status === 'izin',
+                                         'bg-rose-500 border-rose-400': santri.status === 'ghoib',
+                                         'bg-surface-container border-outline-variant/30 !text-on-surface-variant': santri.status === 'belum'
+                                     }"
+                                     x-text="santri.name.charAt(0).toUpperCase()">
+                                </div>
+                            </template>
+                        </div>
+
+                        <!-- Info -->
+                        <div class="flex-1 min-w-0">
+                            <p class="text-sm font-semibold text-on-surface truncate" x-text="santri.name"></p>
+                            <p class="text-[10px] text-on-surface-variant" x-text="'NIS ' + santri.nis + ' · ' + santri.kelas"></p>
+                        </div>
+
+                        <!-- Status Badge -->
+                        <div class="flex items-center gap-2 shrink-0">
+                            <span class="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[9px] font-bold uppercase border"
+                                  :class="{
+                                      'bg-emerald-50 text-emerald-700 border-emerald-200': santri.status === 'hadir',
+                                      'bg-amber-50 text-amber-700 border-amber-200': santri.status === 'izin',
+                                      'bg-rose-50 text-rose-700 border-rose-200': santri.status === 'ghoib',
+                                      'bg-surface-container text-on-surface-variant border-outline-variant/20': santri.status === 'belum'
+                                  }">
+                                <span class="material-symbols-outlined" style="font-size:10px"
+                                      x-text="santri.status === 'hadir' ? 'check_circle' : (santri.status === 'izin' ? 'badge' : (santri.status === 'ghoib' ? 'cancel' : 'schedule'))">
+                                </span>
+                                <span x-text="santri.status === 'belum' ? 'Belum' : santri.status.charAt(0).toUpperCase() + santri.status.slice(1)"></span>
+                            </span>
+
+                            <!-- Tombol Hadir (hanya jika bukan hadir) -->
+                            <template x-if="santri.status !== 'hadir'">
+                                <button type="button"
+                                    @click="markHadir(santri)"
+                                    :disabled="santri._loading"
+                                    class="flex items-center gap-1 rounded-lg bg-emerald-600 px-2.5 py-1 text-[10px] font-bold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95 disabled:opacity-60 disabled:cursor-not-allowed">
+                                    <span class="material-symbols-outlined" style="font-size:12px"
+                                          :class="santri._loading ? 'animate-spin' : ''"
+                                          x-text="santri._loading ? 'progress_activity' : 'check'">
+                                    </span>
+                                    <span x-show="!santri._loading">Hadir</span>
+                                </button>
+                            </template>
+                        </div>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Panel Footer -->
+            <div class="border-t border-outline-variant/10 px-5 py-3 bg-surface-container-lowest">
+                <p class="text-[10px] text-on-surface-variant text-center">
+                    Tombol Hadir akan mencatat absensi manual pada
+                    <span class="font-semibold text-on-surface">{{ $date->translatedFormat('d F Y') }}</span>
+                </p>
+            </div>
         </div>
     </div>
     @endunless
@@ -337,9 +551,34 @@
         </div>
     </form>
 
+    {{-- ===== Hidden Bulk Action Forms (di LUAR form bulk-update utama) ===== --}}
+    @if($santriList->isNotEmpty())
+    <form id="form-bulk-hadir" method="POST" action="{{ route($routePrefix.'.attendance.bulk-hadir') }}" class="hidden">
+        @csrf
+        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+        @if(request('kamar'))
+            <input type="hidden" name="kamar" value="{{ request('kamar') }}">
+        @endif
+    </form>
+    <form id="form-bulk-izin" method="POST" action="{{ route($routePrefix.'.attendance.bulk-izin') }}" class="hidden">
+        @csrf
+        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+        @if(request('kamar'))
+            <input type="hidden" name="kamar" value="{{ request('kamar') }}">
+        @endif
+    </form>
+    <form id="form-bulk-ghoib" method="POST" action="{{ route($routePrefix.'.attendance.bulk-ghoib') }}" class="hidden">
+        @csrf
+        <input type="hidden" name="date" value="{{ $date->toDateString() }}">
+        @if(request('kamar'))
+            <input type="hidden" name="kamar" value="{{ request('kamar') }}">
+        @endif
+    </form>
+    @endif
+
     <!-- Main Content Table -->
     <div class="w-full mt-4">
-        <form method="POST" action="{{ route($routePrefix.'.attendance.bulk-update') }}" class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/10">
+        <form id="form-bulk-update" method="POST" action="{{ route($routePrefix.'.attendance.bulk-update') }}" class="overflow-hidden rounded-xl bg-surface-container-lowest shadow-sm border border-outline-variant/10">
             @csrf
             @method('PUT')
             <input type="hidden" name="date" value="{{ $date->toDateString() }}">
@@ -354,10 +593,34 @@
                     </p>
                 </div>
                 @if($santriList->isNotEmpty())
-                    <button class="btn-primary justify-center py-1.5 px-3">
+                <div class="flex flex-wrap items-center gap-2">
+                    {{-- Hadir Semua --}}
+                    <button type="button"
+                        onclick="if(confirm('Tandai HADIR semua santri yang belum absen pada tanggal ini?')) document.getElementById('form-bulk-hadir').submit();"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-emerald-700 active:scale-95">
+                        <span class="material-symbols-outlined" style="font-size:15px">check_circle</span>
+                        Hadir Semua
+                    </button>
+                    {{-- Izin Semua --}}
+                    <button type="button"
+                        onclick="if(confirm('Tandai IZIN semua santri yang belum absen pada tanggal ini?')) document.getElementById('form-bulk-izin').submit();"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-amber-500 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-amber-600 active:scale-95">
+                        <span class="material-symbols-outlined" style="font-size:15px">badge</span>
+                        Izin Semua
+                    </button>
+                    {{-- Ghoib Semua --}}
+                    <button type="button"
+                        onclick="if(confirm('Tandai GHOIB semua santri yang belum absen pada tanggal ini?')) document.getElementById('form-bulk-ghoib').submit();"
+                        class="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow-sm transition hover:bg-rose-700 active:scale-95">
+                        <span class="material-symbols-outlined" style="font-size:15px">cancel</span>
+                        Ghoib Semua
+                    </button>
+                    {{-- Simpan Manual --}}
+                    <button type="submit" form="form-bulk-update" class="btn-primary justify-center py-1.5 px-3">
                         <span class="material-symbols-outlined text-sm">save</span>
                         Simpan Semua
                     </button>
+                </div>
                 @endif
             </div>
             <!-- Desktop Table View -->
@@ -377,7 +640,7 @@
                             @php
                                 $attendance = $santri->attendances->first();
                                 $activePermission = $santri->santriPermissions->first();
-                                $status = $attendance?->status ?? ($activePermission ? 'izin' : ($date->isBefore(today()) ? 'ghoib' : 'belum'));
+                                $status = $attendance?->status ?? ($activePermission ? 'izin' : 'belum');
                                 $statusStyle = match($status) {
                                     'hadir' => 'bg-green-50 text-green-700 border-green-200/50',
                                     'izin' => 'bg-amber-50 text-amber-700 border-amber-200/50',
@@ -442,7 +705,7 @@
                     @php
                         $attendance = $santri->attendances->first();
                         $activePermission = $santri->santriPermissions->first();
-                        $status = $attendance?->status ?? ($activePermission ? 'izin' : ($date->isBefore(today()) ? 'ghoib' : 'belum'));
+                        $status = $attendance?->status ?? ($activePermission ? 'izin' : 'belum');
                         $statusStyle = match($status) {
                             'hadir' => 'bg-green-50 text-green-700 border-green-200/50',
                             'izin' => 'bg-amber-50 text-amber-700 border-amber-200/50',
@@ -515,6 +778,11 @@ function attendancePage(initialData = {}) {
         summary: initialData.summary || { total: 0, hadir: 0, izin: 0, ghoib: 0, belum: 0 },
         kamarProgress: initialData.kamarProgress || [],
         recentAttendances: initialData.recentAttendances || [],
+        showResult: false,
+        resultData: null,
+        countdown: 5,
+        countdownInterval: null,
+        returnTimeout: null,
         get attendancePercent() {
             const maxVal = Math.max(this.summary.total || 0, this.summary.hadir || 0);
             return maxVal > 0 ? Math.min(100, Math.round((this.summary.hadir / maxVal) * 100)) : 0;
@@ -560,6 +828,60 @@ function attendancePage(initialData = {}) {
                 document.webkitExitFullscreen();
             }
         },
+        // ====== Kamar Modal State & Methods ======
+        kamarModal: {
+            open: false,
+            kamar: null,
+        },
+        openKamarModal(item) {
+            this.kamarModal.kamar = item;
+            this.kamarModal.open = true;
+            document.body.style.overflow = 'hidden';
+        },
+        closeKamarModal() {
+            this.kamarModal.open = false;
+            document.body.style.overflow = '';
+        },
+        async markHadir(santri) {
+            if (santri._loading) return;
+            santri._loading = true;
+            const prevStatus = santri.status; // simpan status lama sebelum AJAX
+            try {
+                const res = await fetch(@js(route($routePrefix.'.attendance.update', ['santri' => '__SANTRI_ID__'])).replace('__SANTRI_ID__', santri.id), {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json', 'X-CSRF-TOKEN': @js(csrf_token()) },
+                    body: JSON.stringify({ date: @js($date->toDateString()), status: 'hadir', notes: '' })
+                });
+                if (res.ok) {
+                    // Update status santri di modal secara reaktif
+                    santri.status = 'hadir';
+                    // Update counter kamar
+                    if (this.kamarModal.kamar) {
+                        const k = this.kamarModal.kamar;
+                        if (prevStatus === 'ghoib') k.ghoib = Math.max(0, k.ghoib - 1);
+                        else if (prevStatus === 'izin') k.izin = Math.max(0, k.izin - 1);
+                        else k.belum = Math.max(0, k.belum - 1);
+                        k.hadir = (k.hadir ?? 0) + 1;
+                        k.percentage = k.total > 0 ? Math.round((k.hadir / k.total) * 100) : 0;
+                        // Sync kamarProgress array agar progress bar di grid juga update
+                        const idx = this.kamarProgress.findIndex(kp => kp.key === k.key);
+                        if (idx !== -1) this.kamarProgress[idx] = { ...k };
+                    }
+                    // Update global summary
+                    if (prevStatus === 'ghoib') this.summary.ghoib = Math.max(0, (this.summary.ghoib ?? 0) - 1);
+                    else if (prevStatus === 'izin') this.summary.izin = Math.max(0, (this.summary.izin ?? 0) - 1);
+                    else this.summary.belum = Math.max(0, (this.summary.belum ?? 0) - 1);
+                    this.summary.hadir = (this.summary.hadir ?? 0) + 1;
+                } else {
+                    alert('Gagal menghadirkan santri. Silakan coba lagi.');
+                }
+            } catch (e) {
+                alert('Terjadi error koneksi. Silakan coba lagi.');
+            } finally {
+                santri._loading = false;
+            }
+        },
+        // ====== /Kamar Modal ======
         async scan() {
             if (!this.canScan) {
                 this.success = false;
@@ -580,7 +902,31 @@ function attendancePage(initialData = {}) {
                 this.message = data.message || 'RFID berhasil diproses.';
                 if (response.ok) {
                     if (data.summary) this.summary = data.summary;
-                    if (data.recentAttendances) this.recentAttendances = data.recentAttendances;
+                    if (data.recentAttendances) {
+                        this.recentAttendances = data.recentAttendances;
+                        // Show result card from latest attendance
+                        if (data.recentAttendances.length > 0) {
+                            const latest = data.recentAttendances[0];
+                            this.resultData = {
+                                name: latest.name,
+                                foto_url: latest.foto_url,
+                                kamar: latest.kamar,
+                                asal: latest.asal || '-',
+                                kelas: latest.kelas || '-',
+                                status: 'hadir'
+                            };
+                            this.showResult = true;
+                            if (this.countdownInterval) clearInterval(this.countdownInterval);
+                            if (this.returnTimeout) clearTimeout(this.returnTimeout);
+                            this.countdown = 5;
+                            this.countdownInterval = setInterval(() => {
+                                this.countdown--;
+                                if (this.countdown <= 0) clearInterval(this.countdownInterval);
+                            }, 1000);
+                            this.returnTimeout = setTimeout(() => this.resetResult(), 5000);
+                            this.$nextTick(() => { if (this.$refs.rfidResult) this.$refs.rfidResult.focus(); });
+                        }
+                    }
                     if (data.kamarProgress) this.kamarProgress = data.kamarProgress;
                 }
             } catch (error) {
@@ -589,8 +935,15 @@ function attendancePage(initialData = {}) {
             } finally {
                 this.rfid = '';
                 this.loading = false;
-                if (this.canScan) this.$refs.rfid?.focus();
+                if (this.canScan && !this.showResult) this.$refs.rfid?.focus();
             }
+        },
+        resetResult() {
+            if (this.countdownInterval) clearInterval(this.countdownInterval);
+            if (this.returnTimeout) clearTimeout(this.returnTimeout);
+            this.showResult = false;
+            this.resultData = null;
+            this.$nextTick(() => { if (this.$refs.rfid) this.$refs.rfid.focus(); });
         }
     }
 }

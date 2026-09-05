@@ -227,9 +227,10 @@
                 [
                     'label' => 'Kesiswaan',
                     'icon' => 'fact_check',
-                    'active' => ['admin.attendance.*', 'admin.permissions.*'],
+                    'active' => ['admin.attendance.*', 'admin.permissions.*', 'admin.attendance-sessions.*'],
                     'children' => [
                         ['permission' => 'admin.attendance.dashboard', 'route' => 'admin.attendance.dashboard', 'active' => 'admin.attendance.dashboard', 'label' => 'Dashboard Kehadiran'],
+                        ['permission' => 'admin.attendance.rfid', 'route' => 'admin.attendance-sessions.index', 'active' => 'admin.attendance-sessions.*', 'label' => 'Sesi Absensi RFID'],
                         ['permission' => 'admin.attendance.rfid', 'route' => 'admin.attendance.rfid', 'active' => 'admin.attendance.rfid', 'label' => 'RFID Presensi'],
                         ['permission' => 'admin.attendance.manual', 'route' => 'admin.attendance.manual', 'active' => 'admin.attendance.manual', 'label' => 'Presensi Manual'],
                         ['permission' => 'admin.attendance.monthly', 'route' => 'admin.attendance.monthly', 'active' => 'admin.attendance.monthly', 'label' => 'Rekap Bulanan'],
@@ -239,10 +240,11 @@
                 [
                     'label' => 'Keuangan',
                     'icon' => 'payments',
-                    'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.riwayat', 'petugas.tarik-tunai'],
+                    'active' => ['petugas.finance-dashboard', 'petugas.transaksi', 'petugas.transactions.topup', 'petugas.riwayat', 'petugas.tarik-tunai'],
                     'children' => [
                         ['permission' => 'petugas.finance.dashboard', 'route' => 'petugas.finance-dashboard', 'active' => 'petugas.finance-dashboard', 'label' => 'Dashboard Keuangan'],
                         ['permission' => 'petugas.transactions.manage', 'route' => 'petugas.transaksi', 'active' => 'petugas.transaksi', 'label' => 'Transaksi'],
+                        ['permission' => 'petugas.topup.manage', 'route' => 'petugas.transactions.topup', 'active' => 'petugas.transactions.topup', 'label' => 'Top Up Saldo'],
                         ['permission' => 'petugas.history.view', 'route' => 'petugas.riwayat', 'active' => 'petugas.riwayat', 'label' => 'Riwayat'],
                         ['permission' => 'petugas.withdrawals.manage', 'route' => 'petugas.tarik-tunai', 'active' => 'petugas.tarik-tunai', 'label' => 'Tarik Tunai'],
                     ],

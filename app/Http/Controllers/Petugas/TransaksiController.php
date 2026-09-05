@@ -208,4 +208,107 @@ class TransaksiController extends Controller
             return back()->withErrors(['error' => 'Terjadi kesalahan saat memproses transaksi: '.$e->getMessage()])->withInput($request->except('pin'));
         }
     }
+
+    /**
+     * Display top up form for Petugas
+     */
+    public function createTopUp(Request $request)
+    {
+        $nis = $request->query('nis');
+
+        return view('pages.petugas.transactions.topup', [
+            'activeRole' => 'petugas',
+            'nis' => $nis,
+        ]);
+    }
+
+    /**
+     * Process top up by Petugas
+     */
+    public function storeTopUp(Request $request)
+    {
+        $validated = $request->validate([
+            'nis' => 'required|string|exists:users,nis',
+            'nominal' => 'required|numeric|min:10000',
+            'keterangan' => 'nullable|string|max:500',
+        ]);
+
+        $santri = User::activeSantri()
+            ->where('nis', $validated['nis'])
+            ->firstOrFail();
+
+        DB::beginTransaction();
+        try {
+            $saldoSebelum = $santri->saldo;
+            $saldoSetelah = $saldoSebelum + $validated['nominal'];
+
+            // Create transaction (Petugas Top Up)
+            $transaction = Transaction::create([
+                'santri_id' => $santri->id,
+                'petugas_id' => Auth::id(), // Petugas who processed
+                'jenis' => 'masuk',
+                'nominal' => $validated['nominal'],
+                'kategori' => 'top_up',
+                'keterangan' => collect([
+                    $validated['keterangan'] ?? null,
+                    'Top-Up Tunai via Petugas',
+                ])->filter()->implode(' - '),
+                'saldo_sebelum' => $saldoSebelum,
+                'saldo_setelah' => $saldoSetelah,
+            ]);
+
+            // Update santri saldo
+            $santri->update([
+                'saldo' => $saldoSetelah,
+            ]);
+
+            DB::commit();
+
+            return redirect()->route('petugas.transactions.topup')
+                ->with('success', 'Top-up sebesar Rp ' . number_format($validated['nominal'], 0, ',', '.') . ' untuk ' . $santri->name . ' berhasil.');
+        } catch (\Exception $e) {
+            DB::rollBack();
+
+            return back()->with('error', 'Terjadi kesalahan saat memproses top-up: '.$e->getMessage())
+                ->withInput();
+        }
+    }
+
+    /**
+     * Search santri for top up via AJAX
+     */
+    public function searchSantri(Request $request)
+    {
+        $request->validate([
+            'search' => 'required|string',
+        ]);
+
+        $santriList = User::activeSantri()
+            ->where(function ($query) use ($request) {
+                $query->where('nis', 'like', '%'.$request->search.'%')
+                    ->orWhere('name', 'like', '%'.$request->search.'%');
+            })
+            ->orderByRaw('CASE WHEN nis = ? THEN 0 ELSE 1 END', [$request->search])
+            ->orderBy('name')
+            ->limit(8)
+            ->get();
+
+        if ($santriList->isEmpty()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Santri tidak ditemukan',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $santriList->map(fn (User $santri) => [
+                'id' => $santri->id,
+                'nis' => $santri->nis,
+                'nama' => $santri->name,
+                'saldo' => $santri->saldo,
+                'foto_url' => $santri->foto ? \Illuminate\Support\Facades\Storage::url($santri->foto) : null,
+            ]),
+        ]);
+    }
 }

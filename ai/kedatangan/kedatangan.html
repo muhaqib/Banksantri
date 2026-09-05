@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="id">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Sistem Absensi Pondok Pesantren</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            "late-bg": "#f0f4f1", // Light sage background
+                            "late-accent": "#2f855a", // Dark emerald green
+                            "late-text": "#1a202c",
+                            "late-subtext": "#4a5568",
+                            "late-card": "#ffffff",
+                            "late-label": "#f9d275", // Light gold accent
+                        },
+                        fontFamily: {
+                            sans: ["Inter", "sans-serif"],
+                            amiri: ["Amiri", "serif"], // For the Arabic text
+                        },
+                    },
+                },
+            };
+        </script>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+            rel="stylesheet"
+        />
+        <link
+            href="https://fonts.googleapis.com/css2?family=Amiri&display=swap"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                font-family: "Inter", sans-serif;
+                background-color: theme("colors.late-bg");
+                color: theme("colors.late-text");
+            }
+            .arabic-text {
+                font-family: "Amiri", serif;
+            }
+        </style>
+    </head>
+    <body class="p-6 md:p-12">
+        <div class="max-w-7xl mx-auto">
+            <header
+                class="flex items-center justify-between p-6 bg-late-accent text-white rounded-lg mb-8 shadow-md"
+            >
+                <h1 class="text-3xl font-bold">Judul Absensi</h1>
+                <span class="text-xs font-mono">Panel Absensi</span>
+            </header>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="space-y-6 lg:col-span-1">
+                    <div
+                        class="bg-late-card p-6 rounded-3xl shadow-lg flex flex-col items-center"
+                    >
+                        <img
+                            src="https://images.unsplash.com/photo-1542382156909-9ae37b3f56fd?w=400&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTB8fHBvcnRyYWl0JTIwbWFuJTIwb2xkJTIwYXNpYW58ZW58MHx8MHx8fDA%3D"
+                            alt="Muhammad Aqib"
+                            class="w-32 h-32 rounded-full border-4 border-late-accent shadow-xl object-cover mb-4"
+                        />
+                        <p class="text-late-subtext text-sm">Status Santri</p>
+                    </div>
+
+                    <div
+                        class="bg-red-50 border-4 border-red-200 p-6 rounded-3xl text-center shadow-md"
+                    >
+                        <p
+                            class="text-xs text-red-600 font-semibold uppercase tracking-wider mb-2"
+                        >
+                            Peringatan
+                        </p>
+                        <p class="text-2xl font-bold text-red-700">
+                            Status : Terlambat
+                        </p>
+                        <div
+                            class="mt-4 flex items-center justify-center space-x-2"
+                        >
+                            <svg
+                                class="w-6 h-6 text-red-600"
+                                fill="none"
+                                stroke="currentColor"
+                                viewBox="0 0 24 24"
+                            >
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                                ></path>
+                            </svg>
+                            <p class="text-sm text-red-600">
+                                Mohon segera konfirmasi ke asrama.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-late-card p-8 rounded-3xl shadow-xl flex flex-col space-y-6 lg:col-span-2"
+                >
+                    <div class="text-right flex-col items-end">
+                        <h2
+                            class="arabic-text text-5xl md:text-6xl text-late-accent font-medium leading-tight"
+                        >
+                            أَهْلاً وَسَهْلاً وَمَرْحَبًا
+                        </h2>
+                    </div>
+
+                    <div class="space-y-2 mt-4">
+                        <p
+                            class="text-3xl md:text-4xl font-extrabold text-late-text"
+                        >
+                            Muhammad Aqib
+                        </p>
+                        <p
+                            class="text-xl md:text-2xl font-semibold text-late-accent"
+                        >
+                            Tegal
+                        </p>
+                    </div>
+
+                    <div class="h-1 bg-late-accent rounded-full w-2/3"></div>
+
+                    <div
+                        class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 pt-6 border-t border-gray-100"
+                    >
+                        <div
+                            class="bg-white border border-gray-200 p-6 rounded-xl flex items-center space-x-4 shadow-inner"
+                        >
+                            <div
+                                class="p-3 bg-late-accent text-white rounded-lg"
+                            >
+                                <svg
+                                    class="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-late-subtext">Kamar</p>
+                                <p class="text-xl font-semibold text-late-text">
+                                    Kamar 2
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-white border border-gray-200 p-6 rounded-xl flex items-center space-x-4 shadow-inner"
+                        >
+                            <div
+                                class="p-3 bg-late-accent text-white rounded-lg"
+                            >
+                                <svg
+                                    class="w-6 h-6"
+                                    fill="none"
+                                    stroke="currentColor"
+                                    viewBox="0 0 24 24"
+                                >
+                                    <path
+                                        stroke-linecap="round"
+                                        stroke-linejoin="round"
+                                        stroke-width="2"
+                                        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.746 0 3.332.477 4.5 1.253v13C19.832 18.477 18.246 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+                                    ></path>
+                                </svg>
+                            </div>
+                            <div>
+                                <p class="text-xs text-late-subtext">Jenjang</p>
+                                <p class="text-xl font-semibold text-late-text">
+                                    3 Mts - 3 Tsanawi
+                                </p>
+                            </div>
+                        </div>
+                        <div
+                            class="bg-late-card p-4 rounded-xl flex flex-col justify-between shadow-inner col-span-1 sm:col-span-2 lg:col-span-1 lg:h-full"
+                        >
+                            <div class="flex items-center space-x-2">
+                                <div
+                                    class="w-2 h-2 bg-late-label rounded-full"
+                                ></div>
+                                <p class="text-xs text-late-subtext">
+                                    Status ID
+                                </p>
+                            </div>
+                            <p
+                                class="text-3xl font-mono text-late-accent font-bold" 
+                            >
+                                RFID :
+                                <span class="text-late-subtext" //input rfid from database
+                                    >..........</span
+                                >
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <footer
+                class="mt-12 text-center text-xs text-late-subtext pb-6 border-t pt-6"
+            >
+                © 2024 Admin Panel Pondok Pesantren — Powered by Tailwind CSS.
+            </footer>
+        </div>
+    </body>
+</html>

@@ -305,13 +305,13 @@ Alur:
 
 Petugas dapat melihat request pending, 20 riwayat keputusan terakhir, dan total settlement approved pada bulan berjalan.
 
-### 7.9 Top-Up Santri oleh Admin
+### 7.9 Top-Up Santri secara Langsung
 
-Admin dapat melakukan top-up langsung:
+Admin dan Petugas (yang memiliki akses) dapat melakukan top-up langsung:
 
-1. Mencari santri berdasarkan NIS atau nama.
-2. Melihat saldo dan lima transaksi terakhir.
-3. Memasukkan nominal minimal Rp10.000, sumber dana, dan keterangan.
+1. Mencari santri berdasarkan NIS atau nama (Petugas bisa menggunakan RFID scan).
+2. Melihat saldo dan lima transaksi terakhir (untuk Admin) atau form konfirmasi (untuk Petugas).
+3. Memasukkan nominal minimal Rp10.000, sumber dana, dan keterangan (sumber dana otomatis "Cash/Tunai" untuk Petugas).
 4. Dalam database transaction, sistem membuat transaksi `masuk` berkategori `top_up` dan menambah saldo santri.
 
 Top-up langsung tidak membuat `top_up_requests`.

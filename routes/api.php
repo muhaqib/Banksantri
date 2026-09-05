@@ -23,6 +23,11 @@ use Illuminate\Support\Facades\Route;
 |--------------------------------------------------------------------------
 */
 
+use App\Http\Controllers\Api\AttendanceSessionScanController;
+
+// Attendance Session Scan (Admin/Dashboard)
+Route::post('/attendance-sessions/{session}/scan', [AttendanceSessionScanController::class, 'scan']);
+
 // Public blog routes
 Route::get('/blog', [ApiBlogController::class, 'index']);
 Route::get('/blog/{slug}', [ApiBlogController::class, 'show']);

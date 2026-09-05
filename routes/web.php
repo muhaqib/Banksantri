@@ -3,6 +3,7 @@
 use App\Http\Controllers\Admin\AccessController;
 use App\Http\Controllers\Admin\AcademicClassController;
 use App\Http\Controllers\Admin\BlogController as AdminBlogController;
+use App\Http\Controllers\Admin\AttendanceSessionController;
 use App\Http\Controllers\Admin\DashboardContentController;
 use App\Http\Controllers\Admin\DashboardController as AdminDashboardController;
 use App\Http\Controllers\Admin\KamarSantriController;
@@ -107,6 +108,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/kas', [KasController::class, 'index'])->middleware('permission:admin.finance.manage')->name('kas');
         Route::post('/kas', [KasController::class, 'store'])->middleware('permission:admin.finance.manage')->name('kas.store');
 
+        Route::middleware('permission:admin.attendance.rfid')->group(function () {
+            Route::get('attendance-sessions/{session}/export', [AttendanceSessionController::class, 'export'])->name('attendance-sessions.export');
+            Route::patch('attendance-sessions/{session}/finish', [AttendanceSessionController::class, 'finish'])->name('attendance-sessions.finish');
+            Route::get('attendance-sessions/{session}/dashboard', [AttendanceSessionController::class, 'dashboard'])->name('attendance-sessions.dashboard');
+            Route::resource('attendance-sessions', AttendanceSessionController::class)->parameters(['attendance-sessions' => 'session']);
+        });
+
         Route::middleware('permission:admin.wa-schedules.manage')->group(function () {
             Route::get('/wa-schedules/status', [WahaScheduleController::class, 'status'])->name('wa-schedules.status');
             Route::get('/wa-schedules/groups', [WahaScheduleController::class, 'groups'])->name('wa-schedules.groups');
@@ -200,6 +208,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:admin.attendance.rfid')->name('attendance.scan');
         Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:admin.attendance.manual')->name('attendance.manual');
         Route::put('/attendance/bulk-update', [AttendanceController::class, 'bulkUpdate'])->middleware('permission:admin.attendance.manual')->name('attendance.bulk-update');
+        Route::post('/attendance/bulk-hadir', [AttendanceController::class, 'bulkHadir'])->middleware('permission:admin.attendance.manual')->name('attendance.bulk-hadir');
+        Route::post('/attendance/bulk-izin', [AttendanceController::class, 'bulkIzin'])->middleware('permission:admin.attendance.manual')->name('attendance.bulk-izin');
+        Route::post('/attendance/bulk-ghoib', [AttendanceController::class, 'bulkGhoib'])->middleware('permission:admin.attendance.manual')->name('attendance.bulk-ghoib');
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:admin.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:admin.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:admin.attendance.monthly')->name('attendance.monthly');
@@ -241,6 +252,13 @@ Route::middleware('auth')->group(function () {
         Route::get('/transaksi', [TransaksiController::class, 'index'])->middleware('permission:petugas.transactions.manage')->name('transaksi');
         Route::post('/transaksi/scan', [TransaksiController::class, 'scanRfid'])->middleware('permission:petugas.transactions.manage')->name('transaksi.scan');
         Route::post('/transaksi', [TransaksiController::class, 'store'])->middleware('permission:petugas.transactions.manage')->name('transaksi.store');
+        
+        Route::middleware('permission:petugas.topup.manage')->group(function () {
+            Route::get('/transaksi/topup', [TransaksiController::class, 'createTopUp'])->name('transactions.topup');
+            Route::post('/transaksi/topup', [TransaksiController::class, 'storeTopUp'])->name('transactions.topup.store');
+            Route::post('/transaksi/search-santri', [TransaksiController::class, 'searchSantri'])->name('transactions.search-santri');
+        });
+
         Route::middleware('permission:petugas.santri.manage')->group(function () {
             Route::get('santri/master', [SantriController::class, 'master'])->name('santri.master');
             Route::post('santri/import', [SantriController::class, 'import'])->name('santri.import');
@@ -288,6 +306,9 @@ Route::middleware('auth')->group(function () {
         Route::post('/attendance/scan', [AttendanceController::class, 'scan'])->middleware('permission:petugas.attendance.rfid')->name('attendance.scan');
         Route::get('/attendance/manual', [AttendanceController::class, 'manual'])->middleware('permission:petugas.attendance.manual')->name('attendance.manual');
         Route::put('/attendance/bulk-update', [AttendanceController::class, 'bulkUpdate'])->middleware('permission:petugas.attendance.manual')->name('attendance.bulk-update');
+        Route::post('/attendance/bulk-hadir', [AttendanceController::class, 'bulkHadir'])->middleware('permission:petugas.attendance.manual')->name('attendance.bulk-hadir');
+        Route::post('/attendance/bulk-izin', [AttendanceController::class, 'bulkIzin'])->middleware('permission:petugas.attendance.manual')->name('attendance.bulk-izin');
+        Route::post('/attendance/bulk-ghoib', [AttendanceController::class, 'bulkGhoib'])->middleware('permission:petugas.attendance.manual')->name('attendance.bulk-ghoib');
         Route::put('/attendance/{santri}', [AttendanceController::class, 'update'])->middleware('permission:petugas.attendance.manual')->name('attendance.update');
         Route::get('/attendance-dashboard', [AttendanceController::class, 'dashboard'])->middleware('permission:petugas.attendance.dashboard')->name('attendance.dashboard');
         Route::get('/attendance-monthly', [AttendanceController::class, 'monthly'])->middleware('permission:petugas.attendance.monthly')->name('attendance.monthly');

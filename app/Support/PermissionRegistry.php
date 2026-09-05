@@ -15,6 +15,7 @@ class PermissionRegistry
             'Bank Santri' => [
                 'admin.finance.manage' => 'Kelola kas, transaksi, top up, dan penarikan tunai',
                 'petugas.transactions.manage' => 'Kelola transaksi petugas',
+                'petugas.topup.manage' => 'Kelola top up saldo santri',
                 'petugas.finance.dashboard' => 'Lihat dashboard keuangan petugas',
                 'petugas.history.view' => 'Lihat riwayat transaksi petugas',
                 'petugas.withdrawals.manage' => 'Kelola tarik tunai',
@@ -111,6 +112,7 @@ class PermissionRegistry
         return [
             'petugas.dashboard.view',
             'petugas.transactions.manage',
+            'petugas.topup.manage',
             'petugas.laundry.manage',
             'petugas.laundry.history',
             'petugas.finance.dashboard',
